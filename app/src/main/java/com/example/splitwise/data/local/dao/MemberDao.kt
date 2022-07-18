@@ -1,0 +1,23 @@
+package com.example.splitwise.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.example.splitwise.data.local.entity.Member
+
+@Dao
+interface MemberDao {
+
+//    @Query("SELECT phone FROM member WHERE name = :name")
+//    suspend fun getPhoneNumberFromName(name: String): Int?
+//
+//    @Query("SELECT name FROM member WHERE phone = :number")
+//    suspend fun getNameFromPhoneNumber(number: Int): String?
+
+    @Query("SELECT * FROM member WHERE member_id = :memberId")
+    suspend fun getMember(memberId: Int): Member?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(member: Member): Long
+}
