@@ -30,6 +30,8 @@ class SplitWiseViewModel(context: Context): ViewModel() {
     val groups: LiveData<List<Group>?>
         get() = _groups
 
+    var groupId: Int = -1
+
     init{
         viewModelScope.launch {
             val memberStats = transactionRepository.transactionStats()

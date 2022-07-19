@@ -6,14 +6,27 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.GroupCardBinding
 
-class GroupsAdapter: RecyclerView.Adapter<GroupsViewHolder>() {
+class GroupsAdapter(
+    val onAddMemberClicked: (Int) -> Unit,
+    val onExpenseClicked: (Int) -> Unit
+): RecyclerView.Adapter<GroupsViewHolder>() {
     private var groups = listOf<Group>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupsViewHolder {
         val view = LayoutInflater.from(parent.context)
         val binding = GroupCardBinding.inflate(view, parent, false)
 
-        return GroupsViewHolder(binding)
+        return GroupsViewHolder(binding).apply {
+            itemView.setOnClickListener {
+                onExpenseClicked(groups[adapterPosition].groupId)
+            }
+            binding.addExpenseTextView.setOnClickListener {
+                onExpenseClicked(groups[adapterPosition].groupId)
+            }
+            binding.addMembersTextView.setOnClickListener {
+                onAddMemberClicked(groups[adapterPosition].groupId)
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: GroupsViewHolder, position: Int) {

@@ -9,14 +9,20 @@ import com.example.splitwise.databinding.ExpenseCardBinding
 import com.example.splitwise.databinding.MemberCardBinding
 import com.example.splitwise.model.ExpenseMember
 
-class ExpensesAdapter: RecyclerView.Adapter<ExpensesViewHolder>() {
+class ExpensesAdapter(
+    val onExpenseClicked: (Int)-> Unit
+): RecyclerView.Adapter<ExpensesViewHolder>() {
     private var expenseMembers = listOf<ExpenseMember>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpensesViewHolder {
         val view = LayoutInflater.from(parent.context)
         val binding = ExpenseCardBinding.inflate(view, parent, false)
 
-        return ExpensesViewHolder(binding)
+        return ExpensesViewHolder(binding).apply {
+            itemView.setOnClickListener {
+                onExpenseClicked(expenseMembers[adapterPosition].expenseId)
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: ExpensesViewHolder, position: Int) {

@@ -52,17 +52,17 @@ class AddMemberDialog : DialogFragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if (nameCheck(nameEditText.text?.trim().toString()))
-                    nameLayout.error = "Enter valid name"
-                else {
+                if (nameCheck(nameEditText.text?.trim().toString())) {
                     nameLayout.error = null
                     nameLayout.isErrorEnabled = false
                 }
+                else
+                    nameLayout.error = "Enter valid name"
 
                 dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled =
-                    !(nameCheck(nameEditText.text?.trim().toString()) ||
-                            (phoneEditText.text?.trim().toString().length != 10)
-                            )
+                    nameCheck(nameEditText.text?.trim().toString()) ||
+                            (phoneEditText.text?.trim().toString().length == 10)
+
             }
 
         }
@@ -82,9 +82,9 @@ class AddMemberDialog : DialogFragment() {
                     phoneLayout.isErrorEnabled = false
                 }
                 dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled =
-                    !(nameCheck(nameEditText.text?.trim().toString()) ||
-                            (phoneEditText.text?.trim().toString().length != 10)
-                            )
+                    nameCheck(nameEditText.text?.trim().toString()) ||
+                            (phoneEditText.text?.trim().toString().length == 10)
+
             }
 
         }

@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsOverviewBinding
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
+import com.example.splitwise.ui.fragment.adapter.GroupsOverviewAdapter
 
 class GroupsOverviewFragment : Fragment() {
 
@@ -32,18 +34,25 @@ class GroupsOverviewFragment : Fragment() {
         binding = FragmentGroupsOverviewBinding.bind(view)
 
         // Rv
-        val groupsAdapter = GroupsAdapter()
+        val groupsAdapter = GroupsOverviewAdapter{ groupId: Int ->
+            gotoExpensesOverviewFragment(groupId)
+        }
 
         binding.groupOverviewRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = groupsAdapter
         }
 
-        // Livedata
+        // Livedata Groups overview
         viewModel.groups.observe(viewLifecycleOwner){ groups ->
             if(groups != null){
                 groupsAdapter.updateGroups(groups)
             }
         }
+    }
+
+    private fun gotoExpensesOverviewFragment(groupId: Int){
+        val action = GroupsOverviewFragmentDirections.actionGroupsOverviewFragmentToExpensesOverviewFragment(groupId)
+        view?.findNavController()?.navigate(action)
     }
 }

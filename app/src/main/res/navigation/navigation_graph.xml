@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/groupsFragment">
+
+    <fragment
+        android:id="@+id/groupsFragment"
+        android:name="com.example.splitwise.ui.fragment.groups.GroupsFragment"
+        android:label="GroupsFragment" >
+        <action
+            android:id="@+id/action_groupsFragment_to_createEditGroupFragment"
+            app:destination="@id/createEditGroupFragment" />
+        <action
+            android:id="@+id/action_groupsFragment_to_expensesFragment"
+            app:destination="@id/expensesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/splitWiseFragment"
+        android:name="com.example.splitwise.ui.fragment.splitwise.SplitWiseFragment"
+        android:label="SplitWiseFragment" >
+        <action
+            android:id="@+id/action_splitWiseFragment_to_settleUpFragment"
+            app:destination="@id/settleUpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupsOverviewFragment"
+        android:name="com.example.splitwise.ui.fragment.groupsoverview.GroupsOverviewFragment"
+        android:label="GroupsOverviewFragment" >
+        <action
+            android:id="@+id/action_groupsOverviewFragment_to_expensesOverviewFragment"
+            app:destination="@id/expensesOverviewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createEditGroupFragment"
+        android:name="com.example.splitwise.ui.fragment.createeditgroup.CreateEditGroupFragment"
+        android:label="CreateEditGroupFragment" >
+        <argument
+            android:name="groupId"
+            app:argType="integer"
+           />
+    </fragment>
+    <fragment
+        android:id="@+id/expensesFragment"
+        android:name="com.example.splitwise.ui.fragment.expenses.ExpensesFragment"
+        android:label="ExpensesFragment" >
+        <action
+            android:id="@+id/action_expensesFragment_to_addExpenseFragment"
+            app:destination="@id/addExpenseFragment" />
+        <action
+            android:id="@+id/action_expensesFragment_to_expenseDetailFragment"
+            app:destination="@id/expenseDetailFragment" />
+        <argument
+            android:name="groupId"
+            app:argType="integer"
+           />
+    </fragment>
+    <fragment
+        android:id="@+id/addExpenseFragment"
+        android:name="com.example.splitwise.ui.fragment.addexpense.AddExpenseFragment"
+        android:label="AddExpenseFragment" >
+        <argument
+            android:name="groupId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/expenseDetailFragment"
+        android:name="com.example.splitwise.ui.fragment.expensedetail.ExpenseDetailFragment"
+        android:label="ExpenseDetailFragment" >
+        <argument
+            android:name="expenseId"
+            app:argType="integer"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/settleUpFragment"
+        android:name="com.example.splitwise.ui.fragment.settleup.SettleUpFragment"
+        android:label="SettleUpFragment" >
+        <argument
+            android:name="payerId"
+            app:argType="integer" />
+        <argument
+            android:name="groupId"
+            app:argType="integer"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/expensesOverviewFragment"
+        android:name="com.example.splitwise.ui.fragment.expensesoverview.ExpensesOverviewFragment"
+        android:label="ExpensesOverviewFragment" >
+        <argument
+            android:name="groupId"
+            app:argType="integer" />
+    </fragment>
+</navigation>

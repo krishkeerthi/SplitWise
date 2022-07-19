@@ -41,7 +41,7 @@ class ExpensesOverviewFragment : Fragment() {
             adapter = expensesAdapter
         }
 
-        // Livedata
+        // Livedata Expenses overview
         viewModel.expenses.observe(viewLifecycleOwner){ expenses ->
             if(expenses != null){
                 expensesAdapter.updateExpenses(expenses)

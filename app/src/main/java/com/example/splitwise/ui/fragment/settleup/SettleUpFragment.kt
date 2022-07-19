@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSettleUpBinding
 import com.example.splitwise.ui.fragment.adapter.PayeeArrayAdapter
@@ -15,9 +16,10 @@ import com.example.splitwise.ui.fragment.adapter.PayeeArrayAdapter
 class SettleUpFragment : Fragment() {
 
     private lateinit var binding: FragmentSettleUpBinding
+    private val args: SettleUpFragmentArgs by navArgs()
 
     private val viewModel: SettleUpViewModel by viewModels {
-        SettleUpViewModelFactory(requireContext(), 4, 4)
+        SettleUpViewModelFactory(requireContext(), args.payerId, args.groupId)
     }
 
     override fun onCreateView(
@@ -36,9 +38,9 @@ class SettleUpFragment : Fragment() {
 
         // Group
         viewModel.group.observe(viewLifecycleOwner) { group ->
-            group?.let {
-                binding.groupNameTextView.text = it.groupName
-            }
+
+            binding.groupNameTextView.text = group?.groupName ?: "All Group"
+
         }
 
         // Payer

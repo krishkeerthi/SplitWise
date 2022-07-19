@@ -6,19 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentExpenseDetailBinding
 import com.example.splitwise.ui.fragment.adapter.BillsAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersCheckboxAdapter
+import com.example.splitwise.util.Category
 
 class ExpenseDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentExpenseDetailBinding
+    private val args: ExpenseDetailFragmentArgs by navArgs()
 
     private val viewModel: ExpenseDetailViewModel by viewModels {
-        ExpenseDetailViewModelFactory(requireContext(), 3)
+        ExpenseDetailViewModelFactory(requireContext(), args.expenseId)
     }
 
     override fun onCreateView(
@@ -48,17 +51,35 @@ class ExpenseDetailFragment : Fragment() {
             adapter = billsAdapter
         }
 
-        // Livedata
+        // Livedata payees
         viewModel.payees.observe(viewLifecycleOwner){ members ->
             if(members != null){
                 membersAdapter.updateMembers(members)
             }
         }
 
+        // bills
         viewModel.bills.observe(viewLifecycleOwner){ bills ->
             if(bills != null){
                 billsAdapter.updateBills(bills)
             }
+        }
+
+        // Expense
+        viewModel.expense.observe(viewLifecycleOwner){ expense ->
+            expense?.let {
+                binding.expenseNameTextView.text = it.expenseName
+                binding.totalAmountTextView.text = it.totalAmount.toString()
+                binding.expenseCategoryTextView.text = Category.values()[it.category].name
+            }
+        }
+
+        // Payer
+        viewModel.payer.observe(viewLifecycleOwner){ payer ->
+            payer?.let {
+                binding.expensePayerTextView.text = it.name
+            }
+
         }
     }
 }

@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentAddExpenseBinding
@@ -19,9 +21,10 @@ import com.example.splitwise.util.Category
 class AddExpenseFragment : Fragment() {
 
     private lateinit var binding: FragmentAddExpenseBinding
+    private val args: AddExpenseFragmentArgs by navArgs()
 
     private val viewModel: AddExpenseViewModel by viewModels {
-        AddExpenseViewModelFactory(requireContext(),4)
+        AddExpenseViewModelFactory(requireContext(),args.groupId)
     }
 
     override fun onCreateView(
@@ -39,7 +42,12 @@ class AddExpenseFragment : Fragment() {
         val categories = Category.values().toList()
 
         // Rv
-        val membersCheckboxAdapter = MembersCheckboxAdapter()
+        val membersCheckboxAdapter = MembersCheckboxAdapter{ memberId: Int, isChecked: Boolean ->
+            if(isChecked)
+                viewModel.memberIds.add(memberId)
+            else
+                viewModel.memberIds.remove(memberId)
+        }
 
         binding.membersRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -57,41 +65,60 @@ class AddExpenseFragment : Fragment() {
                 val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.dropdown, members)
                 binding.payerDropdown.apply {
                     setAdapter(payerAdapter)
-//                    onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
-//                        override fun onItemSelected(
-//                            parent: AdapterView<*>?,
-//                            view: View?,
-//                            position: Int,
-//                            id: Long
-//                        ) {
-//                            TODO("Not yet implemented")
-//                        }
-//
-//                        override fun onNothingSelected(parent: AdapterView<*>?) {
-//                            TODO("Not yet implemented")
-//                        }
-//
-//                    }
+                    onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            viewModel.payerId = members[position].memberId
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                        }
+
+                    }
                 }
             }
         }
 
         // Dropdown
-        binding.categoriesDropdown.setAdapter(
-            CategoryArrayAdapter(requireContext(), R.layout.dropdown, categories)
-        )
+        binding.categoriesDropdown.apply {
+            setAdapter(
+                CategoryArrayAdapter(requireContext(), R.layout.dropdown, categories)
+            )
+            onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    viewModel.payerId = categories[position].ordinal
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+            }
+        }
 
 
-        val members = mutableListOf<Int>()
         // Button click
-//        binding.createExpenseFab.setOnClickListener {
-//            viewModel.createExpense(
-//                binding.expenseNameText.text.toString(),
-//                binding.categoriesDropdown.text.toString(),
-//                binding.payerDropdown.text.toString(),
-//                binding.expenseAmountText.text.toString().toFloat(),
-//                members
-//            )
-//        }
+        binding.createExpenseFab.setOnClickListener {
+            
+            if(binding.expenseNameText.text?.trim().toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
+                && viewModel.category != null && viewModel.payerId != null)
+            viewModel.createExpense(
+                binding.expenseNameText.text.toString(),
+                viewModel.category!!,
+                viewModel.payerId!!,
+                binding.expenseAmountText.text.toString().toFloat(),
+                viewModel.memberIds.toList()
+            )
+            else
+                Toast.makeText(requireContext(), "Enter all fields to add expense", Toast.LENGTH_SHORT).show()
+        }
     }
 }

@@ -13,7 +13,7 @@ interface ExpenseDao {
     @Query("SELECT * FROM expense WHERE group_id = :groupId")
     suspend fun getAllExpenses(groupId: Int): List<Expense>?
 
-    @Query("SELECT * FROM WHERE expense_id = :expenseId")
+    @Query("SELECT * FROM expense WHERE expense_id = :expenseId")
     suspend fun getExpense(expenseId: Int): Expense?
 
     @Query("SELECT * FROM expense WHERE group_id = :groupId AND expense_name LIKE :name || '%'")   // or append % at the end of name parameter. i.e name = "munar%"

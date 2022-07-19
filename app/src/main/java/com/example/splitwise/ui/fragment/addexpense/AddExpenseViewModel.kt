@@ -23,11 +23,17 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
     val members: LiveData<List<Member>?>
         get() = _members
 
+    var memberIds = mutableSetOf<Int>()
+
+    var payerId: Int? = null
+
+    var category: Int? = null
+
     init {
         getGroupMembers()
     }
 
-    fun createExpense(name: String, category: Int, payer: Int, amount: Float, memberIds: List<Int>){
+    fun createExpense(name: String, category: Int, payer: Int, amount: Float, ids: List<Int>){
         viewModelScope.launch {
             val expenseId = expenseRepository.createExpense(
                 groupId,
@@ -39,8 +45,8 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
                 Date()
             )
 
-            for(memberId in memberIds)
-                expenseRepository.addExpensePayee(expenseId, memberId)
+            for(id in ids)
+                expenseRepository.addExpensePayee(expenseId, id)
 
             groupRepository.addGroupExpense(groupId, expenseId)
         }
@@ -48,8 +54,11 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
 
     private fun getGroupMembers() {
         viewModelScope.launch {
-            val memberIds = groupRepository.getGroupMembers(groupId)
-            _members.value = getMembersFromIds(memberIds)
+            val ids = groupRepository.getGroupMembers(groupId)
+            _members.value = getMembersFromIds(ids)
+
+            if(ids != null)
+                memberIds = ids.toMutableSet()
         }
     }
 

@@ -6,14 +6,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.databinding.MemberOweLendCardBinding
 import com.example.splitwise.model.MemberPaymentStatsDetail
 
-class SplitWiseAdapter : RecyclerView.Adapter<SplitWiseViewHolder>() {
+class SplitWiseAdapter(
+    val onTransactionClicked: (Int) -> Unit
+) : RecyclerView.Adapter<SplitWiseViewHolder>() {
     private var membersPaymentStatsDetail = listOf<MemberPaymentStatsDetail>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SplitWiseViewHolder {
         val view = LayoutInflater.from(parent.context)
         val binding = MemberOweLendCardBinding.inflate(view, parent, false)
 
-        return SplitWiseViewHolder(binding)
+        return SplitWiseViewHolder(binding).apply {
+            itemView.setOnClickListener {
+                onTransactionClicked(
+                    membersPaymentStatsDetail[adapterPosition].memberId
+                )
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: SplitWiseViewHolder, position: Int) {

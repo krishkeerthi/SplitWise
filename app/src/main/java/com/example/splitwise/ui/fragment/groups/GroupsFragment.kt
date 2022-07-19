@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
@@ -32,7 +33,14 @@ class GroupsFragment : Fragment() {
         binding = FragmentGroupsBinding.bind(view)
 
         // Rv
-        val groupsAdapter = GroupsAdapter()
+        val groupsAdapter = GroupsAdapter(
+            { groupId: Int ->
+                goToCreateEditGroupFragment(groupId)
+            },
+            { groupId: Int ->
+                goToCreateEditGroupFragment(groupId)
+            }
+        )
 
         binding.groupsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -48,8 +56,18 @@ class GroupsFragment : Fragment() {
 
         // Button click
         binding.addGroupFab.setOnClickListener {
-
+            goToCreateEditGroupFragment()
         }
 
+    }
+
+    private fun goToCreateEditGroupFragment(groupId: Int = -1){
+        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(groupId)
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun goToExpenseFragment(groupId: Int){
+        val action = GroupsFragmentDirections.actionGroupsFragmentToExpensesFragment(groupId)
+        view?.findNavController()?.navigate(action)
     }
 }

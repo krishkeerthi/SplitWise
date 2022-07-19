@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentCreateEditGroupBinding
@@ -21,9 +22,10 @@ import com.example.splitwise.util.nameCheck
 class CreateEditGroupFragment : Fragment() {
 
     private lateinit var binding: FragmentCreateEditGroupBinding
+    private val args: CreateEditGroupFragmentArgs by navArgs()
 
     private val viewModel: CreateEditGroupViewModel by activityViewModels{
-        CreateEditGroupViewModelFactory(requireContext(), 4)
+        CreateEditGroupViewModelFactory(requireContext(), args.groupId)
     }
 
     override fun onCreateView(
@@ -87,15 +89,19 @@ class CreateEditGroupFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if (nameCheck(binding.groupNameText.text?.trim().toString()))
-                    binding.outlinedGroupNameTextField.error = "Enter valid name"
-                else {
+                if (nameCheck(binding.groupNameText.text?.trim().toString())){
                     binding.outlinedGroupNameTextField.error = null
                     binding.outlinedGroupNameTextField.isErrorEnabled = false
                 }
+                else {
+                    binding.outlinedGroupNameTextField.error = "Enter valid name"
+                }
 
-                binding.createGroupButton.isEnabled =
-                    !(nameCheck(binding.groupNameText.text?.trim().toString()))
+                binding.createGroupButton.visibility =
+                    if(nameCheck(binding.groupNameText.text?.trim().toString()))
+                        View.VISIBLE
+                    else
+                        View.GONE
             }
 
         }
