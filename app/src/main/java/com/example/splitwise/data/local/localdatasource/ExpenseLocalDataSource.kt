@@ -48,7 +48,7 @@ class ExpenseLocalDataSource(
     }
 
     override suspend fun getExpensePayees(expenseId: Int): List<Int>? {
-        return getExpensePayees(expenseId)
+        return expensePayeeDao.getPayees(expenseId)
     }
 
     override suspend fun addExpenseBill(expenseId: Int, uri: Uri) {

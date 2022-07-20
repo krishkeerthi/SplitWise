@@ -7,6 +7,8 @@ import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Expense
 import com.example.splitwise.data.local.localdatasource.ExpenseLocalDataSource
 import com.example.splitwise.data.local.localdatasource.GroupLocalDataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.math.exp
 
@@ -23,7 +25,7 @@ class ExpenseRepository(
     suspend fun createExpense(groupId: Int, name:String, category: Int, totalAmount: Float,
                               splitAmount: Float, payer: Int, date: Date
     ): Int{
-        return dataSource.createExpense(groupId, name, category, totalAmount, splitAmount, payer, date)
+        return withContext(Dispatchers.IO){dataSource.createExpense(groupId, name, category, totalAmount, splitAmount, payer, date)}
     }
 
     suspend fun addExpensePayee(expenseId: Int, payeeId: Int){
@@ -31,7 +33,7 @@ class ExpenseRepository(
     }
 
     suspend fun getExpensePayees(expenseId: Int): List<Int>?{
-        return dataSource.getExpensePayees(expenseId)
+        return withContext(Dispatchers.IO){dataSource.getExpensePayees(expenseId)}
     }
 
     suspend fun addExpenseBill(expenseId: Int, uri: Uri){
@@ -39,15 +41,15 @@ class ExpenseRepository(
     }
 
     suspend fun getExpenseBills(expenseId: Int): List<Uri>?{
-        return dataSource.getExpenseBills(expenseId)
+        return withContext(Dispatchers.IO){dataSource.getExpenseBills(expenseId)}
     }
 
     suspend fun getExpense(expenseId: Int): Expense?{
-        return dataSource.getExpense(expenseId)
+        return withContext(Dispatchers.IO){dataSource.getExpense(expenseId)}
     }
 
     suspend fun getExpenses(groupId: Int): List<Expense>?{
-        return dataSource.getExpenses(groupId)
+        return withContext(Dispatchers.IO){dataSource.getExpenses(groupId)}
     }
 
     // Need to implement

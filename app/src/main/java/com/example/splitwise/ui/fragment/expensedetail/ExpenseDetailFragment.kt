@@ -70,6 +70,7 @@ class ExpenseDetailFragment : Fragment() {
             expense?.let {
                 binding.expenseNameTextView.text = it.expenseName
                 binding.totalAmountTextView.text = it.totalAmount.toString()
+                binding.splitAmountTextView.text = it.splitAmount.toString()
                 binding.expenseCategoryTextView.text = Category.values()[it.category].name
             }
         }

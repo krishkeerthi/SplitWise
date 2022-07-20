@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.expenses
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Expense
@@ -10,7 +12,9 @@ import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.model.ExpenseMember
 import com.example.splitwise.ui.fragment.addexpense.AddExpenseViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.exp
 
 class ExpensesViewModel(context: Context, val groupId: Int): ViewModel() {
@@ -31,10 +35,12 @@ class ExpensesViewModel(context: Context, val groupId: Int): ViewModel() {
         get() = _expenseMembers
 
     init {
+        Log.d(TAG, "expenseviewmodel: created")
         viewModelScope.launch {
             val expenses = expenseRepository.getExpenses(groupId)
 
             if (expenses != null) {
+                Log.d(TAG, "viewmodel: group expenses $expenses")
                 val expenseMembers = mutableListOf<ExpenseMember>()
 
                 for(expense in expenses){
@@ -48,39 +54,44 @@ class ExpensesViewModel(context: Context, val groupId: Int): ViewModel() {
             }
 
             val memberIds = groupRepository.getGroupMembers(groupId)
+            Log.d(TAG, "viewmodel: group members $memberIds with groupid ${groupId}")
             _groupMembers.value = getMembersFromIds(memberIds)
         }
     }
 
-    private fun getMembersFromIds(memberIds: List<Int>?): List<Member>? {
-        return if(memberIds != null){
-            val members = mutableListOf<Member>()
+    private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {
+        return withContext(Dispatchers.IO){
+            if(memberIds != null){
+                val members = mutableListOf<Member>()
 
-            for(id in memberIds)
-                viewModelScope.launch {
+                for(id in memberIds) {
                     val member = memberRepository.getMember(id)
                     member?.let {
                         members.add(it)
                     }
                 }
-            members
+
+                members
+            }
+            else
+                null
         }
-        else
-            null
     }
 
-    private fun toExpenseMember(expense: Expense, member: Member): ExpenseMember{
-        return ExpenseMember(
-            expense.expenseId,
-            expense.groupId,
-            expense.expenseName,
-            expense.category,
-            expense.totalAmount,
-            expense.splitAmount,
-            expense.payer,
-            member,
-            expense.date
-        )
+    private suspend fun toExpenseMember(expense: Expense, member: Member): ExpenseMember{
+        return withContext(Dispatchers.IO) {
+            ExpenseMember(
+                expense.expenseId,
+                expense.groupId,
+                expense.expenseName,
+                expense.category,
+                expense.totalAmount,
+                expense.splitAmount,
+                expense.payer,
+                member,
+                expense.date
+            )
+        }
     }
 
 }

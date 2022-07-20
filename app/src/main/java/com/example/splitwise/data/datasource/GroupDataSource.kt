@@ -17,5 +17,7 @@ interface GroupDataSource {
 
     suspend fun getGroups(): List<Group>?
 
+    suspend fun updateTotalExpense(groupId: Int, amount: Float)
 
+    suspend fun getTotalExpense(groupId: Int): Float?
 }

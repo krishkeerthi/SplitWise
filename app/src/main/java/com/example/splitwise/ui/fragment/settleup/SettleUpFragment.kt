@@ -53,10 +53,8 @@ class SettleUpFragment : Fragment() {
         // Payees
         viewModel.payees.observe(viewLifecycleOwner) { payees ->
             if (payees != null) {
-                binding.payeesDropdown.apply {
-                    setAdapter(
-                        PayeeArrayAdapter(requireContext(), R.layout.dropdown, payees)
-                    )
+                binding.payeeSpinner.apply {
+                    adapter = PayeeArrayAdapter(requireContext(), R.layout.dropdown, payees)
 
                     onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(
@@ -90,14 +88,14 @@ class SettleUpFragment : Fragment() {
         binding.selectAllPayeesCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 viewModel.getAmount(viewModel.payerId, groupId = viewModel.groupId)
-                binding.payeesDropdown.isEnabled = false
-                binding.payeesDropdown.isClickable = false
+                binding.payeeSpinner.isEnabled = false
+                binding.payeeSpinner.isClickable = false
             } else {
                 if (viewModel.payeeId != null)
                     viewModel.getAmount(viewModel.payerId, viewModel.payeeId, viewModel.groupId)
 
-                binding.payeesDropdown.isEnabled = true
-                binding.payeesDropdown.isClickable = true
+                binding.payeeSpinner.isEnabled = true
+                binding.payeeSpinner.isClickable = true
             }
         }
 

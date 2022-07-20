@@ -7,6 +7,10 @@ import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.localdatasource.GroupLocalDataSource
 import com.example.splitwise.data.local.localdatasource.MemberLocalDataSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class GroupRepository(
@@ -20,7 +24,7 @@ class GroupRepository(
     )
 
     suspend fun createGroup(name: String, description: String, date: Date, expense: Float): Int{
-        return dataSource.createGroup(name, description, date, expense)
+        return withContext(Dispatchers.IO){dataSource.createGroup(name, description, date, expense)}
     }
 
     suspend fun addGroupMember(groupId: Int, memberId: Int){
@@ -32,15 +36,28 @@ class GroupRepository(
     }
 
     suspend fun getGroup(groupId: Int): Group?{
-        return dataSource.getGroup(groupId)
+        return withContext(Dispatchers.IO){dataSource.getGroup(groupId)}
     }
 
     suspend fun getGroups(): List<Group>?{
-        return dataSource.getGroups()
+        return withContext(Dispatchers.IO){dataSource.getGroups()}
     }
 
     suspend fun getGroupMembers(groupId: Int): List<Int>?{
-        return dataSource.getGroupMembers(groupId)
+        return withContext(Dispatchers.IO){dataSource.getGroupMembers(groupId)}
+    }
+
+    suspend fun getTotalExpense(groupId: Int): Float?{
+        return withContext(Dispatchers.IO){dataSource.getTotalExpense(groupId)}
+    }
+
+    suspend fun updateTotalExpense(groupId: Int, amount: Float){
+        CoroutineScope(Dispatchers.IO).launch{
+            getTotalExpense(groupId)?.let {
+                dataSource.updateTotalExpense(groupId, it + amount)
+            }
+        }
+
     }
 
     suspend fun updateLastActiveDate(date: Date){

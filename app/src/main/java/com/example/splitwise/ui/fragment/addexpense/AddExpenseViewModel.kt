@@ -8,7 +8,9 @@ import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.data.repository.TransactionRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel() {
@@ -49,6 +51,8 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
                 expenseRepository.addExpensePayee(expenseId, id)
 
             groupRepository.addGroupExpense(groupId, expenseId)
+
+            groupRepository.updateTotalExpense(groupId, amount)
         }
     }
 
@@ -62,21 +66,23 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
         }
     }
 
-    private fun getMembersFromIds(memberIds: List<Int>?): List<Member>? {
-        return if(memberIds != null){
-            val members = mutableListOf<Member>()
+    private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {
+        return withContext(Dispatchers.IO){
+            if(memberIds != null){
+                val members = mutableListOf<Member>()
 
-            for(id in memberIds)
-                viewModelScope.launch {
+                for(id in memberIds) {
                     val member = memberRepository.getMember(id)
                     member?.let {
                         members.add(it)
                     }
                 }
-            members
+
+                members
+            }
+            else
+                null
         }
-        else
-            null
     }
 
 }

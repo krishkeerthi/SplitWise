@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.GroupOverviewCardBinding
+import com.example.splitwise.util.formatDate
 
 class GroupsOverviewAdapter(
     val onGroupOverviewClicked: (Int) -> Unit
@@ -43,7 +44,7 @@ class GroupsOverviewViewHolder(val binding: GroupOverviewCardBinding) :
 
     fun bind(group: Group) {
         binding.groupNameTextView.text = group.groupName
-        binding.dateTextView.text = group.creationDate.toString()
+        binding.dateTextView.text = formatDate(group.creationDate)
         binding.totalExpenseTextView.text = group.totalExpense.toString()
     }
 

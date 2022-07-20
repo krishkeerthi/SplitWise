@@ -10,7 +10,9 @@ import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.ui.fragment.addexpense.AddExpenseViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ExpenseDetailViewModel(context: Context, private val expenseId: Int): ViewModel(){
 
@@ -57,21 +59,23 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int): View
         }
     }
 
-    private fun getMembersFromIds(memberIds: List<Int>?): List<Member>? {
-        return if(memberIds != null){
-            val members = mutableListOf<Member>()
+    private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {
+        return withContext(Dispatchers.IO){
+            if(memberIds != null){
+                val members = mutableListOf<Member>()
 
-            for(id in memberIds)
-                viewModelScope.launch {
+                for(id in memberIds) {
                     val member = memberRepository.getMember(id)
                     member?.let {
                         members.add(it)
                     }
                 }
-            members
+
+                members
+            }
+            else
+                null
         }
-        else
-            null
     }
 }
 

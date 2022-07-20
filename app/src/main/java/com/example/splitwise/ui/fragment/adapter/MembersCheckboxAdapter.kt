@@ -1,5 +1,7 @@
 package com.example.splitwise.ui.fragment.adapter
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,16 +22,18 @@ class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit)
         val binding = MemberCheckboxCardBinding.inflate(view, parent, false)
 
 
-        return MembersCheckboxViewHolder(binding, onItemChecked, members)//.apply {
-//            binding.paidUnpaidCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-//                if(isChecked){
-//                    onItemChecked(members[adapterPosition].memberId, true)
-//                }
-//                else{
-//                    onItemChecked(members[adapterPosition].memberId, false)
-//                }
-//            }
-//        }
+        return MembersCheckboxViewHolder(binding).apply {
+            binding.paidUnpaidCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                if(isChecked){
+                    onItemChecked(members[adapterPosition].memberId, true)
+                    Log.d(TAG, "onCreateViewHolder: $adapterPosition")
+                }
+                else{
+                    onItemChecked(members[adapterPosition].memberId, false)
+                    Log.d(TAG, "onCreateViewHolder: $adapterPosition")
+                }
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: MembersCheckboxViewHolder, position: Int) {
@@ -48,20 +52,20 @@ class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit)
     }
 }
 
-class MembersCheckboxViewHolder(val binding: MemberCheckboxCardBinding, val onItemChecked: (Int, Boolean) -> Unit,
-    members: List<Member>)
+class MembersCheckboxViewHolder(val binding: MemberCheckboxCardBinding)
     : RecyclerView.ViewHolder(binding.root){
 
-    init {
-        binding.paidUnpaidCheckbox.setOnCheckedChangeListener{ buttonView, isChecked ->
-            if(isChecked){
-                onItemChecked(members[adapterPosition].memberId, true)
-            }
-            else{
-                onItemChecked(members[adapterPosition].memberId, false)
-            }
-        }
-    }
+//    init {
+//        binding.paidUnpaidCheckbox.setOnCheckedChangeListener{ buttonView, isChecked ->
+//            if(isChecked){
+//                onItemChecked(members[adapterPosition].memberId, true)
+//                Log.d(TAG, " checkbox: $adapterPosition: ")
+//            }
+//            else{
+//                onItemChecked(members[adapterPosition].memberId, false)
+//            }
+//        }
+//    }
     fun bind(member: Member){
         binding.memberTextView.text = member.name
     }

@@ -16,14 +16,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/members_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="85dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/expenses_toolbar"
-        tools:orientation="horizontal"
         tools:itemCount="10"
-        tools:listitem="@layout/member_profile_card" />
+        tools:listitem="@layout/member_profile_card"
+        tools:orientation="horizontal" />
 
     <TextView
         android:id="@+id/expenses_list_text_view"

@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.groups
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -38,7 +40,7 @@ class GroupsFragment : Fragment() {
                 goToCreateEditGroupFragment(groupId)
             },
             { groupId: Int ->
-                goToCreateEditGroupFragment(groupId)
+                goToExpenseFragment(groupId)
             }
         )
 
@@ -49,6 +51,7 @@ class GroupsFragment : Fragment() {
 
         // Livedata
         viewModel.groups.observe(viewLifecycleOwner){ groups ->
+            Log.d(TAG, "onViewCreated: groups livedata ${groups}")
             if(groups != null){
                 groupsAdapter.updateGroups(groups)
             }

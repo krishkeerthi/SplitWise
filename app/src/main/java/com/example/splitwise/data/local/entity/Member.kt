@@ -12,4 +12,8 @@ data class Member(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "member_id")
     var memberId: Int = 0
+
+    override fun toString(): String {
+        return name
+    }
 }

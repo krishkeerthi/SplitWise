@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.splitwise
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -56,10 +58,9 @@ class SplitWiseFragment : Fragment() {
         // Groups
         viewModel.groups.observe(viewLifecycleOwner){ groups ->
             if(groups != null){
-                binding.groupsDropdown.apply {
-                    setAdapter(
-                        GroupArrayAdapter(requireContext(), R.layout.dropdown, groups)
-                    )
+                binding.groupsSpinner.apply {
+                    adapter = GroupArrayAdapter(requireContext(), R.layout.dropdown, groups)
+
 
                     onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
                         override fun onItemSelected(
@@ -70,6 +71,9 @@ class SplitWiseFragment : Fragment() {
                         ) {
                             viewModel.getGroupMembersPaymentStats(groups[position].groupId)
                             viewModel.groupId = groups[position].groupId
+
+                            Log.d(TAG, "onItemSelected: dropdown selected")
+                            binding.groupsSpinner
                         }
 
                         override fun onNothingSelected(parent: AdapterView<*>?) {

@@ -1,19 +1,25 @@
 package com.example.splitwise.ui.fragment.createeditgroup
 
 import android.app.Dialog
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentCreateEditGroupBinding
+import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersAdapter
 import com.example.splitwise.ui.fragment.addmember.AddMemberDialog
@@ -24,7 +30,7 @@ class CreateEditGroupFragment : Fragment() {
     private lateinit var binding: FragmentCreateEditGroupBinding
     private val args: CreateEditGroupFragmentArgs by navArgs()
 
-    private val viewModel: CreateEditGroupViewModel by activityViewModels{
+    private val viewModel: CreateEditGroupViewModel by viewModels{
         CreateEditGroupViewModelFactory(requireContext(), args.groupId)
     }
 
@@ -38,6 +44,7 @@ class CreateEditGroupFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        Log.d(TAG, "onViewCreated: createdit group id : ${args.groupId}")
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentCreateEditGroupBinding.bind(view)
@@ -52,6 +59,7 @@ class CreateEditGroupFragment : Fragment() {
 
         // Livedata Members
         viewModel.members.observe(viewLifecycleOwner){ members ->
+            Log.d(TAG, "onViewCreated: members livedata ${members}")
             if(members != null){
                 membersAdapter.updateMembers(members)
             }
@@ -59,6 +67,7 @@ class CreateEditGroupFragment : Fragment() {
 
         //Group name
         viewModel.groupName.observe(viewLifecycleOwner){ groupName ->
+            Log.d(TAG, "onViewCreated: groupName livedata ${groupName}")
             groupName?.let {
                 binding.groupNameText.setText(it)
             }
@@ -66,7 +75,7 @@ class CreateEditGroupFragment : Fragment() {
 
         // Button click
         binding.addMemberButton.setOnClickListener{
-            AddMemberDialog().show(childFragmentManager, "Add Member Alert Dialog")
+            AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
             // open dialog to add new member.
             // Choosing existing member has to be implemented
         }
@@ -74,11 +83,44 @@ class CreateEditGroupFragment : Fragment() {
 
         // if group id is null
         // set button visibility based on button state
+//        if(args.groupId == -1){
+//            Log.d(TAG, "onViewCreated: inside if")
+//            binding.createGroupButton.isVisible = true
+//        }
+//        else{
+//            Log.d(TAG, "onViewCreated: insise else")
+//            binding.createGroupButton.isVisible = false
+//            binding.groupNameText.isClickable = false
+//        }
 
         binding.createGroupButton.setOnClickListener{
-            viewModel.createGroup(
-                binding.groupNameText.text.toString()
-            )
+            if(args.groupId == -1){
+
+                if(viewModel.memberIds.size > 1) {
+                    val memberId = requireActivity().getSharedPreferences(
+                        MainActivity.KEY,
+                        Context.MODE_PRIVATE
+                    )
+                        .getInt("MEMBERID", -1)
+
+                    viewModel.createGroup(
+                        binding.groupNameText.text.toString(),
+                        memberId
+                    )
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Group created successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                else
+                    Toast.makeText(requireContext(), "Add atleast 2 members to create group", Toast.LENGTH_SHORT).show()
+            }
+            else{
+                Toast.makeText(requireContext(), "Group already created", Toast.LENGTH_SHORT).show()
+            }
+
         }
 
         val nameWatcher = object : TextWatcher {

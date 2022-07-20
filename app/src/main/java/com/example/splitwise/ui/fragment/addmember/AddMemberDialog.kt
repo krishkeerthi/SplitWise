@@ -13,9 +13,11 @@ import com.example.splitwise.util.nameCheck
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-class AddMemberDialog : DialogFragment() {
+class AddMemberDialog(
+    private val viewModel: CreateEditGroupViewModel
+) : DialogFragment() {
 
-    private val viewModel: CreateEditGroupViewModel by activityViewModels()
+    //private val viewModel: CreateEditGroupViewModel by activityViewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
@@ -34,6 +36,7 @@ class AddMemberDialog : DialogFragment() {
             setView(addMemberDialog)
             setTitle("Add Member")
 
+            // Save button
             setPositiveButton("Save") { dialogInterface, position ->
                 viewModel.addMember(
                     nameEditText.text.toString(),
@@ -44,6 +47,7 @@ class AddMemberDialog : DialogFragment() {
 
         val dialog = builder.create()
 
+        // Text watchers
         val nameWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }

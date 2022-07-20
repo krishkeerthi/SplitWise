@@ -1,7 +1,11 @@
 package com.example.splitwise.ui.activity.main
 
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.navigation.NavController
@@ -12,10 +16,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityMainBinding
+import com.example.splitwise.ui.activity.register.RegisterActivity
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
+    //private val sharedPreference = getSharedPreferences(KEY, Context.MODE_PRIVATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +29,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         val view = binding.root
         setContentView(view)
 
+        val sharedPreference = getSharedPreferences(KEY, Context.MODE_PRIVATE)
+        val memberId = sharedPreference.getInt("MEMBERID", -1)
+
+        Log.d(TAG, "onCreate: before register activity intent")
+        if(memberId == -1){
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
+
+        Log.d(TAG, "onCreate: after register activity intent")
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
 
@@ -66,5 +82,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 View.VISIBLE
         else
             View.GONE
+    }
+
+    companion object{
+        const val KEY = "com.example.splitwise.sharedprefkey"
     }
 }

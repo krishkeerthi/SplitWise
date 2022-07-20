@@ -20,4 +20,8 @@ data class Group(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "group_id")
     var groupId: Int = 0
+
+    override fun toString(): String {
+        return groupName
+    }
 }

@@ -47,9 +47,16 @@ GroupDataSource{
         return groupDao.getGroups()
     }
 
+    override suspend fun updateTotalExpense(groupId: Int, amount: Float) {
+        groupDao.updateTotalExpense(groupId, amount)
+    }
+
     override suspend fun getGroupMembers(groupId: Int): List<Int>?{
         return groupMemberDao.getGroupMembers(groupId)
     }
 
+    override suspend fun getTotalExpense(groupId: Int): Float? {
+        return groupDao.getTotalExpense(groupId)
+    }
     // groups with constraint pending
 }

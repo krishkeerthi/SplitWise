@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.MemberCardBinding
+import com.example.splitwise.databinding.MemberProfileCardBinding
 
 class MembersAdapter: RecyclerView.Adapter<MembersViewHolder>() {
     private var members = listOf<Member>()

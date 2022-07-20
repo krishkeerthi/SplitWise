@@ -13,9 +13,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/outlined_group_field"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/outlined_group_field"-->
+<!--        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_marginEnd="24dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/split_wise_toolbar">-->
+
+<!--        <AutoCompleteTextView-->
+<!--            android:id="@+id/groups_dropdown"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="Select Group"-->
+<!--            android:inputType="text" />-->
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/groups_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -23,15 +42,7 @@
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/split_wise_toolbar">
-
-        <AutoCompleteTextView
-            android:id="@+id/groups_dropdown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Select Group"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintTop_toBottomOf="@id/split_wise_toolbar"/>
 
     <TextView
         android:id="@+id/owe_text_view"
@@ -42,7 +53,7 @@
         android:text="Owed"
         android:textAlignment="textEnd"
         app:layout_constraintEnd_toStartOf="@id/vertical_view"
-        app:layout_constraintTop_toBottomOf="@id/outlined_group_field" />
+        app:layout_constraintTop_toBottomOf="@id/groups_spinner" />
 
     <View
         android:id="@+id/vertical_view"
@@ -53,7 +64,7 @@
         android:background="#dee3e1"
         app:layout_constraintBottom_toBottomOf="@+id/lend_text_view"
         app:layout_constraintEnd_toStartOf="@id/lend_text_view"
-        app:layout_constraintTop_toBottomOf="@id/outlined_group_field" />
+        app:layout_constraintTop_toBottomOf="@id/groups_spinner" />
 
     <TextView
         android:id="@+id/lend_text_view"
@@ -64,7 +75,7 @@
         android:text="Lend"
         android:textAlignment="textEnd"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/outlined_group_field" />
+        app:layout_constraintTop_toBottomOf="@id/groups_spinner" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/members_recycler_view"

@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.activity.register
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -22,6 +24,8 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        val sharedPreference = getSharedPreferences(MainActivity.KEY, Context.MODE_PRIVATE)
 
         val nameEditText = binding.memberNameText
         val phoneEditText = binding.memberPhoneText
@@ -65,7 +69,7 @@ class RegisterActivity : AppCompatActivity() {
                     true
                 }
                 else {
-                    phoneLayout.error = "Enter valid name"
+                    phoneLayout.error = "Enter 10 numbers"
                     false
                 }
 
@@ -83,15 +87,27 @@ class RegisterActivity : AppCompatActivity() {
 
         // Live data(observe to move to next screen)
 
-        viewModel.registered.observe(this){
-            if(it){
+        viewModel.memberId.observe(this){
+            if(it != null){
+                saveIdToSharedPreference(it, sharedPreference)
                 gotoMainActivity()
             }
         }
     }
 
     private fun gotoMainActivity(){
-        val intent = Intent(this, MainActivity::class.java)
+
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
         startActivity(intent)
+    }
+
+    private fun saveIdToSharedPreference(memberId: Int, sharedPreference: SharedPreferences){
+        val sharedPreferenceEditor = sharedPreference.edit()
+        sharedPreferenceEditor.apply{
+            putInt("MEMBERID", memberId)
+            apply()
+        }
     }
 }

@@ -35,10 +35,14 @@ interface GroupDao {
     @Query("SELECT group_name FROM `group` ")
     suspend fun getGroupNames(): List<String>?
 
+    @Query("UPDATE `group` SET total_expense = :amount WHERE group_id = :groupId")
+    suspend fun updateTotalExpense(groupId: Int, amount: Float)
+
     @Query("UPDATE `group` SET last_active_date = :date WHERE group_id = :groupId")
     suspend fun updateLastActiveDate(groupId: Int, date: Date)
 
-
+    @Query("SELECT total_expense FROM `group` WHERE group_id = :groupId")
+    suspend fun getTotalExpense(groupId: Int): Float?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(group: Group): Long

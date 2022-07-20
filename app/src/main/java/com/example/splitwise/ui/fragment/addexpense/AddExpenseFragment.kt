@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.addexpense
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,8 +65,8 @@ class AddExpenseFragment : Fragment() {
 
                 // Updating payer adapter
                 val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.dropdown, members)
-                binding.payerDropdown.apply {
-                    setAdapter(payerAdapter)
+                binding.payerSpinner.apply {
+                    adapter = payerAdapter
                     onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
                         override fun onItemSelected(
                             parent: AdapterView<*>?,
@@ -73,6 +75,7 @@ class AddExpenseFragment : Fragment() {
                             id: Long
                         ) {
                             viewModel.payerId = members[position].memberId
+                            Log.d(TAG, "onItemSelected: payer selected")
                         }
 
                         override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -84,10 +87,8 @@ class AddExpenseFragment : Fragment() {
         }
 
         // Dropdown
-        binding.categoriesDropdown.apply {
-            setAdapter(
-                CategoryArrayAdapter(requireContext(), R.layout.dropdown, categories)
-            )
+        binding.categorySpinner.apply {
+            adapter = CategoryArrayAdapter(requireContext(), R.layout.dropdown, categories)
             onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -95,7 +96,8 @@ class AddExpenseFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    viewModel.payerId = categories[position].ordinal
+                    viewModel.category = categories[position].ordinal
+                    Log.d(TAG, "onItemSelected: category selected")
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -109,14 +111,16 @@ class AddExpenseFragment : Fragment() {
         binding.createExpenseFab.setOnClickListener {
             
             if(binding.expenseNameText.text?.trim().toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
-                && viewModel.category != null && viewModel.payerId != null)
-            viewModel.createExpense(
-                binding.expenseNameText.text.toString(),
-                viewModel.category!!,
-                viewModel.payerId!!,
-                binding.expenseAmountText.text.toString().toFloat(),
-                viewModel.memberIds.toList()
-            )
+                && viewModel.category != null && viewModel.payerId != null){
+                viewModel.createExpense(
+                    binding.expenseNameText.text.toString(),
+                    viewModel.category!!,
+                    viewModel.payerId!!,
+                    binding.expenseAmountText.text.toString().toFloat(),
+                    viewModel.memberIds.toList())
+
+                Toast.makeText(requireContext(), "Expense Added", Toast.LENGTH_SHORT).show()
+            }
             else
                 Toast.makeText(requireContext(), "Enter all fields to add expense", Toast.LENGTH_SHORT).show()
         }

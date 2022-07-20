@@ -5,6 +5,8 @@ import com.example.splitwise.data.datasource.MemberDataSource
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.local.localdatasource.MemberLocalDataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MemberRepository(
     private val database: SplitWiseRoomDatabase
@@ -15,10 +17,10 @@ class MemberRepository(
     )
 
     suspend fun addMember(name: String, phoneNumber: Long): Int{
-        return dataSource.addMember(name, phoneNumber)
+        return withContext(Dispatchers.IO){dataSource.addMember(name, phoneNumber)}
     }
 
     suspend fun getMember(memberId: Int): Member? {
-        return dataSource.getMember(memberId)
+        return withContext(Dispatchers.IO){dataSource.getMember(memberId)}
     }
 }

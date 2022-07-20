@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.expenses
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +23,7 @@ class ExpensesFragment : Fragment() {
     private val args: ExpensesFragmentArgs by navArgs()
 
     private val viewModel: ExpensesViewModel by viewModels {
-        ExpensesViewModelFactory(requireContext(), 4)
+        ExpensesViewModelFactory(requireContext(), args.groupId)
     }
 
     override fun onCreateView(
@@ -55,12 +57,14 @@ class ExpensesFragment : Fragment() {
 
         // Livedata
         viewModel.expenseMembers.observe(viewLifecycleOwner){ expenseMembers ->
+            Log.d(TAG, "onViewCreated:expense list livedata ${expenseMembers}")
             if(expenseMembers != null){
                 expensesAdapter.updateExpenseMembers(expenseMembers)
             }
         }
 
         viewModel.groupMembers.observe(viewLifecycleOwner){ members ->
+            Log.d(TAG, "onViewCreated:expense members livedata ${members}")
             if(members != null)
                 membersAdapter.updateMembers(members)
 

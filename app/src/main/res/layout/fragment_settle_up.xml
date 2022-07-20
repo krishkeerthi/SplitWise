@@ -42,9 +42,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/outlined_payer_text_field" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/outlined_payee_field"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/payee_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -52,15 +51,7 @@
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/to_text">
-
-        <AutoCompleteTextView
-            android:id="@+id/payees_dropdown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Select Payee"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintTop_toBottomOf="@id/to_text"/>
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/select_all_payees_checkbox"
@@ -70,7 +61,7 @@
         android:layout_marginTop="24dp"
         android:text="Select all payees"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/outlined_payee_field" />
+        app:layout_constraintTop_toBottomOf="@id/payee_spinner" />
 
     <TextView
         android:id="@+id/group_info_text_view"
