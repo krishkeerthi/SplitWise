@@ -1,6 +1,7 @@
 package com.example.splitwise.data.repository
 
 import android.content.Context
+import android.view.Display
 import com.example.splitwise.data.datasource.MemberDataSource
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Member
@@ -22,5 +23,11 @@ class MemberRepository(
 
     suspend fun getMember(memberId: Int): Member? {
         return withContext(Dispatchers.IO){dataSource.getMember(memberId)}
+    }
+
+    suspend fun getMembers(): List<Member>?{
+        return withContext(Dispatchers.IO){
+            dataSource.getMembers()
+        }
     }
 }

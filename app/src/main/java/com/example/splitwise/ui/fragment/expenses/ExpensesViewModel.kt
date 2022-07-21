@@ -34,7 +34,7 @@ class ExpensesViewModel(context: Context, val groupId: Int): ViewModel() {
     val expenseMembers: LiveData<List<ExpenseMember>?>
         get() = _expenseMembers
 
-    init {
+    fun fetchData() {
         Log.d(TAG, "expenseviewmodel: created")
         viewModelScope.launch {
             val expenses = expenseRepository.getExpenses(groupId)

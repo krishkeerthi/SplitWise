@@ -39,6 +39,7 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/expense"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
             <TextView

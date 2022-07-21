@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentExpensesOverviewBinding
@@ -15,9 +16,10 @@ import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 class ExpensesOverviewFragment : Fragment() {
 
     private lateinit var binding: FragmentExpensesOverviewBinding
+    private val args: ExpensesOverviewFragmentArgs by navArgs()
 
     private val viewModel: ExpensesOverviewViewModel by viewModels {
-        ExpensesOverviewViewModelFactory(requireContext(), 4)
+        ExpensesOverviewViewModelFactory(requireContext(), args.groupId)
     }
 
     override fun onCreateView(

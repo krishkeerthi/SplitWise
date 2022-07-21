@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.groups
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Group
@@ -16,7 +18,8 @@ class GroupsViewModel(context: Context): ViewModel() {
     val groups: LiveData<List<Group>?>
         get() = _groups
 
-    init {
+    fun fetchData(){
+        Log.d(TAG, "groupsviewmodel: called")
         viewModelScope.launch {
             _groups.value = groupsRepository.getGroups()
         }

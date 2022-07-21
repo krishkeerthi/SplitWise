@@ -4,6 +4,8 @@ import com.example.splitwise.model.MemberPaymentStats
 
 interface TransactionDataSource {
 
+    suspend fun addTransaction(groupId: Int, payerId: Int, payeeId: Int, amount: Float)
+
     suspend fun settle(senderId: Int, receiverId: Int)
 
     suspend fun settle(senderId: Int, receiverId: Int, groupId: Int)

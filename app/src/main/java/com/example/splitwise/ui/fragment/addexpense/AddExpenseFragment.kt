@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
@@ -117,12 +118,20 @@ class AddExpenseFragment : Fragment() {
                     viewModel.category!!,
                     viewModel.payerId!!,
                     binding.expenseAmountText.text.toString().toFloat(),
-                    viewModel.memberIds.toList())
+                    viewModel.memberIds.toList()){
+                    gotoExpenseFragment()
+                }
 
                 Toast.makeText(requireContext(), "Expense Added", Toast.LENGTH_SHORT).show()
             }
             else
                 Toast.makeText(requireContext(), "Enter all fields to add expense", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun gotoExpenseFragment(){
+        val action = AddExpenseFragmentDirections.actionAddExpenseFragmentToExpensesFragment(args.groupId)
+        view?.findNavController()?.navigate(action)
+
     }
 }

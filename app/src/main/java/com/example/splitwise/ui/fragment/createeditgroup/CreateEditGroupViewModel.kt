@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-class CreateEditGroupViewModel(context: Context, val groupId: Int): ViewModel() {
+class CreateEditGroupViewModel(context: Context, val groupId: Int, val memberId: Int): ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val groupRepository = GroupRepository(database)
@@ -32,18 +32,35 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int): ViewModel() 
     val members: LiveData<MutableList<Member>?>
         get() = _members
 
-    init {
-        Log.d(TAG, "onViewCreated: viewmodel ${groupId}")
-        if(groupId != -1){
-            viewModelScope.launch {
+    fun fetchData() {
+        Log.d(TAG, "onViewCreated: viewmodel $groupId")
+
+        viewModelScope.launch {
+            if(groupId != -1 && memberId != -1){
                 val group = groupRepository.getGroup(groupId)
                 _groupName.value = group?.groupName
 
-                val memberIds = groupRepository.getGroupMembers(groupId)
+                val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
+
+                memberIds?.add(memberId)
+
                 _members.value = getMembersFromIds(memberIds)
             }
-        }
+            else if(groupId != -1 && memberId == -1){
+                val group = groupRepository.getGroup(groupId)
+                _groupName.value = group?.groupName
 
+                val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
+
+                _members.value = getMembersFromIds(memberIds)
+            }
+            else if(groupId == -1 && memberId != -1){
+                _members.value = getMembersFromIds(mutableListOf(memberId))
+            }
+            else{
+                // Nothing to do here
+            }
+        }
     }
 
     private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {
@@ -69,7 +86,17 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int): ViewModel() 
         viewModelScope.launch {
             val memberId = memberRepository.addMember(name, phoneNumber)
             memberRepository.getMember(memberId)?.let {
-                _members.value?.add(it)
+                Log.d(TAG, "addMember: $it")
+                var existingMembers = members.value
+
+                if(existingMembers != null){
+                    existingMembers.add(it)
+                    _members.value = existingMembers
+                }
+                else{
+                    _members.value = mutableListOf(it)
+                }
+
             }
 
             if(groupId == -1){
@@ -84,7 +111,7 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int): ViewModel() 
 
     }
 
-    fun createGroup(name: String, ownerId: Int){
+    fun createGroup(name: String, ownerId: Int, gotoGroupFragment: () -> Unit){
         viewModelScope.launch {
             val groupId = groupRepository.createGroup(
                 name,
@@ -98,15 +125,28 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int): ViewModel() 
 
             if(ownerId != -1)
                 groupRepository.addGroupMember(groupId, ownerId)
+
+            Log.d(TAG, "createGroup: group created")
+
+            gotoGroupFragment()
         }
+    }
+
+    fun getMembers(): List<Int>{
+        val memberIds = mutableListOf<Int>()
+        members.value?.let{
+            for(member in it)
+                memberIds.add(member.memberId)
+        }
+        return memberIds
     }
 }
 
-class CreateEditGroupViewModelFactory(private val context: Context, private val groupId: Int):
+class CreateEditGroupViewModelFactory(private val context: Context, private val groupId: Int, private val memberId: Int):
     ViewModelProvider.Factory{
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CreateEditGroupViewModel(context, groupId) as T
+        return CreateEditGroupViewModel(context, groupId, memberId) as T
     }
 }

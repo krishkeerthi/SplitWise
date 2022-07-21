@@ -7,7 +7,7 @@ import com.example.splitwise.databinding.MemberOweLendCardBinding
 import com.example.splitwise.model.MemberPaymentStatsDetail
 
 class SplitWiseAdapter(
-    val onTransactionClicked: (Int) -> Unit
+    val onTransactionClicked: (Int, Float, String) -> Unit
 ) : RecyclerView.Adapter<SplitWiseViewHolder>() {
     private var membersPaymentStatsDetail = listOf<MemberPaymentStatsDetail>()
 
@@ -18,7 +18,9 @@ class SplitWiseAdapter(
         return SplitWiseViewHolder(binding).apply {
             itemView.setOnClickListener {
                 onTransactionClicked(
-                    membersPaymentStatsDetail[adapterPosition].memberId
+                    membersPaymentStatsDetail[adapterPosition].memberId,
+                    membersPaymentStatsDetail[adapterPosition].amountOwed,
+                    membersPaymentStatsDetail[adapterPosition].memberName
                 )
             }
         }

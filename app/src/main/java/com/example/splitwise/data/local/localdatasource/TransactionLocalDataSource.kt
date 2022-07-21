@@ -1,13 +1,22 @@
 package com.example.splitwise.data.local.localdatasource
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import com.example.splitwise.data.datasource.TransactionDataSource
 import com.example.splitwise.data.local.dao.TransactionDao
+import com.example.splitwise.data.local.entity.Transaction
 import com.example.splitwise.model.MemberAmount
 import com.example.splitwise.model.MemberPaymentStats
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class TransactionLocalDataSource(
     private val transactionDao: TransactionDao
 ): TransactionDataSource {
+    override suspend fun addTransaction(groupId: Int, payerId: Int, payeeId: Int, amount: Float) {
+        transactionDao.insert(Transaction(groupId, payerId, payeeId, amount))
+    }
+
     override suspend fun settle(senderId: Int, receiverId: Int) {
         transactionDao.reduceAmount(senderId, receiverId)
     }
@@ -40,9 +49,12 @@ class TransactionLocalDataSource(
         val lendList = transactionDao.getLendAmountInGroup(groupId)
         val owedList = transactionDao.getOwedAmountInGroup(groupId)
 
-        return if(lendList != null && owedList != null)
+        return if(lendList != null && owedList != null) {
+            Log.d(TAG, "transactionStats: transaction found")
             listMerger(lendList, owedList)
+        }
         else{
+            Log.d(TAG, "transactionStats: null found")
             //throw NullPointerException("Transaction missing")
             null
         }
@@ -72,34 +84,39 @@ class TransactionLocalDataSource(
         return transactionDao.getPayers(payeeId, groupId)
     }
 
-    private fun listMerger(lendList: List<MemberAmount>, owedList: List<MemberAmount>): List<MemberPaymentStats>{
-        val memberPaymentStats = mutableListOf<MemberPaymentStats>()
-        val lendMap = mutableMapOf<Int, Float>()
+    private suspend fun listMerger(lendList: List<MemberAmount>, owedList: List<MemberAmount>): List<MemberPaymentStats>{
+        Log.d(TAG, "listMerger: lend: $lendList \n owed: $owedList")
+        return withContext(Dispatchers.IO){
+            val memberPaymentStats = mutableListOf<MemberPaymentStats>()
+            val lendMap = mutableMapOf<Int, Float>()
 
-        for(i in lendList)
-            lendMap[i.memberId] = i.amount
+            for(i in lendList)
+                lendMap[i.memberId] = i.amount
 
-        for(i in owedList){
+            for(i in owedList){
+                if(lendMap.containsKey(i.memberId)){
+                    memberPaymentStats.add(
+                        MemberPaymentStats(i.memberId, lendMap[i.memberId] ?: 0F, i.amount)
+                    )
 
-            if(lendMap.containsKey(i.memberId)){
+                    lendMap.remove(i.memberId)
+                }
+                else{
+                    memberPaymentStats.add(
+                        MemberPaymentStats(i.memberId, 0F, i.amount)
+                    )
+                }
+            }
+
+            for( (key, value) in lendMap.entries)
                 memberPaymentStats.add(
-                    MemberPaymentStats(i.memberId, lendMap[i.memberId] ?: 0F, i.amount)
+                    MemberPaymentStats(key, value, 0F)
                 )
 
-                lendMap.remove(i.memberId)
-            }
-            else{
-                memberPaymentStats.add(
-                    MemberPaymentStats(i.memberId, 0F, i.amount)
-                )
-            }
+            Log.d(TAG, "listMerger: $memberPaymentStats")
+
+            memberPaymentStats
         }
 
-        for( (key, value) in lendMap.entries)
-            memberPaymentStats.add(
-                MemberPaymentStats(key, value, 0F)
-            )
-
-        return memberPaymentStats
     }
 }

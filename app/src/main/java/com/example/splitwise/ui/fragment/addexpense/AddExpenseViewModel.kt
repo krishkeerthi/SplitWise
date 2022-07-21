@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.addexpense
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Member
@@ -19,6 +21,7 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
     private val memberRepository = MemberRepository(database)
     private val groupRepository = GroupRepository(database)
     private val expenseRepository = ExpenseRepository(database)
+    private val transactionRepository = TransactionRepository(database)
 
     private val _members = MutableLiveData<List<Member>?>()
 
@@ -35,24 +38,34 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
         getGroupMembers()
     }
 
-    fun createExpense(name: String, category: Int, payer: Int, amount: Float, ids: List<Int>){
+    fun createExpense(name: String, category: Int, payer: Int, amount: Float, memberIds: List<Int>,
+    gotoExpenseFragment: () -> Unit){
         viewModelScope.launch {
+            val splitAmount = amount / (memberIds.size)
             val expenseId = expenseRepository.createExpense(
                 groupId,
                 name,
                 category,
                 amount,
-                amount/(memberIds.size),
+                splitAmount,
                 payer,
                 Date()
             )
 
-            for(id in ids)
+            Log.d(TAG, "createExpense: payer: $payer, \n members: ${memberIds}")
+
+            for(id in memberIds) {
                 expenseRepository.addExpensePayee(expenseId, id)
+                if(id != payer)
+                transactionRepository.addTransaction(groupId, payer, id, splitAmount)
+            }
 
             groupRepository.addGroupExpense(groupId, expenseId)
 
             groupRepository.updateTotalExpense(groupId, amount)
+
+
+            gotoExpenseFragment()
         }
     }
 

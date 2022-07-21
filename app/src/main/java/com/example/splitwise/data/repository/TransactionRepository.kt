@@ -17,6 +17,9 @@ class TransactionRepository(
         database.transactionDao()
     )
 
+    suspend fun addTransaction(groupId: Int, payerId: Int, payeeId: Int, amount: Float){
+        dataSource.addTransaction(groupId, payerId, payeeId, amount)
+    }
     suspend fun settle(senderId: Int, receiverId: Int){
         dataSource.settle(senderId, receiverId)
     }

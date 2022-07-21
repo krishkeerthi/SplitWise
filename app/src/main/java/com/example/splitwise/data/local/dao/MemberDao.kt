@@ -18,6 +18,9 @@ interface MemberDao {
     @Query("SELECT * FROM member WHERE member_id = :memberId")
     suspend fun getMember(memberId: Int): Member?
 
+    @Query("SELECT * FROM member")
+    suspend fun getMembers(): List<Member>?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(member: Member): Long
 }

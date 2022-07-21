@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,11 +37,21 @@ class SplitWiseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.fetchData()
+
         binding = FragmentSplitWiseBinding.bind(view)
 
         // Rv
-        val splitWiseAdapter = SplitWiseAdapter{ payerId: Int ->
-            gotoSettleUpFragment(payerId, viewModel.groupId)
+        val splitWiseAdapter = SplitWiseAdapter{ payerId: Int, amountOwed: Float, name: String ->
+            if(amountOwed == 0f)
+                Toast.makeText(requireContext(), "$name owes nothing", Toast.LENGTH_SHORT).show()
+            else{
+                if(binding.allGroupsCheckbox.isChecked)
+                    gotoSettleUpFragment(payerId, -1)
+                else
+                    gotoSettleUpFragment(payerId, viewModel.groupId)
+            }
+
         }
 
         binding.membersRecyclerView.apply {
@@ -73,7 +84,6 @@ class SplitWiseFragment : Fragment() {
                             viewModel.groupId = groups[position].groupId
 
                             Log.d(TAG, "onItemSelected: dropdown selected")
-                            binding.groupsSpinner
                         }
 
                         override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -81,6 +91,19 @@ class SplitWiseFragment : Fragment() {
 
                     }
                 }
+            }
+        }
+
+        binding.allGroupsCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                viewModel.getGroupMembersPaymentStats()
+                binding.groupsSpinner.isEnabled = false
+                binding.groupsSpinner.isClickable = false
+            }
+            else{
+                viewModel.getGroupMembersPaymentStats(viewModel.groupId)
+                binding.groupsSpinner.isEnabled = true
+                binding.groupsSpinner.isClickable = true
             }
         }
 

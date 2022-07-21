@@ -44,25 +44,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/split_wise_toolbar"/>
 
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/all_groups_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="All Groups"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/groups_spinner" />
+
     <TextView
         android:id="@+id/owe_text_view"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Owed"
         android:textAlignment="textEnd"
+        app:layout_constraintBottom_toBottomOf="@+id/all_groups_checkbox"
         app:layout_constraintEnd_toStartOf="@id/vertical_view"
-        app:layout_constraintTop_toBottomOf="@id/groups_spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/groups_spinner" />
 
     <View
         android:id="@+id/vertical_view"
         android:layout_width="1dp"
-        android:layout_height="10dp"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="#dee3e1"
-        app:layout_constraintBottom_toBottomOf="@+id/lend_text_view"
+        app:layout_constraintBottom_toBottomOf="@+id/all_groups_checkbox"
         app:layout_constraintEnd_toStartOf="@id/lend_text_view"
         app:layout_constraintTop_toBottomOf="@id/groups_spinner" />
 
@@ -70,21 +80,22 @@
         android:id="@+id/lend_text_view"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:text="Lend"
         android:textAlignment="textEnd"
+        app:layout_constraintBottom_toBottomOf="@+id/all_groups_checkbox"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/groups_spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/groups_spinner" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/members_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/owe_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/all_groups_checkbox"
         tools:listitem="@layout/member_owe_lend_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

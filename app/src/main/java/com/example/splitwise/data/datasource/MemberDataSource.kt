@@ -7,4 +7,6 @@ interface MemberDataSource {
     suspend fun addMember(name: String, phoneNumber: Long): Int
 
     suspend fun getMember(memberId: Int): Member?
+
+    suspend fun getMembers(): List<Member>?
 }

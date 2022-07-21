@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
@@ -21,6 +22,8 @@ class GroupsFragment : Fragment() {
         GroupsViewModelFactory(requireContext())
     }
 
+    //private lateinit var viewModel: GroupsViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,7 +34,8 @@ class GroupsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewModel.fetchData() // fetching data in viewmodel init{} does not get called while returning from back stack
+        //viewModel = ViewModelProvider(this, GroupsViewModelFactory(requireContext()))[GroupsViewModel::class.java]
         binding = FragmentGroupsBinding.bind(view)
 
         // Rv
@@ -65,7 +69,7 @@ class GroupsFragment : Fragment() {
     }
 
     private fun goToCreateEditGroupFragment(groupId: Int = -1){
-        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(groupId)
+        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(groupId, -1)
         view?.findNavController()?.navigate(action)
     }
 

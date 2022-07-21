@@ -17,6 +17,7 @@ import com.example.splitwise.databinding.FragmentExpensesBinding
 import com.example.splitwise.ui.fragment.adapter.ExpensesAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersAdapter
+import com.example.splitwise.ui.fragment.adapter.MembersProfileAdapter
 
 class ExpensesFragment : Fragment() {
     private lateinit var binding: FragmentExpensesBinding
@@ -37,13 +38,15 @@ class ExpensesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.fetchData()
+
         binding = FragmentExpensesBinding.bind(view)
 
         // Rv
         val expensesAdapter = ExpensesAdapter{ expenseId: Int ->
             gotoExpenseDetailFragment(expenseId)
         }
-        val membersAdapter = MembersAdapter()
+        val membersAdapter = MembersProfileAdapter()
 
         binding.expensesRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())

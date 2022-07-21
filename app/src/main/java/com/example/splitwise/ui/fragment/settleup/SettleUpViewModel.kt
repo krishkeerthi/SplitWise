@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 
 class SettleUpViewModel(context: Context,
                         val payerId: Int,
-                        val groupId: Int?): ViewModel() {
+                        val groupId: Int): ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val transactionRepository = TransactionRepository(database)
@@ -46,7 +46,7 @@ class SettleUpViewModel(context: Context,
             val member = memberRepository.getMember(payerId)
             _payer.value = member
 
-            val memberIds: List<Int>?= if(groupId != null){
+            val memberIds: List<Int>?= if(groupId != -1){
                 transactionRepository.getPayers(payerId, groupId)
             }
             else{
@@ -55,15 +55,15 @@ class SettleUpViewModel(context: Context,
 
             _payees.value = getMembersFromIds(memberIds)
 
-            if(groupId != null){
+            if(groupId != -1){
                 _group.value = groupRepository.getGroup(groupId)
             }
         }
     }
 
-    fun getAmount(senderId: Int, receiverId: Int? = null, groupId: Int? = null){
+    fun getAmount(senderId: Int, receiverId: Int? = null, groupId: Int){
         viewModelScope.launch {
-            if(groupId != null){
+            if(groupId != -1){
                 if(receiverId != null){
                     _amount.value = transactionRepository.getOwedInGroup(senderId, receiverId, groupId)
                 }
@@ -82,9 +82,10 @@ class SettleUpViewModel(context: Context,
         }
     }
 
-    fun settle(senderId: Int, receiverId: Int? = null, groupId: Int? = null){
+    fun settle(senderId: Int, receiverId: Int? = null, groupId: Int,
+    gotoSplitWiseFragment: () -> Unit){
         viewModelScope.launch {
-            if(groupId != null){
+            if(groupId != -1){
                 if(receiverId != null){
                     transactionRepository.settle(senderId, receiverId, groupId)
                 }
@@ -101,6 +102,7 @@ class SettleUpViewModel(context: Context,
                 }
             }
         }
+        gotoSplitWiseFragment()
     }
 
     private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {
@@ -124,7 +126,7 @@ class SettleUpViewModel(context: Context,
 
 }
 
-class SettleUpViewModelFactory(private val context: Context, private val payerId: Int, private val groupId: Int?):
+class SettleUpViewModelFactory(private val context: Context, private val payerId: Int, private val groupId: Int):
     ViewModelProvider.Factory{
 
     @Suppress("UNCHECKED_CAST")

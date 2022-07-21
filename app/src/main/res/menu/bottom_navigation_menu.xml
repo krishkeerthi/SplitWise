@@ -3,13 +3,16 @@
 
     <item
         android:id="@+id/groupsFragment"
-        android:title="Home" />
+        android:title="Home"
+        android:icon="@drawable/ic_baseline_home_24"/>
 
     <item
         android:id="@+id/splitWiseFragment"
-        android:title="SplitWise"/>
+        android:title="SplitWise"
+        android:icon="@drawable/split"/>
 
     <item
         android:id="@+id/groupsOverviewFragment"
-        android:title="Overview"/>
+        android:title="Overview"
+        android:icon="@drawable/overview"/>
 </menu>

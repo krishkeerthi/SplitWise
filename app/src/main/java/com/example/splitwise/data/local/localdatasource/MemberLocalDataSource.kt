@@ -17,4 +17,10 @@ class MemberLocalDataSource(
     override suspend fun getMember(memberId: Int): Member? {
         return memberDao.getMember(memberId)
     }
+
+    override suspend fun getMembers(): List<Member>? {
+        return memberDao.getMembers()
+    }
+
+
 }

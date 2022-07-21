@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSettleUpBinding
@@ -82,7 +83,7 @@ class SettleUpFragment : Fragment() {
 
         // Amount
         viewModel.amount.observe(viewLifecycleOwner) { amount ->
-            binding.totalAmountTextView.text = (amount ?: 0f).toString()
+            binding.amountTextView.text = (amount ?: 0f).toString()
         }
 
         binding.selectAllPayeesCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -100,15 +101,31 @@ class SettleUpFragment : Fragment() {
         }
 
         binding.settleButton.setOnClickListener {
-            if (binding.selectAllPayeesCheckbox.isChecked || (viewModel.payeeId != null))
+            if (binding.selectAllPayeesCheckbox.isChecked)
+                viewModel.settle(
+                    viewModel.payerId,
+                    null,
+                    viewModel.groupId
+                ){
+                    gotoSplitWiseFragment()
+                }
+            else if(viewModel.payeeId != null){
                 viewModel.settle(
                     viewModel.payerId,
                     viewModel.payeeId,
                     viewModel.groupId
-                )
+                ){
+                    gotoSplitWiseFragment()
+                }
+            }
             else
                 Toast.makeText(requireContext(), "Select Payee to proceed", Toast.LENGTH_SHORT)
                     .show()
         }
+    }
+
+    private fun gotoSplitWiseFragment(){
+        val action = SettleUpFragmentDirections.actionSettleUpFragmentToSplitWiseFragment()
+        view?.findNavController()?.navigate(action)
     }
 }

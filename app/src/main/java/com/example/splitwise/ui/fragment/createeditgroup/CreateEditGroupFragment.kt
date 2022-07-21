@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
@@ -31,7 +32,7 @@ class CreateEditGroupFragment : Fragment() {
     private val args: CreateEditGroupFragmentArgs by navArgs()
 
     private val viewModel: CreateEditGroupViewModel by viewModels{
-        CreateEditGroupViewModelFactory(requireContext(), args.groupId)
+        CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.memberId)
     }
 
     override fun onCreateView(
@@ -44,6 +45,7 @@ class CreateEditGroupFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        viewModel.fetchData()
         Log.d(TAG, "onViewCreated: createdit group id : ${args.groupId}")
         super.onViewCreated(view, savedInstanceState)
 
@@ -61,6 +63,7 @@ class CreateEditGroupFragment : Fragment() {
         viewModel.members.observe(viewLifecycleOwner){ members ->
             Log.d(TAG, "onViewCreated: members livedata ${members}")
             if(members != null){
+                Log.d(TAG, "onViewCreated: addMember observed ${members}")
                 membersAdapter.updateMembers(members)
             }
         }
@@ -79,6 +82,11 @@ class CreateEditGroupFragment : Fragment() {
             // open dialog to add new member.
             // Choosing existing member has to be implemented
         }
+
+        binding.chooseMembersButton.setOnClickListener{
+            gotoChooseMembersFragment(viewModel.getMembers().toIntArray())
+        }
+
 
 
         // if group id is null
@@ -106,13 +114,18 @@ class CreateEditGroupFragment : Fragment() {
                     viewModel.createGroup(
                         binding.groupNameText.text.toString(),
                         memberId
-                    )
+                    ){
+                        gotoGroupsFragment()
+                    }
 
                     Toast.makeText(
                         requireContext(),
                         "Group created successfully",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                   // gotoGroupsFragment()
+                    // calling here goes to groups fragment without completing the group creation process
                 }
                 else
                     Toast.makeText(requireContext(), "Add atleast 2 members to create group", Toast.LENGTH_SHORT).show()
@@ -150,5 +163,16 @@ class CreateEditGroupFragment : Fragment() {
 
         binding.groupNameText.addTextChangedListener(nameWatcher)
 
+    }
+
+    private fun gotoChooseMembersFragment(members: IntArray) {
+        val action = CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToChooseMembersFragment(members, args.groupId)
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun gotoGroupsFragment() {
+        Log.d(TAG, "gotoGroupsFragment: called group created")
+        val action = CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupsFragment()
+        view?.findNavController()?.navigate(action)
     }
 }
