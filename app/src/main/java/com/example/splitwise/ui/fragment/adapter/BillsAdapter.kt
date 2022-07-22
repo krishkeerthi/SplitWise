@@ -7,14 +7,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.BillProfileCardBinding
 
-class BillsAdapter : RecyclerView.Adapter<BillsViewHolder>() {
+class BillsAdapter(
+    val onItemClicked: (Int) -> Unit
+) : RecyclerView.Adapter<BillsViewHolder>() {
     private var uris = listOf<Uri>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BillsViewHolder {
         val view = LayoutInflater.from(parent.context)
         val binding = BillProfileCardBinding.inflate(view, parent, false)
 
-        return BillsViewHolder(binding)
+        return BillsViewHolder(binding).apply {
+            itemView.setOnClickListener {
+                onItemClicked(adapterPosition)
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: BillsViewHolder, position: Int) {
@@ -36,7 +42,7 @@ class BillsAdapter : RecyclerView.Adapter<BillsViewHolder>() {
 class BillsViewHolder(val binding: BillProfileCardBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(uri: Uri) {
-        // Set image from uri
+        binding.billImageView.setImageURI(uri)
     }
 
 }

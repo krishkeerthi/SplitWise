@@ -88,6 +88,9 @@
             android:name="expenseId"
             app:argType="integer"
             />
+        <action
+            android:id="@+id/action_expenseDetailFragment_to_billsHolderFragment"
+            app:destination="@id/billsHolderFragment" />
     </fragment>
     <fragment
         android:id="@+id/settleUpFragment"
@@ -129,6 +132,18 @@
             app:popUpToInclusive="true" />
         <argument
             android:name="groupId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/billsHolderFragment"
+        android:name="com.example.splitwise.ui.fragment.billsholder.BillsHolderFragment"
+        android:label="fragment_bills_holder"
+        tools:layout="@layout/fragment_bills_holder" >
+        <argument
+            android:name="bills"
+            app:argType="string[]" />
+        <argument
+            android:name="position"
             app:argType="integer" />
     </fragment>
 </navigation>

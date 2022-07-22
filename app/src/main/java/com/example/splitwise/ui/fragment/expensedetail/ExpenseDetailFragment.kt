@@ -1,11 +1,23 @@
 package com.example.splitwise.ui.fragment.expensedetail
 
+import android.content.ContentValues
+import android.content.ContentValues.TAG
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
@@ -14,11 +26,14 @@ import com.example.splitwise.ui.fragment.adapter.BillsAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersCheckboxAdapter
 import com.example.splitwise.util.Category
+import java.io.IOException
+import java.util.*
 
 class ExpenseDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentExpenseDetailBinding
     private val args: ExpenseDetailFragmentArgs by navArgs()
+    private lateinit var bitmap: Bitmap
 
     private val viewModel: ExpenseDetailViewModel by viewModels {
         ExpenseDetailViewModelFactory(requireContext(), args.expenseId)
@@ -35,11 +50,14 @@ class ExpenseDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         binding = FragmentExpenseDetailBinding.bind(view)
 
         // Rv
         val membersAdapter = MembersAdapter()
-        val billsAdapter = BillsAdapter()
+        val billsAdapter = BillsAdapter{ position: Int ->
+            gotoBillsHolderFragment(position)
+        }
 
         binding.membersRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -47,7 +65,8 @@ class ExpenseDetailFragment : Fragment() {
         }
 
         binding.billsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,
+            false)
             adapter = billsAdapter
         }
 
@@ -80,7 +99,85 @@ class ExpenseDetailFragment : Fragment() {
             payer?.let {
                 binding.expensePayerTextView.text = it.name
             }
+        }
+
+        // Bills images
+        binding.addBillButton.setOnClickListener {
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            cameraLauncher.launch(intent)
+        }
+    }
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+
+        if(result.resultCode == AppCompatActivity.RESULT_OK){
+
+            // Log.d(TAG, "onCreate: file path: captured image ${result.data?.toUri(Intent.URI_INTENT_SCHEME)}")
+            val imageBitmap = result.data?.extras?.get("data") as Bitmap?
+
+            if(imageBitmap != null) {
+                bitmap = imageBitmap
+                val uri = storeUsingMediaStore(bitmap)
+
+                if(uri != null)
+                viewModel.addBills(uri)
+                else
+                    Toast.makeText(requireContext(), "Error adding image", Toast.LENGTH_SHORT).show()
+
+            }
+            else
+                Toast.makeText(requireContext(), "Bit map not found", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    //On Android 10 (API level 29) and higher, the proper directory for sharing photos is the MediaStore.Images table.
+    private fun storeUsingMediaStore(bitmap: Bitmap): Uri? {
+
+        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Images.Media.getContentUri(
+                MediaStore.VOLUME_EXTERNAL_PRIMARY
+            )
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+
+        val contentValue = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME , "${Date().time}.png")
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+            // by default it is stored in external/pictures
+
+            //put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+            // image stored in dcim is shown in gallery app
+            // whereas image stored in pictures is not shown in gallery
+        }
+
+        var uri: Uri? = null
+
+        try{
+            uri = requireActivity().contentResolver.insert(
+                collection,
+                contentValue
+            ) ?: throw IOException("Failed to create media store record")
+
+            requireActivity().contentResolver.openOutputStream(uri)?.use {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 95, it)
+            } ?: throw IOException("Failed to open output stream")
 
         }
+        catch (e: Exception){
+            Log.d(TAG, "storeUsingMediaStore: ${e.message}")
+        }
+
+        return uri
+    }
+
+    private fun gotoBillsHolderFragment(position: Int){
+        Log.d(TAG, "gotoBillsHolderFragment: position is $position")
+        val action = ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToBillsHolderFragment(
+            viewModel.getBills().toTypedArray(), position
+        )
+
+        view?.findNavController()?.navigate(action)
     }
 }

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="50dp"
-    android:layout_height="65dp"
+    android:layout_height="75dp"
     android:layout_marginStart="24dp"
     android:layout_marginTop="8dp">
 
@@ -29,9 +29,10 @@
     <TextView
         android:id="@+id/member_name_text_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Vikram"
-        android:textAlignment="center"
+        android:layout_height="0dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:text="a bcdeddffd"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -32,6 +32,7 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val memberId:
     val members: LiveData<MutableList<Member>?>
         get() = _members
 
+
     fun fetchData() {
         Log.d(TAG, "onViewCreated: viewmodel $groupId")
 

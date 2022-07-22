@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             View.GONE
     }
 
+
     companion object{
         const val KEY = "com.example.splitwise.sharedprefkey"
     }

@@ -35,6 +35,7 @@ class CreateEditGroupFragment : Fragment() {
         CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.memberId)
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,6 +66,12 @@ class CreateEditGroupFragment : Fragment() {
             if(members != null){
                 Log.d(TAG, "onViewCreated: addMember observed ${members}")
                 membersAdapter.updateMembers(members)
+
+                binding.constraintTextView.visibility = if(members.size > 1)
+                     View.GONE
+                else
+                    View.VISIBLE
+
             }
         }
 
@@ -89,17 +96,12 @@ class CreateEditGroupFragment : Fragment() {
 
 
 
-        // if group id is null
-        // set button visibility based on button state
-//        if(args.groupId == -1){
-//            Log.d(TAG, "onViewCreated: inside if")
-//            binding.createGroupButton.isVisible = true
-//        }
-//        else{
-//            Log.d(TAG, "onViewCreated: insise else")
-//            binding.createGroupButton.isVisible = false
-//            binding.groupNameText.isClickable = false
-//        }
+        // if group id is not null
+        // make sure group name is not editable
+        if(args.groupId != -1){
+            binding.groupNameText.isClickable = false
+            binding.groupNameText.isFocusable = false
+        }
 
         binding.createGroupButton.setOnClickListener{
             if(args.groupId == -1){
@@ -153,7 +155,7 @@ class CreateEditGroupFragment : Fragment() {
                 }
 
                 binding.createGroupButton.visibility =
-                    if(nameCheck(binding.groupNameText.text?.trim().toString()))
+                    if(nameCheck(binding.groupNameText.text?.trim().toString()) && args.groupId == -1)
                         View.VISIBLE
                     else
                         View.GONE
@@ -175,4 +177,6 @@ class CreateEditGroupFragment : Fragment() {
         val action = CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupsFragment()
         view?.findNavController()?.navigate(action)
     }
+
+
 }
