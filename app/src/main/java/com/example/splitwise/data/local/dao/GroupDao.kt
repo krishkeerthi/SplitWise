@@ -20,11 +20,23 @@ interface GroupDao {
     @Query("SELECT * FROM `group` WHERE creation_date >= :date")
     suspend fun getGroupsCreatedAfter(date: Date): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE total_expense < :expense")
-    suspend fun getGroupsWithExpenseBelow(expense: Float): List<Group>?
+    @Query("SELECT * FROM `group` WHERE total_expense < :amount")
+    suspend fun getGroupsWithAmountBelow(amount: Float): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE total_expense >= :expense")
-    suspend fun getGroupsWithExpenseAbove(expense: Float): List<Group>
+    @Query("SELECT * FROM `group` WHERE total_expense >= :amount")
+    suspend fun getGroupsWithAmountAbove(amount: Float): List<Group>
+
+    @Query("SELECT * FROM `group` WHERE creation_date < :date AND total_expense < :amount")
+    suspend fun getGroupsCreatedBeforeAndAmountBelow(date: Date, amount: Float): List<Group>?
+
+    @Query("SELECT * FROM `group` WHERE creation_date < :date AND total_expense >= :amount")
+    suspend fun getGroupsCreatedBeforeAndAmountAbove(date: Date, amount: Float): List<Group>?
+
+    @Query("SELECT * FROM `group` WHERE creation_date >= :date AND total_expense < :amount")
+    suspend fun getGroupsCreatedAfterAndAmountBelow(date: Date, amount: Float): List<Group>?
+
+    @Query("SELECT * FROM `group` WHERE creation_date >= :date AND total_expense >= :amount")
+    suspend fun getGroupsCreatedAfterAndAmountAbove(date: Date, amount: Float): List<Group>?
 
     @Query("SELECT * FROM `group`")
     suspend fun getGroups(): List<Group>?

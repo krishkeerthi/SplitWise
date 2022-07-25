@@ -10,8 +10,10 @@ import android.view.MenuItem
 import android.view.View
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.splitwise.R
@@ -41,20 +43,27 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         Log.d(TAG, "onCreate: after register activity intent")
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
+//
+//        navController.setGraph(R.navigation.navigation_graph)
+//
+//        binding.bottomNavigation.setupWithNavController(navController)
+//
+//        appBarConfiguration = AppBarConfiguration(
+//            setOf(
+//                R.id.groupsFragment,
+//                R.id.splitWiseFragment,
+//                R.id.groupsOverviewFragment
+//            )
+        //topLevelDestinationIds - The set of destinations by id considered at the top level
+            // of your information hierarchy. The Up button will not be displayed when on
+            // these destinations.
+//        )
 
-        navController.setGraph(R.navigation.navigation_graph)
 
-        binding.bottomNavigation.setupWithNavController(navController)
+//        setupActionBarWithNavController(navController, appBarConfiguration)
 
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.groupsFragment,
-                R.id.splitWiseFragment,
-                R.id.groupsOverviewFragment
-            )
-        )
-
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        setSupportActionBar(binding.toolbar)
+        NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
 
         navController.addOnDestinationChangedListener(this)
 

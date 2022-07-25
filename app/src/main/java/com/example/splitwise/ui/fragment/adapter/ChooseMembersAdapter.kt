@@ -4,19 +4,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Member
+import com.example.splitwise.databinding.ChooseMemberCardBinding
 import com.example.splitwise.databinding.MemberCardBinding
 
-class ChooseMembersAdapter(val onItemClicked: (Int) -> Unit)
+class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit)
     : RecyclerView.Adapter<ChooseMembersViewHolder>() {
     private var members = listOf<Member>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseMembersViewHolder {
         val view = LayoutInflater.from(parent.context)
-        val binding = MemberCardBinding.inflate(view, parent, false)
+        val binding = ChooseMemberCardBinding.inflate(view, parent, false)
 
         return ChooseMembersViewHolder(binding).apply {
-            itemView.setOnClickListener {
-                onItemClicked(members[adapterPosition].memberId)
+            binding.selectedCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                if(isChecked)
+                    onItemChecked(members[adapterPosition], true)
+                else
+                    onItemChecked(members[adapterPosition], false)
             }
         }
     }
@@ -37,7 +41,7 @@ class ChooseMembersAdapter(val onItemClicked: (Int) -> Unit)
     }
 }
 
-class ChooseMembersViewHolder(val binding: MemberCardBinding)
+class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding)
     : RecyclerView.ViewHolder(binding.root){
 
     fun bind(member: Member){

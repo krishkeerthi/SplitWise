@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.expensedetail
 
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -7,15 +8,16 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -24,10 +26,10 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentExpenseDetailBinding
 import com.example.splitwise.ui.fragment.adapter.BillsAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersAdapter
-import com.example.splitwise.ui.fragment.adapter.MembersCheckboxAdapter
 import com.example.splitwise.util.Category
 import java.io.IOException
 import java.util.*
+
 
 class ExpenseDetailFragment : Fragment() {
 
@@ -123,7 +125,6 @@ class ExpenseDetailFragment : Fragment() {
                 viewModel.addBills(uri)
                 else
                     Toast.makeText(requireContext(), "Error adding image", Toast.LENGTH_SHORT).show()
-
             }
             else
                 Toast.makeText(requireContext(), "Bit map not found", Toast.LENGTH_SHORT).show()
@@ -160,6 +161,9 @@ class ExpenseDetailFragment : Fragment() {
                 contentValue
             ) ?: throw IOException("Failed to create media store record")
 
+            if(uri == null){
+                Log.d(TAG, "storeUsingMediaStore: null")
+            }
             requireActivity().contentResolver.openOutputStream(uri)?.use {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 95, it)
             } ?: throw IOException("Failed to open output stream")
@@ -171,6 +175,10 @@ class ExpenseDetailFragment : Fragment() {
 
         return uri
     }
+
+
+
+
 
     private fun gotoBillsHolderFragment(position: Int){
         Log.d(TAG, "gotoBillsHolderFragment: position is $position")

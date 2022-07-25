@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.expenses
 
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -89,4 +92,5 @@ class ExpensesFragment : Fragment() {
         val action = ExpensesFragmentDirections.actionExpensesFragmentToExpenseDetailFragment(expenseId)
         view?.findNavController()?.navigate(action)
     }
+
 }

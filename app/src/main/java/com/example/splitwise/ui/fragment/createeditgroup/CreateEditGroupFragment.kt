@@ -32,7 +32,7 @@ class CreateEditGroupFragment : Fragment() {
     private val args: CreateEditGroupFragmentArgs by navArgs()
 
     private val viewModel: CreateEditGroupViewModel by viewModels{
-        CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.memberId)
+        CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.selectedMembers)
     }
 
 
@@ -91,7 +91,7 @@ class CreateEditGroupFragment : Fragment() {
         }
 
         binding.chooseMembersButton.setOnClickListener{
-            gotoChooseMembersFragment(viewModel.getMembers().toIntArray())
+            gotoChooseMembersFragment()
         }
 
 
@@ -106,7 +106,7 @@ class CreateEditGroupFragment : Fragment() {
         binding.createGroupButton.setOnClickListener{
             if(args.groupId == -1){
 
-                if(viewModel.memberIds.size > 1) {
+                if(viewModel.getMembersSize() > 1) {
                     val memberId = requireActivity().getSharedPreferences(
                         MainActivity.KEY,
                         Context.MODE_PRIVATE
@@ -167,8 +167,9 @@ class CreateEditGroupFragment : Fragment() {
 
     }
 
-    private fun gotoChooseMembersFragment(members: IntArray) {
-        val action = CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToChooseMembersFragment(members, args.groupId)
+    private fun gotoChooseMembersFragment() {
+        val action = CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToChooseMembersFragment(
+            args.groupId, viewModel.members.value?.toTypedArray())
         view?.findNavController()?.navigate(action)
     }
 

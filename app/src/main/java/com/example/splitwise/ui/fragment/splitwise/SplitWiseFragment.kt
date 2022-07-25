@@ -8,15 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
+import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.FragmentSplitWiseBinding
 import com.example.splitwise.ui.fragment.adapter.GroupArrayAdapter
-import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.ui.fragment.adapter.SplitWiseAdapter
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class SplitWiseFragment : Fragment() {
 
@@ -69,44 +73,72 @@ class SplitWiseFragment : Fragment() {
         // Groups
         viewModel.groups.observe(viewLifecycleOwner){ groups ->
             if(groups != null){
-                binding.groupsSpinner.apply {
-                    adapter = GroupArrayAdapter(requireContext(), R.layout.dropdown, groups)
-
-
-                    onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
-                        override fun onItemSelected(
-                            parent: AdapterView<*>?,
-                            view: View?,
-                            position: Int,
-                            id: Long
-                        ) {
-                            viewModel.getGroupMembersPaymentStats(groups[position].groupId)
-                            viewModel.groupId = groups[position].groupId
-
-                            Log.d(TAG, "onItemSelected: dropdown selected")
-                        }
-
-                        override fun onNothingSelected(parent: AdapterView<*>?) {
-                        }
-
-                    }
+                binding.chooseGroupCard.setOnClickListener {
+                    openGroupsBottomSheet(groups)
                 }
+//                binding.groupsSpinner.apply {
+//                    adapter = GroupArrayAdapter(requireContext(), R.layout.dropdown, groups)
+//
+//
+//                    onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+//                        override fun onItemSelected(
+//                            parent: AdapterView<*>?,
+//                            view: View?,
+//                            position: Int,
+//                            id: Long
+//                        ) {
+//                            viewModel.getGroupMembersPaymentStats(groups[position].groupId)
+//                            viewModel.groupId = groups[position].groupId
+//
+//                            Log.d(TAG, "onItemSelected: dropdown selected")
+//                        }
+//
+//                        override fun onNothingSelected(parent: AdapterView<*>?) {
+//                        }
+//
+//                    }
+//                }
             }
         }
 
         binding.allGroupsCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
                 viewModel.getGroupMembersPaymentStats()
-                binding.groupsSpinner.isEnabled = false
-                binding.groupsSpinner.isClickable = false
+                binding.chooseGroupCard.isEnabled = false
+                binding.chooseGroupCard.isClickable = false
             }
             else{
                 viewModel.getGroupMembersPaymentStats(viewModel.groupId)
-                binding.groupsSpinner.isEnabled = true
-                binding.groupsSpinner.isClickable = true
+                binding.chooseGroupCard.isEnabled = true
+                binding.chooseGroupCard.isClickable = true
             }
         }
 
+    }
+
+    private fun openGroupsBottomSheet(groups: List<Group>) {
+        val groupBottomSheetDialog = BottomSheetDialog(requireContext())
+        groupBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+
+        val groupTitle = groupBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
+        val groupList = groupBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+
+        groupTitle?.text = "Select Group"
+        //Adapter
+        val groupAdapter = GroupArrayAdapter(requireContext(), R.layout.dropdown, groups)
+        groupList?.apply {
+            Log.d(TAG, "openPayerBottomSheet: list adapter set")
+            adapter = groupAdapter
+            onItemClickListener =
+                AdapterView.OnItemClickListener { parent, view, position, id ->
+                    viewModel.getGroupMembersPaymentStats(groups[position].groupId)
+                    viewModel.groupId = groups[position].groupId
+                    binding.chooseGroupText.text = groups[position].groupName
+                    groupBottomSheetDialog.dismiss()
+                }
+        }
+
+        groupBottomSheetDialog.show()
     }
 
     private fun gotoSettleUpFragment(payerId: Int, groupId: Int){

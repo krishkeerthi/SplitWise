@@ -43,6 +43,10 @@ class GroupRepository(
         return withContext(Dispatchers.IO){dataSource.getGroups()}
     }
 
+    suspend fun getGroupsStartsWith(query: String): List<Group>?{
+        return if(query == "") null else withContext(Dispatchers.IO){dataSource.getGroupsStartsWith(query)}
+    }
+
     suspend fun getGroupMembers(groupId: Int): List<Int>?{
         return withContext(Dispatchers.IO){dataSource.getGroupMembers(groupId)}
     }
@@ -58,6 +62,38 @@ class GroupRepository(
             }
         }
 
+    }
+
+    suspend fun getGroupsCreatedBefore(date: Date): List<Group>? = withContext(Dispatchers.IO){
+        dataSource.getGroupsCreatedBefore(date)
+    }
+
+    suspend fun getGroupsCreatedAfter(date: Date): List<Group>? = withContext(Dispatchers.IO){
+        dataSource.getGroupsCreatedAfter(date)
+    }
+
+    suspend fun getGroupsWithAmountBelow(amount: Float): List<Group>? = withContext(Dispatchers.IO){
+        dataSource.getGroupsWithAmountBelow(amount)
+    }
+
+    suspend fun getGroupsWithAmountAbove(amount: Float): List<Group> = withContext(Dispatchers.IO){
+        dataSource.getGroupsWithAmountAbove(amount)
+    }
+
+    suspend fun getGroupsCreatedBeforeAndAmountBelow(date: Date, amount: Float): List<Group>? = withContext(Dispatchers.IO){
+        dataSource.getGroupsCreatedBeforeAndAmountBelow(date, amount)
+    }
+
+    suspend fun getGroupsCreatedBeforeAndAmountAbove(date: Date, amount: Float): List<Group>? = withContext(Dispatchers.IO){
+        dataSource.getGroupsCreatedBeforeAndAmountAbove(date, amount)
+    }
+
+    suspend fun getGroupsCreatedAfterAndAmountBelow(date: Date, amount: Float): List<Group>? = withContext(Dispatchers.IO){
+        dataSource.getGroupsCreatedAfterAndAmountBelow(date, amount)
+    }
+
+    suspend fun getGroupsCreatedAfterAndAmountAbove(date: Date, amount: Float): List<Group>? = withContext(Dispatchers.IO){
+        dataSource.getGroupsCreatedAfterAndAmountAbove(date, amount)
     }
 
     suspend fun updateLastActiveDate(date: Date){

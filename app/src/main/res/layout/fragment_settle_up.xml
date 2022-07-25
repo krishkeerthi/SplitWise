@@ -5,14 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/settle_up_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_payer_text_field"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -24,7 +16,7 @@
         android:hint="Payer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settle_up_toolbar">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/payer_name_text"
@@ -42,16 +34,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/outlined_payer_text_field" />
 
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/payee_spinner"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/choose_payee_card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/to_text"/>
+        app:layout_constraintTop_toBottomOf="@id/to_text">
+
+        <TextView
+            android:id="@+id/choose_payee_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Choose Payee"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            android:layout_marginStart="12dp"/>
+    </androidx.cardview.widget.CardView>
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/select_all_payees_checkbox"
@@ -61,7 +64,7 @@
         android:layout_marginTop="24dp"
         android:text="Select all payees"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/payee_spinner" />
+        app:layout_constraintTop_toBottomOf="@id/choose_payee_card" />
 
     <TextView
         android:id="@+id/group_info_text_view"

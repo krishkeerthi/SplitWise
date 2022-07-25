@@ -46,7 +46,8 @@ class AddMemberDialog(
         }
 
         val dialog = builder.create()
-
+        dialog.show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
         // Text watchers
         val nameWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

@@ -14,13 +14,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-class CreateEditGroupViewModel(context: Context, val groupId: Int, val memberId: Int): ViewModel() {
+class CreateEditGroupViewModel(context: Context, val groupId: Int, val selectedMembers: Array<Member>?): ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val groupRepository = GroupRepository(database)
     private val memberRepository = MemberRepository(database)
 
-    val memberIds = mutableListOf<Int>()
+    //val memberIds = mutableListOf<Int>()
 
     private val _groupName = MutableLiveData<String?>()
 
@@ -37,17 +37,7 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val memberId:
         Log.d(TAG, "onViewCreated: viewmodel $groupId")
 
         viewModelScope.launch {
-            if(groupId != -1 && memberId != -1){
-                val group = groupRepository.getGroup(groupId)
-                _groupName.value = group?.groupName
-
-                val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
-
-                memberIds?.add(memberId)
-
-                _members.value = getMembersFromIds(memberIds)
-            }
-            else if(groupId != -1 && memberId == -1){
+            if(groupId != -1 && selectedMembers == null){
                 val group = groupRepository.getGroup(groupId)
                 _groupName.value = group?.groupName
 
@@ -55,12 +45,58 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val memberId:
 
                 _members.value = getMembersFromIds(memberIds)
             }
-            else if(groupId == -1 && memberId != -1){
-                _members.value = getMembersFromIds(mutableListOf(memberId))
+            else if(groupId == -1 && selectedMembers != null){
+                _members.value = selectedMembers.toMutableList()
+            }
+            else if(groupId != -1 && selectedMembers != null){
+                _members.value = selectedMembers.toMutableList()
+                addMembersNotIncludedToGroup()
             }
             else{
-                // Nothing to do here
+                _members.value = null
             }
+//            if(groupId != -1 && memberId != -1){
+//                val group = groupRepository.getGroup(groupId)
+//                _groupName.value = group?.groupName
+//
+//                val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
+//
+//                memberIds?.add(memberId)
+//
+//                _members.value = getMembersFromIds(memberIds)
+//            }
+//            else if(groupId != -1 && memberId == -1){
+//                val group = groupRepository.getGroup(groupId)
+//                _groupName.value = group?.groupName
+//
+//                val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
+//
+//                _members.value = getMembersFromIds(memberIds)
+//            }
+//            else if(groupId == -1 && memberId != -1){
+//                _members.value = getMembersFromIds(mutableListOf(memberId))
+//            }
+//            else{
+//                // Nothing to do here
+//            }
+        }
+    }
+
+    private suspend fun addMembersNotIncludedToGroup() {
+        val groupMemberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
+
+        // since this is called when group id != -1, so atleast 2 members will be there.
+        groupMemberIds?.let { memberIds ->
+
+            val sMembers = selectedMembers?.toList()
+
+            if(sMembers != null){
+                for(member in sMembers){
+                    if(member.memberId !in memberIds)
+                        groupRepository.addGroupMember(groupId, member.memberId)
+                }
+            }
+
         }
     }
 
@@ -83,31 +119,53 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val memberId:
         }
     }
 
+
     fun addMember(name: String, phoneNumber: Long){
         viewModelScope.launch {
-            val memberId = memberRepository.addMember(name, phoneNumber)
-            memberRepository.getMember(memberId)?.let {
-                Log.d(TAG, "addMember: $it")
+
+            if(groupId != -1){
+                val memberId = memberRepository.addMember(name, phoneNumber)
+                memberRepository.getMember(memberId)?.let {
+                    Log.d(TAG, "addMember: $it")
+                    var existingMembers = members.value
+
+                    if(existingMembers != null){
+                        existingMembers.add(it)
+                        _members.value = existingMembers
+                    }
+                    else{
+                        _members.value = mutableListOf(it)
+                    }
+
+                }
+
+                groupRepository.addGroupMember(groupId, memberId)
+            }
+            else{
                 var existingMembers = members.value
 
                 if(existingMembers != null){
-                    existingMembers.add(it)
+                    existingMembers.add(Member(name, phoneNumber).apply {
+                        memberId = Random().nextInt()
+                    })
                     _members.value = existingMembers
                 }
                 else{
-                    _members.value = mutableListOf(it)
+                    _members.value = mutableListOf(Member(name, phoneNumber).apply {
+                        memberId = Random().nextInt()
+                    })
                 }
-
             }
 
-            if(groupId == -1){
-                memberIds.add(memberId)
-                Log.d(TAG, "addMember: member added to list")
-            }
-            else{
-                groupRepository.addGroupMember(groupId, memberId)
-                Log.d(TAG, "addMember: member added to group, caz group id is known")
-            }
+
+//            if(groupId == -1){
+//                memberIds.add(memberId)
+//                Log.d(TAG, "addMember: member added to list")
+//            }
+//            else{
+//                groupRepository.addGroupMember(groupId, memberId)
+//                Log.d(TAG, "addMember: member added to group, caz group id is known")
+//            }
         }
 
     }
@@ -121,11 +179,20 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val memberId:
                 0F
             )
 
-            for(memberId in memberIds)
-                groupRepository.addGroupMember(groupId, memberId)
+            members.value?.let { members->
+                for(i in members) {
+                    val member = memberRepository.getMember(i.memberId)
+                    if(member == null){
+                        val mId = memberRepository.addMember(i.name, i.phone)
+                        groupRepository.addGroupMember(groupId, mId)
+                    }
+                    else
+                        groupRepository.addGroupMember(groupId, member.memberId)
+                }
+            }
 
-            if(ownerId != -1)
-                groupRepository.addGroupMember(groupId, ownerId)
+//            if(ownerId != -1)
+//                groupRepository.addGroupMember(groupId, ownerId)
 
             Log.d(TAG, "createGroup: group created")
 
@@ -141,13 +208,22 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val memberId:
         }
         return memberIds
     }
+
+    fun getMembersSize(): Int{
+        return if(members.value != null){
+            members.value!!.size
+        }
+        else
+            0
+    }
 }
 
-class CreateEditGroupViewModelFactory(private val context: Context, private val groupId: Int, private val memberId: Int):
+class CreateEditGroupViewModelFactory(private val context: Context, private val groupId: Int,
+                                      private val selectedMembers: Array<Member>?):
     ViewModelProvider.Factory{
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CreateEditGroupViewModel(context, groupId, memberId) as T
+        return CreateEditGroupViewModel(context, groupId, selectedMembers) as T
     }
 }

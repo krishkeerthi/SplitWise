@@ -8,6 +8,7 @@ import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.GroupExpense
 import com.example.splitwise.data.local.entity.GroupMember
 import java.util.*
+import kotlin.math.exp
 
 class GroupLocalDataSource(
     private val groupDao: GroupDao,
@@ -47,6 +48,10 @@ GroupDataSource{
         return groupDao.getGroups()
     }
 
+    override suspend fun getGroupsStartsWith(query: String): List<Group>? {
+        return groupDao.getGroupsStartsWith(query)
+    }
+
     override suspend fun updateTotalExpense(groupId: Int, amount: Float) {
         groupDao.updateTotalExpense(groupId, amount)
     }
@@ -58,5 +63,49 @@ GroupDataSource{
     override suspend fun getTotalExpense(groupId: Int): Float? {
         return groupDao.getTotalExpense(groupId)
     }
-    // groups with constraint pending
+
+    override suspend fun getGroupsCreatedBefore(date: Date): List<Group>? {
+        return groupDao.getGroupsCreatedBefore(date)
+    }
+
+    override suspend fun getGroupsCreatedAfter(date: Date): List<Group>? {
+        return groupDao.getGroupsCreatedAfter(date)
+    }
+
+    override suspend fun getGroupsWithAmountBelow(amount: Float): List<Group>? {
+        return groupDao.getGroupsWithAmountBelow(amount)
+    }
+
+    override suspend fun getGroupsWithAmountAbove(amount: Float): List<Group> {
+        return groupDao.getGroupsWithAmountAbove(amount)
+    }
+
+    override suspend fun getGroupsCreatedBeforeAndAmountBelow(
+        date: Date,
+        amount: Float
+    ): List<Group>? {
+        return groupDao.getGroupsCreatedBeforeAndAmountBelow(date, amount)
+    }
+
+    override suspend fun getGroupsCreatedBeforeAndAmountAbove(
+        date: Date,
+        amount: Float
+    ): List<Group>? {
+        return groupDao.getGroupsCreatedBeforeAndAmountAbove(date, amount)
+    }
+
+    override suspend fun getGroupsCreatedAfterAndAmountBelow(
+        date: Date,
+        amount: Float
+    ): List<Group>? {
+        return groupDao.getGroupsCreatedAfterAndAmountBelow(date, amount)
+    }
+
+    override suspend fun getGroupsCreatedAfterAndAmountAbove(
+        date: Date,
+        amount: Float
+    ): List<Group>? {
+        return groupDao.getGroupsCreatedAfterAndAmountAbove(date, amount)
+    }
+
 }

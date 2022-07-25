@@ -5,13 +5,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/groups_toolbar"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/chip_group_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/filter_chip_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/amount_filter_chip"
+                style="@style/Widget.MaterialComponents.Chip.Entry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/date_filter_chip"
+                style="@style/Widget.MaterialComponents.Chip.Entry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+        </com.google.android.material.chip.ChipGroup>
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/groups_recycler_view"
@@ -20,7 +44,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/groups_toolbar"
+        app:layout_constraintTop_toBottomOf="@id/chip_group_card"
         tools:listitem="@layout/group_card"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -35,3 +59,12 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--res/values/styles.xml-->
+
+<!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+<!--<item name="android:navigationBarColor">@android:color/transparent</item>-->
+<!--<item name="android:windowTranslucentStatus">true</item>-->
+<!--<item name="android:windowTranslucentNavigation">true</item>-->
+<!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
