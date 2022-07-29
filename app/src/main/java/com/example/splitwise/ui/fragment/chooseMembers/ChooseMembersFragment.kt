@@ -101,7 +101,7 @@ class ChooseMembersFragment : Fragment() {
 
     private fun gotoCreateEditGroupFragment(selectedMembers: Array<Member>){
         val action = ChooseMembersFragmentDirections.actionChooseMembersFragmentToCreateEditGroupFragment(
-            args.groupId, selectedMembers)
+            args.groupId, selectedMembers, args.groupName)
         view?.findNavController()?.navigate(action)
     }
 }

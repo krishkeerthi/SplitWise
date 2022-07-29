@@ -53,7 +53,7 @@ class GroupsFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //viewModel.fetchData() // fetching data in viewmodel init{} does not get called while returning from back stack
+        viewModel.fetchData() // fetching data in viewmodel init{} does not get called while returning from back stack
         //viewModel = ViewModelProvider(this, GroupsViewModelFactory(requireContext()))[GroupsViewModel::class.java]
         binding = FragmentGroupsBinding.bind(view)
 
@@ -88,6 +88,8 @@ class GroupsFragment : Fragment(){
 
         // Menu
         setHasOptionsMenu(true)
+
+//        requireActivity().setTitle("Groups")
 //        binding.groupsToolbar.inflateMenu(R.menu.groups_fragment_menu)
 //
 //        // Menu click
@@ -161,7 +163,7 @@ class GroupsFragment : Fragment(){
     }
 
     private fun goToCreateEditGroupFragment(groupId: Int = -1){
-        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(groupId, null)
+        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(groupId, null, null)
         view?.findNavController()?.navigate(action)
     }
 

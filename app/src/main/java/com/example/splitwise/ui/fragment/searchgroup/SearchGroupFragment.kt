@@ -109,7 +109,7 @@ class SearchGroupFragment : Fragment() {
     }
 
     private fun goToCreateEditGroupFragment(groupId: Int = -1){
-        val action = SearchGroupFragmentDirections.actionSearchGroupFragmentToCreateEditGroupFragment(groupId, null)
+        val action = SearchGroupFragmentDirections.actionSearchGroupFragmentToCreateEditGroupFragment(groupId, null, null)
         view?.findNavController()?.navigate(action)
     }
 

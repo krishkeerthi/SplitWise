@@ -52,6 +52,7 @@ class CreateEditGroupFragment : Fragment() {
 
         binding = FragmentCreateEditGroupBinding.bind(view)
 
+
         // Rv
         val membersAdapter = MembersAdapter()
 
@@ -81,6 +82,14 @@ class CreateEditGroupFragment : Fragment() {
             groupName?.let {
                 binding.groupNameText.setText(it)
             }
+        }
+
+        // retains group name while returning from choose members screen
+        if(args.groupName != null){
+            binding.groupNameText.setText(args.groupName)
+
+            if(args.groupName.toString().trim() != "")
+                binding.createGroupButton.visibility = View.VISIBLE
         }
 
         // Button click
@@ -169,7 +178,7 @@ class CreateEditGroupFragment : Fragment() {
 
     private fun gotoChooseMembersFragment() {
         val action = CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToChooseMembersFragment(
-            args.groupId, viewModel.members.value?.toTypedArray())
+            args.groupId, viewModel.members.value?.toTypedArray(), binding.groupNameText.text.toString())
         view?.findNavController()?.navigate(action)
     }
 

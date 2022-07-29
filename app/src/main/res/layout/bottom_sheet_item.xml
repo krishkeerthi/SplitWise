@@ -4,14 +4,11 @@
     android:layout_height="wrap_content"
      >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Item"
         android:padding="16dp"
-        android:textAlignment="center"
-        android:textAppearance="?attr/textAppearanceBody1"
-        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

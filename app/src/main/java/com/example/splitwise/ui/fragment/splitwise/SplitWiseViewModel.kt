@@ -36,6 +36,21 @@ class SplitWiseViewModel(context: Context) : ViewModel() {
 
     var groupId: Int = -1
 
+    private val _groupName = MutableLiveData<String?>()
+
+    val groupName:  LiveData<String?>
+        get() = _groupName
+
+    init{
+        fetchData()
+    }
+
+    fun loadGroupName(){
+        viewModelScope.launch {
+            _groupName.value = groupRepository.getGroup(groupId)?.groupName
+        }
+    }
+
     fun fetchData() {
         viewModelScope.launch {
             val memberStats = transactionRepository.transactionStats()

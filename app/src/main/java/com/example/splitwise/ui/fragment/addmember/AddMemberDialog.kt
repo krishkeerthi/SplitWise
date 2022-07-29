@@ -65,7 +65,7 @@ class AddMemberDialog(
                     nameLayout.error = "Enter valid name"
 
                 dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled =
-                    nameCheck(nameEditText.text?.trim().toString()) ||
+                    nameCheck(nameEditText.text?.trim().toString()) &&
                             (phoneEditText.text?.trim().toString().length == 10)
 
             }
@@ -87,7 +87,7 @@ class AddMemberDialog(
                     phoneLayout.isErrorEnabled = false
                 }
                 dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled =
-                    nameCheck(nameEditText.text?.trim().toString()) ||
+                    nameCheck(nameEditText.text?.trim().toString()) &&
                             (phoneEditText.text?.trim().toString().length == 10)
 
             }

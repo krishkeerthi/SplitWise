@@ -60,8 +60,7 @@ class GroupRepository(
             getTotalExpense(groupId)?.let {
                 dataSource.updateTotalExpense(groupId, it + amount)
             }
-        }
-
+        }.join()
     }
 
     suspend fun getGroupsCreatedBefore(date: Date): List<Group>? = withContext(Dispatchers.IO){

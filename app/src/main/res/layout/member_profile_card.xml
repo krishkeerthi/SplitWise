@@ -5,14 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="50dp"
     android:layout_height="75dp"
-    android:layout_marginStart="24dp"
+    android:layout_marginStart="16dp"
     android:layout_marginTop="8dp">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/member_profile_card_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:cardCornerRadius="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,15 +23,15 @@
             android:src="@drawable/user"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/member_name_text_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:text="a bcdeddffd"
+        android:text="Keerthi"
+        android:lines="1"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

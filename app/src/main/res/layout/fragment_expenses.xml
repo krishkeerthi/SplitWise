@@ -11,18 +11,16 @@
         android:layout_height="85dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:itemCount="10"
         tools:listitem="@layout/member_profile_card"
         tools:orientation="horizontal" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/expenses_list_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Expenses List"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,8 +41,8 @@
         android:id="@+id/add_expense_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

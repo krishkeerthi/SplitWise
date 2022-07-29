@@ -64,32 +64,12 @@ class SettleUpFragment : Fragment() {
                 binding.choosePayeeCard.setOnClickListener {
                     openPayeesBottomSheet(payees)
                 }
-//                binding.payeeSpinner.apply {
-//                    adapter = PayeeArrayAdapter(requireContext(), R.layout.dropdown, payees)
-//
-//                    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//                        override fun onItemSelected(
-//                            parent: AdapterView<*>?,
-//                            view: View?,
-//                            position: Int,
-//                            id: Long
-//                        ) {
-//                            viewModel.payeeId = payees[position].memberId
-//
-//                            viewModel.getAmount(
-//                                viewModel.payerId,
-//                                viewModel.payeeId,
-//                                viewModel.groupId
-//                            )
-//                        }
-//
-//                        override fun onNothingSelected(parent: AdapterView<*>?) {
-//                        }
-//
-//                    }
-//                }
             }
         }
+
+        // make payer unchangeable
+        binding.payerNameText.isFocusable = false
+        binding.payerNameText.isClickable = false
 
         // Amount
         viewModel.amount.observe(viewLifecycleOwner) { amount ->

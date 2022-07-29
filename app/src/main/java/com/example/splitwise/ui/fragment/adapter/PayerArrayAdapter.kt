@@ -16,16 +16,16 @@ class PayerArrayAdapter(
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val binding: DropdownBinding
 
-        return if(convertView != null){
+        var convertView = convertView
+        if(convertView == null){
             val inflater = LayoutInflater.from(parent.context)
             binding = DropdownBinding.inflate(inflater, parent, false)
 
+            convertView = binding.root
             binding.dropdownTextView.text = payers[position].name
-
-            binding.root
         }
-        else
-            super.getView(position, convertView, parent)
+
+        return convertView
 
     }
 }

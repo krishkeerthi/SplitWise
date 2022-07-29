@@ -1,6 +1,8 @@
 package com.example.splitwise.data.repository
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import com.example.splitwise.data.datasource.ExpenseDataSource
 import com.example.splitwise.data.datasource.TransactionDataSource
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
@@ -37,11 +39,17 @@ class TransactionRepository(
     }
 
     suspend fun getPayers(payeeId: Int): List<Int>?{
-        return withContext(Dispatchers.IO){dataSource.getPayers(payeeId)}
+        return withContext(Dispatchers.IO){
+            val payerIds = dataSource.getPayers(payeeId)
+            payerIds?.toSet()?.toList()
+        }
     }
 
     suspend fun getPayers(payeeId: Int, groupId: Int): List<Int>?{
-        return withContext(Dispatchers.IO){dataSource.getPayers(payeeId, groupId)}
+        return withContext(Dispatchers.IO){
+            val payerIds = dataSource.getPayers(payeeId, groupId)
+            payerIds?.toSet()?.toList()
+        }
     }
 
     suspend fun transactionStats(): List<MemberPaymentStats>?{

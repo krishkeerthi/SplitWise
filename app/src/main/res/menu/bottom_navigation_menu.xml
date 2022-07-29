@@ -9,10 +9,15 @@
     <item
         android:id="@+id/splitWiseFragment"
         android:title="SplitWise"
-        android:icon="@drawable/split"/>
+        android:icon="@drawable/ic_baseline_call_split_24"/>
 
     <item
         android:id="@+id/groupsOverviewFragment"
         android:title="Overview"
-        android:icon="@drawable/overview"/>
+        android:icon="@drawable/ic_baseline_list_alt_24"/>
+
+    <item
+        android:id="@+id/settingsFragment"
+        android:title="Settings"
+        android:icon="@drawable/ic_baseline_settings_24"/>
 </menu>

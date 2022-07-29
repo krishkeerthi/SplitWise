@@ -41,7 +41,7 @@ class SplitWiseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.fetchData()
+        //viewModel.fetchData()
 
         binding = FragmentSplitWiseBinding.bind(view)
 
@@ -76,29 +76,12 @@ class SplitWiseFragment : Fragment() {
                 binding.chooseGroupCard.setOnClickListener {
                     openGroupsBottomSheet(groups)
                 }
-//                binding.groupsSpinner.apply {
-//                    adapter = GroupArrayAdapter(requireContext(), R.layout.dropdown, groups)
-//
-//
-//                    onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
-//                        override fun onItemSelected(
-//                            parent: AdapterView<*>?,
-//                            view: View?,
-//                            position: Int,
-//                            id: Long
-//                        ) {
-//                            viewModel.getGroupMembersPaymentStats(groups[position].groupId)
-//                            viewModel.groupId = groups[position].groupId
-//
-//                            Log.d(TAG, "onItemSelected: dropdown selected")
-//                        }
-//
-//                        override fun onNothingSelected(parent: AdapterView<*>?) {
-//                        }
-//
-//                    }
-//                }
             }
+        }
+
+        // load groups if already selected
+        viewModel.groupName.observe(viewLifecycleOwner){ groupName ->
+            binding.chooseGroupText.text = groupName
         }
 
         binding.allGroupsCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -133,6 +116,7 @@ class SplitWiseFragment : Fragment() {
                 AdapterView.OnItemClickListener { parent, view, position, id ->
                     viewModel.getGroupMembersPaymentStats(groups[position].groupId)
                     viewModel.groupId = groups[position].groupId
+                    viewModel.loadGroupName()
                     binding.chooseGroupText.text = groups[position].groupName
                     groupBottomSheetDialog.dismiss()
                 }

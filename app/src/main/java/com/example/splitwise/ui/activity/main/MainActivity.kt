@@ -27,12 +27,17 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPreference = getSharedPreferences(KEY, Context.MODE_PRIVATE)
+        val memberId = sharedPreference.getInt("MEMBERID", -1)
+        val theme = sharedPreference.getInt("THEME", R.style.Theme_SplitWise_Showcase)
+
+        setTheme(theme)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
-        val sharedPreference = getSharedPreferences(KEY, Context.MODE_PRIVATE)
-        val memberId = sharedPreference.getInt("MEMBERID", -1)
 
         Log.d(TAG, "onCreate: before register activity intent")
         if(memberId == -1){
@@ -80,6 +85,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     }
 
+
     override fun onDestinationChanged(
         controller: NavController,
         destination: NavDestination,
@@ -87,7 +93,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     ) {
 
         binding.bottomNavigation.visibility =
-            if(destination.id in setOf(R.id.groupsFragment, R.id.splitWiseFragment, R.id.groupsOverviewFragment))
+            if(destination.id in setOf(R.id.groupsFragment, R.id.splitWiseFragment, R.id.groupsOverviewFragment,
+                R.id.settingsFragment))
                 View.VISIBLE
         else
             View.GONE

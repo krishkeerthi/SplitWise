@@ -37,12 +37,20 @@ class GroupsViewModel(context: Context): ViewModel() {
 //        filterModel.amountFilterModel = AmountFilterModel(AmountFilter.ABOVE, 89f)
 //    }
 
-    init{
+//    init{
+//        Log.d(TAG, "groupsviewmodel: called")
+//        viewModelScope.launch {
+//            _groups.value = groupsRepository.getGroups()
+//        }
+//    }
+
+    fun fetchData(){
         Log.d(TAG, "groupsviewmodel: called")
         viewModelScope.launch {
             _groups.value = groupsRepository.getGroups()
         }
     }
+
 
     fun applyDateFilter(date: Date) {
         val dateFilter = DateFilterModel(selectedDateFilter, date)

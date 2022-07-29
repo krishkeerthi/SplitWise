@@ -55,6 +55,10 @@
             android:name="selectedMembers"
             app:argType="com.example.splitwise.data.local.entity.Member[]"
             app:nullable="true" />
+        <argument
+            android:name="groupName"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/expensesFragment"
@@ -138,6 +142,10 @@
             android:name="selectedMembers"
             app:argType="com.example.splitwise.data.local.entity.Member[]"
             app:nullable="true" />
+        <argument
+            android:name="groupName"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/billsHolderFragment"
@@ -163,4 +171,9 @@
             android:id="@+id/action_searchGroupFragment_to_expensesFragment"
             app:destination="@id/expensesFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.splitwise.ui.fragment.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

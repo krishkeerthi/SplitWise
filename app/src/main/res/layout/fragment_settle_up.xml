@@ -7,12 +7,11 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_payer_text_field"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
         android:hint="Payer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +23,7 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/to_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,87 +33,84 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/outlined_payer_text_field" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/choose_payee_card"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginStart="24dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/to_text">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/choose_payee_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
             android:hint="Choose Payee"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center_vertical"
-            android:layout_marginStart="12dp"/>
-    </androidx.cardview.widget.CardView>
+            android:gravity="center_vertical" />
+    </com.google.android.material.card.MaterialCardView>
 
-    <androidx.appcompat.widget.AppCompatCheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/select_all_payees_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Select all payees"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/choose_payee_card" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/group_info_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Group Info: "
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/select_all_payees_checkbox" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/total_amount_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Total Amount: "
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/group_name_text_view" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/group_name_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp"
-        android:text="Munar tour with college friends"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="All Groups"
         android:textAlignment="textEnd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/group_info_text_view"
         app:layout_constraintTop_toBottomOf="@id/select_all_payees_checkbox" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/amount_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:text="1234 "
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="0.0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/group_name_text_view" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/settle_button"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/rounded_corner"
         android:text="Settle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

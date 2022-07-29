@@ -13,4 +13,134 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!--    Theme one-->
+    <style name="Theme.SplitWise.Showcase" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!--    Color-->
+
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#212121</item>
+        <item name="colorPrimaryVariant">#8d8d8d</item>
+        <item name="colorOnPrimary">#ffffff</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#37474f</item>
+        <item name="colorSecondaryVariant">#000a12</item>
+        <item name="colorOnSecondary">#ffffff</item>
+
+        <item name="colorSurface">#bdbdbd</item>
+
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!--    Shape-->
+
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.App.LargeComponent</item>
+
+        <!--    Typography-->
+        <item name="textAppearanceHeadline6">@style/TextAppearance.App.Headline6</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.App.Body2</item>
+
+        <!--        Component Style-->
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+    </style>
+
+
+    <!--        Component Style-->
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+    </style>
+
+    <!--    Typography-->
+    <style name="TextAppearance.App.Headline6"
+        parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">"sans-serif"</item>
+    </style>
+    <style name="TextAppearance.App.Body2"
+        parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">"sans-serif-light" </item>
+    </style>
+
+    <!--    Shape-->
+    <style name="ShapeAppearance.App.SmallComponent"
+        parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+    <style name="ShapeAppearance.App.MediumComponent"
+        parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="ShapeAppearance.App.LargeComponent"
+        parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+
+    <!--    Theme Two-->
+
+
+    <style name="Theme.SplitWise.Expression" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!--    Color-->
+
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#3e2723</item>
+        <item name="colorPrimaryVariant">#c8b7b5</item>
+        <item name="colorOnPrimary">#ffffff</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#795548</item>
+        <item name="colorSecondaryVariant">#5f4339</item>
+        <item name="colorOnSecondary">#ffffff</item>
+
+        <item name="colorSurface">#fbe9e7</item>
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!--    Shape-->
+
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App1.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App1.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.App1.LargeComponent</item>
+
+        <!--    Typography-->
+        <item name="textAppearanceHeadline6">@style/TextAppearance.App1.Headline6</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.App1.Body2</item>
+
+        <!--        Component Style-->
+        <item name="textInputStyle">@style/Widget.App1.TextInputLayout</item>
+    </style>
+
+
+    <!--        Component Style-->
+    <style name="Widget.App1.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <!-- Custom attrs -->
+    </style>
+
+    <!--    Typography-->
+    <style name="TextAppearance.App1.Headline6"
+        parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">"sans-serif-black"</item>
+    </style>
+    <style name="TextAppearance.App1.Body2"
+        parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">"sans-serif-medium" </item>
+    </style>
+
+    <!--    Shape-->
+    <style name="ShapeAppearance.App1.SmallComponent"
+        parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+    <style name="ShapeAppearance.App1.MediumComponent"
+        parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="ShapeAppearance.App1.LargeComponent"
+        parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">16dp</item>
+    </style>
 </resources>

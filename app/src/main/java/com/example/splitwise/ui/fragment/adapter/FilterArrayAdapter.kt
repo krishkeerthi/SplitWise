@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import com.example.splitwise.databinding.DropdownBinding
 
 class FilterArrayAdapter<T: Enum<T>>(
@@ -15,16 +16,17 @@ class FilterArrayAdapter<T: Enum<T>>(
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val binding: DropdownBinding
 
-        return if(convertView != null){
+        var convertView = convertView
+
+        if(convertView == null){
             val inflater = LayoutInflater.from(parent.context)
             binding = DropdownBinding.inflate(inflater, parent, false)
 
+            convertView= binding.root
             binding.dropdownTextView.text = list[position].name
-
-            binding.root
         }
-        else
-            super.getView(position, convertView, parent)
+
+        return convertView
 
     }
 }

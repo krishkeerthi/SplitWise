@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -27,7 +28,10 @@ import com.example.splitwise.databinding.FragmentExpenseDetailBinding
 import com.example.splitwise.ui.fragment.adapter.BillsAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersAdapter
 import com.example.splitwise.util.Category
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.util.*
 
 
@@ -117,10 +121,14 @@ class ExpenseDetailFragment : Fragment() {
             // Log.d(TAG, "onCreate: file path: captured image ${result.data?.toUri(Intent.URI_INTENT_SCHEME)}")
             val imageBitmap = result.data?.extras?.get("data") as Bitmap?
 
+           // val x = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, )
+
+            Log.d(TAG, ": uri is ${imageBitmap}")
+
             if(imageBitmap != null) {
                 bitmap = imageBitmap
+                //val uri = saveImage(bitmap, "${Date().time}.png")
                 val uri = storeUsingMediaStore(bitmap)
-
                 if(uri != null)
                 viewModel.addBills(uri)
                 else
@@ -165,7 +173,7 @@ class ExpenseDetailFragment : Fragment() {
                 Log.d(TAG, "storeUsingMediaStore: null")
             }
             requireActivity().contentResolver.openOutputStream(uri)?.use {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 95, it)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
             } ?: throw IOException("Failed to open output stream")
 
         }
@@ -176,6 +184,42 @@ class ExpenseDetailFragment : Fragment() {
         return uri
     }
 
+   // @Throws(IOException::class)
+    private fun saveImage(bitmap: Bitmap, name: String): Uri? {
+        var uri: Uri?
+        val fos: OutputStream?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver: ContentResolver = requireActivity().contentResolver
+            val contentValues = ContentValues()
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+         //   contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/$IMAGES_FOLDER_NAME")
+
+            val collection = MediaStore.Images.Media.getContentUri(
+                MediaStore.VOLUME_EXTERNAL_PRIMARY
+            )
+
+            uri = resolver.insert(collection, contentValues)
+            fos = resolver.openOutputStream(uri!!)
+        } else {
+            val imagesDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM
+            ).toString() + File.separator //+ IMAGES_FOLDER_NAME
+            val file = File(imagesDir)
+            uri = file.toUri()
+            if (!file.exists()) {
+                file.mkdir()
+            }
+            val image = File(imagesDir, "$name.png")
+            fos = FileOutputStream(image)
+
+        }
+        bitmap.compress(Bitmap.CompressFormat.PNG, 95, fos!!)
+       fos.flush()
+       fos.close()
+
+        return uri
+    }
 
 
 

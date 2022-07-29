@@ -7,12 +7,11 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_expense_name_text_field"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
         android:hint="Enter Expense Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,82 +23,54 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/choose_category_card"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/outlined_expense_name_text_field">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/choose_category_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="Choose Category"
-            android:textSize="18sp"
-            android:textStyle="bold"
             android:gravity="center_vertical"
-            android:layout_marginStart="12dp"/>
-    </androidx.cardview.widget.CardView>
+            android:layout_marginStart="16dp"/>
 
-<!--    <androidx.appcompat.widget.AppCompatSpinner-->
-<!--        android:id="@+id/category_spinner"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/outlined_expense_name_text_field"/>-->
+    </com.google.android.material.card.MaterialCardView>
 
-
-<!--    <androidx.appcompat.widget.AppCompatSpinner-->
-<!--        android:id="@+id/payer_spinner"-->
-<!--        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:layout_marginEnd="16dp"-->
-<!--        app:layout_constraintEnd_toStartOf="@id/outlined_expense_amount_text_field"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/choose_category_card"/>-->
-
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/choose_payer_card"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toStartOf="@id/outlined_expense_amount_text_field"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/choose_category_card">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/choose_payer_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="Choose Payer"
-            android:textSize="18sp"
-            android:textStyle="bold"
             android:gravity="center_vertical"
-            android:layout_marginStart="12dp"/>
-    </androidx.cardview.widget.CardView>
+            android:layout_marginStart="16dp"/>
+    </com.google.android.material.card.MaterialCardView>
 
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_expense_amount_text_field"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
         android:hint="Amount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/choose_category_card">
@@ -111,11 +82,11 @@
             android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/members_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="26dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Members"
         app:layout_constraintStart_toStartOf="parent"
@@ -136,11 +107,10 @@
         android:id="@+id/create_expense_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/tick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

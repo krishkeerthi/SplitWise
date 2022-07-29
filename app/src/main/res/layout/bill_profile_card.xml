@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bill_profile_card_view"
     android:layout_width="50dp"
     android:layout_height="65dp"
-    android:layout_marginStart="24dp"
+    android:layout_marginStart="16dp"
     android:layout_marginTop="8dp"
-    app:cardCornerRadius="10dp"
     >
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -18,7 +17,6 @@
         android:layout_height="match_parent"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
 
 
