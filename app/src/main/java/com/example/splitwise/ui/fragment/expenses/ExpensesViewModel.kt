@@ -6,23 +6,27 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Expense
+import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.model.ExpenseMember
-import com.example.splitwise.ui.fragment.addexpense.AddExpenseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.exp
 
-class ExpensesViewModel(context: Context, val groupId: Int): ViewModel() {
+class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val groupRepository = GroupRepository(database)
     private val memberRepository = MemberRepository(database)
     private val expenseRepository = ExpenseRepository(database)
+
+    private val _group = MutableLiveData<Group?>()
+
+    val group: LiveData<Group?>
+        get() = _group
 
     private val _groupMembers = MutableLiveData<List<Member>?>()
 
@@ -37,34 +41,36 @@ class ExpensesViewModel(context: Context, val groupId: Int): ViewModel() {
     fun fetchData() {
         Log.d(TAG, "expenseviewmodel: created")
         viewModelScope.launch {
+            _group.value = groupRepository.getGroup(groupId)
+
             val expenses = expenseRepository.getExpenses(groupId)
 
             if (expenses != null) {
                 Log.d(TAG, "viewmodel: group expenses $expenses")
                 val expenseMembers = mutableListOf<ExpenseMember>()
 
-                for(expense in expenses){
+                for (expense in expenses) {
                     val member = memberRepository.getMember(expense.payer)
 
-                    if(member != null)
-                    expenseMembers.add(toExpenseMember(expense, member))
+                    if (member != null)
+                        expenseMembers.add(toExpenseMember(expense, member))
                 }
 
                 _expenseMembers.value = expenseMembers
             }
 
             val memberIds = groupRepository.getGroupMembers(groupId)
-            Log.d(TAG, "viewmodel: group members $memberIds with groupid ${groupId}")
+            Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
             _groupMembers.value = getMembersFromIds(memberIds)
         }
     }
 
     private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {
-        return withContext(Dispatchers.IO){
-            if(memberIds != null){
+        return withContext(Dispatchers.IO) {
+            if (memberIds != null) {
                 val members = mutableListOf<Member>()
 
-                for(id in memberIds) {
+                for (id in memberIds) {
                     val member = memberRepository.getMember(id)
                     member?.let {
                         members.add(it)
@@ -72,13 +78,12 @@ class ExpensesViewModel(context: Context, val groupId: Int): ViewModel() {
                 }
 
                 members
-            }
-            else
+            } else
                 null
         }
     }
 
-    private suspend fun toExpenseMember(expense: Expense, member: Member): ExpenseMember{
+    private suspend fun toExpenseMember(expense: Expense, member: Member): ExpenseMember {
         return withContext(Dispatchers.IO) {
             ExpenseMember(
                 expense.expenseId,
@@ -94,10 +99,16 @@ class ExpensesViewModel(context: Context, val groupId: Int): ViewModel() {
         }
     }
 
+    fun deleteGroup(groupId: Int) {
+        viewModelScope.launch {
+            groupRepository.deleteGroup(groupId)
+        }
+    }
+
 }
 
-class ExpensesViewModelFactory(private val context: Context, private val groupId: Int):
-    ViewModelProvider.Factory{
+class ExpensesViewModelFactory(private val context: Context, private val groupId: Int) :
+    ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

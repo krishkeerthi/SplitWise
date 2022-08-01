@@ -7,23 +7,17 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSearchGroupBinding
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
-import com.example.splitwise.ui.fragment.groups.GroupsFragmentDirections
-import com.example.splitwise.ui.fragment.groups.GroupsViewModel
-import com.example.splitwise.ui.fragment.groups.GroupsViewModelFactory
-import com.example.splitwise.util.nameCheck
 
 class SearchGroupFragment : Fragment() {
 
@@ -63,16 +57,21 @@ class SearchGroupFragment : Fragment() {
         }
 
         // Livedata
-        viewModel.groups.observe(viewLifecycleOwner){ groups ->
-            Log.d(ContentValues.TAG, "onViewCreated: search groups livedata ${groups}")
-            if (groups != null)
+        viewModel.groups.observe(viewLifecycleOwner) { groups ->
+            Log.d(TAG, "onViewCreated: search groups livedata $groups")
+            if (groups != null && groups.isNotEmpty()) {
                 groupsAdapter.updateGroups(groups)
-            else
+                binding.searchGroupsRecyclerView.visibility = View.VISIBLE
+                binding.noResultImage.visibility = View.GONE
+            } else {
                 groupsAdapter.updateGroups(listOf())
+                binding.searchGroupsRecyclerView.visibility = View.GONE
+                binding.noResultImage.visibility = View.VISIBLE
+            }
 
         }
 
-        val watcher = object: TextWatcher{
+        val watcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -82,14 +81,13 @@ class SearchGroupFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 val query = binding.toolbar.searchGroupText.text?.trim().toString()
 
-                    Log.d(TAG, "afterTextChanged:search query changes")
-                    viewModel.textEntered = query
-                    viewModel.fetchData()
+                Log.d(TAG, "afterTextChanged:search query changes")
+                viewModel.textEntered = query
+                viewModel.fetchData()
 
             }
         }
         binding.toolbar.searchGroupText.addTextChangedListener(watcher)
-
 
 
 //        binding.groupSearchView.setOnQueryTextListener( object : androidx.appcompat.widget.SearchView.OnQueryTextListener{
@@ -108,13 +106,19 @@ class SearchGroupFragment : Fragment() {
 //        })
     }
 
-    private fun goToCreateEditGroupFragment(groupId: Int = -1){
-        val action = SearchGroupFragmentDirections.actionSearchGroupFragmentToCreateEditGroupFragment(groupId, null, null)
+    private fun goToCreateEditGroupFragment(groupId: Int = -1) {
+        val action =
+            SearchGroupFragmentDirections.actionSearchGroupFragmentToCreateEditGroupFragment(
+                groupId,
+                null,
+                null
+            )
         view?.findNavController()?.navigate(action)
     }
 
-    private fun goToExpenseFragment(groupId: Int){
-        val action = SearchGroupFragmentDirections.actionSearchGroupFragmentToExpensesFragment(groupId)
+    private fun goToExpenseFragment(groupId: Int) {
+        val action =
+            SearchGroupFragmentDirections.actionSearchGroupFragmentToExpensesFragment(groupId)
         view?.findNavController()?.navigate(action)
     }
 

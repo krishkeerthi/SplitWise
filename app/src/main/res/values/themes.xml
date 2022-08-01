@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.SplitWise" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.SplitWise" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -30,7 +30,9 @@
 
         <item name="colorSurface">#bdbdbd</item>
 
+        <item name="android:textColor">#212121</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
         <!--    Shape-->
 
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.SmallComponent</item>
@@ -43,6 +45,12 @@
 
         <!--        Component Style-->
         <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+
+<!--        Action Mode -->
+        <item name="actionModeBackground">?attr/colorPrimaryVariant</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+
     </style>
 
 
@@ -96,6 +104,7 @@
         <item name="colorOnSecondary">#ffffff</item>
 
         <item name="colorSurface">#fbe9e7</item>
+
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!--    Shape-->
 
@@ -109,6 +118,12 @@
 
         <!--        Component Style-->
         <item name="textInputStyle">@style/Widget.App1.TextInputLayout</item>
+
+        <!--        Action Mode -->
+        <item name="actionModeBackground">?attr/colorPrimaryVariant</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+
     </style>
 
 

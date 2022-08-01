@@ -3,7 +3,6 @@ package com.example.splitwise.ui.fragment.splitwise
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,7 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,12 +44,14 @@ class SplitWiseFragment : Fragment() {
 
         binding = FragmentSplitWiseBinding.bind(view)
 
+        requireActivity().title = "SplitWise"
+
         // Rv
-        val splitWiseAdapter = SplitWiseAdapter{ payerId: Int, amountOwed: Float, name: String ->
-            if(amountOwed == 0f)
+        val splitWiseAdapter = SplitWiseAdapter { payerId: Int, amountOwed: Float, name: String ->
+            if (amountOwed == 0f)
                 Toast.makeText(requireContext(), "$name owes nothing", Toast.LENGTH_SHORT).show()
-            else{
-                if(binding.allGroupsCheckbox.isChecked)
+            else {
+                if (binding.allGroupsCheckbox.isChecked)
                     gotoSettleUpFragment(payerId, -1)
                 else
                     gotoSettleUpFragment(payerId, viewModel.groupId)
@@ -64,15 +65,15 @@ class SplitWiseFragment : Fragment() {
         }
 
         // Livedata transactions
-        viewModel.membersPaymentStatsDetail.observe(viewLifecycleOwner){ membersPaymentStatsDetail ->
-            if(membersPaymentStatsDetail != null){
+        viewModel.membersPaymentStatsDetail.observe(viewLifecycleOwner) { membersPaymentStatsDetail ->
+            if (membersPaymentStatsDetail != null) {
                 splitWiseAdapter.updateMembersPaymentStatsDetail(membersPaymentStatsDetail)
             }
         }
 
         // Groups
-        viewModel.groups.observe(viewLifecycleOwner){ groups ->
-            if(groups != null){
+        viewModel.groups.observe(viewLifecycleOwner) { groups ->
+            if (groups != null) {
                 binding.chooseGroupCard.setOnClickListener {
                     openGroupsBottomSheet(groups)
                 }
@@ -80,17 +81,16 @@ class SplitWiseFragment : Fragment() {
         }
 
         // load groups if already selected
-        viewModel.groupName.observe(viewLifecycleOwner){ groupName ->
+        viewModel.groupName.observe(viewLifecycleOwner) { groupName ->
             binding.chooseGroupText.text = groupName
         }
 
         binding.allGroupsCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if(isChecked){
+            if (isChecked) {
                 viewModel.getGroupMembersPaymentStats()
                 binding.chooseGroupCard.isEnabled = false
                 binding.chooseGroupCard.isClickable = false
-            }
-            else{
+            } else {
                 viewModel.getGroupMembersPaymentStats(viewModel.groupId)
                 binding.chooseGroupCard.isEnabled = true
                 binding.chooseGroupCard.isClickable = true
@@ -106,7 +106,7 @@ class SplitWiseFragment : Fragment() {
         val groupTitle = groupBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
         val groupList = groupBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
 
-        groupTitle?.text = "Select Group"
+        groupTitle?.text = getString(R.string.select_group)
         //Adapter
         val groupAdapter = GroupArrayAdapter(requireContext(), R.layout.dropdown, groups)
         groupList?.apply {
@@ -125,8 +125,9 @@ class SplitWiseFragment : Fragment() {
         groupBottomSheetDialog.show()
     }
 
-    private fun gotoSettleUpFragment(payerId: Int, groupId: Int){
-        val action = SplitWiseFragmentDirections.actionSplitWiseFragmentToSettleUpFragment(payerId, groupId)
+    private fun gotoSettleUpFragment(payerId: Int, groupId: Int) {
+        val action =
+            SplitWiseFragmentDirections.actionSplitWiseFragmentToSettleUpFragment(payerId, groupId)
         view?.findNavController()?.navigate(action)
     }
 }

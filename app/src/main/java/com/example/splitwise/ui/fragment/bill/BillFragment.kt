@@ -3,11 +3,11 @@ package com.example.splitwise.ui.fragment.bill
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentBillBinding
 
@@ -26,7 +26,7 @@ class BillFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_bill, container, false)
 
-        view.setOnTouchListener { view, event ->
+        view.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
             true
         }

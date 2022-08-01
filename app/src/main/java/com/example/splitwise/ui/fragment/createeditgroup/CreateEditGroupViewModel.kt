@@ -8,13 +8,16 @@ import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
-import com.example.splitwise.ui.fragment.addexpense.AddExpenseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-class CreateEditGroupViewModel(context: Context, val groupId: Int, val selectedMembers: Array<Member>?): ViewModel() {
+class CreateEditGroupViewModel(
+    context: Context,
+    val groupId: Int,
+    val selectedMembers: Array<Member>?
+) : ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val groupRepository = GroupRepository(database)
@@ -37,22 +40,19 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val selectedM
         Log.d(TAG, "onViewCreated: viewmodel $groupId")
 
         viewModelScope.launch {
-            if(groupId != -1 && selectedMembers == null){
+            if (groupId != -1 && selectedMembers == null) {
                 val group = groupRepository.getGroup(groupId)
                 _groupName.value = group?.groupName
 
                 val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
 
                 _members.value = getMembersFromIds(memberIds)
-            }
-            else if(groupId == -1 && selectedMembers != null){
+            } else if (groupId == -1 && selectedMembers != null) {
                 _members.value = selectedMembers.toMutableList()
-            }
-            else if(groupId != -1 && selectedMembers != null){
+            } else if (groupId != -1 && selectedMembers != null) {
                 _members.value = selectedMembers.toMutableList()
                 addMembersNotIncludedToGroup()
-            }
-            else{
+            } else {
                 _members.value = null
             }
 //            if(groupId != -1 && memberId != -1){
@@ -90,9 +90,9 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val selectedM
 
             val sMembers = selectedMembers?.toList()
 
-            if(sMembers != null){
-                for(member in sMembers){
-                    if(member.memberId !in memberIds)
+            if (sMembers != null) {
+                for (member in sMembers) {
+                    if (member.memberId !in memberIds)
                         groupRepository.addGroupMember(groupId, member.memberId)
                 }
             }
@@ -101,56 +101,52 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val selectedM
     }
 
     private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {
-        return withContext(Dispatchers.IO){
-            if(memberIds != null){
+        return withContext(Dispatchers.IO) {
+            if (memberIds != null) {
                 val members = mutableListOf<Member>()
 
-                for(id in memberIds) {
-                        val member = memberRepository.getMember(id)
-                        member?.let {
-                            members.add(it)
-                        }
+                for (id in memberIds) {
+                    val member = memberRepository.getMember(id)
+                    member?.let {
+                        members.add(it)
                     }
+                }
 
                 members
-            }
-            else
+            } else
                 null
         }
     }
 
 
-    fun addMember(name: String, phoneNumber: Long){
+    fun addMember(name: String, phoneNumber: Long) {
         viewModelScope.launch {
 
-            if(groupId != -1){
+            if (groupId != -1) {
                 val memberId = memberRepository.addMember(name, phoneNumber)
                 memberRepository.getMember(memberId)?.let {
                     Log.d(TAG, "addMember: $it")
-                    var existingMembers = members.value
+                    val existingMembers = members.value
 
-                    if(existingMembers != null){
+                    if (existingMembers != null) {
                         existingMembers.add(it)
                         _members.value = existingMembers
-                    }
-                    else{
+                    } else {
                         _members.value = mutableListOf(it)
                     }
 
                 }
 
                 groupRepository.addGroupMember(groupId, memberId)
-            }
-            else{
-                var existingMembers = members.value
+            } else {
+                val existingMembers = members.value
 
-                if(existingMembers != null){
+                if (existingMembers != null) {
                     existingMembers.add(Member(name, phoneNumber).apply {
                         memberId = Random().nextInt()
                     })
                     _members.value = existingMembers
-                }
-                else{
+                } else {
                     _members.value = mutableListOf(Member(name, phoneNumber).apply {
                         memberId = Random().nextInt()
                     })
@@ -170,7 +166,7 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val selectedM
 
     }
 
-    fun createGroup(name: String, ownerId: Int, gotoGroupFragment: () -> Unit){
+    fun createGroup(name: String, ownerId: Int, gotoGroupFragment: () -> Unit) {
         viewModelScope.launch {
             val groupId = groupRepository.createGroup(
                 name,
@@ -179,14 +175,16 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val selectedM
                 0F
             )
 
-            members.value?.let { members->
-                for(i in members) {
+            members.value?.let { members ->
+                for (i in members) {
                     val member = memberRepository.getMember(i.memberId)
-                    if(member == null){
+                    if (member == null) {
+                        // add to members table
                         val mId = memberRepository.addMember(i.name, i.phone)
+                        // add to member streak table
+                        memberRepository.addMemberStreak(mId)
                         groupRepository.addGroupMember(groupId, mId)
-                    }
-                    else
+                    } else
                         groupRepository.addGroupMember(groupId, member.memberId)
                 }
             }
@@ -200,27 +198,28 @@ class CreateEditGroupViewModel(context: Context, val groupId: Int, val selectedM
         }
     }
 
-    fun getMembers(): List<Int>{
+    fun getMembers(): List<Int> {
         val memberIds = mutableListOf<Int>()
-        members.value?.let{
-            for(member in it)
+        members.value?.let {
+            for (member in it)
                 memberIds.add(member.memberId)
         }
         return memberIds
     }
 
-    fun getMembersSize(): Int{
-        return if(members.value != null){
+    fun getMembersSize(): Int {
+        return if (members.value != null) {
             members.value!!.size
-        }
-        else
+        } else
             0
     }
 }
 
-class CreateEditGroupViewModelFactory(private val context: Context, private val groupId: Int,
-                                      private val selectedMembers: Array<Member>?):
-    ViewModelProvider.Factory{
+class CreateEditGroupViewModelFactory(
+    private val context: Context, private val groupId: Int,
+    private val selectedMembers: Array<Member>?
+) :
+    ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

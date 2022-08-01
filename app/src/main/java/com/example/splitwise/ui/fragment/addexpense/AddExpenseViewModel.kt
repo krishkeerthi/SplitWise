@@ -55,7 +55,10 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
             Log.d(TAG, "createExpense: payer: $payer, \n members: ${memberIds}")
 
             for(id in memberIds) {
+                // add expense payee
                 expenseRepository.addExpensePayee(expenseId, id)
+                // increment payee streak
+                memberRepository.incrementStreak(id)
                 if(id != payer)
                 transactionRepository.addTransaction(groupId, payer, id, splitAmount)
             }

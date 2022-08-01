@@ -3,7 +3,6 @@ package com.example.splitwise.ui.fragment.settleup
 import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -18,6 +18,7 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSettleUpBinding
 import com.example.splitwise.ui.fragment.adapter.PayerArrayAdapter
+import com.example.splitwise.util.roundOff
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class SettleUpFragment : Fragment() {
@@ -42,6 +43,7 @@ class SettleUpFragment : Fragment() {
 
         binding = FragmentSettleUpBinding.bind(view)
 
+        requireActivity().title = "Settle Up"
 
         // Group
         viewModel.group.observe(viewLifecycleOwner) { group ->
@@ -73,7 +75,7 @@ class SettleUpFragment : Fragment() {
 
         // Amount
         viewModel.amount.observe(viewLifecycleOwner) { amount ->
-            binding.amountTextView.text = (amount ?: 0f).toString()
+            binding.amountTextView.text = "₹" + (amount?.roundOff() ?: "")
         }
 
         binding.selectAllPayeesCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -96,19 +98,18 @@ class SettleUpFragment : Fragment() {
                     viewModel.payerId,
                     null,
                     viewModel.groupId
-                ){
+                ) {
                     gotoSplitWiseFragment()
                 }
-            else if(viewModel.payeeId != null){
+            else if (viewModel.payeeId != null) {
                 viewModel.settle(
                     viewModel.payerId,
                     viewModel.payeeId,
                     viewModel.groupId
-                ){
+                ) {
                     gotoSplitWiseFragment()
                 }
-            }
-            else
+            } else
                 Toast.makeText(requireContext(), "Select Payee to proceed", Toast.LENGTH_SHORT)
                     .show()
         }
@@ -121,7 +122,7 @@ class SettleUpFragment : Fragment() {
         val payeeTitle = payeeBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
         val payeeList = payeeBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
 
-        payeeTitle?.text = "Select Payee"
+        payeeTitle?.text = getString(R.string.select_payee)
         //Adapter
         val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.dropdown, payees)
         payeeList?.apply {
@@ -132,10 +133,10 @@ class SettleUpFragment : Fragment() {
                     viewModel.payeeId = payees[position].memberId
 
                     viewModel.getAmount(
-                                viewModel.payerId,
-                                viewModel.payeeId,
-                                viewModel.groupId
-                            )
+                        viewModel.payerId,
+                        viewModel.payeeId,
+                        viewModel.groupId
+                    )
                     binding.choosePayeeText.text = payees[position].name
                     payeeBottomSheetDialog.dismiss()
                 }
@@ -144,7 +145,7 @@ class SettleUpFragment : Fragment() {
         payeeBottomSheetDialog.show()
     }
 
-    private fun gotoSplitWiseFragment(){
+    private fun gotoSplitWiseFragment() {
         val action = SettleUpFragmentDirections.actionSettleUpFragmentToSplitWiseFragment()
         view?.findNavController()?.navigate(action)
     }

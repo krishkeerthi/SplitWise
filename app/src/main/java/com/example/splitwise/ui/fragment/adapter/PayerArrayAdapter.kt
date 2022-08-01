@@ -10,14 +10,13 @@ import com.example.splitwise.databinding.DropdownBinding
 
 class PayerArrayAdapter(
     context: Context, layout: Int, private val payers: List<Member>
-)
-    : ArrayAdapter<Member>(context, layout, payers) {
+) : ArrayAdapter<Member>(context, layout, payers) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val binding: DropdownBinding
 
         var convertView = convertView
-        if(convertView == null){
+        if (convertView == null) {
             val inflater = LayoutInflater.from(parent.context)
             binding = DropdownBinding.inflate(inflater, parent, false)
 

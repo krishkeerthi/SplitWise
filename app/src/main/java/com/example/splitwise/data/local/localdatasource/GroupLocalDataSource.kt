@@ -108,4 +108,8 @@ GroupDataSource{
         return groupDao.getGroupsCreatedAfterAndAmountAbove(date, amount)
     }
 
+    override suspend fun deleteGroup(groupId: Int) {
+        groupDao.deleteGroup(groupId)
+    }
+
 }

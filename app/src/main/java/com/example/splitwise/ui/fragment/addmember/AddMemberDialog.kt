@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
 import com.example.splitwise.R
 import com.example.splitwise.ui.fragment.createeditgroup.CreateEditGroupViewModel
 import com.example.splitwise.util.nameCheck
@@ -60,8 +59,7 @@ class AddMemberDialog(
                 if (nameCheck(nameEditText.text?.trim().toString())) {
                     nameLayout.error = null
                     nameLayout.isErrorEnabled = false
-                }
-                else
+                } else
                     nameLayout.error = "Enter valid name"
 
                 dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled =

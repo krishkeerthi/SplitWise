@@ -3,13 +3,14 @@ package com.example.splitwise.ui.fragment.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.ChooseMemberCardBinding
-import com.example.splitwise.databinding.MemberCardBinding
+import com.example.splitwise.model.MemberAndStreak
 
-class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit)
-    : RecyclerView.Adapter<ChooseMembersViewHolder>() {
-    private var members = listOf<Member>()
+class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
+    RecyclerView.Adapter<ChooseMembersViewHolder>() {
+    private var membersAndStreaks = listOf<MemberAndStreak>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseMembersViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -17,35 +18,36 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit)
 
         return ChooseMembersViewHolder(binding).apply {
             binding.selectedCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if(isChecked)
-                    onItemChecked(members[adapterPosition], true)
+                if (isChecked)
+                    onItemChecked(membersAndStreaks[adapterPosition].member, true)
                 else
-                    onItemChecked(members[adapterPosition], false)
+                    onItemChecked(membersAndStreaks[adapterPosition].member, false)
             }
         }
     }
 
     override fun onBindViewHolder(holder: ChooseMembersViewHolder, position: Int) {
-        val member = members[position]
+        val member = membersAndStreaks[position]
 
         holder.bind(member)
     }
 
     override fun getItemCount(): Int {
-        return members.size
+        return membersAndStreaks.size
     }
 
-    fun updateMembers(members: List<Member>){
-        this.members = members
+    fun updateMembersAndStreaks(membersAndStreaks: List<MemberAndStreak>) {
+        this.membersAndStreaks = membersAndStreaks
         notifyDataSetChanged()
     }
 }
 
-class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding)
-    : RecyclerView.ViewHolder(binding.root){
+class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding) :
+    RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(member: Member){
-        binding.memberNameTextView.text = member.name
+    fun bind(memberAndStreak: MemberAndStreak) {
+        binding.memberNameTextView.text = memberAndStreak.member.name
+        binding.memberStreakTextView.text =  "🔥" + memberAndStreak.streak.toString()
     }
 
 }

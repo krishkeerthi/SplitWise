@@ -6,15 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.register.RegisterActivity">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome"
-        app:layout_constraintBottom_toTopOf="@+id/outlined_member_name_text_field"
-        app:layout_constraintEnd_toEndOf="parent"
+    <androidx.appcompat.widget.AppCompatImageView
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/single_user"
+        app:layout_constraintBottom_toTopOf="@id/outlined_member_name_text_field"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_member_name_text_field"
@@ -24,6 +24,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:hint="Enter Name"
+        app:startIconDrawable="@drawable/ic_baseline_person_24"
         app:layout_constraintBottom_toTopOf="@+id/outlined_member_phone_text_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -32,8 +33,7 @@
             android:id="@+id/member_name_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:textAlignment="center" />
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -43,6 +43,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:hint="Enter Phone Number"
+        app:startIconDrawable="@drawable/ic_baseline_local_phone_24"
+        app:counterEnabled="true"
+        app:counterMaxLength="10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,8 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:maxLength="10"
-            android:textAlignment="center" />
+            android:maxLength="10" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -66,6 +68,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Register"
+        android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/outlined_member_phone_text_field" />

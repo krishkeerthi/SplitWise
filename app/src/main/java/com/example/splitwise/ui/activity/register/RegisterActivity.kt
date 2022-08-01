@@ -3,11 +3,11 @@ package com.example.splitwise.ui.activity.register
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.example.splitwise.databinding.ActivityRegisterBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.util.nameCheck
@@ -41,15 +41,16 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                binding.registerButton.isEnabled = if (nameCheck(nameEditText.text?.trim().toString())) {
+                if (nameCheck(nameEditText.text?.trim().toString())) {
                     nameLayout.error = null
                     nameLayout.isErrorEnabled = false
-                    true
-                }
-                else {
+                } else {
                     nameLayout.error = "Enter valid name"
-                    false
                 }
+
+                binding.registerButton.isEnabled =
+                    (nameCheck(nameEditText.text?.trim().toString())) &&
+                            (phoneEditText.text?.trim().toString().length == 10)
 
             }
 
@@ -63,16 +64,18 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                binding.registerButton.isEnabled = if (phoneEditText.text?.trim().toString().length == 10) {
+                if (phoneEditText.text?.trim().toString().length == 10) {
                     phoneLayout.error = null
                     phoneLayout.isErrorEnabled = false
-                    true
-                }
-                else {
+
+                } else {
                     phoneLayout.error = "Enter 10 numbers"
-                    false
+
                 }
 
+                binding.registerButton.isEnabled =
+                    (nameCheck(nameEditText.text?.trim().toString())) &&
+                            (phoneEditText.text?.trim().toString().length == 10)
             }
 
         }
@@ -81,21 +84,29 @@ class RegisterActivity : AppCompatActivity() {
         phoneEditText.addTextChangedListener(phoneWatcher)
 
         // Button click
-        binding.registerButton.setOnClickListener{
-            viewModel.registerMember(binding.memberNameText.text.toString(), binding.memberPhoneText.text.toString().toLong())
+        binding.registerButton.setOnClickListener {
+            viewModel.registerMember(
+                binding.memberNameText.text.toString(),
+                binding.memberPhoneText.text.toString().toLong()
+            )
         }
 
         // Live data(observe to move to next screen)
 
-        viewModel.memberId.observe(this){
-            if(it != null){
+        viewModel.memberId.observe(this) {
+            if (it != null) {
                 saveIdToSharedPreference(it, sharedPreference)
                 gotoMainActivity()
             }
         }
     }
 
-    private fun gotoMainActivity(){
+    override fun onBackPressed() {
+        finishAffinity()
+        super.onBackPressed()
+    }
+
+    private fun gotoMainActivity() {
 
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -103,9 +114,9 @@ class RegisterActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun saveIdToSharedPreference(memberId: Int, sharedPreference: SharedPreferences){
+    private fun saveIdToSharedPreference(memberId: Int, sharedPreference: SharedPreferences) {
         val sharedPreferenceEditor = sharedPreference.edit()
-        sharedPreferenceEditor.apply{
+        sharedPreferenceEditor.apply {
             putInt("MEMBERID", memberId)
             apply()
         }

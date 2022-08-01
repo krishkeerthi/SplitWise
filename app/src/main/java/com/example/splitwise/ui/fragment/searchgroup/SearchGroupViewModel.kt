@@ -9,7 +9,7 @@ import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.repository.GroupRepository
 import kotlinx.coroutines.launch
 
-class SearchGroupViewModel(context: Context): ViewModel() {
+class SearchGroupViewModel(context: Context) : ViewModel() {
     private val groupsRepository = GroupRepository(SplitWiseRoomDatabase.getInstance(context))
 
     var textEntered: String = ""
@@ -19,8 +19,11 @@ class SearchGroupViewModel(context: Context): ViewModel() {
     val groups: LiveData<List<Group>?>
         get() = _groups
 
-    fun fetchData(){
-        Log.d(ContentValues.TAG, "groupsviewmodel:search fetch called with textentered is $textEntered")
+    fun fetchData() {
+        Log.d(
+            ContentValues.TAG,
+            "groupsviewmodel:search fetch called with textentered is $textEntered"
+        )
 
         viewModelScope.launch {
             _groups.value = groupsRepository.getGroupsStartsWith(textEntered)
@@ -28,8 +31,8 @@ class SearchGroupViewModel(context: Context): ViewModel() {
     }
 }
 
-class SearchGroupViewModelFactory(private val context: Context):
-    ViewModelProvider.Factory{
+class SearchGroupViewModelFactory(private val context: Context) :
+    ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

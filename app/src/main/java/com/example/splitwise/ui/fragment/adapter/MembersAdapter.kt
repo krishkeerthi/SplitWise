@@ -5,9 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.MemberCardBinding
-import com.example.splitwise.databinding.MemberProfileCardBinding
 
-class MembersAdapter: RecyclerView.Adapter<MembersViewHolder>() {
+class MembersAdapter : RecyclerView.Adapter<MembersViewHolder>() {
     private var members = listOf<Member>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MembersViewHolder {
@@ -27,16 +26,15 @@ class MembersAdapter: RecyclerView.Adapter<MembersViewHolder>() {
         return members.size
     }
 
-    fun updateMembers(members: List<Member>){
+    fun updateMembers(members: List<Member>) {
         this.members = members
         notifyDataSetChanged()
     }
 }
 
-class MembersViewHolder(val binding: MemberCardBinding)
-    : RecyclerView.ViewHolder(binding.root){
+class MembersViewHolder(val binding: MemberCardBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(member: Member){
+    fun bind(member: Member) {
         binding.memberNameTextView.text = member.name
     }
 

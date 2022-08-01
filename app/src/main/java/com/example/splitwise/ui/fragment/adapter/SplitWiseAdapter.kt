@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.databinding.MemberOweLendCardBinding
 import com.example.splitwise.model.MemberPaymentStatsDetail
+import com.example.splitwise.util.roundOff
 
 class SplitWiseAdapter(
     val onTransactionClicked: (Int, Float, String) -> Unit
@@ -47,8 +48,8 @@ class SplitWiseViewHolder(val binding: MemberOweLendCardBinding) :
 
     fun bind(memberPaymentStatsDetail: MemberPaymentStatsDetail) {
         binding.memberTextView.text = memberPaymentStatsDetail.memberName
-        binding.oweTextView.text = memberPaymentStatsDetail.amountOwed.toString()
-        binding.lendTextView.text = memberPaymentStatsDetail.amountLend.toString()
+        binding.oweTextView.text = "₹" + memberPaymentStatsDetail.amountOwed.roundOff()
+        binding.lendTextView.text = "₹" + memberPaymentStatsDetail.amountLend.roundOff()
     }
 
 }

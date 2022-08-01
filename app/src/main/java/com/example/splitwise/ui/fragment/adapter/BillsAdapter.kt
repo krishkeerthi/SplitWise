@@ -4,7 +4,6 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.BillProfileCardBinding
 
 class BillsAdapter(

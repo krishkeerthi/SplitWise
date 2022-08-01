@@ -1,16 +1,15 @@
 package com.example.splitwise.ui.fragment.groupsoverview
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsOverviewBinding
-import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupsOverviewAdapter
 
 class GroupsOverviewFragment : Fragment() {
@@ -20,6 +19,7 @@ class GroupsOverviewFragment : Fragment() {
     private val viewModel: GroupsOverviewViewModel by viewModels {
         GroupsOverviewViewModelFactory(requireContext())
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,8 +33,10 @@ class GroupsOverviewFragment : Fragment() {
 
         binding = FragmentGroupsOverviewBinding.bind(view)
 
+        requireActivity().title = "Groups Overview"
+
         // Rv
-        val groupsAdapter = GroupsOverviewAdapter{ groupId: Int ->
+        val groupsAdapter = GroupsOverviewAdapter { groupId: Int ->
             gotoExpensesOverviewFragment(groupId)
         }
 
@@ -44,15 +46,18 @@ class GroupsOverviewFragment : Fragment() {
         }
 
         // Livedata Groups overview
-        viewModel.groups.observe(viewLifecycleOwner){ groups ->
-            if(groups != null){
+        viewModel.groups.observe(viewLifecycleOwner) { groups ->
+            if (groups != null) {
                 groupsAdapter.updateGroups(groups)
             }
         }
     }
 
-    private fun gotoExpensesOverviewFragment(groupId: Int){
-        val action = GroupsOverviewFragmentDirections.actionGroupsOverviewFragmentToExpensesOverviewFragment(groupId)
+    private fun gotoExpensesOverviewFragment(groupId: Int) {
+        val action =
+            GroupsOverviewFragmentDirections.actionGroupsOverviewFragmentToExpensesOverviewFragment(
+                groupId
+            )
         view?.findNavController()?.navigate(action)
     }
 }

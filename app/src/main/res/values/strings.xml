@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">SplitWise</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="streak">🔥</string>
+    <string name="select_category">Select Category</string>
+    <string name="select_payer">Select Payer</string>
+    <string name="select_payee">Select Payee</string>
+    <string name="select_group">Select Group</string>
+    <string name="filter_by">Filter By</string>
+    <string name="filter_by_amount">Filter By Amount</string>
+    <string name="filter_by_date">Filter By Date</string>
 </resources>

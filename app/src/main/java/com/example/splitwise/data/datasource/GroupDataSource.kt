@@ -39,4 +39,6 @@ interface GroupDataSource {
     suspend fun getGroupsCreatedAfterAndAmountBelow(date: Date, amount: Float): List<Group>?
 
     suspend fun getGroupsCreatedAfterAndAmountAbove(date: Date, amount: Float): List<Group>?
+
+    suspend fun deleteGroup(groupId: Int)
 }

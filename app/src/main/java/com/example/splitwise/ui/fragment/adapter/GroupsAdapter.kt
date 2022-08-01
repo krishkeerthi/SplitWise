@@ -4,28 +4,31 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Group
+import com.example.splitwise.databinding.GroupCard1Binding
 import com.example.splitwise.databinding.GroupCardBinding
+import com.example.splitwise.util.formatDate
+import com.example.splitwise.util.roundOff
 
 class GroupsAdapter(
     val onAddMemberClicked: (Int) -> Unit,
     val onExpenseClicked: (Int) -> Unit
-): RecyclerView.Adapter<GroupsViewHolder>() {
+) : RecyclerView.Adapter<GroupsViewHolder>() {
     private var groups = listOf<Group>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupsViewHolder {
         val view = LayoutInflater.from(parent.context)
-        val binding = GroupCardBinding.inflate(view, parent, false)
+        val binding = GroupCard1Binding.inflate(view, parent, false)
 
         return GroupsViewHolder(binding).apply {
             itemView.setOnClickListener {
                 onExpenseClicked(groups[adapterPosition].groupId)
             }
-            binding.addExpenseTextView.setOnClickListener {
-                onExpenseClicked(groups[adapterPosition].groupId)
-            }
-            binding.addMembersTextView.setOnClickListener {
-                onAddMemberClicked(groups[adapterPosition].groupId)
-            }
+////            binding.addExpenseTextView.setOnClickListener {
+////                onExpenseClicked(groups[adapterPosition].groupId)
+////            }
+//            binding.addMemberLayout.setOnClickListener {
+//                onAddMemberClicked(groups[adapterPosition].groupId)
+//            }
         }
     }
 
@@ -39,18 +42,18 @@ class GroupsAdapter(
         return groups.size
     }
 
-    fun updateGroups(groups: List<Group>){
+    fun updateGroups(groups: List<Group>) {
         this.groups = groups
         notifyDataSetChanged()
     }
 }
 
-class GroupsViewHolder(val binding: GroupCardBinding)
-    : RecyclerView.ViewHolder(binding.root){
+class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(group: Group){
-            binding.groupNameTextView.text = group.groupName
-            binding.groupExpenseTextView.text = group.totalExpense.toString()
-        }
+    fun bind(group: Group) {
+        binding.groupNameTextView.text = group.groupName
+        binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
+        binding.groupCreationDateTextView.text = formatDate(group.creationDate)
+    }
 
 }

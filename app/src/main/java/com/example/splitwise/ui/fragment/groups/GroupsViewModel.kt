@@ -10,14 +10,13 @@ import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.model.AmountFilterModel
 import com.example.splitwise.model.DateFilterModel
 import com.example.splitwise.model.FilterModel
-import com.example.splitwise.ui.fragment.addexpense.AddExpenseViewModel
 import com.example.splitwise.util.AmountFilter
 import com.example.splitwise.util.DateFilter
 import com.example.splitwise.util.GroupFilter
 import kotlinx.coroutines.launch
 import java.util.*
 
-class GroupsViewModel(context: Context): ViewModel() {
+class GroupsViewModel(context: Context) : ViewModel() {
     private val groupsRepository = GroupRepository(SplitWiseRoomDatabase.getInstance(context))
 
     private val _groups = MutableLiveData<List<Group>?>()
@@ -26,7 +25,7 @@ class GroupsViewModel(context: Context): ViewModel() {
         get() = _groups
 
     // Filter related properties
-    val remainingFilters= GroupFilter.values().toMutableList()
+    val remainingFilters = GroupFilter.values().toMutableList()
 
     val filterModel = FilterModel(null, null)
 
@@ -44,7 +43,7 @@ class GroupsViewModel(context: Context): ViewModel() {
 //        }
 //    }
 
-    fun fetchData(){
+    fun fetchData() {
         Log.d(TAG, "groupsviewmodel: called")
         viewModelScope.launch {
             _groups.value = groupsRepository.getGroups()
@@ -70,58 +69,51 @@ class GroupsViewModel(context: Context): ViewModel() {
         applyFilter()
     }
 
-    private fun applyFilter(){
+    private fun applyFilter() {
         val dateFilterModel = filterModel.dateFilterModel
         val date = dateFilterModel?.date
         val amountFilterModel = filterModel.amountFilterModel
         val amount = amountFilterModel?.amount
 
         viewModelScope.launch {
-            if(dateFilterModel != null && amountFilterModel != null){
-                _groups.value =  if(dateFilterModel.dateFilter == DateFilter.BEFORE && amountFilterModel.amountFilter == AmountFilter.BELOW){
-                    groupsRepository.getGroupsCreatedBeforeAndAmountBelow(date!!, amount!!)
-                }
-                else if(dateFilterModel.dateFilter == DateFilter.BEFORE && amountFilterModel.amountFilter == AmountFilter.ABOVE){
-                    groupsRepository.getGroupsCreatedBeforeAndAmountAbove(date!!, amount!!)
-                }
-                else if(dateFilterModel.dateFilter == DateFilter.AFTER && amountFilterModel.amountFilter == AmountFilter.ABOVE){
-                    groupsRepository.getGroupsCreatedAfterAndAmountAbove(date!!, amount!!)
-                }
-                else{
-                    groupsRepository.getGroupsCreatedAfterAndAmountBelow(date!!, amount!!)
-                }
-            }
-            else if(dateFilterModel != null && amountFilterModel == null){
-                _groups.value = if(dateFilterModel.dateFilter == DateFilter.AFTER){
+            if (dateFilterModel != null && amountFilterModel != null) {
+                _groups.value =
+                    if (dateFilterModel.dateFilter == DateFilter.BEFORE && amountFilterModel.amountFilter == AmountFilter.BELOW) {
+                        groupsRepository.getGroupsCreatedBeforeAndAmountBelow(date!!, amount!!)
+                    } else if (dateFilterModel.dateFilter == DateFilter.BEFORE && amountFilterModel.amountFilter == AmountFilter.ABOVE) {
+                        groupsRepository.getGroupsCreatedBeforeAndAmountAbove(date!!, amount!!)
+                    } else if (dateFilterModel.dateFilter == DateFilter.AFTER && amountFilterModel.amountFilter == AmountFilter.ABOVE) {
+                        groupsRepository.getGroupsCreatedAfterAndAmountAbove(date!!, amount!!)
+                    } else {
+                        groupsRepository.getGroupsCreatedAfterAndAmountBelow(date!!, amount!!)
+                    }
+            } else if (dateFilterModel != null && amountFilterModel == null) {
+                _groups.value = if (dateFilterModel.dateFilter == DateFilter.AFTER) {
                     groupsRepository.getGroupsCreatedAfter(date!!)
-                }
-                else{
+                } else {
                     groupsRepository.getGroupsCreatedBefore(date!!)
                 }
-            }
-            else if(dateFilterModel == null && amountFilterModel != null){
-                _groups.value = if(amountFilterModel.amountFilter == AmountFilter.ABOVE){
+            } else if (dateFilterModel == null && amountFilterModel != null) {
+                _groups.value = if (amountFilterModel.amountFilter == AmountFilter.ABOVE) {
                     groupsRepository.getGroupsWithAmountAbove(amount!!)
-                }
-                else{
+                } else {
                     groupsRepository.getGroupsWithAmountBelow(amount!!)
                 }
 
-            }
-            else{
+            } else {
                 _groups.value = groupsRepository.getGroups()
             }
         }
     }
 
-    fun removeDateFilter(){
+    fun removeDateFilter() {
         filterModel.dateFilterModel = null
         remainingFilters.add(GroupFilter.DATE)
 
         applyFilter()
     }
 
-    fun removeAmountFilter(){
+    fun removeAmountFilter() {
         filterModel.amountFilterModel = null
         remainingFilters.add(GroupFilter.AMOUNT)
 
@@ -131,8 +123,8 @@ class GroupsViewModel(context: Context): ViewModel() {
 
 }
 
-class GroupsViewModelFactory(private val context: Context):
-    ViewModelProvider.Factory{
+class GroupsViewModelFactory(private val context: Context) :
+    ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

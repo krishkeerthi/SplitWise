@@ -3,18 +3,13 @@ package com.example.splitwise.ui.fragment.adapter
 import android.content.ContentValues.TAG
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
-import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.MemberCheckboxCardBinding
-import com.example.splitwise.databinding.MemberProfileCardBinding
 
-class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit)
-    : RecyclerView.Adapter<MembersCheckboxViewHolder>() {
+class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) :
+    RecyclerView.Adapter<MembersCheckboxViewHolder>() {
     private var members = listOf<Member>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MembersCheckboxViewHolder {
@@ -24,11 +19,10 @@ class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit)
 
         return MembersCheckboxViewHolder(binding).apply {
             binding.paidUnpaidCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if(isChecked){
+                if (isChecked) {
                     onItemChecked(members[adapterPosition].memberId, true)
                     Log.d(TAG, "onCreateViewHolder: $adapterPosition")
-                }
-                else{
+                } else {
                     onItemChecked(members[adapterPosition].memberId, false)
                     Log.d(TAG, "onCreateViewHolder: $adapterPosition")
                 }
@@ -46,16 +40,16 @@ class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit)
         return members.size
     }
 
-    fun updateMembers(members: List<Member>){
+    fun updateMembers(members: List<Member>) {
         this.members = members
         notifyDataSetChanged()
     }
 }
 
-class MembersCheckboxViewHolder(val binding: MemberCheckboxCardBinding)
-    : RecyclerView.ViewHolder(binding.root){
+class MembersCheckboxViewHolder(val binding: MemberCheckboxCardBinding) :
+    RecyclerView.ViewHolder(binding.root) {
 
-//    init {
+    //    init {
 //        binding.paidUnpaidCheckbox.setOnCheckedChangeListener{ buttonView, isChecked ->
 //            if(isChecked){
 //                onItemChecked(members[adapterPosition].memberId, true)
@@ -66,7 +60,7 @@ class MembersCheckboxViewHolder(val binding: MemberCheckboxCardBinding)
 //            }
 //        }
 //    }
-    fun bind(member: Member){
+    fun bind(member: Member) {
         binding.memberTextView.text = member.name
     }
 

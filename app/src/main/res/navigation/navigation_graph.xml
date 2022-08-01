@@ -74,6 +74,11 @@
             android:name="groupId"
             app:argType="integer"
            />
+        <action
+            android:id="@+id/action_expensesFragment_to_groupsFragment"
+            app:destination="@id/groupsFragment"
+            app:popUpTo="@id/groupsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/addExpenseFragment"
@@ -146,6 +151,11 @@
             android:name="groupName"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_chooseMembersFragment_self"
+            app:destination="@id/chooseMembersFragment"
+            app:popUpTo="@id/chooseMembersFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/billsHolderFragment"

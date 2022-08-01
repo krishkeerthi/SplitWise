@@ -7,6 +7,7 @@ import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.localdatasource.GroupLocalDataSource
 import com.example.splitwise.data.local.localdatasource.MemberLocalDataSource
+import com.example.splitwise.util.titleCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ class GroupRepository(
     )
 
     suspend fun createGroup(name: String, description: String, date: Date, expense: Float): Int{
-        return withContext(Dispatchers.IO){dataSource.createGroup(name, description, date, expense)}
+        return withContext(Dispatchers.IO){dataSource.createGroup(name.titleCase(), description.titleCase(), date, expense)}
     }
 
     suspend fun addGroupMember(groupId: Int, memberId: Int){
@@ -97,5 +98,11 @@ class GroupRepository(
 
     suspend fun updateLastActiveDate(date: Date){
 
+    }
+
+    suspend fun deleteGroup(groupId: Int) {
+        withContext(Dispatchers.IO){
+            dataSource.deleteGroup(groupId)
+        }
     }
 }

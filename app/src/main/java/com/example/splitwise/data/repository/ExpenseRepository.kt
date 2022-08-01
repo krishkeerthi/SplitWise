@@ -7,6 +7,7 @@ import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Expense
 import com.example.splitwise.data.local.localdatasource.ExpenseLocalDataSource
 import com.example.splitwise.data.local.localdatasource.GroupLocalDataSource
+import com.example.splitwise.util.titleCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -25,7 +26,7 @@ class ExpenseRepository(
     suspend fun createExpense(groupId: Int, name:String, category: Int, totalAmount: Float,
                               splitAmount: Float, payer: Int, date: Date
     ): Int{
-        return withContext(Dispatchers.IO){dataSource.createExpense(groupId, name, category, totalAmount, splitAmount, payer, date)}
+        return withContext(Dispatchers.IO){dataSource.createExpense(groupId, name.titleCase(), category, totalAmount, splitAmount, payer, date)}
     }
 
     suspend fun addExpensePayee(expenseId: Int, payeeId: Int){

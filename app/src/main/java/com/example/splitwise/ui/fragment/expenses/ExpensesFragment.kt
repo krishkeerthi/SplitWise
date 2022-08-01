@@ -1,26 +1,25 @@
 package com.example.splitwise.ui.fragment.expenses
 
-import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentExpensesBinding
 import com.example.splitwise.ui.fragment.adapter.ExpensesAdapter
-import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
-import com.example.splitwise.ui.fragment.adapter.MembersAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersProfileAdapter
+import com.example.splitwise.util.formatDate
+import com.example.splitwise.util.roundOff
+import kotlin.properties.Delegates
 
 class ExpensesFragment : Fragment() {
     private lateinit var binding: FragmentExpensesBinding
@@ -29,6 +28,15 @@ class ExpensesFragment : Fragment() {
     private val viewModel: ExpensesViewModel by viewModels {
         ExpensesViewModelFactory(requireContext(), args.groupId)
     }
+
+    // animations
+
+    private val rotateOpen: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_open_anim) }
+    private val rotateClose: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_close_anim) }
+    private val fromBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.from_bottom_anim) }
+    private val toBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.to_bottom_anim) }
+    private var clicked: Boolean = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,13 +48,16 @@ class ExpensesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        clicked = false
 
         viewModel.fetchData()
+
+       // requireActivity().title = "Group Detail"
 
         binding = FragmentExpensesBinding.bind(view)
 
         // Rv
-        val expensesAdapter = ExpensesAdapter{ expenseId: Int ->
+        val expensesAdapter = ExpensesAdapter { expenseId: Int ->
             gotoExpenseDetailFragment(expenseId)
         }
         val membersAdapter = MembersProfileAdapter()
@@ -56,40 +67,135 @@ class ExpensesFragment : Fragment() {
             adapter = expensesAdapter
         }
 
-        binding.membersRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            adapter = membersAdapter
-        }
+//        binding.membersRecyclerView.apply {
+//            layoutManager =
+//                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+//            adapter = membersAdapter
+//        }
 
         // Livedata
-        viewModel.expenseMembers.observe(viewLifecycleOwner){ expenseMembers ->
-            Log.d(TAG, "onViewCreated:expense list livedata ${expenseMembers}")
-            if(expenseMembers != null){
+        viewModel.group.observe(viewLifecycleOwner) { group ->
+            if (group != null) {
+               // binding.groupNameTextView.text = group.groupName
+                requireActivity().title = group.groupName
+                //binding.groupCreationDateTextView.text = formatDate(group.creationDate)
+                binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
+            }
+        }
+
+        viewModel.expenseMembers.observe(viewLifecycleOwner) { expenseMembers ->
+            Log.d(TAG, "onViewCreated:expense list livedata $expenseMembers")
+            if (expenseMembers != null) {
                 expensesAdapter.updateExpenseMembers(expenseMembers)
             }
         }
 
-        viewModel.groupMembers.observe(viewLifecycleOwner){ members ->
-            Log.d(TAG, "onViewCreated:expense members livedata ${members}")
-            if(members != null)
+        viewModel.groupMembers.observe(viewLifecycleOwner) { members ->
+            Log.d(TAG, "onViewCreated:expense members livedata $members")
+            if (members != null)
                 membersAdapter.updateMembers(members)
 
         }
 
         // Button click
-        binding.addExpenseFab.setOnClickListener {
-            gotoAddExpenseFragment(args.groupId)
+        binding.addExpenseButton.setOnClickListener {
+            if (args.groupId == 12345 || args.groupId == 54321)
+                Toast.makeText(
+                    requireContext(),
+                    "This is dummy group. Create actual group to add expense",
+                    Toast.LENGTH_SHORT
+                ).show()
+            else
+                gotoAddExpenseFragment(args.groupId)
         }
 
+        binding.addFabButton.setOnClickListener {
+            onAddButtonClicked()
+        }
+
+        binding.addMemberButton.setOnClickListener{
+
+        }
+
+
+        // Collapsing cardview
+//        binding.membersLayout.setOnClickListener {
+//            if (binding.membersRecyclerView.isVisible) {
+//                binding.groupMembersDropDown.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
+//                binding.membersRecyclerView.visibility = View.GONE
+//            } else {
+//                binding.groupMembersDropDown.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
+//                binding.membersRecyclerView.visibility = View.VISIBLE
+//            }
+//        }
+
+        // Menu
+        if (args.groupId == 12345 || args.groupId == 54321)
+            setHasOptionsMenu(true)
     }
 
-    private fun gotoAddExpenseFragment(groupId: Int){
+    private fun onAddButtonClicked() {
+        clicked = !clicked
+        setVisibility()
+        setAnimation()
+    }
+
+    private fun setAnimation() {
+        if(clicked){
+            binding.addMemberButton.startAnimation(fromBottom)
+            binding.addExpenseButton.startAnimation(fromBottom)
+            binding.addFabButton.startAnimation(rotateOpen)
+        }
+        else{
+            binding.addMemberButton.startAnimation(toBottom)
+            binding.addExpenseButton.startAnimation(toBottom)
+            binding.addFabButton.startAnimation(rotateClose)
+        }
+    }
+
+    private fun setVisibility() {
+        if(clicked){
+            binding.addMemberButton.visibility = View.VISIBLE
+            binding.addExpenseButton.visibility = View.VISIBLE
+        }
+        else{
+            binding.addMemberButton.visibility = View.GONE
+            binding.addExpenseButton.visibility = View.GONE
+        }
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.group_detail_fragment_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.group_delete -> {
+                viewModel.deleteGroup(args.groupId)
+                gotoGroupsFragment()
+                true
+            }
+            else -> {
+                false
+            }
+        }
+    }
+
+    private fun gotoAddExpenseFragment(groupId: Int) {
         val action = ExpensesFragmentDirections.actionExpensesFragmentToAddExpenseFragment(groupId)
         view?.findNavController()?.navigate(action)
     }
 
-    private fun gotoExpenseDetailFragment(expenseId: Int){
-        val action = ExpensesFragmentDirections.actionExpensesFragmentToExpenseDetailFragment(expenseId)
+    private fun gotoGroupsFragment() {
+        val action = ExpensesFragmentDirections.actionExpensesFragmentToGroupsFragment()
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun gotoExpenseDetailFragment(expenseId: Int) {
+        val action =
+            ExpensesFragmentDirections.actionExpensesFragmentToExpenseDetailFragment(expenseId)
         view?.findNavController()?.navigate(action)
     }
 

@@ -1,6 +1,5 @@
 package com.example.splitwise.ui.fragment.groups
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
@@ -10,9 +9,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import android.widget.AdapterView
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,17 +22,13 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
 import com.example.splitwise.ui.fragment.adapter.FilterArrayAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
-import com.example.splitwise.util.AmountFilter
-import com.example.splitwise.util.DateFilter
-import com.example.splitwise.util.GroupFilter
-import com.example.splitwise.util.formatDate
+import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.*
 
-class GroupsFragment : Fragment(){
+class GroupsFragment : Fragment() {
 
     private lateinit var binding: FragmentGroupsBinding
     private val viewModel: GroupsViewModel by viewModels {
@@ -61,7 +59,14 @@ class GroupsFragment : Fragment(){
         // Rv
         val groupsAdapter = GroupsAdapter(
             { groupId: Int ->
-                goToCreateEditGroupFragment(groupId)
+                if (groupId == 12345 || groupId == 54321)
+                    Toast.makeText(
+                        requireContext(),
+                        "This is dummy group. Create actual group to add members",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                else
+                    goToCreateEditGroupFragment(groupId)
             },
             { groupId: Int ->
                 goToExpenseFragment(groupId)
@@ -74,9 +79,9 @@ class GroupsFragment : Fragment(){
         }
 
         // Livedata
-        viewModel.groups.observe(viewLifecycleOwner){ groups ->
+        viewModel.groups.observe(viewLifecycleOwner) { groups ->
             Log.d(TAG, "onViewCreated: groups livedata ${groups}")
-            if(groups != null){
+            if (groups != null) {
                 groupsAdapter.updateGroups(groups)
             }
         }
@@ -88,8 +93,30 @@ class GroupsFragment : Fragment(){
 
         // Menu
         setHasOptionsMenu(true)
+//        requireActivity().addMenuProvider(object : MenuProvider {
+//            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+//                menuInflater.inflate(R.menu.groups_fragment_menu, menu)
+//            }
+//
+//            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+//                return when (menuItem.itemId) {
+//                    R.id.group_fragment_search -> {
+//                        goToSearchGroupFragment()
+//                        true
+//                    }
+//                    R.id.group_fragment_filter -> {
+//                        openFilterBottomSheet()
+//                        true
+//                    }
+//                    else ->
+//                        false
+//                }
+//            }
+//
+//        })
 
-//        requireActivity().setTitle("Groups")
+
+        requireActivity().title = "Groups"
 //        binding.groupsToolbar.inflateMenu(R.menu.groups_fragment_menu)
 //
 //        // Menu click
@@ -108,15 +135,20 @@ class GroupsFragment : Fragment(){
 //            }
 //        }
 
-        if(viewModel.filterModel.amountFilterModel != null) {
+        if (viewModel.filterModel.amountFilterModel != null) {
             val amountFilterModel = viewModel.filterModel.amountFilterModel
-            binding.amountFilterChip.text = "${amountFilterModel!!.amountFilter.name} ${amountFilterModel!!.amount}"
+            binding.amountFilterChip.text = "${
+                amountFilterModel!!.amountFilter.name.lowercase().titleCase()
+            } ${amountFilterModel!!.amount}"
             binding.amountFilterChip.visibility = View.VISIBLE
         }
 
-        if(viewModel.filterModel.dateFilterModel != null) {
+        if (viewModel.filterModel.dateFilterModel != null) {
             val dateFilterModel = viewModel.filterModel.dateFilterModel
-            binding.dateFilterChip.text = "${dateFilterModel!!.dateFilter.name} ${formatDate(dateFilterModel!!.date)}"
+            binding.dateFilterChip.text =
+                "${dateFilterModel!!.dateFilter.name.lowercase().titleCase()} ${
+                    formatDate(dateFilterModel!!.date)
+                }"
             binding.dateFilterChip.visibility = View.VISIBLE
         }
 
@@ -137,38 +169,41 @@ class GroupsFragment : Fragment(){
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        //super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.groups_fragment_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
-                R.id.group_fragment_search ->{
-                    goToSearchGroupFragment()
-                    true
-                }
-                R.id.group_fragment_filter ->{
-                    openFilterBottomSheet()
-                    true
-                }
-                else ->
-                    false
+        return when (item.itemId) {
+            R.id.group_fragment_search -> {
+                goToSearchGroupFragment()
+                true
             }
+            R.id.group_fragment_filter -> {
+                openFilterBottomSheet()
+                true
+            }
+            else ->
+                false
+        }
     }
 
-    private fun goToSearchGroupFragment(){
+    private fun goToSearchGroupFragment() {
         val action = GroupsFragmentDirections.actionGroupsFragmentToSearchGroupFragment()
         view?.findNavController()?.navigate(action)
     }
 
-    private fun goToCreateEditGroupFragment(groupId: Int = -1){
-        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(groupId, null, null)
+    private fun goToCreateEditGroupFragment(groupId: Int = -1) {
+        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(
+            groupId,
+            null,
+            null
+        )
         view?.findNavController()?.navigate(action)
     }
 
 
-    private fun goToExpenseFragment(groupId: Int){
+    private fun goToExpenseFragment(groupId: Int) {
         val action = GroupsFragmentDirections.actionGroupsFragmentToExpensesFragment(groupId)
         view?.findNavController()?.navigate(action)
     }
@@ -182,21 +217,22 @@ class GroupsFragment : Fragment(){
         val filterList = filterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
         val filters = viewModel.remainingFilters
 
-        filterTitle?.text = "Filter By"
+        filterTitle?.text = getString(R.string.filter_by)
 
         //Adapter
-        val filterAdapter = FilterArrayAdapter<GroupFilter>(requireContext(), R.layout.dropdown, filters)
+        val filterAdapter =
+            FilterArrayAdapter<GroupFilter>(requireContext(), R.layout.dropdown, filters)
         filterList?.apply {
             Log.d(TAG, "openCategoryBottomSheet: list adapter set")
             adapter = filterAdapter
             onItemClickListener =
                 AdapterView.OnItemClickListener { parent, view, position, id ->
 
-                    when(filters[position]){
-                        GroupFilter.AMOUNT ->{
+                    when (filters[position]) {
+                        GroupFilter.AMOUNT -> {
                             openAmountFilterBottomSheet()
                         }
-                        GroupFilter.DATE-> {
+                        GroupFilter.DATE -> {
                             openDateFilterBottomSheet()
                         }
                     }
@@ -212,14 +248,17 @@ class GroupsFragment : Fragment(){
         val amountFilterBottomSheetDialog = BottomSheetDialog(requireContext())
         amountFilterBottomSheetDialog.setContentView(R.layout.bottom_sheet)
 
-        val amountFilterTitle = amountFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
-        val amountFilterList = amountFilterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+        val amountFilterTitle =
+            amountFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
+        val amountFilterList =
+            amountFilterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
         val amountFilters = AmountFilter.values().toList()
 
-        amountFilterTitle?.text = "Filter By Amount"
+        amountFilterTitle?.text = getString(R.string.filter_by_amount)
 
         //Adapter
-        val filterAdapter = FilterArrayAdapter<AmountFilter>(requireContext(), R.layout.dropdown, amountFilters)
+        val filterAdapter =
+            FilterArrayAdapter<AmountFilter>(requireContext(), R.layout.dropdown, amountFilters)
         amountFilterList?.apply {
             Log.d(TAG, "openCategoryBottomSheet: list adapter set")
             adapter = filterAdapter
@@ -239,14 +278,17 @@ class GroupsFragment : Fragment(){
         val dateFilterBottomSheetDialog = BottomSheetDialog(requireContext())
         dateFilterBottomSheetDialog.setContentView(R.layout.bottom_sheet)
 
-        val dateFilterTitle = dateFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
-        val dateFilterList = dateFilterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+        val dateFilterTitle =
+            dateFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
+        val dateFilterList =
+            dateFilterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
         val dateFilters = DateFilter.values().toList()
 
-        dateFilterTitle?.text = "Filter By Date"
+        dateFilterTitle?.text = getString(R.string.filter_by_date)
 
         //Adapter
-        val filterAdapter = FilterArrayAdapter<DateFilter>(requireContext(), R.layout.dropdown, dateFilters)
+        val filterAdapter =
+            FilterArrayAdapter<DateFilter>(requireContext(), R.layout.dropdown, dateFilters)
         dateFilterList?.apply {
             Log.d(TAG, "openCategoryBottomSheet: list adapter set")
             adapter = filterAdapter
@@ -263,19 +305,20 @@ class GroupsFragment : Fragment(){
         dateFilterBottomSheetDialog.show()
     }
 
-    private val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->  // SAM
-        //Toast.makeText(requireContext(), "$dayOfMonth/${month+1}/$year", Toast.LENGTH_SHORT).show()
-        // put logic
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.YEAR, year)
-            set(Calendar.MONTH, month)
-            set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        }
+    private val dateSetListener =
+        DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->  // SAM
+            //Toast.makeText(requireContext(), "$dayOfMonth/${month+1}/$year", Toast.LENGTH_SHORT).show()
+            // put logic
+            val calendar = Calendar.getInstance().apply {
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month)
+                set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            }
 
-        val date = calendar.time
+            val date = calendar.time
 
-        viewModel.applyDateFilter(date)
-        createDateFilterChip(viewModel.selectedDateFilter, date)
+            viewModel.applyDateFilter(date)
+            createDateFilterChip(viewModel.selectedDateFilter, date)
         }
 
     private fun openDatePicker() {
@@ -316,8 +359,10 @@ class GroupsFragment : Fragment(){
         val amountWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
+
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
+
             override fun afterTextChanged(s: Editable?) {
                 val amount = amountEditText.text.toString()
 
@@ -335,7 +380,7 @@ class GroupsFragment : Fragment(){
 
     }
 
-    private fun createDateFilterChip(dateFilter: DateFilter, date: Date){
+    private fun createDateFilterChip(dateFilter: DateFilter, date: Date) {
 //        val chipGroup = binding.filterChipGroup
 //        val chip = Chip(requireContext()).apply {
 //            text = "${dateFilter.name} ${formatDate(date)}"
@@ -353,7 +398,7 @@ class GroupsFragment : Fragment(){
         binding.dateFilterChip.visibility = View.VISIBLE
     }
 
-    private fun createAmountFilterChip(amountFilter: AmountFilter, amount: Float){
+    private fun createAmountFilterChip(amountFilter: AmountFilter, amount: Float) {
         binding.amountFilterChip.text = "${amountFilter.name} $amount"
         binding.amountFilterChip.visibility = View.VISIBLE
     }

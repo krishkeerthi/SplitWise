@@ -6,13 +6,11 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Group
-import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.data.repository.TransactionRepository
 import com.example.splitwise.model.MemberPaymentStats
 import com.example.splitwise.model.MemberPaymentStatsDetail
-import com.example.splitwise.ui.fragment.addexpense.AddExpenseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,14 +36,14 @@ class SplitWiseViewModel(context: Context) : ViewModel() {
 
     private val _groupName = MutableLiveData<String?>()
 
-    val groupName:  LiveData<String?>
+    val groupName: LiveData<String?>
         get() = _groupName
 
-    init{
+    init {
         fetchData()
     }
 
-    fun loadGroupName(){
+    fun loadGroupName() {
         viewModelScope.launch {
             _groupName.value = groupRepository.getGroup(groupId)?.groupName
         }
@@ -62,7 +60,7 @@ class SplitWiseViewModel(context: Context) : ViewModel() {
 
     fun getGroupMembersPaymentStats(groupId: Int? = null) {
         viewModelScope.launch {
-            val memberStats = if(groupId != null)
+            val memberStats = if (groupId != null)
                 transactionRepository.transactionStats(groupId)
             else
                 transactionRepository.transactionStats()

@@ -17,6 +17,7 @@ import com.example.splitwise.ui.fragment.adapter.ChooseMembersAdapter
 class ChooseMembersFragment : Fragment() {
     private lateinit var binding: FragmentChooseMembersBinding
     private val args: ChooseMembersFragmentArgs by navArgs()
+    private var contextualActionMode: ActionMode? = null
 
     private val viewModel: ChooseMembersViewModel by viewModels {
         ChooseMembersViewModelFactory(requireContext(), args.selectedMembers)
@@ -35,15 +36,15 @@ class ChooseMembersFragment : Fragment() {
 
         viewModel.fetchData()
 
+        requireActivity().title = "Choose Members"
+
         binding = FragmentChooseMembersBinding.bind(view)
 
         // Adapter
-        val chooseMembersAdapter = ChooseMembersAdapter{
-            member: Member, isChecked: Boolean ->
-            if(isChecked){
+        val chooseMembersAdapter = ChooseMembersAdapter { member: Member, isChecked: Boolean ->
+            if (isChecked) {
                 viewModel.addMemberToSelected(member)
-            }
-            else{
+            } else {
                 viewModel.removeMemberFromSelected(member)
             }
 
@@ -55,9 +56,9 @@ class ChooseMembersFragment : Fragment() {
             adapter = chooseMembersAdapter
         }
 
-        viewModel.members.observe(viewLifecycleOwner){ members ->
-            if(members != null){
-                chooseMembersAdapter.updateMembers(members)
+        viewModel.membersAndStreaks.observe(viewLifecycleOwner) { membersAndStreaks ->
+            if (membersAndStreaks != null) {
+                chooseMembersAdapter.updateMembersAndStreaks(membersAndStreaks)
             }
         }
 
@@ -66,42 +67,73 @@ class ChooseMembersFragment : Fragment() {
 
         // Live observer to update menu
 
-        viewModel.selectedMembersCount.observe(viewLifecycleOwner){
-            if(it <= 0)
-                setHasOptionsMenu(false)
-            else
-                setHasOptionsMenu(true)
+        viewModel.selectedMembersCount.observe(viewLifecycleOwner) {
+            if (it > 0) {
+                if (contextualActionMode == null)
+                    contextualActionMode = requireActivity().startActionMode(actionModeCallback)
+
+            } else {
+                contextualActionMode?.finish()
+                contextualActionMode = null
+            }
+
         }
     }
 
+    private val actionModeCallback = object : ActionMode.Callback {
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            mode?.apply {
+                menuInflater?.inflate(R.menu.choose_members_fragment_menu, menu)
+                title = "Choose Members"
+
+            }
+
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            return false // false when no updation performed
+        }
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            return when (item?.itemId) {
+                R.id.choose_member_fragment_done -> {
+                    mode?.finish()
+                    gotoCreateEditGroupFragment(viewModel.getSelectedMembers())
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            gotoChooseMemberFragment()
+        }
+
+    }
+
     @SuppressLint("RestrictedApi")
-    private fun hideOptionMenu(){
+    private fun hideOptionMenu() {
         (activity as AppCompatActivity).supportActionBar?.closeOptionsMenu()
     }
 
     @SuppressLint("RestrictedApi")
-    private fun showOptionMenu(){
+    private fun showOptionMenu() {
         (activity as AppCompatActivity).supportActionBar?.openOptionsMenu()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.choose_members_fragment_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+    private fun gotoCreateEditGroupFragment(selectedMembers: Array<Member>) {
+        val action =
+            ChooseMembersFragmentDirections.actionChooseMembersFragmentToCreateEditGroupFragment(
+                args.groupId, selectedMembers, args.groupName
+            )
+        view?.findNavController()?.navigate(action)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
-            R.id.choose_member_fragment_done -> {
-                gotoCreateEditGroupFragment(viewModel.getSelectedMembers())
-                true
-            }
-            else -> false
-        }
-    }
-
-    private fun gotoCreateEditGroupFragment(selectedMembers: Array<Member>){
-        val action = ChooseMembersFragmentDirections.actionChooseMembersFragmentToCreateEditGroupFragment(
-            args.groupId, selectedMembers, args.groupName)
+    private fun gotoChooseMemberFragment() {
+        val action = ChooseMembersFragmentDirections.actionChooseMembersFragmentSelf(
+            args.groupId, args.selectedMembers, args.groupName
+        )
         view?.findNavController()?.navigate(action)
     }
 }

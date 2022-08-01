@@ -5,17 +5,14 @@ import android.net.Uri
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Expense
-import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.MemberRepository
-import com.example.splitwise.ui.fragment.addexpense.AddExpenseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.exp
 
-class ExpenseDetailViewModel(context: Context, private val expenseId: Int): ViewModel(){
+class ExpenseDetailViewModel(context: Context, private val expenseId: Int) : ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val expenseRepository = ExpenseRepository(database)
@@ -47,7 +44,7 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int): View
             val expense = expenseRepository.getExpense(expenseId)
             _expense.value = expense
 
-            if(expense != null){
+            if (expense != null) {
                 val member = memberRepository.getMember(expense.payer)
                 _payer.value = member
             }
@@ -60,16 +57,16 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int): View
         }
     }
 
-    private suspend fun fetchBills(){
+    private suspend fun fetchBills() {
         _bills.value = expenseRepository.getExpenseBills(expenseId)
     }
 
     private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {
-        return withContext(Dispatchers.IO){
-            if(memberIds != null){
+        return withContext(Dispatchers.IO) {
+            if (memberIds != null) {
                 val members = mutableListOf<Member>()
 
-                for(id in memberIds) {
+                for (id in memberIds) {
                     val member = memberRepository.getMember(id)
                     member?.let {
                         members.add(it)
@@ -77,24 +74,23 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int): View
                 }
 
                 members
-            }
-            else
+            } else
                 null
         }
     }
 
-    fun addBills(uri: Uri){
+    fun addBills(uri: Uri) {
         viewModelScope.launch {
             expenseRepository.addExpenseBill(expenseId, uri)
             fetchBills()
         }
     }
 
-    fun getBills(): List<String>{
+    fun getBills(): List<String> {
         val billsString = mutableListOf<String>()
 
         bills.value?.let { uriList ->
-            for(uri in uriList)
+            for (uri in uriList)
                 billsString.add(uri.toString())
         }
 
@@ -103,9 +99,8 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int): View
 }
 
 
-
-class ExpenseDetailViewModelFactory(private val context: Context, private val expenseId: Int):
-    ViewModelProvider.Factory{
+class ExpenseDetailViewModelFactory(private val context: Context, private val expenseId: Int) :
+    ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

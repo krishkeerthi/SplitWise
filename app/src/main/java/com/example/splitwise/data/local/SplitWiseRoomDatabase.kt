@@ -11,7 +11,7 @@ import com.example.splitwise.util.*
 
 @Database(
     entities = [ ExpenseBill::class, ExpensePayee::class, Expense::class, GroupExpense::class, GroupMember::class,
-        Group::class, Member::class, Transaction::class] ,
+        Group::class, Member::class, Transaction::class, MemberStreak::class] ,
     version = 1
 )
 @TypeConverters(
@@ -27,6 +27,7 @@ abstract class SplitWiseRoomDatabase: RoomDatabase() {
     abstract fun groupDao(): GroupDao
     abstract fun transactionDao(): TransactionDao
     abstract fun memberDao(): MemberDao
+    abstract fun memberStreakDao(): MemberStreakDao
 
     companion object{
         @Volatile
@@ -45,7 +46,8 @@ abstract class SplitWiseRoomDatabase: RoomDatabase() {
                 context.applicationContext,
                 SplitWiseRoomDatabase::class.java,
                 "split_wise_database"
-            ).build()
+            ).createFromAsset("database/splitwise_dummy.db")
+                .build()
         }
     }
 }

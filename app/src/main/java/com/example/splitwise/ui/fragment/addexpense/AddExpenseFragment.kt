@@ -30,7 +30,7 @@ class AddExpenseFragment : Fragment() {
     private val args: AddExpenseFragmentArgs by navArgs()
 
     private val viewModel: AddExpenseViewModel by viewModels {
-        AddExpenseViewModelFactory(requireContext(),args.groupId)
+        AddExpenseViewModelFactory(requireContext(), args.groupId)
     }
 
     override fun onCreateView(
@@ -47,8 +47,8 @@ class AddExpenseFragment : Fragment() {
         binding = FragmentAddExpenseBinding.bind(view)
 
         // Rv
-        val membersCheckboxAdapter = MembersCheckboxAdapter{ memberId: Int, isChecked: Boolean ->
-            if(isChecked)
+        val membersCheckboxAdapter = MembersCheckboxAdapter { memberId: Int, isChecked: Boolean ->
+            if (isChecked)
                 viewModel.memberIds.add(memberId)
             else
                 viewModel.memberIds.remove(memberId)
@@ -60,9 +60,9 @@ class AddExpenseFragment : Fragment() {
         }
 
         // Livedata
-        viewModel.members.observe(viewLifecycleOwner){ members ->
+        viewModel.members.observe(viewLifecycleOwner) { members ->
 
-            if(members != null){
+            if (members != null) {
                 // Updating member check box adapter
                 membersCheckboxAdapter.updateMembers(members)
 
@@ -112,7 +112,7 @@ class AddExpenseFragment : Fragment() {
 //            }
 //        }
 
-            // Choose category
+        // Choose category
         // Dropdown
         binding.chooseCategoryCard.setOnClickListener {
             openCategoryBottomSheet()
@@ -121,22 +121,28 @@ class AddExpenseFragment : Fragment() {
 
         // Button click
         binding.createExpenseFab.setOnClickListener {
-            
-            if(binding.expenseNameText.text?.trim().toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
-                && viewModel.category != null && viewModel.payerId != null){
+
+            if (binding.expenseNameText.text?.trim()
+                    .toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
+                && viewModel.category != null && viewModel.payerId != null
+            ) {
                 viewModel.createExpense(
                     binding.expenseNameText.text.toString(),
                     viewModel.category!!,
                     viewModel.payerId!!,
                     binding.expenseAmountText.text.toString().toFloat(),
-                    viewModel.memberIds.toList()){
+                    viewModel.memberIds.toList()
+                ) {
                     gotoExpenseFragment()
                 }
 
                 Toast.makeText(requireContext(), "Expense Added", Toast.LENGTH_SHORT).show()
-            }
-            else
-                Toast.makeText(requireContext(), "Enter all fields to add expense", Toast.LENGTH_SHORT).show()
+            } else
+                Toast.makeText(
+                    requireContext(),
+                    "Enter all fields to add expense",
+                    Toast.LENGTH_SHORT
+                ).show()
         }
     }
 
@@ -144,11 +150,12 @@ class AddExpenseFragment : Fragment() {
         val categoryBottomSheetDialog = BottomSheetDialog(requireContext())
         categoryBottomSheetDialog.setContentView(R.layout.bottom_sheet)
 
-        val categoryTitle = categoryBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
+        val categoryTitle =
+            categoryBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
         val categoryList = categoryBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
         val categories = Category.values().toList()
 
-        categoryTitle?.text = "Select Category"
+        categoryTitle?.text = getString(R.string.select_category)
 
         //Adapter
         val categoryAdapter = CategoryArrayAdapter(requireContext(), R.layout.dropdown, categories)
@@ -173,7 +180,7 @@ class AddExpenseFragment : Fragment() {
         val payerTitle = payerBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
         val payerList = payerBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
 
-        payerTitle?.text = "Select Payer"
+        payerTitle?.text = getString(R.string.select_payer)
         //Adapter
         val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.dropdown, payers)
         payerList?.apply {
@@ -190,8 +197,9 @@ class AddExpenseFragment : Fragment() {
         payerBottomSheetDialog.show()
     }
 
-    private fun gotoExpenseFragment(){
-        val action = AddExpenseFragmentDirections.actionAddExpenseFragmentToExpensesFragment(args.groupId)
+    private fun gotoExpenseFragment() {
+        val action =
+            AddExpenseFragmentDirections.actionAddExpenseFragmentToExpensesFragment(args.groupId)
         view?.findNavController()?.navigate(action)
 
     }

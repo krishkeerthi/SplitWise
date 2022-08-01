@@ -59,5 +59,7 @@ interface GroupDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(group: Group): Long
 
+    @Query("DELETE FROM `group` WHERE group_id = :groupId")
+    suspend fun deleteGroup(groupId: Int)
 
 }
