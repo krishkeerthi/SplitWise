@@ -79,6 +79,9 @@
             app:destination="@id/groupsFragment"
             app:popUpTo="@id/groupsFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_expensesFragment_to_createEditGroupFragment"
+            app:destination="@id/createEditGroupFragment" />
     </fragment>
     <fragment
         android:id="@+id/addExpenseFragment"
@@ -174,9 +177,6 @@
         android:name="com.example.splitwise.ui.fragment.searchgroup.SearchGroupFragment"
         android:label="fragment_search_group"
         tools:layout="@layout/fragment_search_group" >
-        <action
-            android:id="@+id/action_searchGroupFragment_to_createEditGroupFragment"
-            app:destination="@id/createEditGroupFragment" />
         <action
             android:id="@+id/action_searchGroupFragment_to_expensesFragment"
             app:destination="@id/expensesFragment" />

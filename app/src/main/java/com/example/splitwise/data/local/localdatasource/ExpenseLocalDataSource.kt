@@ -69,7 +69,7 @@ class ExpenseLocalDataSource(
         return expenseDao.getExpense(expenseId)
     }
 
-    override suspend fun getExpensesWithConstraint(groupId: Int): List<Expense>? {
-        TODO("Not yet implemented")
+    override suspend fun getExpensesByCategory(groupId: Int, category: Int): List<Expense>? {
+        return expenseDao.getExpensesByCategory(groupId, category)
     }
 }

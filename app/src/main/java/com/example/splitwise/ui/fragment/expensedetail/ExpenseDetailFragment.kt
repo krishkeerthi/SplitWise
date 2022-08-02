@@ -31,6 +31,7 @@ import com.example.splitwise.ui.fragment.adapter.BillsAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersAdapter
 import com.example.splitwise.util.Category
 import com.example.splitwise.util.roundOff
+import com.example.splitwise.util.titleCase
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -119,10 +120,9 @@ class ExpenseDetailFragment : Fragment() {
         // Expense
         viewModel.expense.observe(viewLifecycleOwner) { expense ->
             expense?.let {
-                binding.expenseNameTextView.text = it.expenseName
-                binding.totalAmountTextView.text = "₹" + it.totalAmount.roundOff()
-                binding.splitAmountTextView.text = "₹" + it.splitAmount.roundOff()
-                binding.expenseCategoryTextView.text = Category.values()[it.category].name
+                requireActivity().title = it.expenseName
+                binding.expenseTotalTextView.text = "₹" + it.totalAmount.roundOff()
+                binding.expenseCategoryExpense.text = Category.values()[it.category].name.lowercase().titleCase()
             }
         }
 

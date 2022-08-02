@@ -3,9 +3,7 @@ package com.example.splitwise.ui.fragment.addexpense
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
@@ -118,31 +116,54 @@ class AddExpenseFragment : Fragment() {
             openCategoryBottomSheet()
         }
 
+//        binding.chooseCategoryText.setOnClickListener {
+//            openCategoryBottomSheet()
+//        }
 
         // Button click
-        binding.createExpenseFab.setOnClickListener {
 
-            if (binding.expenseNameText.text?.trim()
-                    .toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
-                && viewModel.category != null && viewModel.payerId != null
+        // Menu
+        setHasOptionsMenu(true)
+    }
+
+    private fun createExpense() {
+        if (binding.expenseNameText.text?.trim()
+                .toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
+            && viewModel.category != null && viewModel.payerId != null
+        ) {
+            viewModel.createExpense(
+                binding.expenseNameText.text.toString(),
+                viewModel.category!!,
+                viewModel.payerId!!,
+                binding.expenseAmountText.text.toString().toFloat(),
+                viewModel.memberIds.toList()
             ) {
-                viewModel.createExpense(
-                    binding.expenseNameText.text.toString(),
-                    viewModel.category!!,
-                    viewModel.payerId!!,
-                    binding.expenseAmountText.text.toString().toFloat(),
-                    viewModel.memberIds.toList()
-                ) {
-                    gotoExpenseFragment()
-                }
+                gotoExpenseFragment()
+            }
 
-                Toast.makeText(requireContext(), "Expense Added", Toast.LENGTH_SHORT).show()
-            } else
-                Toast.makeText(
-                    requireContext(),
-                    "Enter all fields to add expense",
-                    Toast.LENGTH_SHORT
-                ).show()
+            Toast.makeText(requireContext(), "Expense Added", Toast.LENGTH_SHORT).show()
+        } else
+            Toast.makeText(
+                requireContext(),
+                "Enter all fields to add expense",
+                Toast.LENGTH_SHORT
+            ).show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.add_expense_fragment_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.add_expense ->{
+                createExpense()
+                true
+            }
+            else ->{
+                false
+            }
         }
     }
 

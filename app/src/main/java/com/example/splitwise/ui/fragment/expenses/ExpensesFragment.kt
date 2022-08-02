@@ -7,6 +7,7 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,8 +18,11 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentExpensesBinding
 import com.example.splitwise.ui.fragment.adapter.ExpensesAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersProfileAdapter
+import com.example.splitwise.ui.fragment.groups.GroupsFragmentDirections
+import com.example.splitwise.util.Category
 import com.example.splitwise.util.formatDate
 import com.example.splitwise.util.roundOff
+import com.google.android.material.chip.Chip
 import kotlin.properties.Delegates
 
 class ExpensesFragment : Fragment() {
@@ -50,7 +54,7 @@ class ExpensesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         clicked = false
 
-        viewModel.fetchData()
+       // viewModel.fetchData()
 
        // requireActivity().title = "Group Detail"
 
@@ -114,7 +118,7 @@ class ExpensesFragment : Fragment() {
         }
 
         binding.addMemberButton.setOnClickListener{
-
+            goToCreateEditGroupFragment(args.groupId)
         }
 
 
@@ -132,6 +136,43 @@ class ExpensesFragment : Fragment() {
         // Menu
         if (args.groupId == 12345 || args.groupId == 54321)
             setHasOptionsMenu(true)
+
+        // Chip selection
+        binding.categoryChipGroup.forEach { child ->
+            (child as Chip).setOnCheckedChangeListener { buttonView, isChecked ->
+                if(isChecked){
+                    val category = when(buttonView.text){
+                        "Food" -> Category.FOOD
+                        "Travel" -> Category.TRAVEL
+                        "Tickets" -> Category.TICKETS
+                        "Rent" -> Category.RENT
+                        "Fees" -> Category.FEES
+                        "Repair" -> Category.REPAIRS
+                        "Entertainment" -> Category.ENTERTAINMENT
+                        "Essentials" -> Category.ESSENTIALS
+                        else -> Category.OTHERS
+                    }
+
+                    Log.d(TAG, "onViewCreated: checked ${buttonView.text}")
+                    viewModel.filterByCategory(category)
+                }
+                else {
+                    Log.d(TAG, "onViewCreated: unchecked ${buttonView.text}")
+                    viewModel.filterByCategory(null)
+                }
+            }
+
+        }
+
+        // Pending work
+        viewModel.running.observe(viewLifecycleOwner){ running ->
+            if(running == false && viewModel.pending){
+                viewModel.pending = false
+                viewModel.filterByCategory(viewModel.pendingCategory)
+                viewModel.pendingCategory = null
+            }
+
+        }
     }
 
     private fun onAddButtonClicked() {
@@ -199,4 +240,12 @@ class ExpensesFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
+    private fun goToCreateEditGroupFragment(groupId: Int = -1) {
+        val action = ExpensesFragmentDirections.actionExpensesFragmentToCreateEditGroupFragment(
+            groupId,
+            null,
+            null
+        )
+        view?.findNavController()?.navigate(action)
+    }
 }

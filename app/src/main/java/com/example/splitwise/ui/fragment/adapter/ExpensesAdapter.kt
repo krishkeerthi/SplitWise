@@ -44,7 +44,7 @@ class ExpensesViewHolder(val binding: ExpenseCard1Binding) : RecyclerView.ViewHo
 
     fun bind(expenseMember: ExpenseMember) {
         binding.expenseNameTextView.text = expenseMember.expenseName
-        binding.totalExpenseTextView.text = "- ₹" + expenseMember.totalAmount.roundOff()
+        binding.totalExpenseTextView.text = "₹" + expenseMember.totalAmount.roundOff()
         binding.expensePayerTextView.text = expenseMember.payerInfo.name
     }
 

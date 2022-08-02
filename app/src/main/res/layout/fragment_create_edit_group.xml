@@ -5,18 +5,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/group_image_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/group"
+        />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_group_name_text_field"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Enter Group Name"
-        app:startIconDrawable="@drawable/ic_baseline_edit_24"
+        android:hint="Group Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/group_image_view">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/group_name_text"
@@ -24,59 +34,37 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/members_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Members"
+        app:layout_constraintBottom_toBottomOf="@+id/choose_member_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/choose_member_button" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/group_members_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="300dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/outlined_group_name_text_field"
-        tools:itemCount="6"
-        tools:listitem="@layout/member_card" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/constraint_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:text="* Add atleast 2 members"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_member_button" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/add_member_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Add member"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/group_members_recycler_view" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/choose_members_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Choose members"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/add_member_button"
-        app:layout_constraintTop_toBottomOf="@id/group_members_recycler_view" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/create_group_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="create"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/members_text_view"
+        tools:listitem="@layout/group_member_card" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/choose_member_button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Choose Members"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/outlined_group_name_text_field" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

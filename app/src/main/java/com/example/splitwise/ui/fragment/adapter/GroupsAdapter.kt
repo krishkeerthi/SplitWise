@@ -10,7 +10,6 @@ import com.example.splitwise.util.formatDate
 import com.example.splitwise.util.roundOff
 
 class GroupsAdapter(
-    val onAddMemberClicked: (Int) -> Unit,
     val onExpenseClicked: (Int) -> Unit
 ) : RecyclerView.Adapter<GroupsViewHolder>() {
     private var groups = listOf<Group>()
@@ -23,12 +22,6 @@ class GroupsAdapter(
             itemView.setOnClickListener {
                 onExpenseClicked(groups[adapterPosition].groupId)
             }
-////            binding.addExpenseTextView.setOnClickListener {
-////                onExpenseClicked(groups[adapterPosition].groupId)
-////            }
-//            binding.addMemberLayout.setOnClickListener {
-//                onAddMemberClicked(groups[adapterPosition].groupId)
-//            }
         }
     }
 

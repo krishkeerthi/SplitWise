@@ -12,6 +12,8 @@ import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.model.ExpenseMember
+import com.example.splitwise.util.Category
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,6 +32,13 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
     private val _groupMembers = MutableLiveData<List<Member>?>()
 
+    var pending: Boolean = false
+    var pendingCategory: Category? = null
+
+    private val _running = MutableLiveData<Boolean>()
+    val running: LiveData<Boolean>
+    get() = _running
+
     val groupMembers: LiveData<List<Member>?>
         get() = _groupMembers
 
@@ -38,26 +47,16 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
     val expenseMembers: LiveData<List<ExpenseMember>?>
         get() = _expenseMembers
 
+    init {
+        fetchData()
+        _running.value = false
+    }
     fun fetchData() {
         Log.d(TAG, "expenseviewmodel: created")
         viewModelScope.launch {
             _group.value = groupRepository.getGroup(groupId)
 
-            val expenses = expenseRepository.getExpenses(groupId)
-
-            if (expenses != null) {
-                Log.d(TAG, "viewmodel: group expenses $expenses")
-                val expenseMembers = mutableListOf<ExpenseMember>()
-
-                for (expense in expenses) {
-                    val member = memberRepository.getMember(expense.payer)
-
-                    if (member != null)
-                        expenseMembers.add(toExpenseMember(expense, member))
-                }
-
-                _expenseMembers.value = expenseMembers
-            }
+            setExpenseMembers()
 
             val memberIds = groupRepository.getGroupMembers(groupId)
             Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
@@ -99,11 +98,58 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
         }
     }
 
+    private suspend fun setExpenseMembers(category: Category? = null){
+        withContext(Dispatchers.Main){
+
+            val expenses = category?.let { expenseRepository.getExpensesByCategory(groupId, it.ordinal) }
+                ?: expenseRepository.getExpenses(groupId)
+
+            if (expenses != null) {
+                Log.d(TAG, "viewmodel: group expenses $expenses")
+                val expenseMembers = mutableListOf<ExpenseMember>()
+
+                for (expense in expenses) {
+                    val member = memberRepository.getMember(expense.payer)
+
+                    if (member != null)
+                        expenseMembers.add(toExpenseMember(expense, member))
+                }
+
+               _expenseMembers.value = expenseMembers
+            }
+        }
+    }
+
     fun deleteGroup(groupId: Int) {
         viewModelScope.launch {
             groupRepository.deleteGroup(groupId)
         }
     }
+
+    fun filterByCategory(category: Category?) {
+        if(_running.value == false)
+        viewModelScope.launch {
+            _running.value = true
+            setExpenseMembers(category)
+            _running.value = false
+
+        }
+        else {
+            pending = true
+            pendingCategory = category
+        }
+
+    }
+
+//    fun clearCategoryFilter() {
+//        viewModelScope.launch {
+//            _pending.value = false
+//            Log.d(TAG, "clearCategoryFilter: started")
+//            setExpenseMembers()
+//            Log.d(TAG, "clearCategoryFilter: ended")
+//            _pending.value = true
+//        }
+//    }
 
 }
 

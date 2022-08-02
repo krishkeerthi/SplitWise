@@ -42,14 +42,9 @@ class SearchGroupFragment : Fragment() {
         binding = FragmentSearchGroupBinding.bind(view)
 
         // Rv
-        val groupsAdapter = GroupsAdapter(
-            { groupId: Int ->
-                goToCreateEditGroupFragment(groupId)
-            },
-            { groupId: Int ->
-                goToExpenseFragment(groupId)
-            }
-        )
+        val groupsAdapter = GroupsAdapter { groupId: Int ->
+            goToExpenseFragment(groupId)
+        }
 
         binding.searchGroupsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -104,16 +99,6 @@ class SearchGroupFragment : Fragment() {
 //            }
 //
 //        })
-    }
-
-    private fun goToCreateEditGroupFragment(groupId: Int = -1) {
-        val action =
-            SearchGroupFragmentDirections.actionSearchGroupFragmentToCreateEditGroupFragment(
-                groupId,
-                null,
-                null
-            )
-        view?.findNavController()?.navigate(action)
     }
 
     private fun goToExpenseFragment(groupId: Int) {

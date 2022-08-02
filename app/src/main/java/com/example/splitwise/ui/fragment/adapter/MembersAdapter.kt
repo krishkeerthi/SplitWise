@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Member
+import com.example.splitwise.databinding.GroupMemberCardBinding
 import com.example.splitwise.databinding.MemberCardBinding
 
 class MembersAdapter : RecyclerView.Adapter<MembersViewHolder>() {
@@ -11,7 +12,7 @@ class MembersAdapter : RecyclerView.Adapter<MembersViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MembersViewHolder {
         val view = LayoutInflater.from(parent.context)
-        val binding = MemberCardBinding.inflate(view, parent, false)
+        val binding = GroupMemberCardBinding.inflate(view, parent, false)
 
         return MembersViewHolder(binding)
     }
@@ -32,10 +33,11 @@ class MembersAdapter : RecyclerView.Adapter<MembersViewHolder>() {
     }
 }
 
-class MembersViewHolder(val binding: MemberCardBinding) : RecyclerView.ViewHolder(binding.root) {
+class MembersViewHolder(val binding: GroupMemberCardBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(member: Member) {
         binding.memberNameTextView.text = member.name
+        binding.memberPhoneTextView.text = member.phone.toString()
     }
 
 }

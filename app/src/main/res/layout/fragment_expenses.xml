@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/group_expense_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/group_total_expense" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/group_total_expense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,18 +28,8 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/group_name_text_view" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
-        android:id="@+id/group_name_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/expenses_list_text_view"
@@ -52,15 +42,101 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/group_expense_text_view" />
 
+    <HorizontalScrollView
+        android:id="@+id/horizontal_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/expenses_list_text_view">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/category_chip_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_food"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:text="Food"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_travel"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:text="Travel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_tickets"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:text="Tickets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_rent"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:text="Rent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_fees"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:text="Fees"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_repair"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:text="Repair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_entertainment"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:text="Entertainment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_essentials"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:text="Essentials"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_others"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:text="Others"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/expenses_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expenses_list_text_view"
-        tools:listitem="@layout/expense_card_1"/>
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_scroll_view"
+        tools:listitem="@layout/expense_card_1" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_fab_button"

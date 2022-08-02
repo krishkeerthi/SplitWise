@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -68,11 +66,6 @@ class CreateEditGroupFragment : Fragment() {
                 Log.d(TAG, "onViewCreated: addMember observed $members")
                 membersAdapter.updateMembers(members)
 
-                binding.constraintTextView.visibility = if (members.size > 1)
-                    View.GONE
-                else
-                    View.VISIBLE
-
             }
         }
 
@@ -88,18 +81,18 @@ class CreateEditGroupFragment : Fragment() {
         if (args.groupName != null) {
             binding.groupNameText.setText(args.groupName)
 
-            if (args.groupName.toString().trim() != "")
-                binding.createGroupButton.visibility = View.VISIBLE
+//            if (args.groupName.toString().trim() != "")
+//                binding.createGroupButton.visibility = View.VISIBLE
         }
 
         // Button click
-        binding.addMemberButton.setOnClickListener {
-            AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
-            // open dialog to add new member.
-            // Choosing existing member has to be implemented
-        }
+//        binding.addMemberButton.setOnClickListener {
+//            AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
+//            // open dialog to add new member.
+//            // Choosing existing member has to be implemented
+//        }
 
-        binding.chooseMembersButton.setOnClickListener {
+        binding.chooseMemberButton.setOnClickListener {
             gotoChooseMembersFragment()
         }
 
@@ -111,42 +104,9 @@ class CreateEditGroupFragment : Fragment() {
             binding.groupNameText.isFocusable = false
         }
 
-        binding.createGroupButton.setOnClickListener {
-            if (args.groupId == -1) {
-
-                if (viewModel.getMembersSize() > 1) {
-                    val memberId = requireActivity().getSharedPreferences(
-                        MainActivity.KEY,
-                        Context.MODE_PRIVATE
-                    )
-                        .getInt("MEMBERID", -1)
-
-                    viewModel.createGroup(
-                        binding.groupNameText.text.toString(),
-                        memberId
-                    ) {
-                        gotoGroupsFragment()
-                    }
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Group created successfully",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    // gotoGroupsFragment()
-                    // calling here goes to groups fragment without completing the group creation process
-                } else
-                    Toast.makeText(
-                        requireContext(),
-                        "Add atleast 2 members to create group",
-                        Toast.LENGTH_SHORT
-                    ).show()
-            } else {
-                Toast.makeText(requireContext(), "Group already created", Toast.LENGTH_SHORT).show()
-            }
-
-        }
+//        binding.createGroupButton.setOnClickListener {
+//            createGroup()
+//        }
 
         val nameWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -163,20 +123,85 @@ class CreateEditGroupFragment : Fragment() {
                     binding.outlinedGroupNameTextField.error = "Enter valid name"
                 }
 
-                binding.createGroupButton.visibility =
-                    if (nameCheck(
-                            binding.groupNameText.text?.trim().toString()
-                        ) && args.groupId == -1
-                    )
-                        View.VISIBLE
-                    else
-                        View.GONE
+//                binding.createGroupButton.visibility =
+//                    if (nameCheck(
+//                            binding.groupNameText.text?.trim().toString()
+//                        ) && args.groupId == -1
+//                    )
+//                        View.VISIBLE
+//                    else
+//                        View.GONE
             }
 
         }
 
         binding.groupNameText.addTextChangedListener(nameWatcher)
 
+        // Menu
+
+        setHasOptionsMenu(true)
+
+    }
+
+    private fun createGroup() {
+        if (nameCheck(binding.groupNameText.text?.trim().toString())) {
+
+            if (viewModel.getMembersSize() > 1) {
+                val memberId = requireActivity().getSharedPreferences(
+                    MainActivity.KEY,
+                    Context.MODE_PRIVATE
+                )
+                    .getInt("MEMBERID", -1)
+
+                viewModel.createGroup(
+                    binding.groupNameText.text.toString(),
+                    memberId
+                ) {
+                    gotoGroupsFragment()
+                }
+
+                Toast.makeText(
+                    requireContext(),
+                    "Group created successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                // gotoGroupsFragment()
+                // calling here goes to groups fragment without completing the group creation process
+            } else
+                Toast.makeText(
+                    requireContext(),
+                    "Add atleast 2 members to create group",
+                    Toast.LENGTH_SHORT
+                ).show()
+        } else {
+            Toast.makeText(requireContext(), "Group Name Missing", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.create_edit_fragment_menu, menu)
+
+        menu.findItem(R.id.create_group).isVisible = args.groupId == -1
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.add_member -> {
+                AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
+                true
+            }
+            R.id.create_group ->{
+                createGroup()
+                true
+            }
+            else ->{
+                false
+            }
+        }
     }
 
     private fun gotoChooseMembersFragment() {

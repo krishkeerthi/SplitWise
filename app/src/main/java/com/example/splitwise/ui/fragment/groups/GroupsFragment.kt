@@ -57,21 +57,20 @@ class GroupsFragment : Fragment() {
 
 
         // Rv
-        val groupsAdapter = GroupsAdapter(
-            { groupId: Int ->
-                if (groupId == 12345 || groupId == 54321)
-                    Toast.makeText(
-                        requireContext(),
-                        "This is dummy group. Create actual group to add members",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                else
-                    goToCreateEditGroupFragment(groupId)
-            },
-            { groupId: Int ->
-                goToExpenseFragment(groupId)
-            }
-        )
+        val groupsAdapter = GroupsAdapter{ groupId: Int ->
+            goToExpenseFragment(groupId)
+        }
+//            { groupId: Int ->
+//                if (groupId == 12345 || groupId == 54321)
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "This is dummy group. Create actual group to add members",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                else
+//                    goToCreateEditGroupFragment(groupId)
+//            },
+
 
         binding.groupsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -193,16 +192,6 @@ class GroupsFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
-    private fun goToCreateEditGroupFragment(groupId: Int = -1) {
-        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(
-            groupId,
-            null,
-            null
-        )
-        view?.findNavController()?.navigate(action)
-    }
-
-
     private fun goToExpenseFragment(groupId: Int) {
         val action = GroupsFragmentDirections.actionGroupsFragmentToExpensesFragment(groupId)
         view?.findNavController()?.navigate(action)
@@ -242,6 +231,15 @@ class GroupsFragment : Fragment() {
         }
 
         filterBottomSheetDialog.show()
+    }
+
+    private fun goToCreateEditGroupFragment(groupId: Int = -1) {
+        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(
+            groupId,
+            null,
+            null
+        )
+        view?.findNavController()?.navigate(action)
     }
 
     private fun openAmountFilterBottomSheet() {
