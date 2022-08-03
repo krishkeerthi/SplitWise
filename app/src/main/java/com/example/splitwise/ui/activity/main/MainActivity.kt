@@ -15,6 +15,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityMainBinding
 import com.example.splitwise.ui.activity.register.RegisterActivity
@@ -57,23 +59,26 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 //        navController.setGraph(R.navigation.navigation_graph)
 //
 //        binding.bottomNavigation.setupWithNavController(navController)
-//
+////
 //        appBarConfiguration = AppBarConfiguration(
 //            setOf(
 //                R.id.groupsFragment,
 //                R.id.splitWiseFragment,
 //                R.id.groupsOverviewFragment
 //            )
+//        )
         //topLevelDestinationIds - The set of destinations by id considered at the top level
         // of your information hierarchy. The Up button will not be displayed when on
         // these destinations.
 //        )
 
 
-//        setupActionBarWithNavController(navController, appBarConfiguration)
+        //setupActionBarWithNavController(navController, appBarConfiguration)
+        // this give up navigation and fragment names for title, explicit change not applying
 
         setSupportActionBar(binding.toolbar)
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
+
 
         navController.addOnDestinationChangedListener(this)
 

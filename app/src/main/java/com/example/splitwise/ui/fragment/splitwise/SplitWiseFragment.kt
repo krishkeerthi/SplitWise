@@ -40,7 +40,7 @@ class SplitWiseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //viewModel.fetchData()
+        viewModel.fetchData()
 
         binding = FragmentSplitWiseBinding.bind(view)
 

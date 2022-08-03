@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
@@ -44,6 +45,7 @@ class AddExpenseFragment : Fragment() {
 
         binding = FragmentAddExpenseBinding.bind(view)
 
+        requireActivity().title = "Add Expense"
         // Rv
         val membersCheckboxAdapter = MembersCheckboxAdapter { memberId: Int, isChecked: Boolean ->
             if (isChecked)
@@ -53,7 +55,7 @@ class AddExpenseFragment : Fragment() {
         }
 
         binding.membersRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = GridLayoutManager(requireContext(), 3)
             adapter = membersCheckboxAdapter
         }
 

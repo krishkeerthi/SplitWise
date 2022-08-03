@@ -20,24 +20,35 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/group_image_view"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/group"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/choose_group_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:hint="Choose Group"
+                android:layout_marginStart="8dp"
                 android:gravity="center_vertical"
-                app:layout_constraintStart_toStartOf="parent"
+                android:hint="Choose Group"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintStart_toEndOf="@+id/group_image_view"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/choose_group_drop_down"
-                android:layout_width="45dp"
-                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/ic_baseline_arrow_drop_down_24"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -52,38 +63,6 @@
         android:text="All Groups"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/choose_group_card" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/owe_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="Owed"
-        android:textAlignment="textEnd"
-        app:layout_constraintBottom_toBottomOf="@+id/all_groups_checkbox"
-        app:layout_constraintEnd_toStartOf="@id/vertical_view"
-        app:layout_constraintTop_toTopOf="@+id/all_groups_checkbox" />
-
-    <View
-        android:id="@+id/vertical_view"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/view_color"
-        app:layout_constraintTop_toTopOf="@id/all_groups_checkbox"
-        app:layout_constraintBottom_toBottomOf="@+id/all_groups_checkbox"
-        app:layout_constraintEnd_toStartOf="@id/lend_text_view" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/lend_text_view"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:text="Lend"
-        android:textAlignment="textEnd"
-        app:layout_constraintBottom_toBottomOf="@+id/all_groups_checkbox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/all_groups_checkbox" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/members_recycler_view"

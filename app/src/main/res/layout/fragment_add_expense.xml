@@ -105,10 +105,11 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/choose_category_drop_down"
-                android:layout_width="45dp"
-                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/ic_baseline_arrow_drop_down_24"
-                app:layout_constraintBottom_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -145,10 +146,11 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/choose_payer_drop_down"
-                android:layout_width="45dp"
-                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/ic_baseline_arrow_drop_down_24"
-                app:layout_constraintBottom_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -173,11 +175,13 @@
         android:id="@+id/members_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/members_text_view"
-        tools:listitem="@layout/member_checkbox_card" />
+        tools:listitem="@layout/member_select" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,20 +4,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Member
+import com.example.splitwise.databinding.ExpenseMemberCardBinding
 import com.example.splitwise.databinding.GroupMemberCardBinding
-import com.example.splitwise.databinding.MemberCardBinding
+import com.example.splitwise.util.roundOff
 
-class MembersAdapter : RecyclerView.Adapter<MembersViewHolder>() {
+class GroupMembersAdapter: RecyclerView.Adapter<GroupMembersViewHolder>() {
     private var members = listOf<Member>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MembersViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupMembersViewHolder {
         val view = LayoutInflater.from(parent.context)
         val binding = GroupMemberCardBinding.inflate(view, parent, false)
 
-        return MembersViewHolder(binding)
+        return GroupMembersViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MembersViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: GroupMembersViewHolder, position: Int) {
         val member = members[position]
 
         holder.bind(member)
@@ -31,9 +32,10 @@ class MembersAdapter : RecyclerView.Adapter<MembersViewHolder>() {
         this.members = members
         notifyDataSetChanged()
     }
+
 }
 
-class MembersViewHolder(val binding: GroupMemberCardBinding) : RecyclerView.ViewHolder(binding.root) {
+class GroupMembersViewHolder(val binding: GroupMemberCardBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(member: Member) {
         binding.memberNameTextView.text = member.name

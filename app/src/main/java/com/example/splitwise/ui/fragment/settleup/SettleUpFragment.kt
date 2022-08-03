@@ -43,35 +43,32 @@ class SettleUpFragment : Fragment() {
 
         binding = FragmentSettleUpBinding.bind(view)
 
-        requireActivity().title = "Settle Up"
+        if(args.groupId == -1)
+        requireActivity().title = "All Groups"
 
         // Group
         viewModel.group.observe(viewLifecycleOwner) { group ->
-
-            binding.groupNameTextView.text = group?.groupName ?: "All Group"
+            //binding.groupNameTextView.text = group?.groupName //?: "All Group"
+            requireActivity().title = group?.groupName
 
         }
 
         // Payer
         viewModel.payer.observe(viewLifecycleOwner) { payer ->
             payer?.let {
-                binding.payerNameText.setText(it.name)
+                binding.fromMemberNameTextView.text = it.name
+                binding.fromMemberPhoneTextView.text = it.phone.toString()
             }
         }
 
         // Payees
         viewModel.payees.observe(viewLifecycleOwner) { payees ->
             if (payees != null) {
-
-                binding.choosePayeeCard.setOnClickListener {
+                binding.choosePayeeButton.setOnClickListener {
                     openPayeesBottomSheet(payees)
                 }
             }
         }
-
-        // make payer unchangeable
-        binding.payerNameText.isFocusable = false
-        binding.payerNameText.isClickable = false
 
         // Amount
         viewModel.amount.observe(viewLifecycleOwner) { amount ->
@@ -81,14 +78,9 @@ class SettleUpFragment : Fragment() {
         binding.selectAllPayeesCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 viewModel.getAmount(viewModel.payerId, groupId = viewModel.groupId)
-                binding.choosePayeeCard.isFocusable = false
-                binding.choosePayeeCard.isClickable = false
             } else {
                 if (viewModel.payeeId != null)
                     viewModel.getAmount(viewModel.payerId, viewModel.payeeId, viewModel.groupId)
-
-                binding.choosePayeeCard.isFocusable = true
-                binding.choosePayeeCard.isClickable = true
             }
         }
 
@@ -132,12 +124,18 @@ class SettleUpFragment : Fragment() {
                 AdapterView.OnItemClickListener { parent, view, position, id ->
                     viewModel.payeeId = payees[position].memberId
 
+                    // Make payee visible
+                    binding.toMemberLayout.visibility = View.VISIBLE
+                    binding.totalTextView.visibility = View.VISIBLE
+
                     viewModel.getAmount(
                         viewModel.payerId,
                         viewModel.payeeId,
                         viewModel.groupId
                     )
-                    binding.choosePayeeText.text = payees[position].name
+                    binding.toMemberNameTextView.text = payees[position].name
+                    binding.toMemberPhoneTextView.text = payees[position].phone.toString()
+
                     payeeBottomSheetDialog.dismiss()
                 }
         }

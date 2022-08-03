@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentExpenseDetailBinding
 import com.example.splitwise.ui.fragment.adapter.BillsAdapter
-import com.example.splitwise.ui.fragment.adapter.MembersAdapter
+import com.example.splitwise.ui.fragment.adapter.ExpenseMembersAdapter
 import com.example.splitwise.util.Category
 import com.example.splitwise.util.roundOff
 import com.example.splitwise.util.titleCase
@@ -85,7 +85,7 @@ class ExpenseDetailFragment : Fragment() {
         requireActivity().title = "Expense Detail"
 
         // Rv
-        val membersAdapter = MembersAdapter()
+        val membersAdapter = ExpenseMembersAdapter()
         val billsAdapter = BillsAdapter { position: Int ->
             gotoBillsHolderFragment(position)
         }
@@ -121,6 +121,7 @@ class ExpenseDetailFragment : Fragment() {
         viewModel.expense.observe(viewLifecycleOwner) { expense ->
             expense?.let {
                 requireActivity().title = it.expenseName
+                membersAdapter.updateTotal(it.totalAmount)
                 binding.expenseTotalTextView.text = "₹" + it.totalAmount.roundOff()
                 binding.expenseCategoryExpense.text = Category.values()[it.category].name.lowercase().titleCase()
             }

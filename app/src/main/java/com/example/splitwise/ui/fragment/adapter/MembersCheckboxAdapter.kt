@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.MemberCheckboxCardBinding
+import com.example.splitwise.databinding.MemberSelectBinding
 
 class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) :
     RecyclerView.Adapter<MembersCheckboxViewHolder>() {
@@ -14,7 +15,7 @@ class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MembersCheckboxViewHolder {
         val view = LayoutInflater.from(parent.context)
-        val binding = MemberCheckboxCardBinding.inflate(view, parent, false)
+        val binding = MemberSelectBinding.inflate(view, parent, false)
 
 
         return MembersCheckboxViewHolder(binding).apply {
@@ -46,7 +47,7 @@ class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) 
     }
 }
 
-class MembersCheckboxViewHolder(val binding: MemberCheckboxCardBinding) :
+class MembersCheckboxViewHolder(val binding: MemberSelectBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     //    init {

@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentCreateEditGroupBinding
 import com.example.splitwise.ui.activity.main.MainActivity
-import com.example.splitwise.ui.fragment.adapter.MembersAdapter
+import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
 import com.example.splitwise.ui.fragment.addmember.AddMemberDialog
 import com.example.splitwise.util.nameCheck
 
@@ -52,7 +52,7 @@ class CreateEditGroupFragment : Fragment() {
             requireActivity().title = "Edit Group"
 
         // Rv
-        val membersAdapter = MembersAdapter()
+        val membersAdapter = GroupMembersAdapter()
 
         binding.groupMembersRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())

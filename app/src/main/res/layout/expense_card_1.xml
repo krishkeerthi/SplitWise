@@ -19,13 +19,15 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/expense_image_view"
-                android:layout_width="50dp"
-                android:layout_height="70dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:src="@drawable/expense1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/expense1"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -33,23 +35,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginBottom="2dp"
                 android:text="Shoe purchase"
                 android:textColor="@android:color/black"
-                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/expense_image_view"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toTopOf="@+id/expense_payer_text_view"
+                app:layout_constraintStart_toEndOf="@+id/expense_image_view" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/expense_payer_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
                 android:text="27/09/2022"
-                app:layout_constraintStart_toEndOf="@+id/expense_image_view"
-                app:layout_constraintTop_toBottomOf="@+id/expense_name_text_view" />
+                app:layout_constraintBottom_toBottomOf="@+id/expense_image_view"
+                app:layout_constraintStart_toEndOf="@+id/expense_image_view" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/total_expense_text_view"
@@ -58,7 +59,6 @@
                 android:layout_marginEnd="16dp"
                 android:text="- ₹4800"
                 android:textColor="#F44336"
-                android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

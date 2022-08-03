@@ -57,9 +57,11 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@id/add_bill_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/members_share_text_view"
-        tools:listitem="@layout/group_member_card" />
+        app:layout_constraintVertical_bias="1.0"
+        tools:listitem="@layout/expense_member_card" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/bills_text_view"
@@ -91,8 +93,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:itemCount="10"
-        tools:listitem="@layout/bill_profile_card"
-        tools:orientation="horizontal" />
+        tools:listitem="@layout/bill_profile_card" />
 
 
 
