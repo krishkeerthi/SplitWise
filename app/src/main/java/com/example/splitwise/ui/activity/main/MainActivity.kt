@@ -32,13 +32,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         val sharedPreference = getSharedPreferences(KEY, Context.MODE_PRIVATE)
         val memberId = sharedPreference.getInt("MEMBERID", -1)
-        val theme = sharedPreference.getInt("THEME", R.style.Theme_SplitWise_Showcase)
+        val theme = sharedPreference.getInt("THEME", R.style.Theme_SplitWise)
 
-        //setTheme(theme)
+        setTheme(theme)
 
-        if(this.isDarkThemeOn()){
-            Toast.makeText(this, "dark theme on", Toast.LENGTH_SHORT).show()
-        }
+//        if(this.isDarkThemeOn()){
+//            Toast.makeText(this, "dark theme on", Toast.LENGTH_SHORT).show()
+//        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/add_expense"
-        android:icon="@drawable/tick"
+        android:icon="@drawable/ic_baseline_check_24"
         android:title="Save"
         app:showAsAction="ifRoom"/>
 

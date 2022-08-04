@@ -2,9 +2,11 @@ package com.example.splitwise.ui.fragment.addmember
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.DialogFragment
 import com.example.splitwise.R
 import com.example.splitwise.ui.fragment.createeditgroup.CreateEditGroupViewModel
@@ -41,6 +43,7 @@ class AddMemberDialog(
                     nameEditText.text.toString(),
                     phoneEditText.text.toString().toLong()
                 )
+                Log.d(TAG, "onCreateDialog: membercheck dialog saved, ${viewModel.members.value}")
             }
         }
 

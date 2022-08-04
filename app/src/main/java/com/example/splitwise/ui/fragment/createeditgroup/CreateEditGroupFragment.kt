@@ -41,6 +41,9 @@ class CreateEditGroupFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         viewModel.fetchData()
+
+        Log.d(TAG, "onCreateDialog: membercheck inside create edit grop , ${viewModel.members.value}")
+
         Log.d(TAG, "onViewCreated: createdit group id : ${args.groupId}")
         super.onViewCreated(view, savedInstanceState)
 
@@ -205,6 +208,7 @@ class CreateEditGroupFragment : Fragment() {
     }
 
     private fun gotoChooseMembersFragment() {
+        Log.d(TAG, "onCreateDialog: membercheck choose member clicked, ${viewModel.members.value}")
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToChooseMembersFragment(
                 args.groupId,

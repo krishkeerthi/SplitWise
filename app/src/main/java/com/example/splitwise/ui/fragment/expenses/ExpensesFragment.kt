@@ -71,11 +71,11 @@ class ExpensesFragment : Fragment() {
             adapter = expensesAdapter
         }
 
-//        binding.membersRecyclerView.apply {
-//            layoutManager =
-//                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-//            adapter = membersAdapter
-//        }
+        binding.membersRecyclerView.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = membersAdapter
+        }
 
         // Livedata
         viewModel.group.observe(viewLifecycleOwner) { group ->

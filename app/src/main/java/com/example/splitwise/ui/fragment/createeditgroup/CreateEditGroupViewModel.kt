@@ -16,7 +16,7 @@ import java.util.*
 class CreateEditGroupViewModel(
     context: Context,
     val groupId: Int,
-    val selectedMembers: Array<Member>?
+    private val selectedMembers: Array<Member>?
 ) : ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
@@ -35,9 +35,13 @@ class CreateEditGroupViewModel(
     val members: LiveData<MutableList<Member>?>
         get() = _members
 
-
+init {
+    Log.d(TAG, "membercheck: init create edit view model called")
+}
     fun fetchData() {
         Log.d(TAG, "onViewCreated: viewmodel $groupId")
+
+        Log.d(TAG, "onCreateDialog: membercheck create edit viewmodel, members ${members.value}")
 
         viewModelScope.launch {
             if (groupId != -1 && selectedMembers == null) {
@@ -47,13 +51,16 @@ class CreateEditGroupViewModel(
                 val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
 
                 _members.value = getMembersFromIds(memberIds)
-            } else if (groupId == -1 && selectedMembers != null) {
+            } else if (groupId == -1 && selectedMembers != null ) {
                 _members.value = selectedMembers.toMutableList()
+                Log.d(TAG, "onCreateDialog: membercheck group null, selected members not null")
             } else if (groupId != -1 && selectedMembers != null) {
                 _members.value = selectedMembers.toMutableList()
                 addMembersNotIncludedToGroup()
             } else {
-                _members.value = null
+                //_members.value = null
+                    // do nothing
+                Log.d(TAG, "onCreateDialog: membercheck group null,selected members null")
             }
 //            if(groupId != -1 && memberId != -1){
 //                val group = groupRepository.getGroup(groupId)

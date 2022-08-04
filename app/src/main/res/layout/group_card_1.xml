@@ -28,9 +28,9 @@
         android:ellipsize="end"
         android:lines="1"
         android:text="Family Group"
-        android:textColor="@android:color/black"
+        android:textColor="@color/text_bold"
         android:textSize="16sp"
-        android:textStyle="normal|bold"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/group_expense_text_view"
         app:layout_constraintEnd_toStartOf="@+id/group_creation_date_text_view"
         app:layout_constraintStart_toEndOf="@+id/group_image_view" />

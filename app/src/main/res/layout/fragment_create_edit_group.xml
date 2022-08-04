@@ -7,13 +7,12 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/group_image_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/group"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_group_name_text_field"

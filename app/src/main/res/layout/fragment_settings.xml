@@ -29,20 +29,20 @@
         app:layout_constraintTop_toBottomOf="@id/themes_label">
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/theme_showcase_radio_button"
+            android:id="@+id/theme_default_radio_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layoutDirection="rtl"
-            android:text="Charcoal Black"
+            android:text="Default"
             android:textAlignment="textStart" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/theme_expression_radio_button"
+            android:id="@+id/theme_boxed_radio_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="textStart"
             android:layoutDirection="rtl"
-            android:text="Elegant Pink" />
+            android:text="Boxed" />
     </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

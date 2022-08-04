@@ -1,7 +1,9 @@
 package com.example.splitwise.ui.fragment.chooseMembers
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -36,6 +38,7 @@ class ChooseMembersFragment : Fragment() {
 
         viewModel.fetchData()
 
+        Log.d(ContentValues.TAG, "onCreateDialog: membercheck inside  choose member onviewcreated, ${viewModel.getSelectedMembers().toList()}")
         requireActivity().title = "Choose Members"
 
         binding = FragmentChooseMembersBinding.bind(view)

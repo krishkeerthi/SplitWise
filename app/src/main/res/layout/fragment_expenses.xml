@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="₹12500"
-        android:textColor="#000000"
+        android:textColor="@color/text_bold"
         android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,15 +32,41 @@
 
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/members_list_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Members"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_expense_text_view" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/members_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/members_list_text_view"
+        tools:listitem="@layout/member_profile_card" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/expenses_list_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="Expenses"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/group_expense_text_view" />
+        app:layout_constraintTop_toBottomOf="@id/horizontal_view" />
 
     <HorizontalScrollView
         android:id="@+id/horizontal_scroll_view"
@@ -136,6 +162,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontal_scroll_view"
+        tools:itemCount="1"
         tools:listitem="@layout/expense_card_1" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -170,5 +197,15 @@
         app:layout_constraintBottom_toTopOf="@+id/add_fab_button"
         app:layout_constraintEnd_toEndOf="parent" />
 
+
+    <View
+        android:id="@+id/horizontal_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="#dee3e1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/members_recycler_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

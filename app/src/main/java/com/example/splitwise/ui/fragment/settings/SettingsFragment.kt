@@ -40,12 +40,12 @@ class SettingsFragment : Fragment() {
 
         // Set default radio checked
 
-        when (sharedPreferences.getInt("THEME", R.style.Theme_SplitWise_Showcase)) {
-            R.style.Theme_SplitWise_Showcase -> {
-                binding.themeShowcaseRadioButton.isChecked = true
+        when (sharedPreferences.getInt("THEME", R.style.Theme_SplitWise)) {
+            R.style.Theme_SplitWise -> {
+                binding.themeDefaultRadioButton.isChecked = true
             }
-            R.style.Theme_SplitWise_Expression -> {
-                binding.themeExpressionRadioButton.isChecked = true
+            R.style.Theme_SplitWise_Boxed -> {
+                binding.themeBoxedRadioButton.isChecked = true
             }
         }
 
@@ -53,14 +53,14 @@ class SettingsFragment : Fragment() {
         // Radio checked listener
         binding.themeGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
-                R.id.theme_showcase_radio_button -> {
-                    applyTheme(R.style.Theme_SplitWise_Showcase)
+                R.id.theme_default_radio_button -> {
+                    applyTheme(R.style.Theme_SplitWise)
                 }
-                R.id.theme_expression_radio_button -> {
-                    applyTheme(R.style.Theme_SplitWise_Expression)
+                R.id.theme_boxed_radio_button -> {
+                    applyTheme(R.style.Theme_SplitWise_Boxed)
                 }
                 else -> {
-                    applyTheme(R.style.Theme_SplitWise_Showcase)
+                    applyTheme(R.style.Theme_SplitWise)
                 }
             }
         }
