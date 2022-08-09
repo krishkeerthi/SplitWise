@@ -1,33 +1,28 @@
 package com.example.splitwise.ui.fragment.settleup
 
-import android.content.ContentValues
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ListView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
+import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSettleUpBinding
-import com.example.splitwise.ui.fragment.adapter.PayerArrayAdapter
 import com.example.splitwise.util.roundOff
-import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class SettleUpFragment : Fragment() {
 
     private lateinit var binding: FragmentSettleUpBinding
     private val args: SettleUpFragmentArgs by navArgs()
 
+    private var selectedMembers = listOf<Member>()
     private val viewModel: SettleUpViewModel by viewModels {
-        SettleUpViewModelFactory(requireContext(), args.payerId, args.groupId)
+        SettleUpViewModelFactory(requireContext(), args.payerId, args.groupIds.toList())
     }
 
     override fun onCreateView(
@@ -43,14 +38,37 @@ class SettleUpFragment : Fragment() {
 
         binding = FragmentSettleUpBinding.bind(view)
 
-        if(args.groupId == -1)
-        requireActivity().title = "All Groups"
+        // toolbar title
+        requireActivity().title = "Settle Up"
+
+        viewModel.fetchData()
+
+        // Load data based on selected members
+        selectedMembers = args.selectedMembers.toList()
+
+        if(selectedMembers.isNotEmpty()){
+            var payeesText = ""
+            for(member in selectedMembers){
+                payeesText += "● ${member.name} "
+            }
+            binding.selectedPayeesText.text = payeesText
+            binding.selectedPayeesCard.visibility = View.VISIBLE
+
+            viewModel.getAmount(getMemberIds(selectedMembers))
+        }
+
 
         // Group
-        viewModel.group.observe(viewLifecycleOwner) { group ->
+        viewModel.groups.observe(viewLifecycleOwner) { groups ->
             //binding.groupNameTextView.text = group?.groupName //?: "All Group"
-            requireActivity().title = group?.groupName
-
+            if(groups != null) {
+                var groupsText = ""
+                for (group in groups) {
+                    groupsText += "● ${group.groupName} "
+                }
+                binding.totalTextView.text = groupsText
+                binding.totalTextView.visibility = View.VISIBLE
+            }
         }
 
         // Payer
@@ -65,7 +83,8 @@ class SettleUpFragment : Fragment() {
         viewModel.payees.observe(viewLifecycleOwner) { payees ->
             if (payees != null) {
                 binding.choosePayeeButton.setOnClickListener {
-                    openPayeesBottomSheet(payees)
+                    gotoChoosePayeeFragment(payees)
+                    //openPayeesBottomSheet(payees)
                 }
             }
         }
@@ -75,76 +94,101 @@ class SettleUpFragment : Fragment() {
             binding.amountTextView.text = "₹" + (amount?.roundOff() ?: "")
         }
 
-        binding.selectAllPayeesCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                viewModel.getAmount(viewModel.payerId, groupId = viewModel.groupId)
-            } else {
-                if (viewModel.payeeId != null)
-                    viewModel.getAmount(viewModel.payerId, viewModel.payeeId, viewModel.groupId)
-            }
-        }
+//        binding.selectAllPayeesCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+//            if (isChecked) {
+//                viewModel.getAmount(viewModel.payerId, groupId = viewModel.groupId)
+//            } else {
+//                if (viewModel.payeeId != null)
+//                    viewModel.getAmount(viewModel.payerId, viewModel.payeeId, viewModel.groupId)
+//            }
+//        }
 
         binding.settleButton.setOnClickListener {
-            if (binding.selectAllPayeesCheckbox.isChecked)
-                viewModel.settle(
-                    viewModel.payerId,
-                    null,
-                    viewModel.groupId
-                ) {
-                    gotoSplitWiseFragment()
-                }
-            else if (viewModel.payeeId != null) {
-                viewModel.settle(
-                    viewModel.payerId,
-                    viewModel.payeeId,
-                    viewModel.groupId
-                ) {
-                    gotoSplitWiseFragment()
-                }
-            } else
-                Toast.makeText(requireContext(), "Select Payee to proceed", Toast.LENGTH_SHORT)
-                    .show()
-        }
-    }
-
-    private fun openPayeesBottomSheet(payees: List<Member>) {
-        val payeeBottomSheetDialog = BottomSheetDialog(requireContext())
-        payeeBottomSheetDialog.setContentView(R.layout.bottom_sheet)
-
-        val payeeTitle = payeeBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
-        val payeeList = payeeBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
-
-        payeeTitle?.text = getString(R.string.select_payee)
-        //Adapter
-        val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.dropdown, payees)
-        payeeList?.apply {
-            Log.d(ContentValues.TAG, "openPayerBottomSheet: list adapter set")
-            adapter = payerAdapter
-            onItemClickListener =
-                AdapterView.OnItemClickListener { parent, view, position, id ->
-                    viewModel.payeeId = payees[position].memberId
-
-                    // Make payee visible
-                    binding.toMemberLayout.visibility = View.VISIBLE
-                    binding.totalTextView.visibility = View.VISIBLE
-
-                    viewModel.getAmount(
-                        viewModel.payerId,
-                        viewModel.payeeId,
-                        viewModel.groupId
-                    )
-                    binding.toMemberNameTextView.text = payees[position].name
-                    binding.toMemberPhoneTextView.text = payees[position].phone.toString()
-
-                    payeeBottomSheetDialog.dismiss()
-                }
+            if(selectedMembers.isNotEmpty())
+            viewModel.settle(getMemberIds(selectedMembers)){
+                gotoSplitWiseFragment()
+            }
+            else
+                Toast.makeText(requireContext(), "Select Payee(s)", Toast.LENGTH_SHORT).show()
         }
 
-        payeeBottomSheetDialog.show()
+//        binding.settleButton.setOnClickListener {
+//            if (binding.selectAllPayeesCheckbox.isChecked)
+//                viewModel.settle(
+//                    viewModel.payerId,
+//                    null,
+//                    viewModel.groupId
+//                ) {
+//                    gotoSplitWiseFragment()
+//                }
+//            else if (viewModel.payeeId != null) {
+//                viewModel.settle(
+//                    viewModel.payerId,
+//                    viewModel.payeeId,
+//                    viewModel.groupId
+//                ) {
+//                    gotoSplitWiseFragment()
+//                }
+//            } else
+//                Toast.makeText(requireContext(), "Select Payee to proceed", Toast.LENGTH_SHORT)
+//                    .show()
+//        }
     }
 
-    private fun gotoSplitWiseFragment() {
-        val action = SettleUpFragmentDirections.actionSettleUpFragmentToSplitWiseFragment()
+    private fun getMemberIds(members: List<Member>): List<Int> {
+        var memberIds = mutableListOf<Int>()
+        for(member in members){
+            memberIds.add(member.memberId)
+        }
+        return memberIds.toList()
+    }
+
+    private fun gotoChoosePayeeFragment(payees: List<Member>){
+        val action = SettleUpFragmentDirections.actionSettleUpFragmentToChoosePayeesFragment(
+            payees.toTypedArray(), viewModel.payerId, viewModel.groupIds().toIntArray(), getMemberIds(selectedMembers).toIntArray())
+
         view?.findNavController()?.navigate(action)
     }
+
+//    private fun openPayeesBottomSheet(payees: List<Member>) {
+//        val payeeBottomSheetDialog = BottomSheetDialog(requireContext())
+//        payeeBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+//
+//        val payeeTitle = payeeBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
+//        val payeeList = payeeBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+//
+//        payeeTitle?.text = getString(R.string.select_payee)
+//        //Adapter
+//        val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.dropdown, payees)
+//        payeeList?.apply {
+//            Log.d(ContentValues.TAG, "openPayerBottomSheet: list adapter set")
+//            adapter = payerAdapter
+//            onItemClickListener =
+//                AdapterView.OnItemClickListener { parent, view, position, id ->
+//                    viewModel.payeeId = payees[position].memberId
+//
+//                    // Make payee visible
+//                    binding.toMemberLayout.visibility = View.VISIBLE
+//                    binding.totalTextView.visibility = View.VISIBLE
+//
+//                    viewModel.getAmount(
+//                        viewModel.payerId,
+//                        viewModel.payeeId,
+//                        viewModel.groupId
+//                    )
+//                    binding.toMemberNameTextView.text = payees[position].name
+//                    binding.toMemberPhoneTextView.text = payees[position].phone.toString()
+//
+//                    payeeBottomSheetDialog.dismiss()
+//                }
+//        }
+//
+//        payeeBottomSheetDialog.show()
+//    }
+
+    private fun gotoSplitWiseFragment() {
+        val action = SettleUpFragmentDirections.actionSettleUpFragmentToSplitWiseFragment(listOf<Group>().toTypedArray())
+        view?.findNavController()?.navigate(action)
+    }
+
 }

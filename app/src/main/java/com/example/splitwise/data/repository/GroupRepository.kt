@@ -44,6 +44,10 @@ class GroupRepository(
         return withContext(Dispatchers.IO){dataSource.getGroups()}
     }
 
+    suspend fun getGroups(groupIds: List<Int>): List<Group>?{
+        return withContext(Dispatchers.IO){dataSource.getGroups(groupIds)}
+    }
+
     suspend fun getGroupsStartsWith(query: String): List<Group>?{
         return if(query == "") null else withContext(Dispatchers.IO){dataSource.getGroupsStartsWith(query)}
     }

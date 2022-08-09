@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 class SettleUpViewModel(
     context: Context,
     val payerId: Int,
-    val groupId: Int
+    val groupIds: List<Int>
 ) : ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
@@ -25,9 +25,9 @@ class SettleUpViewModel(
 
     var payeeId: Int? = null
 
-    private val _group = MutableLiveData<Group?>()
-    val group: LiveData<Group?>
-        get() = _group
+    private val _groups = MutableLiveData<List<Group>?>()
+    val groups: LiveData<List<Group>?>
+        get() = _groups
 
     private val _payer = MutableLiveData<Member?>()
     val payer: LiveData<Member?>
@@ -42,21 +42,48 @@ class SettleUpViewModel(
         get() = _amount
 
     init {
+        getGroups()
+    }
+
+    fun fetchData(){
         viewModelScope.launch {
             val member = memberRepository.getMember(payerId)
             _payer.value = member
 
-            val memberIds: List<Int>? = if (groupId != -1) {
-                transactionRepository.getPayers(payerId, groupId)
-            } else {
+            val memberIds: List<Int>? = if (groupIds.isEmpty()) {
                 transactionRepository.getPayers(payerId)
+            } else {
+                transactionRepository.getPayers(payerId, groupIds)
             }
 
             _payees.value = getMembersFromIds(memberIds)
+        }
+    }
 
-            if (groupId != -1) {
-                _group.value = groupRepository.getGroup(groupId)
+    private fun getGroups(){
+        viewModelScope.launch {
+            if (groupIds.isNotEmpty()) {
+                _groups.value = groupRepository.getGroups(groupIds)
             }
+            else{
+                _groups.value = groupRepository.getGroups()
+            }
+        }
+    }
+
+    fun groupIds(): List<Int>{
+        val groupIds = mutableListOf<Int>()
+        if(groups.value != null){
+            for(group in groups.value!!)
+                groupIds.add(group.groupId)
+        }
+
+        return groupIds.toList()
+    }
+
+    fun getAmount(receiverIds: List<Int>) {
+        viewModelScope.launch {
+            _amount.value = transactionRepository.getOwed(payerId, receiverIds, groupIds)
         }
     }
 
@@ -77,6 +104,16 @@ class SettleUpViewModel(
                 }
             }
         }
+    }
+
+    fun settle(
+        receiverIds: List<Int>,
+        gotoSplitWiseFragment: () -> Unit
+    ) {
+        viewModelScope.launch {
+            transactionRepository.settle(payerId, receiverIds, groupIds)
+        }
+        gotoSplitWiseFragment()
     }
 
     fun settle(
@@ -124,12 +161,12 @@ class SettleUpViewModel(
 class SettleUpViewModelFactory(
     private val context: Context,
     private val payerId: Int,
-    private val groupId: Int
+    private val groupIds: List<Int>
 ) :
     ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SettleUpViewModel(context, payerId, groupId) as T
+        return SettleUpViewModel(context, payerId, groupIds) as T
     }
 }

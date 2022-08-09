@@ -58,10 +58,14 @@ class SearchGroupFragment : Fragment() {
                 groupsAdapter.updateGroups(groups)
                 binding.searchGroupsRecyclerView.visibility = View.VISIBLE
                 binding.noResultImage.visibility = View.GONE
-            } else {
+            } else if(groups != null && groups.isEmpty()) {
                 groupsAdapter.updateGroups(listOf())
                 binding.searchGroupsRecyclerView.visibility = View.GONE
                 binding.noResultImage.visibility = View.VISIBLE
+            }
+            else{
+                binding.searchGroupsRecyclerView.visibility = View.GONE
+                binding.noResultImage.visibility = View.GONE
             }
 
         }
@@ -75,11 +79,9 @@ class SearchGroupFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 val query = binding.toolbar.searchGroupText.text?.trim().toString()
-
-                Log.d(TAG, "afterTextChanged:search query changes")
-                viewModel.textEntered = query
-                viewModel.fetchData()
-
+                    Log.d(TAG, "afterTextChanged:search query changes")
+                    viewModel.textEntered = query
+                    viewModel.fetchData()
             }
         }
         binding.toolbar.searchGroupText.addTextChangedListener(watcher)

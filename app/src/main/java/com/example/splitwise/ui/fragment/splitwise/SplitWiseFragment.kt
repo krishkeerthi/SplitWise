@@ -13,18 +13,23 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
+import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSplitWiseBinding
 import com.example.splitwise.ui.fragment.adapter.GroupArrayAdapter
 import com.example.splitwise.ui.fragment.adapter.SplitWiseAdapter
+import com.example.splitwise.ui.fragment.choosegroups.ChooseGroupsFragmentDirections
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.lang.Exception
 
 class SplitWiseFragment : Fragment() {
 
     private lateinit var binding: FragmentSplitWiseBinding
-
+    private val args: SplitWiseFragmentArgs by navArgs()
+    private var selectedGroups = mutableListOf<Group>()
     private val viewModel: SplitWiseViewModel by viewModels {
         SplitWiseViewModelFactory(requireContext())
     }
@@ -40,11 +45,29 @@ class SplitWiseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.fetchData()
-
         binding = FragmentSplitWiseBinding.bind(view)
 
         requireActivity().title = "SplitWise"
+
+        try{
+            selectedGroups = args.selectedGroups.toMutableList()
+            if(selectedGroups.isNotEmpty()){
+                var groupsText = ""
+                for(group in selectedGroups){
+                    groupsText += "● ${group.groupName} "
+                }
+                binding.selectedGroupsText.text = groupsText
+                binding.selectedGroupsCard.visibility = View.VISIBLE
+            }
+
+            Log.d(TAG, "onViewCreated: fetchData in try")
+            viewModel.fetchData(getGroupIds(selectedGroups))
+
+        }
+        catch (e: Exception){
+            Log.d(TAG, "onViewCreated: fetchData in try")
+            viewModel.fetchData()
+        }
 
         // Rv
         val splitWiseAdapter = SplitWiseAdapter { payerId: Int, amountOwed: Float, name: String ->
@@ -75,7 +98,8 @@ class SplitWiseFragment : Fragment() {
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             if (groups != null) {
                 binding.chooseGroupCard.setOnClickListener {
-                    openGroupsBottomSheet(groups)
+                   // openGroupsBottomSheet(groups)
+                    gotoChooseGroupsFragment()
                 }
             }
         }
@@ -97,6 +121,21 @@ class SplitWiseFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun gotoChooseGroupsFragment(){
+        val action = SplitWiseFragmentDirections.actionSplitWiseFragmentToChooseGroupsFragment(
+            getGroupIds(selectedGroups).toIntArray()
+        )
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun getGroupIds(groups: MutableList<Group>): List<Int> {
+        var groupIds = mutableListOf<Int>()
+        for(group in groups){
+            groupIds.add(group.groupId)
+        }
+        return groupIds.toList()
     }
 
     private fun openGroupsBottomSheet(groups: List<Group>) {
@@ -127,7 +166,8 @@ class SplitWiseFragment : Fragment() {
 
     private fun gotoSettleUpFragment(payerId: Int, groupId: Int) {
         val action =
-            SplitWiseFragmentDirections.actionSplitWiseFragmentToSettleUpFragment(payerId, groupId)
+            SplitWiseFragmentDirections.actionSplitWiseFragmentToSettleUpFragment(payerId, getGroupIds(selectedGroups).toIntArray(),
+            listOf<Member>().toTypedArray()) // Passing empty list of members when going to settle up fragment
         view?.findNavController()?.navigate(action)
     }
 }

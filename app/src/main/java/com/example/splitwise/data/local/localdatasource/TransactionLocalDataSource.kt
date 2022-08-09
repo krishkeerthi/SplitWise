@@ -25,6 +25,10 @@ class TransactionLocalDataSource(
         transactionDao.reduceAmount(senderId, receiverId, groupId)
     }
 
+    override suspend fun settle(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>) {
+        transactionDao.reduceAmount(senderId, receiverIds, groupIds)
+    }
+
     override suspend fun settleAllInGroup(senderId: Int, groupId: Int) {
         transactionDao.reduceBulkAmountInGroup(senderId, groupId)
     }
@@ -60,12 +64,35 @@ class TransactionLocalDataSource(
         }
     }
 
+    override suspend fun transactionStats(groupIds: List<Int>): List<MemberPaymentStats>? {
+        val lendList = transactionDao.getLendAmountInGroups(groupIds)
+        val owedList = transactionDao.getOwedAmountInGroups(groupIds)
+
+        return if(lendList != null && owedList != null) {
+            Log.d(TAG, "transactionStats: transaction found")
+            listMerger(lendList, owedList)
+        }
+        else{
+            Log.d(TAG, "transactionStats: null found")
+            //throw NullPointerException("Transaction missing")
+            null
+        }
+    }
+
     override suspend fun getOwed(senderId: Int, receiverId: Int): Float? {
         return transactionDao.getOwedAmount(senderId, receiverId)
     }
 
     override suspend fun getOwed(senderId: Int): Float? {
         return transactionDao.getOwedAmount(senderId)
+    }
+
+    override suspend fun getOwed(
+        senderId: Int,
+        receiverIds: List<Int>,
+        groupIds: List<Int>
+    ): Float? {
+        return transactionDao.getOwedAmount(senderId, receiverIds, groupIds)
     }
 
     override suspend fun getOwedInGroup(senderId: Int, receiverId: Int, groupId: Int): Float? {
@@ -82,6 +109,10 @@ class TransactionLocalDataSource(
 
     override suspend fun getPayers(payeeId: Int, groupId: Int): List<Int>? {
         return transactionDao.getPayers(payeeId, groupId)
+    }
+
+    override suspend fun getPayers(payeeId: Int, groupIds: List<Int>): List<Int>? {
+        return transactionDao.getPayers(payeeId, groupIds)
     }
 
     private suspend fun listMerger(lendList: List<MemberAmount>, owedList: List<MemberAmount>): List<MemberPaymentStats>{

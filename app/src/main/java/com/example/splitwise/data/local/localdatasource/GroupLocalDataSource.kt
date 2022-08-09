@@ -48,6 +48,10 @@ GroupDataSource{
         return groupDao.getGroups()
     }
 
+    override suspend fun getGroups(groupIds: List<Int>): List<Group>? {
+        return groupDao.getGroups(groupIds)
+    }
+
     override suspend fun getGroupsStartsWith(query: String): List<Group>? {
         return groupDao.getGroupsStartsWith(query)
     }

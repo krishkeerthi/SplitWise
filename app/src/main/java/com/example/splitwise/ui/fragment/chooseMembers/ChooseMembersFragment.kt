@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -81,7 +82,27 @@ class ChooseMembersFragment : Fragment() {
             }
 
         }
+
+       // setHasOptionsMenu(true)
     }
+
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        super.onCreateOptionsMenu(menu, inflater)
+//        inflater.inflate(R.menu.add_expense_fragment_menu, menu)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return when(item.itemId){
+//            R.id.add_expense -> {
+//                Toast.makeText(requireContext(), "working", Toast.LENGTH_SHORT).show()
+//                true
+//            }
+//            else ->{
+//                super.onOptionsItemSelected(item)
+//            }
+//        }
+//
+//    }
 
     private val actionModeCallback = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {

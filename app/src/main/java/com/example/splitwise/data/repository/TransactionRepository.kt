@@ -30,6 +30,10 @@ class TransactionRepository(
         dataSource.settle(senderId, receiverId, groupId)
     }
 
+    suspend fun settle(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>){
+        dataSource.settle(senderId, receiverIds, groupIds)
+    }
+
     suspend fun settleAllInGroup(senderId: Int, groupId: Int){
         dataSource.settleAllInGroup(senderId, groupId)
     }
@@ -52,6 +56,13 @@ class TransactionRepository(
         }
     }
 
+    suspend fun getPayers(payeeId: Int, groupIds: List<Int>): List<Int>?{
+        return withContext(Dispatchers.IO){
+            val payerIds = dataSource.getPayers(payeeId, groupIds)
+            payerIds?.toSet()?.toList()
+        }
+    }
+
     suspend fun transactionStats(): List<MemberPaymentStats>?{
         return withContext(Dispatchers.IO){dataSource.transactionStats()}
     }
@@ -60,8 +71,16 @@ class TransactionRepository(
         return withContext(Dispatchers.IO){dataSource.transactionStats(groupId)}
     }
 
+    suspend fun transactionStats(groupIds: List<Int>): List<MemberPaymentStats>?{
+        return withContext(Dispatchers.IO){dataSource.transactionStats(groupIds)}
+    }
+
     suspend fun getOwed(senderId: Int, receiverId: Int): Float?{
         return withContext(Dispatchers.IO){dataSource.getOwed(senderId, receiverId)}
+    }
+
+    suspend fun getOwed(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>): Float?{
+        return withContext(Dispatchers.IO){dataSource.getOwed(senderId, receiverIds, groupIds)}
     }
 
     suspend fun getOwedInGroup(senderId: Int, receiverId: Int, groupId: Int): Float?{

@@ -57,7 +57,7 @@ class GroupsFragment : Fragment() {
 
 
         // Rv
-        val groupsAdapter = GroupsAdapter{ groupId: Int ->
+        val groupsAdapter = GroupsAdapter { groupId: Int ->
             goToExpenseFragment(groupId)
         }
 //            { groupId: Int ->
@@ -83,6 +83,9 @@ class GroupsFragment : Fragment() {
             if (groups != null) {
                 groupsAdapter.updateGroups(groups)
             }
+//                binding.emptyGroupImageView.visibility = View.GONE
+//            } else
+//                binding.emptyGroupImageView.visibility = View.VISIBLE
         }
 
         // Button click

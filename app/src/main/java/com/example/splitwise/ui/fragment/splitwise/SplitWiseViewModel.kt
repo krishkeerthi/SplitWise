@@ -40,7 +40,7 @@ class SplitWiseViewModel(context: Context) : ViewModel() {
         get() = _groupName
 
     init {
-        fetchData()
+       // fetchData()
     }
 
     fun loadGroupName() {
@@ -49,9 +49,12 @@ class SplitWiseViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun fetchData() {
+    fun fetchData(groupIds: List<Int> = listOf()) {
+        Log.d(TAG, "fetchData: ${groupIds.size}")
         viewModelScope.launch {
-            val memberStats = transactionRepository.transactionStats()
+            val memberStats = if(groupIds.isEmpty()) transactionRepository.transactionStats()
+            else transactionRepository.transactionStats(groupIds)
+
             _membersPaymentStatsDetail.value = memberStatsToDetail(memberStats)
             Log.d(TAG, "getGroupMembersPaymentStats: $memberStats")
             _groups.value = groupRepository.getGroups()
@@ -64,6 +67,14 @@ class SplitWiseViewModel(context: Context) : ViewModel() {
                 transactionRepository.transactionStats(groupId)
             else
                 transactionRepository.transactionStats()
+            Log.d(TAG, "getGroupMembersPaymentStats: ${memberStats}")
+            _membersPaymentStatsDetail.value = memberStatsToDetail(memberStats)
+        }
+    }
+
+    fun getGroupMembersPaymentStats(groupIds: List<Int>) {
+        viewModelScope.launch {
+            val memberStats = transactionRepository.transactionStats(groupIds)
             Log.d(TAG, "getGroupMembersPaymentStats: ${memberStats}")
             _membersPaymentStatsDetail.value = memberStatsToDetail(memberStats)
         }

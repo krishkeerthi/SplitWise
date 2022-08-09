@@ -26,6 +26,12 @@
         <action
             android:id="@+id/action_splitWiseFragment_to_settleUpFragment"
             app:destination="@id/settleUpFragment" />
+        <action
+            android:id="@+id/action_splitWiseFragment_to_chooseGroupsFragment"
+            app:destination="@id/chooseGroupsFragment" />
+        <argument
+            android:name="selectedGroups"
+            app:argType="com.example.splitwise.data.local.entity.Group[]" />
     </fragment>
     <fragment
         android:id="@+id/groupsOverviewFragment"
@@ -115,15 +121,20 @@
         <argument
             android:name="payerId"
             app:argType="integer" />
-        <argument
-            android:name="groupId"
-            app:argType="integer"
-            />
         <action
             android:id="@+id/action_settleUpFragment_to_splitWiseFragment"
             app:destination="@id/splitWiseFragment"
             app:popUpTo="@id/splitWiseFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="groupIds"
+            app:argType="integer[]" />
+        <action
+            android:id="@+id/action_settleUpFragment_to_choosePayeesFragment"
+            app:destination="@id/choosePayeesFragment" />
+        <argument
+            android:name="selectedMembers"
+            app:argType="com.example.splitwise.data.local.entity.Member[]" />
     </fragment>
     <fragment
         android:id="@+id/expensesOverviewFragment"
@@ -186,4 +197,51 @@
         android:name="com.example.splitwise.ui.fragment.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/chooseGroupsFragment"
+        android:name="com.example.splitwise.ui.fragment.choosegroups.ChooseGroupsFragment"
+        android:label="fragment_choose_groups"
+        tools:layout="@layout/fragment_choose_groups" >
+        <action
+            android:id="@+id/action_chooseGroupsFragment_self"
+            app:destination="@id/chooseGroupsFragment"
+            app:popUpTo="@id/chooseGroupsFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_chooseGroupsFragment_to_splitWiseFragment"
+            app:destination="@id/splitWiseFragment"
+            app:popUpTo="@id/splitWiseFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="selectedGroupIds"
+            app:argType="integer[]" />
+    </fragment>
+    <fragment
+        android:id="@+id/choosePayeesFragment"
+        android:name="com.example.splitwise.ui.fragment.choosepayees.ChoosePayeesFragment"
+        android:label="fragment_choose_payees"
+        tools:layout="@layout/fragment_choose_payees" >
+        <action
+            android:id="@+id/action_choosePayeesFragment_to_settleUpFragment"
+            app:destination="@id/settleUpFragment"
+            app:popUpTo="@id/settleUpFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_choosePayeesFragment_self"
+            app:destination="@id/choosePayeesFragment"
+            app:popUpTo="@id/choosePayeesFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="payees"
+            app:argType="com.example.splitwise.data.local.entity.Member[]" />
+        <argument
+            android:name="payerId"
+            app:argType="integer" />
+        <argument
+            android:name="groupIds"
+            app:argType="integer[]" />
+        <argument
+            android:name="selectedPayeeIds"
+            app:argType="integer[]" />
+    </fragment>
 </navigation>

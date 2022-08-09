@@ -41,6 +41,9 @@ interface GroupDao {
     @Query("SELECT * FROM `group`")
     suspend fun getGroups(): List<Group>?
 
+    @Query("SELECT * FROM `group` WHERE group_id IN (:groupIds)")
+    suspend fun getGroups(groupIds: List<Int>): List<Group>?
+
     @Query("SELECT * FROM `group` WHERE group_id = :groupId")
     suspend fun getGroup(groupId: Int): Group?
 

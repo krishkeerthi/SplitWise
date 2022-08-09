@@ -25,6 +25,7 @@
         android:layout_marginStart="16dp"
         android:lines="1"
         android:text="Keerthi"
+        android:textAlignment="center"
         android:textColor="@color/text_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
