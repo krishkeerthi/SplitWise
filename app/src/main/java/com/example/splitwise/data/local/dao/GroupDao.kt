@@ -65,4 +65,7 @@ interface GroupDao {
     @Query("DELETE FROM `group` WHERE group_id = :groupId")
     suspend fun deleteGroup(groupId: Int)
 
+    @Query("SELECT * FROM `group` WHERE group_name LIKE '%' || :query || '%'")
+    suspend fun getGroupsContains(query: String): List<Group>?
+
 }

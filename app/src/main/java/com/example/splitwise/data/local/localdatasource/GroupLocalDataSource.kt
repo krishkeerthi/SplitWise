@@ -56,6 +56,10 @@ GroupDataSource{
         return groupDao.getGroupsStartsWith(query)
     }
 
+    override suspend fun getGroupsContains(query: String): List<Group>? {
+        return groupDao.getGroupsContains(query)
+    }
+
     override suspend fun updateTotalExpense(groupId: Int, amount: Float) {
         groupDao.updateTotalExpense(groupId, amount)
     }

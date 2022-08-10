@@ -22,6 +22,8 @@ interface GroupDataSource {
 
     suspend fun getGroupsStartsWith(query: String): List<Group>?
 
+    suspend fun getGroupsContains(query: String): List<Group>?
+
     suspend fun updateTotalExpense(groupId: Int, amount: Float)
 
     suspend fun getTotalExpense(groupId: Int): Float?

@@ -7,6 +7,7 @@ import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.repository.GroupRepository
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
 class SearchGroupViewModel(context: Context) : ViewModel() {
@@ -26,8 +27,32 @@ class SearchGroupViewModel(context: Context) : ViewModel() {
         )
 
         viewModelScope.launch {
-            _groups.value = groupsRepository.getGroupsStartsWith(textEntered)
+            val groupsStartedWith = groupsRepository.getGroupsStartsWith(textEntered)
+            val groupsContained = groupsRepository.getGroupsContain(textEntered)
+
+            _groups.value = merge(groupsStartedWith, groupsContained)
         }
+    }
+
+    private fun merge(startedWithList: List<Group>?, containsList: List<Group>?): List<Group>?{
+        var mergedList= mutableListOf<Group>()
+
+        startedWithList?.let {
+            for(group in it)
+                mergedList.add(group)
+        }
+
+        containsList?.let {
+            for(group in it){
+                if(!mergedList.contains(group))
+                    mergedList.add(group)
+            }
+
+        }
+
+        return mergedList.ifEmpty {
+            if(textEntered == "") null
+        else listOf<Group>()}
     }
 }
 

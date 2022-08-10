@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
 import com.example.splitwise.ui.fragment.adapter.FilterArrayAdapter
@@ -79,13 +80,25 @@ class GroupsFragment : Fragment() {
 
         // Livedata
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
-            Log.d(TAG, "onViewCreated: groups livedata ${groups}")
+            Log.d(TAG, "onViewCreated: groups livedata $groups")
             if (groups != null) {
                 groupsAdapter.updateGroups(groups)
+                binding.groupsRecyclerView.visibility = View.VISIBLE
+                binding.emptyGroupImageView.visibility = View.GONE
+//                binding.groupsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+//                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                        super.onScrolled(recyclerView, dx, dy)
+//
+//                        val layout = recyclerView.layoutManager as LinearLayoutManager
+//                        val position = layout.findFirstCompletelyVisibleItemPosition()
+//
+//                        Toast.makeText(requireContext(), "${groups[position].groupName}", Toast.LENGTH_SHORT).show()
+//                    }
+//                })
+            } else {
+                binding.groupsRecyclerView.visibility = View.GONE
+                binding.emptyGroupImageView.visibility = View.VISIBLE
             }
-//                binding.emptyGroupImageView.visibility = View.GONE
-//            } else
-//                binding.emptyGroupImageView.visibility = View.VISIBLE
         }
 
         // Button click

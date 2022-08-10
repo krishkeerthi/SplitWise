@@ -13,6 +13,7 @@ class ChooseGroupsViewModel(context: Context)
     : ViewModel(){
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
+
     private val groupRepository = GroupRepository(database)
 
     private val _groups=  MutableLiveData<List<Group>?>()
@@ -27,6 +28,7 @@ class ChooseGroupsViewModel(context: Context)
 
     init {
         fetchData()
+        database
     }
 
     fun fetchData(){

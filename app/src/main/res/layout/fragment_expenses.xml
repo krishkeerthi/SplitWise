@@ -48,20 +48,32 @@
         android:id="@+id/members_recycler_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/members_list_text_view"
-        tools:listitem="@layout/member_profile_card" />
+        tools:listitem="@layout/member_profile_card"
+        tools:visibility="gone" />
+
+    <View
+        android:id="@+id/horizontal_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="#dee3e1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/members_recycler_view" />
+
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/expenses_list_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Expenses"
         app:layout_constraintEnd_toEndOf="parent"
@@ -75,6 +87,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/expenses_list_text_view">
@@ -89,65 +102,65 @@
             <com.google.android.material.chip.Chip
                 android:id="@+id/category_food"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:text="Food"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Food" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/category_travel"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:text="Travel"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Travel" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/category_tickets"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:text="Tickets"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Tickets" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/category_rent"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:text="Rent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Rent" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/category_fees"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:text="Fees"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Fees" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/category_repair"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:text="Repair"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Repair" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/category_entertainment"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:text="Entertainment"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Entertainment" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/category_essentials"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:text="Essentials"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Essentials" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/category_others"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:text="Others"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Others" />
 
         </com.google.android.material.chip.ChipGroup>
 
@@ -198,14 +211,15 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <View
-        android:id="@+id/horizontal_view"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="#dee3e1"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/no_expense_image_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/empty_expense"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/members_recycler_view" />
+        app:layout_constraintTop_toBottomOf="@id/expenses_list_text_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -46,9 +46,9 @@ abstract class SplitWiseRoomDatabase: RoomDatabase() {
                 context.applicationContext,
                 SplitWiseRoomDatabase::class.java,
                 "split_wise_database"
-            )//.build()
-                .createFromAsset("database/splitwise_dummy.db")
-                .build()
+            ).build()
+//                .createFromAsset("database/splitwise_dummy.db")
+//                .build()
         }
     }
 }

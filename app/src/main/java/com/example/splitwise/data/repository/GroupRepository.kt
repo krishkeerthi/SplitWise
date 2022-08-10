@@ -109,4 +109,8 @@ class GroupRepository(
             dataSource.deleteGroup(groupId)
         }
     }
+
+    suspend fun getGroupsContain(query: String): List<Group>? {
+        return if(query == "") null else withContext(Dispatchers.IO){dataSource.getGroupsContains(query)}
+    }
 }

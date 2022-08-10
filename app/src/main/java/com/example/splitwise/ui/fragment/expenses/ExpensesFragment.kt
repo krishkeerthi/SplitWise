@@ -23,6 +23,7 @@ import com.example.splitwise.util.Category
 import com.example.splitwise.util.formatDate
 import com.example.splitwise.util.roundOff
 import com.google.android.material.chip.Chip
+import kotlin.math.exp
 import kotlin.properties.Delegates
 
 class ExpensesFragment : Fragment() {
@@ -89,8 +90,14 @@ class ExpensesFragment : Fragment() {
 
         viewModel.expenseMembers.observe(viewLifecycleOwner) { expenseMembers ->
             Log.d(TAG, "onViewCreated:expense list livedata $expenseMembers")
-            if (expenseMembers != null) {
+            if (expenseMembers != null && expenseMembers.isNotEmpty()) {
                 expensesAdapter.updateExpenseMembers(expenseMembers)
+                binding.expensesRecyclerView.visibility = View.VISIBLE
+                binding.noExpenseImageView.visibility = View.GONE
+            }
+            else{
+                binding.expensesRecyclerView.visibility = View.GONE
+                binding.noExpenseImageView.visibility = View.VISIBLE
             }
         }
 

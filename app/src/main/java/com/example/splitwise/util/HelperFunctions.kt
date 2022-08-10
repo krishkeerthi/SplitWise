@@ -1,19 +1,8 @@
 package com.example.splitwise.util
 
-import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,7 +12,27 @@ fun nameCheck(value: String): Boolean {
 
 fun formatDate(date: Date): String{
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.UK) // warning shown to add locale
-    return sdf.format(date).toString()
+
+    val currentDate = Calendar.getInstance()
+    val currentYear = currentDate[Calendar.YEAR]
+    val currentMonth = currentDate[Calendar.MONTH]
+    val currentDay = currentDate[Calendar.DAY_OF_MONTH]
+
+    val createdDate = Calendar.getInstance()
+    createdDate.time = date
+    val year = createdDate[Calendar.YEAR]
+    val month = createdDate[Calendar.MONTH]
+    val day = createdDate[Calendar.DAY_OF_MONTH]
+
+    return if((currentYear == year) && (currentMonth == month)){
+        when {
+            currentDay == day -> "Today"
+            day == (currentDay - 1) -> "Yesterday"
+            else -> sdf.format(date).toString()
+        }
+    }
+    else
+        sdf.format(date).toString()
 }
 
 fun Float.roundOff(): String{

@@ -11,7 +11,7 @@ import com.example.splitwise.util.roundOff
 class ExpensesAdapter(
     val onExpenseClicked: (Int) -> Unit
 ) : RecyclerView.Adapter<ExpensesViewHolder>() {
-    private var expenseMembers = listOf<ExpenseMember>()
+    private var expenseMembers = listOf<ExpenseMember>() // Expense And Member
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpensesViewHolder {
         val view = LayoutInflater.from(parent.context)

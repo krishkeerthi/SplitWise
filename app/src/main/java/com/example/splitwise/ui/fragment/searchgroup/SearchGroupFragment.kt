@@ -17,6 +17,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSearchGroupBinding
+import com.example.splitwise.ui.fragment.adapter.FilteredGroupsAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 
 class SearchGroupFragment : Fragment() {
@@ -37,12 +38,12 @@ class SearchGroupFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.fetchData()
+        //viewModel.fetchData()
 
         binding = FragmentSearchGroupBinding.bind(view)
 
         // Rv
-        val groupsAdapter = GroupsAdapter { groupId: Int ->
+        val groupsAdapter = FilteredGroupsAdapter { groupId: Int ->
             goToExpenseFragment(groupId)
         }
 
@@ -53,17 +54,19 @@ class SearchGroupFragment : Fragment() {
 
         // Livedata
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
-            Log.d(TAG, "onViewCreated: search groups livedata $groups")
             if (groups != null && groups.isNotEmpty()) {
-                groupsAdapter.updateGroups(groups)
+                Log.d(TAG, "onViewCreated:$$$ groups != null && groups.isNotEmpty()")
+                groupsAdapter.updateGroups(groups, viewModel.textEntered)
                 binding.searchGroupsRecyclerView.visibility = View.VISIBLE
                 binding.noResultImage.visibility = View.GONE
-            } else if(groups != null && groups.isEmpty()) {
-                groupsAdapter.updateGroups(listOf())
+            } else if(groups != null && groups.isEmpty() ) { // to handle when query not entered
+                Log.d(TAG, "onViewCreated:$$$ groups != null && groups.isEmpty()")
+                groupsAdapter.updateGroups(listOf(), "")
                 binding.searchGroupsRecyclerView.visibility = View.GONE
                 binding.noResultImage.visibility = View.VISIBLE
             }
             else{
+                Log.d(TAG, "onViewCreated:$$$ else")
                 binding.searchGroupsRecyclerView.visibility = View.GONE
                 binding.noResultImage.visibility = View.GONE
             }
