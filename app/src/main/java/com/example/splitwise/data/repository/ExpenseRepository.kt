@@ -57,6 +57,10 @@ class ExpenseRepository(
         return withContext(Dispatchers.IO){dataSource.getExpensesByCategory(groupId, category)}
     }
 
+    suspend fun getExpensesByCategories(groupId: Int, categories: List<Int>): List<Expense>?{
+        return withContext(Dispatchers.IO){dataSource.getExpensesByCategories(groupId, categories)}
+    }
+
     // Need to implement
     suspend fun getExpensesWithConstraint(groupId: Int): List<Expense>?{
         return dataSource.getExpenses(groupId)

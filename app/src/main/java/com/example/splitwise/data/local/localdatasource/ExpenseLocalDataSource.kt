@@ -72,4 +72,11 @@ class ExpenseLocalDataSource(
     override suspend fun getExpensesByCategory(groupId: Int, category: Int): List<Expense>? {
         return expenseDao.getExpensesByCategory(groupId, category)
     }
+
+    override suspend fun getExpensesByCategories(
+        groupId: Int,
+        categories: List<Int>
+    ): List<Expense>? {
+        return expenseDao.getExpensesByCategories(groupId, categories)
+    }
 }

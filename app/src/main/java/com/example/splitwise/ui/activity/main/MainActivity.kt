@@ -3,12 +3,12 @@ package com.example.splitwise.ui.activity.main
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -20,7 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityMainBinding
 import com.example.splitwise.ui.activity.register.RegisterActivity
-import com.example.splitwise.util.isDarkThemeOn
+
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     private lateinit var binding: ActivityMainBinding
@@ -58,30 +58,32 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 //
 //        navController.setGraph(R.navigation.navigation_graph)
 //
-//        binding.bottomNavigation.setupWithNavController(navController)
+        binding.bottomNavigation.setupWithNavController(navController)
 ////
-//        appBarConfiguration = AppBarConfiguration(
-//            setOf(
-//                R.id.groupsFragment,
-//                R.id.splitWiseFragment,
-//                R.id.groupsOverviewFragment
-//            )
-//        )
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.groupsFragment,
+                R.id.splitWiseFragment,
+                R.id.groupsOverviewFragment,
+                R.id.settingsFragment
+            )
+        )
         //topLevelDestinationIds - The set of destinations by id considered at the top level
         // of your information hierarchy. The Up button will not be displayed when on
         // these destinations.
 //        )
 
 
-        //setupActionBarWithNavController(navController, appBarConfiguration)
+        setupActionBarWithNavController(navController, appBarConfiguration)
         // this give up navigation and fragment names for title, explicit change not applying
 
-        setSupportActionBar(binding.toolbar)
+     //   setSupportActionBar(binding.toolbar)
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
-
 
         navController.addOnDestinationChangedListener(this)
 
+        val colorDrawable = ColorDrawable(Color.parseColor("#0F9D58"))
+        actionBar?.setBackgroundDrawable(colorDrawable)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

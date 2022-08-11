@@ -23,4 +23,6 @@ interface ExpenseDataSource {
     suspend fun getExpense(expenseId: Int): Expense?
 
     suspend fun getExpensesByCategory(groupId: Int, category: Int): List<Expense>?
+
+    suspend fun getExpensesByCategories(groupId: Int, categories: List<Int>): List<Expense>?
 }

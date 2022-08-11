@@ -81,8 +81,8 @@ class ExpensesFragment : Fragment() {
         // Livedata
         viewModel.group.observe(viewLifecycleOwner) { group ->
             if (group != null) {
-               // binding.groupNameTextView.text = group.groupName
-                requireActivity().title = group.groupName
+                binding.groupNameTextView.text = group.groupName
+                //requireActivity().title = group.groupName
                 //binding.groupCreationDateTextView.text = formatDate(group.creationDate)
                 binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
             }
@@ -147,39 +147,44 @@ class ExpensesFragment : Fragment() {
         // Chip selection
         binding.categoryChipGroup.forEach { child ->
             (child as Chip).setOnCheckedChangeListener { buttonView, isChecked ->
-                if(isChecked){
-                    val category = when(buttonView.text){
-                        "Food" -> Category.FOOD
-                        "Travel" -> Category.TRAVEL
-                        "Tickets" -> Category.TICKETS
-                        "Rent" -> Category.RENT
-                        "Fees" -> Category.FEES
-                        "Repair" -> Category.REPAIRS
-                        "Entertainment" -> Category.ENTERTAINMENT
-                        "Essentials" -> Category.ESSENTIALS
-                        else -> Category.OTHERS
-                    }
+                Log.d(TAG, "onViewCreated: checked outside")
+                val category = when(buttonView.text){
+                    "Food" -> Category.FOOD
+                    "Travel" -> Category.TRAVEL
+                    "Tickets" -> Category.TICKETS
+                    "Rent" -> Category.RENT
+                    "Fees" -> Category.FEES
+                    "Repair" -> Category.REPAIRS
+                    "Entertainment" -> Category.ENTERTAINMENT
+                    "Essentials" -> Category.ESSENTIALS
+                    else -> Category.OTHERS
+                }
 
+                if(isChecked){
+                    viewModel.checkedFilters.add(category)
                     Log.d(TAG, "onViewCreated: checked ${buttonView.text}")
-                    viewModel.filterByCategory(category)
+                    viewModel.filterByCategory()
                 }
                 else {
+                    viewModel.checkedFilters.remove(category)
                     Log.d(TAG, "onViewCreated: unchecked ${buttonView.text}")
-                    viewModel.filterByCategory(null)
+                    viewModel.filterByCategory()
                 }
             }
 
         }
 
         // Pending work
-        viewModel.running.observe(viewLifecycleOwner){ running ->
-            if(running == false && viewModel.pending){
-                viewModel.pending = false
-                viewModel.filterByCategory(viewModel.pendingCategory)
-                viewModel.pendingCategory = null
-            }
+//        viewModel.running.observe(viewLifecycleOwner){ running ->
+//            if(running == false && viewModel.pending){
+//                viewModel.pending = false
+//                viewModel.filterByCategory(viewModel.pendingCategory)
+//                viewModel.pendingCategory = null
+//            }
+//
+//        }
 
-        }
+//        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun onAddButtonClicked() {
@@ -220,6 +225,10 @@ class ExpensesFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+//            android.R.id.home ->{
+//                requireActivity().finish()
+//                true
+//            }
             R.id.group_delete -> {
                 viewModel.deleteGroup(args.groupId)
                 gotoGroupsFragment()

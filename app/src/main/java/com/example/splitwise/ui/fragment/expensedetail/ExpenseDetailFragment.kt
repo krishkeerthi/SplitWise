@@ -82,7 +82,7 @@ class ExpenseDetailFragment : Fragment() {
 
         binding = FragmentExpenseDetailBinding.bind(view)
 
-        requireActivity().title = "Expense Detail"
+        //requireActivity().title = "Expense Detail"
 
         // Rv
         val membersAdapter = ExpenseMembersAdapter()
@@ -120,7 +120,8 @@ class ExpenseDetailFragment : Fragment() {
         // Expense
         viewModel.expense.observe(viewLifecycleOwner) { expense ->
             expense?.let {
-                requireActivity().title = it.expenseName
+                //requireActivity().title = it.expenseName
+                binding.groupExpenseTitleTextView.text = it.expenseName
                 membersAdapter.updateTotal(it.totalAmount)
                 binding.expenseTotalTextView.text = "₹" + it.totalAmount.roundOff()
                 binding.expenseCategoryExpense.text = Category.values()[it.category].name.lowercase().titleCase()

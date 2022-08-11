@@ -42,4 +42,7 @@ interface ExpenseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(expense: Expense): Long
+
+    @Query("SELECT * FROM expense WHERE group_id = :groupId AND category IN (:categories) ")
+    suspend fun getExpensesByCategories(groupId: Int, categories: List<Int>): List<Expense>?
 }

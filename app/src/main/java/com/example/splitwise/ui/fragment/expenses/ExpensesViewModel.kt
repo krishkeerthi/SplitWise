@@ -37,7 +37,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
     private val _running = MutableLiveData<Boolean>()
     val running: LiveData<Boolean>
-    get() = _running
+        get() = _running
 
     val groupMembers: LiveData<List<Member>?>
         get() = _groupMembers
@@ -47,16 +47,19 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
     val expenseMembers: LiveData<List<ExpenseMember>?>
         get() = _expenseMembers
 
+    val checkedFilters = mutableListOf<Category>()
+
     init {
         fetchData()
         _running.value = false
     }
+
     fun fetchData() {
         Log.d(TAG, "expenseviewmodel: created")
         viewModelScope.launch {
             _group.value = groupRepository.getGroup(groupId)
 
-            setExpenseMembers()
+            setExpenseMembers(true)
 
             val memberIds = groupRepository.getGroupMembers(groupId)
             Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
@@ -98,11 +101,23 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
         }
     }
 
-    private suspend fun setExpenseMembers(category: Category? = null){
-        withContext(Dispatchers.Main){
+    private suspend fun setExpenseMembers(initialLoad: Boolean = false) {
 
-            val expenses = category?.let { expenseRepository.getExpensesByCategory(groupId, it.ordinal) }
-                ?: expenseRepository.getExpenses(groupId)
+        withContext(Dispatchers.Main) {
+
+
+            val ordinals = mutableListOf<Int>()
+            for (category in checkedFilters) {
+                ordinals.add(category.ordinal)
+            }
+
+//            val expenses = category?.let { expenseRepository.getExpensesByCategory(groupId, it.ordinal) }
+//                ?: expenseRepository.getExpenses(groupId)
+
+            val expenses = if (initialLoad || ordinals.isEmpty())
+                expenseRepository.getExpenses(groupId)
+            else
+                expenseRepository.getExpensesByCategories(groupId, ordinals)
 
             if (expenses != null) {
                 Log.d(TAG, "viewmodel: group expenses $expenses")
@@ -115,7 +130,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
                         expenseMembers.add(toExpenseMember(expense, member))
                 }
 
-               _expenseMembers.value = expenseMembers
+                _expenseMembers.value = expenseMembers
             }
         }
     }
@@ -126,17 +141,17 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
         }
     }
 
-    fun filterByCategory(category: Category?) {
-        if(_running.value == false)
-        viewModelScope.launch {
-            _running.value = true
-            setExpenseMembers(category)
-            _running.value = false
+    fun filterByCategory() {
+        if (_running.value == false)
+            viewModelScope.launch {
+                _running.value = true
+                setExpenseMembers()
+                _running.value = false
 
-        }
+            }
         else {
             pending = true
-            pendingCategory = category
+            pendingCategory = Category.OTHERS // need to work
         }
 
     }

@@ -74,32 +74,53 @@ class GroupsFragment : Fragment() {
 
 
         binding.groupsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = LinearLayoutManager(requireContext()).apply {
+                reverseLayout = true // it reverses but scrolled down to the last item
+                stackFromEnd = true // corrects above problem
+            }
+
             adapter = groupsAdapter
         }
 
         // Livedata
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
-            Log.d(TAG, "onViewCreated: groups livedata $groups")
-            if (groups != null) {
+            if (groups != null && groups.isNotEmpty()) {
+                Log.d(TAG, "onViewCreated: groups livedata ${groups.size}")
                 groupsAdapter.updateGroups(groups)
                 binding.groupsRecyclerView.visibility = View.VISIBLE
                 binding.emptyGroupImageView.visibility = View.GONE
-//                binding.groupsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-//                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                        super.onScrolled(recyclerView, dx, dy)
-//
-//                        val layout = recyclerView.layoutManager as LinearLayoutManager
-//                        val position = layout.findFirstCompletelyVisibleItemPosition()
-//
-//                        Toast.makeText(requireContext(), "${groups[position].groupName}", Toast.LENGTH_SHORT).show()
-//                    }
-//                })
+                binding.dateTextView.visibility = View.VISIBLE
+
             } else {
+                Log.d(TAG, "onViewCreated: groups livedata null")
                 binding.groupsRecyclerView.visibility = View.GONE
                 binding.emptyGroupImageView.visibility = View.VISIBLE
+                binding.dateTextView.visibility = View.GONE
             }
         }
+
+
+        binding.groupsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layout = recyclerView.layoutManager as LinearLayoutManager
+                val position = layout.findLastCompletelyVisibleItemPosition()
+
+                if(viewModel.groups.value != null){
+
+                    binding.dateTextView.text = formatDate(viewModel.groups.value!![position].creationDate)
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "${groups[position].groupName}",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+                }
+
+            }
+
+
+        })
 
         // Button click
         binding.addGroupFab.setOnClickListener {
