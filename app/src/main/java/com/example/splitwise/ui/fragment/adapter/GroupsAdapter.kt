@@ -3,6 +3,7 @@ package com.example.splitwise.ui.fragment.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.GroupCard1Binding
 import com.example.splitwise.databinding.GroupCardBinding
@@ -39,14 +40,25 @@ class GroupsAdapter(
         this.groups = groups
         notifyDataSetChanged()
     }
+
 }
 
 class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder(binding.root) {
 
+    val resources = binding.root.resources
+
     fun bind(group: Group) {
         binding.groupNameTextView.text = group.groupName
         binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
-        binding.groupCreationDateTextView.text = formatDate(group.creationDate)
+        binding.groupCreationDateTextView.text = getDateStringResource(formatDate(group.creationDate))
+    }
+
+    private fun getDateStringResource(formatDate: String): String {
+        return when(formatDate){
+            "Today" -> resources.getString(R.string.today)
+            "Yesterday" -> resources.getString(R.string.yesterday)
+            else -> formatDate
+        }
     }
 
 }

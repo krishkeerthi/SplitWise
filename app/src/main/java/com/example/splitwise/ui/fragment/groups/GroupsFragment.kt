@@ -109,17 +109,16 @@ class GroupsFragment : Fragment() {
 
                 if(viewModel.groups.value != null){
 
-                    binding.dateTextView.text = formatDate(viewModel.groups.value!![position].creationDate)
-//                    Toast.makeText(
-//                        requireContext(),
-//                        "${groups[position].groupName}",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
+                    binding.dateTextView.text = getDateStringResource(formatDate(viewModel.groups.value!![position].creationDate))
                 }
 
+                binding.dateTextView.visibility = View.VISIBLE
             }
 
-
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                binding.dateTextView.visibility = View.GONE
+            }
         })
 
         // Button click
@@ -221,6 +220,14 @@ class GroupsFragment : Fragment() {
             }
             else ->
                 false
+        }
+    }
+
+    private fun getDateStringResource(formatDate: String): String {
+        return when(formatDate){
+            "Today" -> getString(R.string.today)
+            "Yesterday" -> getString(R.string.yesterday)
+            else -> formatDate
         }
     }
 

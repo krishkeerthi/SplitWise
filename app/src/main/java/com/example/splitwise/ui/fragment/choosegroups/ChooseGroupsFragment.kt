@@ -41,7 +41,7 @@ class ChooseGroupsFragment : Fragment() {
         binding = FragmentChooseGroupsBinding.bind(view)
 
         // toolbar title
-        requireActivity().title = "Choose Groups"
+        //requireActivity().title = "Choose Groups"
 
         groupsAdapter = ChooseGroupAdapter { group, isChecked ->
             if (isChecked) {
@@ -109,7 +109,7 @@ class ChooseGroupsFragment : Fragment() {
                     R.menu.choose_members_fragment_menu,
                     menu
                 ) // Since done is the only menu, I just reused choose_members_fragment_menu
-                title = "Choose Groups"
+                title = getString(R.string.select_group)
 
             }
             return true

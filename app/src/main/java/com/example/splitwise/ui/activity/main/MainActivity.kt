@@ -3,12 +3,15 @@ package com.example.splitwise.ui.activity.main
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -20,6 +23,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityMainBinding
 import com.example.splitwise.ui.activity.register.RegisterActivity
+import java.util.*
 
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
@@ -32,9 +36,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         val sharedPreference = getSharedPreferences(KEY, Context.MODE_PRIVATE)
         val memberId = sharedPreference.getInt("MEMBERID", -1)
+
+        // set theme
         val theme = sharedPreference.getInt("THEME", R.style.Theme_SplitWise)
 
         setTheme(theme)
+
+        // set language
+        val language = sharedPreference.getString("LANGUAGE", "English") as String
+        Toast.makeText(this, "$language", Toast.LENGTH_SHORT).show()
+        changeLanguage(language)
 
 //        if(this.isDarkThemeOn()){
 //            Toast.makeText(this, "dark theme on", Toast.LENGTH_SHORT).show()
@@ -77,13 +88,28 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         setupActionBarWithNavController(navController, appBarConfiguration)
         // this give up navigation and fragment names for title, explicit change not applying
 
-     //   setSupportActionBar(binding.toolbar)
+        //   setSupportActionBar(binding.toolbar)
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
 
         navController.addOnDestinationChangedListener(this)
 
         val colorDrawable = ColorDrawable(Color.parseColor("#0F9D58"))
         actionBar?.setBackgroundDrawable(colorDrawable)
+    }
+
+    private fun changeLanguage(language: String) {
+        val languageCode = when(language){
+            "English" -> "en"
+            "Tamil" -> "ta"
+            else -> "en"
+        }
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        Log.d(TAG, "changeLanguage: $languageCode")
+        val config = resources.configuration
+        config.setLocale(locale)
+        createConfigurationContext(config)
+        resources.updateConfiguration(config, resources.displayMetrics)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

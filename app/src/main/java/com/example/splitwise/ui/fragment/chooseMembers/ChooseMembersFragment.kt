@@ -40,7 +40,7 @@ class ChooseMembersFragment : Fragment() {
         viewModel.fetchData()
 
         Log.d(ContentValues.TAG, "onCreateDialog: membercheck inside  choose member onviewcreated, ${viewModel.getSelectedMembers().toList()}")
-        requireActivity().title = "Choose Members"
+        //requireActivity().title = "Choose Members"
 
         binding = FragmentChooseMembersBinding.bind(view)
 
@@ -108,10 +108,8 @@ class ChooseMembersFragment : Fragment() {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             mode?.apply {
                 menuInflater?.inflate(R.menu.choose_members_fragment_menu, menu)
-                title = "Choose Members"
-
+                title = getString(R.string.choose_members)
             }
-
             return true
         }
 

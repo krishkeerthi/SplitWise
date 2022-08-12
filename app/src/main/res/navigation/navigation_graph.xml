@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/groupsFragment"
         android:name="com.example.splitwise.ui.fragment.groups.GroupsFragment"
-        android:label="Groups" >
+        android:label="@string/groups" >
         <action
             android:id="@+id/action_groupsFragment_to_createEditGroupFragment"
             app:destination="@id/createEditGroupFragment" />
@@ -22,7 +22,7 @@
     <fragment
         android:id="@+id/splitWiseFragment"
         android:name="com.example.splitwise.ui.fragment.splitwise.SplitWiseFragment"
-        android:label="SplitWise" >
+        android:label="@string/splitwise" >
         <action
             android:id="@+id/action_splitWiseFragment_to_settleUpFragment"
             app:destination="@id/settleUpFragment" />
@@ -36,7 +36,7 @@
     <fragment
         android:id="@+id/groupsOverviewFragment"
         android:name="com.example.splitwise.ui.fragment.groupsoverview.GroupsOverviewFragment"
-        android:label="Overview" >
+        android:label="@string/group_overview" >
         <action
             android:id="@+id/action_groupsOverviewFragment_to_expensesOverviewFragment"
             app:destination="@id/expensesOverviewFragment" />
@@ -44,7 +44,7 @@
     <fragment
         android:id="@+id/createEditGroupFragment"
         android:name="com.example.splitwise.ui.fragment.createeditgroup.CreateEditGroupFragment"
-        android:label="CreateEditGroup" >
+        android:label="@string/create_edit_group" >
         <argument
             android:name="groupId"
             app:argType="integer"
@@ -69,7 +69,7 @@
     <fragment
         android:id="@+id/expensesFragment"
         android:name="com.example.splitwise.ui.fragment.expenses.ExpensesFragment"
-        android:label="Expenses" >
+        android:label="@string/expenses" >
         <action
             android:id="@+id/action_expensesFragment_to_addExpenseFragment"
             app:destination="@id/addExpenseFragment" />
@@ -92,7 +92,7 @@
     <fragment
         android:id="@+id/addExpenseFragment"
         android:name="com.example.splitwise.ui.fragment.addexpense.AddExpenseFragment"
-        android:label="AddExpense" >
+        android:label="@string/add_expense" >
         <argument
             android:name="groupId"
             app:argType="integer" />
@@ -105,7 +105,7 @@
     <fragment
         android:id="@+id/expenseDetailFragment"
         android:name="com.example.splitwise.ui.fragment.expensedetail.ExpenseDetailFragment"
-        android:label="ExpenseDetail" >
+        android:label="@string/expense_detail" >
         <argument
             android:name="expenseId"
             app:argType="integer"
@@ -117,7 +117,7 @@
     <fragment
         android:id="@+id/settleUpFragment"
         android:name="com.example.splitwise.ui.fragment.settleup.SettleUpFragment"
-        android:label="SettleUp" >
+        android:label="@string/settle_up" >
         <argument
             android:name="payerId"
             app:argType="integer" />
@@ -139,7 +139,7 @@
     <fragment
         android:id="@+id/expensesOverviewFragment"
         android:name="com.example.splitwise.ui.fragment.expensesoverview.ExpensesOverviewFragment"
-        android:label="Expenses Overview" >
+        android:label="@string/expense_overview" >
         <argument
             android:name="groupId"
             app:argType="integer" />
@@ -147,7 +147,7 @@
     <fragment
         android:id="@+id/chooseMembersFragment"
         android:name="com.example.splitwise.ui.fragment.chooseMembers.ChooseMembersFragment"
-        android:label="Choose Members"
+        android:label="@string/choose_members"
         tools:layout="@layout/fragment_choose_members" >
         <action
             android:id="@+id/action_chooseMembersFragment_to_createEditGroupFragment"
@@ -174,7 +174,7 @@
     <fragment
         android:id="@+id/billsHolderFragment"
         android:name="com.example.splitwise.ui.fragment.billsholder.BillsHolderFragment"
-        android:label="Bill"
+        android:label="@string/bills"
         tools:layout="@layout/fragment_bills_holder" >
         <argument
             android:name="bills"
@@ -186,7 +186,7 @@
     <fragment
         android:id="@+id/searchGroupFragment"
         android:name="com.example.splitwise.ui.fragment.searchgroup.SearchGroupFragment"
-        android:label="Search Group"
+        android:label="@string/search"
         tools:layout="@layout/fragment_search_group" >
         <action
             android:id="@+id/action_searchGroupFragment_to_expensesFragment"
@@ -195,12 +195,12 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.splitwise.ui.fragment.settings.SettingsFragment"
-        android:label="Settings"
+        android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/chooseGroupsFragment"
         android:name="com.example.splitwise.ui.fragment.choosegroups.ChooseGroupsFragment"
-        android:label="Choose Groups"
+        android:label="@string/select_group"
         tools:layout="@layout/fragment_choose_groups" >
         <action
             android:id="@+id/action_chooseGroupsFragment_self"
@@ -219,7 +219,7 @@
     <fragment
         android:id="@+id/choosePayeesFragment"
         android:name="com.example.splitwise.ui.fragment.choosepayees.ChoosePayeesFragment"
-        android:label="Choose Payees"
+        android:label="@string/select_payee"
         tools:layout="@layout/fragment_choose_payees" >
         <action
             android:id="@+id/action_choosePayeesFragment_to_settleUpFragment"

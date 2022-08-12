@@ -56,6 +56,17 @@ class SettingsFragment : Fragment() {
         }
 
 
+        when (sharedPreferences.getString("LANGUAGE", "English")) {
+            "English" -> {
+                binding.languageDefaultRadioButton.isChecked = true
+            }
+            "Tamil" -> {
+                binding.languageTamilRadioButton.isChecked = true
+            }
+        }
+
+
+
         // Radio checked listener
         binding.themeGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
@@ -67,6 +78,20 @@ class SettingsFragment : Fragment() {
                 }
                 else -> {
                     applyTheme(R.style.Theme_SplitWise)
+                }
+            }
+        }
+
+        binding.languageGroup.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                R.id.language_default_radio_button -> {
+                   changeLanguage("English")
+                }
+                R.id.language_tamil_radio_button -> {
+                    changeLanguage("Tamil")
+                }
+                else -> {
+                    changeLanguage("English")
                 }
             }
         }
@@ -120,6 +145,15 @@ class SettingsFragment : Fragment() {
     private fun applyTheme(themeId: Int) {
         with(sharedPreferences.edit()) {
             putInt("THEME", themeId)
+            apply()
+        }
+
+        restartActivity()
+    }
+
+    private fun changeLanguage(language: String){
+        with(sharedPreferences.edit()){
+            putString("LANGUAGE", language)
             apply()
         }
 

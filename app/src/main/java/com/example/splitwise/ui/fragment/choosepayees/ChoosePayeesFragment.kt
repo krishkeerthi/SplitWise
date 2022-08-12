@@ -45,7 +45,7 @@ class ChoosePayeesFragment : Fragment() {
         binding = FragmentChoosePayeesBinding.bind(view)
 
         // toolbar title
-        requireActivity().title = "Choose Payee"
+        //requireActivity().title = "Choose Payee"
 
         payeesAdapter = ChoosePayeeAdapter { member, isChecked ->
             if (isChecked) {
@@ -112,7 +112,7 @@ class ChoosePayeesFragment : Fragment() {
                     R.menu.choose_members_fragment_menu,
                     menu
                 ) // Since done is the only menu, I just reused choose_members_fragment_menu
-                title = "Choose Payees"
+                title = getString(R.string.choose_payee)
 
             }
             return true

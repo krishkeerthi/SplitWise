@@ -48,7 +48,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="Members"
+        android:text="@string/members"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/group_expense_text_view" />
@@ -85,7 +85,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Expenses"
+        android:text="@string/expenses"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/horizontal_view" />
@@ -212,7 +212,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Add Member"
+        android:text="@string/add_member"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/add_expense_button"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -223,7 +223,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Add Expense"
+        android:text="@string/add_expense"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/add_fab_button"
         app:layout_constraintEnd_toEndOf="parent" />

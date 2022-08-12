@@ -8,11 +8,12 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_amount_text_field"
         android:layout_width="match_parent"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Enter Amount"
+        android:hint="@string/amount"
         app:prefixText="₹"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

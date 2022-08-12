@@ -6,12 +6,12 @@
         android:id="@+id/group_fragment_search"
         android:icon="@drawable/ic_baseline_search_24"
         app:showAsAction="ifRoom"
-        android:title="Search" />
+        android:title="@string/search" />
 
     <item
         android:id="@+id/group_fragment_filter"
         android:icon="@drawable/ic_baseline_filter_alt_24"
         app:showAsAction="ifRoom"
-        android:title="Filter"/>
+        android:title="@string/filter"/>
 
 </menu>

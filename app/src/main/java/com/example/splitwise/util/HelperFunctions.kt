@@ -3,6 +3,7 @@ package com.example.splitwise.util
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import com.example.splitwise.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,7 +44,9 @@ fun String.titleCase(): String{
     return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 }
 
+
 fun Context.isDarkThemeOn(): Boolean {
     return resources.configuration.uiMode and
             Configuration.UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
 }
+

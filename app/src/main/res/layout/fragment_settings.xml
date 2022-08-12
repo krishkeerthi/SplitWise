@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Theme"
+        android:text="@string/theme"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layoutDirection="rtl"
-            android:text="Default"
+            android:text="@string/Default"
             android:textAlignment="textStart" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -42,7 +42,46 @@
             android:layout_height="wrap_content"
             android:textAlignment="textStart"
             android:layoutDirection="rtl"
-            android:text="Boxed" />
+            android:text="@string/boxed" />
+    </RadioGroup>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/language_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/language"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/theme_group" />
+
+    <RadioGroup
+        android:id="@+id/language_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/language_label">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/language_default_radio_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layoutDirection="rtl"
+            android:text="@string/english"
+            android:textAlignment="textStart" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/language_tamil_radio_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:layoutDirection="rtl"
+            android:text="@string/tamil" />
     </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

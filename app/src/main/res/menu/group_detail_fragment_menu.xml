@@ -6,6 +6,6 @@
         android:id="@+id/group_delete"
         android:icon="@drawable/ic_baseline_delete_24"
         app:showAsAction="ifRoom"
-        android:title="Delete" />
+        android:title="@string/delete" />
 
 </menu>

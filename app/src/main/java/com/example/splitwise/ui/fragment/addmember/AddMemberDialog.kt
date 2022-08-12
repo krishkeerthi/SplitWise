@@ -35,10 +35,10 @@ class AddMemberDialog(
 
         builder.apply {
             setView(addMemberDialog)
-            setTitle("Add Member")
+            setTitle(R.string.add_member)
 
             // Save button
-            setPositiveButton("Save") { dialogInterface, position ->
+            setPositiveButton(R.string.save) { dialogInterface, position ->
                 viewModel.addMember(
                     nameEditText.text.toString(),
                     phoneEditText.text.toString().toLong()
