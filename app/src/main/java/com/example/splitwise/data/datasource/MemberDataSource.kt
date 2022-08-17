@@ -18,4 +18,6 @@ interface MemberDataSource {
     suspend fun getMembersStreak(memberIds: List<Int>): List<MemberStreak>?
 
     suspend fun updateMemberStreak(memberId: Int, streak: Int)
+
+    suspend fun getMember(name: String, phoneNumber: Long): Member?
 }

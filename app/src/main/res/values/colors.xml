@@ -10,5 +10,6 @@
     <color name="view_color">#dee3e1</color>
     <color name="text_bold">#FF000000</color>
     <color name="blue">#1976d2</color>
+    <color name="background">#FFFFFF</color>
 
 </resources>

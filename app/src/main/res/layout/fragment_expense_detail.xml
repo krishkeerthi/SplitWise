@@ -106,6 +106,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:itemCount="10"
+        android:visibility="gone"
         tools:listitem="@layout/bill_profile_card" />
 
 

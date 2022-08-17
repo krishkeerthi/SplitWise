@@ -46,7 +46,9 @@ class GroupsViewModel(context: Context) : ViewModel() {
     fun fetchData() {
         Log.d(TAG, "groupsviewmodel: called")
         viewModelScope.launch {
-            _groups.value = groupsRepository.getGroups()
+            //_groups.value = groupsRepository.getGroups()
+
+            applyFilter()
         }
     }
 

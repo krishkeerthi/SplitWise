@@ -23,4 +23,7 @@ interface MemberDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(member: Member): Long
+
+    @Query("SELECT * FROM member WHERE name = :name AND phone = :phoneNumber")
+    suspend fun getMember(name: String, phoneNumber: Long): Member?
 }

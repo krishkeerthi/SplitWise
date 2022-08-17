@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentAddExpenseBinding
@@ -21,6 +20,7 @@ import com.example.splitwise.ui.fragment.adapter.CategoryArrayAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersCheckboxAdapter
 import com.example.splitwise.ui.fragment.adapter.PayerArrayAdapter
 import com.example.splitwise.util.Category
+import com.example.splitwise.util.titleCase
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class AddExpenseFragment : Fragment() {
@@ -181,14 +181,14 @@ class AddExpenseFragment : Fragment() {
         categoryTitle?.text = getString(R.string.select_category)
 
         //Adapter
-        val categoryAdapter = CategoryArrayAdapter(requireContext(), R.layout.dropdown, categories)
+        val categoryAdapter = CategoryArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, categories)
         categoryList?.apply {
             Log.d(TAG, "openCategoryBottomSheet: list adapter set")
             adapter = categoryAdapter
             onItemClickListener =
                 AdapterView.OnItemClickListener { parent, view, position, id ->
                     viewModel.category = categories[position].ordinal
-                    binding.chooseCategoryText.text = categories[position].name
+                    binding.chooseCategoryText.text = categories[position].name.titleCase()
                     categoryBottomSheetDialog.dismiss()
                 }
         }
@@ -205,7 +205,7 @@ class AddExpenseFragment : Fragment() {
 
         payerTitle?.text = getString(R.string.select_payer)
         //Adapter
-        val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.dropdown, payers)
+        val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, payers)
         payerList?.apply {
             Log.d(TAG, "openPayerBottomSheet: list adapter set")
             adapter = payerAdapter

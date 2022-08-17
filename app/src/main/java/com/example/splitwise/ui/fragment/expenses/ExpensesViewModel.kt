@@ -47,7 +47,17 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
     val expenseMembers: LiveData<List<ExpenseMember>?>
         get() = _expenseMembers
 
+    private val _expenseCount = MutableLiveData<Int>(0)
+
+    val expenseCount: LiveData<Int>
+        get() = _expenseCount
+
     val checkedFilters = mutableListOf<Category>()
+
+    private val _checkedFiltersCount = MutableLiveData<Int>(0)
+
+    val checkedFiltersCount: LiveData<Int>
+        get() = _checkedFiltersCount
 
     init {
         fetchData()
@@ -64,6 +74,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
             val memberIds = groupRepository.getGroupMembers(groupId)
             Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
             _groupMembers.value = getMembersFromIds(memberIds)
+
         }
     }
 
@@ -120,6 +131,10 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
                 expenseRepository.getExpensesByCategories(groupId, ordinals)
 
             if (expenses != null) {
+                // setting expense count on initial load
+                    if(initialLoad)
+                        _expenseCount.value = expenses.size
+
                 Log.d(TAG, "viewmodel: group expenses $expenses")
                 val expenseMembers = mutableListOf<ExpenseMember>()
 
@@ -154,6 +169,14 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
             pendingCategory = Category.OTHERS // need to work
         }
 
+    }
+
+    fun decrementCheckedFiltersCount() {
+        _checkedFiltersCount.value = _checkedFiltersCount.value?.minus(1)
+    }
+
+    fun incrementCheckedFiltersCount() {
+        _checkedFiltersCount.value = _checkedFiltersCount.value?.plus(1)
     }
 
 //    fun clearCategoryFilter() {

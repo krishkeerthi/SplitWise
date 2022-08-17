@@ -161,17 +161,53 @@ class ExpensesFragment : Fragment() {
                 }
 
                 if(isChecked){
+                    viewModel.incrementCheckedFiltersCount()
                     viewModel.checkedFilters.add(category)
                     Log.d(TAG, "onViewCreated: checked ${buttonView.text}")
                     viewModel.filterByCategory()
                 }
                 else {
+                    viewModel.decrementCheckedFiltersCount()
                     viewModel.checkedFilters.remove(category)
                     Log.d(TAG, "onViewCreated: unchecked ${buttonView.text}")
                     viewModel.filterByCategory()
                 }
             }
+        }
 
+        // clear button click
+        binding.clearExpensesFilter.setOnClickListener {
+            binding.categoryChipGroup.forEach { child ->
+                val chip = child as Chip
+
+                viewModel.checkedFilters.clear()
+
+                if(chip.isChecked){
+                    chip.isChecked = false
+                }
+            }
+//            viewModel.checkedFilters.clear()
+//            viewModel.filterByCategory()
+        }
+
+        // show filter and clear when expenses is not null
+        viewModel.expenseCount.observe(viewLifecycleOwner){ count ->
+            if(count > 0){
+                binding.horizontalScrollView.visibility = View.VISIBLE
+            }
+            else{
+                binding.horizontalScrollView.visibility = View.GONE
+            }
+        }
+
+        // show clear filter when at least one filter is checked
+        viewModel.checkedFiltersCount.observe(viewLifecycleOwner){ count ->
+            if(count > 0){
+                binding.clearExpensesFilter.visibility = View.VISIBLE
+            }
+            else{
+                binding.clearExpensesFilter.visibility = View.INVISIBLE
+            }
         }
 
         // Pending work

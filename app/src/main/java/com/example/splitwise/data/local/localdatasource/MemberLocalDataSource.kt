@@ -42,4 +42,8 @@ class MemberLocalDataSource(
         memberStreakDao.update(memberId, streak)
     }
 
+    override suspend fun getMember(name: String, phoneNumber: Long): Member? {
+        return memberDao.getMember(name, phoneNumber)
+    }
+
 }

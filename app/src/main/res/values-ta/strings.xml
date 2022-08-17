@@ -55,4 +55,9 @@
     <string name="expense_overview">கண்ணோட்டம்</string>
     <string name="Default">இயல்புநிலை</string>
     <string name="boxed">பெட்டி</string>
+    <string name="clear">அழி</string>
+    <string name="no_payee_selected">பணம் பெறுபவர் தேர்ந்தெடுக்கப்படவில்லை</string>
+    <string name="owed">பெற்றது</string>
+    <string name="lent">கொடுத்தது</string>
+    <string name="edit">மாற்று</string>
 </resources>

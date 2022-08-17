@@ -1,6 +1,8 @@
 package com.example.splitwise.data.repository
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import android.view.Display
 import androidx.room.util.dropFtsSyncTriggers
 import com.example.splitwise.data.datasource.MemberDataSource
@@ -60,6 +62,14 @@ class MemberRepository(
             dataSource.getMemberStreak(memberId)?.let { memberStreak ->
                 dataSource.updateMemberStreak(memberStreak.memberId, memberStreak.streak + 1)
             }
+        }
+    }
+
+    suspend fun checkMemberExistence(name: String, phoneNumber: Long): Boolean {
+        return withContext(Dispatchers.IO){
+            val result = dataSource.getMember(name.titleCase(), phoneNumber)
+            Log.d(TAG, "checkMemberExistence: ${result != null}")
+            result != null
         }
     }
 

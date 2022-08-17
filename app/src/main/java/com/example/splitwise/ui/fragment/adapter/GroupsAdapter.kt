@@ -11,7 +11,8 @@ import com.example.splitwise.util.formatDate
 import com.example.splitwise.util.roundOff
 
 class GroupsAdapter(
-    val onExpenseClicked: (Int) -> Unit
+    val onExpenseClicked: (Int) -> Unit,
+    val onImageClicked: () -> Unit
 ) : RecyclerView.Adapter<GroupsViewHolder>() {
     private var groups = listOf<Group>()
 
@@ -20,7 +21,10 @@ class GroupsAdapter(
         val binding = GroupCard1Binding.inflate(view, parent, false)
 
         return GroupsViewHolder(binding).apply {
-            itemView.setOnClickListener {
+            binding.groupImageView.setOnClickListener {
+                onImageClicked()
+            }
+            binding.textLayout.setOnClickListener{
                 onExpenseClicked(groups[adapterPosition].groupId)
             }
         }

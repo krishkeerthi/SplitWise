@@ -5,8 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import com.example.splitwise.databinding.DropdownBinding
+import com.example.splitwise.databinding.IconBottomSheetItemBinding
 import com.example.splitwise.util.Category
+import com.example.splitwise.util.getCategoryDrawableResource
 import com.example.splitwise.util.titleCase
 
 class CategoryArrayAdapter(
@@ -14,16 +15,17 @@ class CategoryArrayAdapter(
 ) : ArrayAdapter<Category>(context, layout, categories) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val binding: DropdownBinding
+        val binding: IconBottomSheetItemBinding
 
         var convertView = convertView
 
         if (convertView == null) {
             val inflater = LayoutInflater.from(parent.context)
-            binding = DropdownBinding.inflate(inflater, parent, false)
+            binding = IconBottomSheetItemBinding.inflate(inflater, parent, false)
 
             convertView = binding.root
-            binding.dropdownTextView.text = categories[position].name.lowercase().titleCase()
+            binding.itemTextView.text = categories[position].name.lowercase().titleCase()
+            binding.itemImageView.setImageResource(getCategoryDrawableResource(categories[position].ordinal))
         }
 
         return convertView

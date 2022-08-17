@@ -9,7 +9,8 @@
         android:id="@+id/group_image_view"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:src="@drawable/group"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/people"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

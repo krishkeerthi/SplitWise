@@ -10,4 +10,5 @@
     <color name="view_color">#52514e</color>
     <color name="text_bold">#FFFFFFFF</color>
     <color name="blue">#4fc3f7</color>
+    <color name="background">#000000</color>
 </resources>

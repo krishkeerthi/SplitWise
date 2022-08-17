@@ -8,9 +8,12 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
@@ -29,6 +32,27 @@ class CreateEditGroupFragment : Fragment() {
         CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.selectedMembers)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val callback = object: OnBackPressedCallback(true /* enabled by default */) {
+
+            override fun handleOnBackPressed() {
+                val builder =  AlertDialog.Builder(requireContext())
+
+                builder.setTitle("Discard");
+                builder.setMessage("Do you want to discard changes? ")
+                builder.setPositiveButton("Discard"
+                ) { dialog, which ->
+                    //  Toast.makeText(requireContext(), "custom back pressed", Toast.LENGTH_SHORT).show()
+                    NavHostFragment.findNavController(this@CreateEditGroupFragment).popBackStack()
+                }
+                builder.setNegativeButton("Cancel",null)
+                builder.show()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback);
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,6 +93,14 @@ class CreateEditGroupFragment : Fragment() {
                 Log.d(TAG, "onViewCreated: addMember observed $members")
                 membersAdapter.updateMembers(members)
 
+            }
+        }
+
+        // Livedata member exists
+        viewModel.exists.observe(viewLifecycleOwner){ exists ->
+            if(exists){
+                Toast.makeText(requireContext(), "Member Exists Already", Toast.LENGTH_SHORT).show()
+                viewModel.exists.value = false
             }
         }
 

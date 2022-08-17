@@ -9,10 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSettleUpBinding
+import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
+import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
+import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragmentDirections
 import com.example.splitwise.util.roundOff
 
 class SettleUpFragment : Fragment() {
@@ -46,29 +50,54 @@ class SettleUpFragment : Fragment() {
         // Load data based on selected members
         selectedMembers = args.selectedMembers.toList()
 
-        if(selectedMembers.isNotEmpty()){
-            var payeesText = ""
-            for(member in selectedMembers){
-                payeesText += "● ${member.name} "
-            }
-            binding.selectedPayeesText.text = payeesText
-            binding.selectedPayeesCard.visibility = View.VISIBLE
+        val payeesAdapter = GroupMembersAdapter() // reusing the adapter here
 
+        if(selectedMembers.isNotEmpty()){
+//            var payeesText = ""
+//            for(member in selectedMembers){
+//                payeesText += "● ${member.name} "
+//            }
+//            binding.selectedPayeesText.text = payeesText
+//            binding.selectedPayeesCard.visibility = View.VISIBLE
+
+            payeesAdapter.updateMembers(selectedMembers)
             viewModel.getAmount(getMemberIds(selectedMembers))
+
+            binding.clearPayees.visibility = View.VISIBLE
+            binding.payeesRecyclerView.visibility = View.VISIBLE
+            binding.totalTextView.visibility = View.VISIBLE
+            binding.amountTextView.visibility = View.VISIBLE
+            binding.settleButton.visibility = View.VISIBLE
+
+            binding.emptyPayees.visibility = View.GONE
+        }
+        else{
+            binding.clearPayees.visibility = View.INVISIBLE
+            binding.payeesRecyclerView.visibility = View.GONE
+            binding.totalTextView.visibility = View.GONE
+            binding.amountTextView.visibility = View.GONE
+            binding.settleButton.visibility = View.INVISIBLE
+
+            binding.emptyPayees.visibility = View.VISIBLE
         }
 
+        // payees
+        binding.payeesRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = payeesAdapter
+        }
 
         // Group
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             //binding.groupNameTextView.text = group?.groupName //?: "All Group"
-            if(groups != null) {
-                var groupsText = ""
-                for (group in groups) {
-                    groupsText += "● ${group.groupName} "
-                }
-                binding.totalTextView.text = groupsText
-                binding.totalTextView.visibility = View.VISIBLE
-            }
+//            if(groups != null) {
+//                var groupsText = ""
+//                for (group in groups) {
+//                    groupsText += "● ${group.groupName} "
+//                }
+//                binding.totalTextView.text = groupsText
+//                binding.totalTextView.visibility = View.VISIBLE
+//            }
         }
 
         // Payer
@@ -87,6 +116,11 @@ class SettleUpFragment : Fragment() {
                     //openPayeesBottomSheet(payees)
                 }
             }
+        }
+
+        // clear button
+        binding.clearPayees.setOnClickListener {
+            gotoSelf()
         }
 
         // Amount
@@ -188,6 +222,12 @@ class SettleUpFragment : Fragment() {
 
     private fun gotoSplitWiseFragment() {
         val action = SettleUpFragmentDirections.actionSettleUpFragmentToSplitWiseFragment(listOf<Group>().toTypedArray())
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun gotoSelf() {
+        val action =
+            SettleUpFragmentDirections.actionSettleUpFragmentSelf(args.payerId, args.groupIds, listOf<Member>().toTypedArray()) // Passing empty list of members when going to settle up fragment
         view?.findNavController()?.navigate(action)
     }
 

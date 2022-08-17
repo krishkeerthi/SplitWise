@@ -78,112 +78,53 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:text="@string/payee"
+        app:layout_constraintBottom_toBottomOf="@+id/clear_payees"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/horizontal_view" />
+        app:layout_constraintTop_toTopOf="@+id/clear_payees" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/to_member_layout"
-        android:layout_width="match_parent"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/clear_payees"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/to_text_view">
+        android:text="@string/clear"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_view"
+        tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/to_member_image_view"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:src="@drawable/user2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/to_member_name_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            android:text="Keerthi K"
-            android:textColor="@color/text_bold"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/to_member_phone_text_view"
-            app:layout_constraintStart_toEndOf="@+id/to_member_image_view" />
-
-        <TextView
-            android:id="@+id/to_member_phone_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="4dp"
-            android:text="9790307426"
-            app:layout_constraintBottom_toBottomOf="@+id/to_member_image_view"
-            app:layout_constraintStart_toEndOf="@+id/to_member_image_view" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/selected_payees_card"
-        android:layout_width="match_parent"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/empty_payees"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone"
+        android:text="@string/no_payee_selected"
+        app:layout_constraintBottom_toTopOf="@id/choose_payee_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/to_member_layout"
-        tools:visibility="visible">
+        app:layout_constraintTop_toBottomOf="@id/clear_payees" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/selected_payees_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="Selected Payees"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/selected_payees_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:text="Selected Groups"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/selected_payees_text_view" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </com.google.android.material.card.MaterialCardView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/payees_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/choose_payee_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clear_payees"
+        tools:listitem="@layout/group_member_card"
+        tools:visibility="visible" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/choose_payee_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/choose_payee"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/selected_payees_card" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/select_all_payees_checkbox"
@@ -199,12 +140,13 @@
         android:id="@+id/total_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:text="Total"
+        android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/amount_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/amount_text_view"
@@ -213,11 +155,13 @@
         android:textColor="@color/text_bold"
         android:textSize="34sp"
         android:textStyle="bold"
-        tools:text="₹12500"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/settle_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/select_all_payees_checkbox" />
+        app:layout_constraintTop_toBottomOf="@+id/select_all_payees_checkbox"
+        tools:text="₹12500"
+        tools:visibility="visible" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/settle_button"
@@ -227,8 +171,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/settle"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,8 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
-import com.example.splitwise.ui.fragment.adapter.FilterArrayAdapter
-import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
+import com.example.splitwise.ui.fragment.adapter.*
 import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
@@ -50,6 +49,8 @@ class GroupsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_groups, container, false)
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.fetchData() // fetching data in viewmodel init{} does not get called while returning from back stack
@@ -58,9 +59,11 @@ class GroupsFragment : Fragment() {
 
 
         // Rv
-        val groupsAdapter = GroupsAdapter { groupId: Int ->
+        val groupsAdapter = GroupsAdapter({ groupId: Int ->
             goToExpenseFragment(groupId)
-        }
+        },
+            { gotoGroupIconFragment()}
+        )
 //            { groupId: Int ->
 //                if (groupId == 12345 || groupId == 54321)
 //                    Toast.makeText(
@@ -203,6 +206,11 @@ class GroupsFragment : Fragment() {
 
     }
 
+    private fun gotoGroupIconFragment() {
+        val action = GroupsFragmentDirections.actionGroupsFragmentToGroupIconFragment()
+        view?.findNavController()?.navigate(action)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.groups_fragment_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -254,7 +262,7 @@ class GroupsFragment : Fragment() {
 
         //Adapter
         val filterAdapter =
-            FilterArrayAdapter<GroupFilter>(requireContext(), R.layout.dropdown, filters)
+            GroupFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, filters)
         filterList?.apply {
             Log.d(TAG, "openCategoryBottomSheet: list adapter set")
             adapter = filterAdapter
@@ -300,7 +308,7 @@ class GroupsFragment : Fragment() {
 
         //Adapter
         val filterAdapter =
-            FilterArrayAdapter<AmountFilter>(requireContext(), R.layout.dropdown, amountFilters)
+            AmountFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, amountFilters)
         amountFilterList?.apply {
             Log.d(TAG, "openCategoryBottomSheet: list adapter set")
             adapter = filterAdapter
@@ -330,7 +338,7 @@ class GroupsFragment : Fragment() {
 
         //Adapter
         val filterAdapter =
-            FilterArrayAdapter<DateFilter>(requireContext(), R.layout.dropdown, dateFilters)
+            DateFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, dateFilters)
         dateFilterList?.apply {
             Log.d(TAG, "openCategoryBottomSheet: list adapter set")
             adapter = filterAdapter

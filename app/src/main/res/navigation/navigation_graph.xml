@@ -6,6 +6,24 @@
     app:startDestination="@id/groupsFragment">
 
     <fragment
+        android:id="@+id/searchImageFragment"
+        android:name="com.example.splitwise.ui.fragment.searchimage.SearchImageFragment"
+        android:label="@string/search"
+        tools:layout="@layout/fragment_search_image">
+        <action
+            android:id="@+id/action_searchImageFragment_to_setImageFragment"
+            app:destination="@id/setImageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/setImageFragment"
+        android:name="com.example.splitwise.ui.fragment.setimage.SetImageFragment"
+        tools:layout="@layout/fragment_set_image">
+        <argument
+            android:name="imageUrl"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
         android:id="@+id/groupsFragment"
         android:name="com.example.splitwise.ui.fragment.groups.GroupsFragment"
         android:label="@string/groups" >
@@ -18,6 +36,9 @@
         <action
             android:id="@+id/action_groupsFragment_to_searchGroupFragment"
             app:destination="@id/searchGroupFragment" />
+        <action
+            android:id="@+id/action_groupsFragment_to_groupIconFragment"
+            app:destination="@id/groupIconFragment" />
     </fragment>
     <fragment
         android:id="@+id/splitWiseFragment"
@@ -32,6 +53,11 @@
         <argument
             android:name="selectedGroups"
             app:argType="com.example.splitwise.data.local.entity.Group[]" />
+        <action
+            android:id="@+id/action_splitWiseFragment_self"
+            app:destination="@id/splitWiseFragment"
+            app:popUpTo="@id/splitWiseFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/groupsOverviewFragment"
@@ -135,6 +161,11 @@
         <argument
             android:name="selectedMembers"
             app:argType="com.example.splitwise.data.local.entity.Member[]" />
+        <action
+            android:id="@+id/action_settleUpFragment_self"
+            app:destination="@id/settleUpFragment"
+            app:popUpTo="@id/settleUpFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/expensesOverviewFragment"
@@ -191,6 +222,11 @@
         <action
             android:id="@+id/action_searchGroupFragment_to_expensesFragment"
             app:destination="@id/expensesFragment" />
+        <action
+            android:id="@+id/action_searchGroupFragment_to_groupsFragment"
+            app:destination="@id/groupsFragment"
+            app:popUpTo="@id/groupsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -243,5 +279,14 @@
         <argument
             android:name="selectedPayeeIds"
             app:argType="integer[]" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupIconFragment"
+        android:name="com.example.splitwise.ui.fragment.groupicon.GroupIconFragment"
+        android:label="Group Icon"
+        tools:layout="@layout/fragment_group_icon" >
+        <action
+            android:id="@+id/action_groupIconFragment_to_searchImageFragment"
+            app:destination="@id/searchImageFragment" />
     </fragment>
 </navigation>

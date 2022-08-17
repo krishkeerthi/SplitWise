@@ -51,6 +51,10 @@ class GroupsOverviewFragment : Fragment() {
                 groupsAdapter.updateGroups(groups)
             }
         }
+
+        binding.searchButton.setOnClickListener {
+           // gotoSearchImageFragment()
+        }
     }
 
     private fun gotoExpensesOverviewFragment(groupId: Int) {
@@ -60,4 +64,11 @@ class GroupsOverviewFragment : Fragment() {
             )
         view?.findNavController()?.navigate(action)
     }
+
+//    private fun gotoSearchImageFragment() {
+//        val action =
+//            GroupsOverviewFragmentDirections.actionGroupsOverviewFragmentToSearchImageFragment()
+//        view?.findNavController()?.navigate(action)
+//    }
+
 }

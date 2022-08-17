@@ -6,6 +6,7 @@
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/drawable-v24/rounded_corner.xml" value="0.1615" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/drawable/bg_chip_state.xml" value="0.1" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.1605" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/drawable/ic_baseline_photo_camera_24.xml" value="0.161" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/drawable/register_background_color.xml" value="0.1615" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/drawable/register_rounded_corner.xml" value="0.1615" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/drawable/white_rounded_corner.xml" value="0.1" />
@@ -17,10 +18,12 @@
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/bottom_sheet.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/bottom_sheet_item.xml" value="0.25815217391304346" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/category_bottom_sheet.xml" value="0.25815217391304346" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/category_bottom_sheet_item.xml" value="0.213768115942029" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/choose_group_card.xml" value="0.16" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/choose_member_card.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/choose_payee_card.xml" value="0.21145833333333333" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/dropdown.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/edit_group_icon.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/expense_card.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/expense_card_1.xml" value="0.4" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/expense_member_card.xml" value="0.4" />
@@ -35,32 +38,41 @@
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_expense_detail.xml" value="0.2" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_expenses.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_expenses_overview.xml" value="0.2" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_group_icon.xml" value="0.25226449275362317" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_groups.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_groups_overview.xml" value="0.29010416666666666" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_search_group.xml" value="0.25815217391304346" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_search_image.xml" value="0.25226449275362317" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_set_image.xml" value="0.25226449275362317" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_settings.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_settle_up.xml" value="0.264" />
-        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_split_wise.xml" value="0.30416666666666664" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/fragment_split_wise.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/group_card.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/group_card_1.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/group_detail_card.xml" value="0.24230072463768115" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/group_member_card.xml" value="0.4" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/group_overview_card.xml" value="0.30416666666666664" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/icon_bottom_sheet_item.xml" value="0.2269021739130435" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/member_card.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/member_checkbox_card.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/member_owe_lend_card.xml" value="0.30416666666666664" />
-        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/member_profile_card.xml" value="0.536" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/member_profile_card.xml" value="0.6" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/member_select.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/member_share_card.xml" value="0.30416666666666664" />
-        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/search_group_toolbar.xml" value="0.23072916666666668" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/search_group_toolbar.xml" value="0.264" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/share_card.xml" value="0.30416666666666664" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/unsplash_photo.xml" value="0.25226449275362317" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/layout/unsplash_photo_load_state_footer.xml" value="0.25226449275362317" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/add_expense_fragment_menu.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/choose_members_fragment_menu.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/choose_menu.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/create_edit_fragment_menu.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/group_detail_fragment_menu.xml" value="0.28854166666666664" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/group_icon_menu.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/groups_fragment_menu.xml" value="0.23072916666666668" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/search_image_menu.xml" value="0.30416666666666664" />
+        <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/set_image_menu.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/menu/settings_menu.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/keerthi-con927/AndroidStudioProjects/SplitWise/app/src/main/res/xml/file_paths.xml" value="0.30416666666666664" />
       </map>

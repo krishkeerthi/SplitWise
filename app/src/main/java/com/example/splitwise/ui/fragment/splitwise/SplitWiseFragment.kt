@@ -21,8 +21,10 @@ import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSplitWiseBinding
 import com.example.splitwise.ui.fragment.adapter.GroupArrayAdapter
 import com.example.splitwise.ui.fragment.adapter.SplitWiseAdapter
-import com.example.splitwise.ui.fragment.choosegroups.ChooseGroupsFragmentDirections
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class SplitWiseFragment : Fragment() {
@@ -74,12 +76,19 @@ class SplitWiseFragment : Fragment() {
             if (amountOwed == 0f)
                 Toast.makeText(requireContext(), "$name owes nothing", Toast.LENGTH_SHORT).show()
             else {
-                if (binding.allGroupsCheckbox.isChecked)
-                    gotoSettleUpFragment(payerId, -1)
-                else
-                    gotoSettleUpFragment(payerId, viewModel.groupId)
+                    gotoSettleUpFragment(payerId)
             }
 
+        }
+        // clear button selected groups
+        binding.clearGroups.setOnClickListener {
+//            selectedGroups.clear()
+//            viewModel.fetchData()
+//
+//            // update selected groups card
+//            binding.selectedGroupsText.text = ""
+//            binding.selectedGroupsCard.visibility = View.GONE
+            gotoSelf()
         }
 
         binding.membersRecyclerView.apply {
@@ -97,29 +106,17 @@ class SplitWiseFragment : Fragment() {
         // Groups
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             if (groups != null) {
-                binding.chooseGroupCard.setOnClickListener {
+                binding.selectGroupButton.setOnClickListener {
                    // openGroupsBottomSheet(groups)
                     gotoChooseGroupsFragment()
                 }
             }
         }
 
-        // load groups if already selected
-        viewModel.groupName.observe(viewLifecycleOwner) { groupName ->
-            binding.chooseGroupText.text = groupName
-        }
-
-        binding.allGroupsCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                viewModel.getGroupMembersPaymentStats()
-                binding.chooseGroupCard.isEnabled = false
-                binding.chooseGroupCard.isClickable = false
-            } else {
-                viewModel.getGroupMembersPaymentStats(viewModel.groupId)
-                binding.chooseGroupCard.isEnabled = true
-                binding.chooseGroupCard.isClickable = true
-            }
-        }
+//        // load groups if already selected
+//        viewModel.groupName.observe(viewLifecycleOwner) { groupName ->
+//            binding.chooseGroupText.text = groupName
+//        }
 
     }
 
@@ -156,7 +153,7 @@ class SplitWiseFragment : Fragment() {
                     viewModel.getGroupMembersPaymentStats(groups[position].groupId)
                     viewModel.groupId = groups[position].groupId
                     viewModel.loadGroupName()
-                    binding.chooseGroupText.text = groups[position].groupName
+                   // binding.chooseGroupText.text = groups[position].groupName
                     groupBottomSheetDialog.dismiss()
                 }
         }
@@ -164,10 +161,16 @@ class SplitWiseFragment : Fragment() {
         groupBottomSheetDialog.show()
     }
 
-    private fun gotoSettleUpFragment(payerId: Int, groupId: Int) {
+    private fun gotoSettleUpFragment(payerId: Int) {
         val action =
             SplitWiseFragmentDirections.actionSplitWiseFragmentToSettleUpFragment(payerId, getGroupIds(selectedGroups).toIntArray(),
             listOf<Member>().toTypedArray()) // Passing empty list of members when going to settle up fragment
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun gotoSelf() {
+        val action =
+            SplitWiseFragmentDirections.actionSplitWiseFragmentSelf(listOf<Group>().toTypedArray()) // Passing empty list of members when going to settle up fragment
         view?.findNavController()?.navigate(action)
     }
 }

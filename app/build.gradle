@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.splitwise"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -57,7 +57,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha01"
 
     // viewModels
-    implementation "androidx.fragment:fragment-ktx:1.5.0"
+    implementation "androidx.fragment:fragment-ktx:1.5.2"
+
+    // Paging 3
+    implementation "androidx.paging:paging-runtime:3.2.0-alpha02"
 
     // Navigation graph
     def nav_version = "2.5.0"

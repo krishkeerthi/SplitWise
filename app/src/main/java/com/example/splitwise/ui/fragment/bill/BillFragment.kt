@@ -47,7 +47,7 @@ class BillFragment : Fragment() {
         scaleGestureDetector = ScaleGestureDetector(
             requireContext(),
             object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                override fun onScale(detector: ScaleGestureDetector?): Boolean {
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
                     scaleFactor *= scaleGestureDetector.scaleFactor
                     scaleFactor = 0.1f.coerceAtLeast(scaleFactor.coerceAtMost(10.0f))
 

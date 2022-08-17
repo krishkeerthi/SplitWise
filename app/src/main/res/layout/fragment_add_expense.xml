@@ -9,7 +9,7 @@
         android:id="@+id/expense_image_view"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:src="@drawable/expense1"
+        android:src="@drawable/others"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

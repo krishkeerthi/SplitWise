@@ -54,5 +54,10 @@
     <string name="expense_overview">Expense Overview</string>
     <string name="Default">Default</string>
     <string name="boxed">Boxed</string>
+    <string name="clear">Clear</string>
+    <string name="no_payee_selected">No Payee Selected</string>
+    <string name="owed">Owed</string>
+    <string name="lent">Lent</string>
+    <string name="edit">Edit</string>
 
 </resources>

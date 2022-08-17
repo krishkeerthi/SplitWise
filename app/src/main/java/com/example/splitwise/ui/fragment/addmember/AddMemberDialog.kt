@@ -39,10 +39,11 @@ class AddMemberDialog(
 
             // Save button
             setPositiveButton(R.string.save) { dialogInterface, position ->
-                viewModel.addMember(
-                    nameEditText.text.toString(),
-                    phoneEditText.text.toString().toLong()
-                )
+                val name = nameEditText.text.toString()
+                val phoneNumber = phoneEditText.text.toString().toLong()
+
+                viewModel.checkMember(name, phoneNumber) // true means member does not registered
+
                 Log.d(TAG, "onCreateDialog: membercheck dialog saved, ${viewModel.members.value}")
             }
         }

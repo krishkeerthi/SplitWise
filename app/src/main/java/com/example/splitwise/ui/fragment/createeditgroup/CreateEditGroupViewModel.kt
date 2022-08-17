@@ -35,6 +35,8 @@ class CreateEditGroupViewModel(
     val members: LiveData<MutableList<Member>?>
         get() = _members
 
+    val exists = MutableLiveData<Boolean>(false)
+
 init {
     Log.d(TAG, "membercheck: init create edit view model called")
 }
@@ -220,6 +222,24 @@ init {
         } else
             0
     }
+
+    fun checkMember(name: String, phoneNumber: Long) {
+        viewModelScope.launch {
+            val memberExist = memberRepository.checkMemberExistence(name, phoneNumber)
+
+            if(!memberExist){
+                Log.d(TAG, "checkMember: checkMemberExistence member does not exist")
+                addMember(name, phoneNumber)
+            }
+            else{
+                Log.d(TAG, "checkMember: checkMemberExistence member exists")
+                exists.value = true
+            }
+        }
+
+    }
+
+
 }
 
 class CreateEditGroupViewModelFactory(
