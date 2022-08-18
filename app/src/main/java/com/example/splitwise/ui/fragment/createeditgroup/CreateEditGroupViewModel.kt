@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
+import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
@@ -30,6 +31,11 @@ class CreateEditGroupViewModel(
     val groupName: LiveData<String?>
         get() = _groupName
 
+    private val _group = MutableLiveData<Group?>()
+
+    val group: LiveData<Group?>
+        get() = _group
+
     private val _members = MutableLiveData<MutableList<Member>?>()
 
     val members: LiveData<MutableList<Member>?>
@@ -49,6 +55,7 @@ init {
             if (groupId != -1 && selectedMembers == null) {
                 val group = groupRepository.getGroup(groupId)
                 _groupName.value = group?.groupName
+                _group.value = group
 
                 val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
 
@@ -181,7 +188,8 @@ init {
                 name,
                 "description",
                 Date(),
-                0F
+                0F,
+                null
             )
 
             members.value?.let { members ->

@@ -1,12 +1,16 @@
 package com.example.splitwise.ui.fragment.groupicon
 
+import android.content.ContentValues.TAG
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.BottomSheetBinding
 import com.example.splitwise.databinding.FragmentGroupIconBinding
@@ -16,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class GroupIconFragment : Fragment() {
 
     private lateinit var binding: FragmentGroupIconBinding
+    private val args: GroupIconFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +35,19 @@ class GroupIconFragment : Fragment() {
 
         binding = FragmentGroupIconBinding.bind(view)
 
+        val groupIcon = args.groupIcon
+
+        if(groupIcon != null){
+            Log.d(TAG, "onViewCreated: group icon ${Uri.parse(groupIcon)}")
+            binding.groupIconImageView.setImageURI(Uri.parse(groupIcon))
+
+            binding.groupIconImageView.visibility = View.VISIBLE
+            binding.emptyGroupIcon.visibility = View.GONE
+        }
+        else{
+            binding.groupIconImageView.visibility = View.GONE
+            binding.emptyGroupIcon.visibility = View.VISIBLE
+        }
 
         // menu
         setHasOptionsMenu(true)
@@ -77,7 +95,7 @@ class GroupIconFragment : Fragment() {
     }
 
     private fun gotoSearchImageFragment(){
-        val action = GroupIconFragmentDirections.actionGroupIconFragmentToSearchImageFragment()
+        val action = GroupIconFragmentDirections.actionGroupIconFragmentToSearchImageFragment(args.groupId, args.groupName)
         view?.findNavController()?.navigate(action)
     }
 }

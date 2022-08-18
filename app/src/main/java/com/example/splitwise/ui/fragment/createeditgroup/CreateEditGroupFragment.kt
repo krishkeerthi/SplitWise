@@ -105,10 +105,17 @@ class CreateEditGroupFragment : Fragment() {
         }
 
         //Group name
-        viewModel.groupName.observe(viewLifecycleOwner) { groupName ->
-            Log.d(TAG, "onViewCreated: groupName livedata $groupName")
-            groupName?.let {
-                binding.groupNameText.setText(it)
+//        viewModel.groupName.observe(viewLifecycleOwner) { groupName ->
+//            Log.d(TAG, "onViewCreated: groupName livedata $groupName")
+//            groupName?.let {
+//                binding.groupNameText.setText(it)
+//            }
+//        }
+
+        viewModel.group.observe(viewLifecycleOwner) { group ->
+            if(group != null){
+                binding.groupNameText.setText(group.groupName)
+                binding.groupImageView.setImageURI(group.groupIcon)
             }
         }
 

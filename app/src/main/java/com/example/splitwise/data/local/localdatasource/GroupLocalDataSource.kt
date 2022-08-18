@@ -1,5 +1,6 @@
 package com.example.splitwise.data.local.localdatasource
 
+import android.net.Uri
 import com.example.splitwise.data.datasource.GroupDataSource
 import com.example.splitwise.data.local.dao.GroupDao
 import com.example.splitwise.data.local.dao.GroupExpenseDao
@@ -20,7 +21,8 @@ GroupDataSource{
         name: String,
         description: String,
         date: Date,
-        expense: Float
+        expense: Float,
+        icon: Uri?
     ): Int {
         return groupDao.insert(
             Group(
@@ -28,7 +30,8 @@ GroupDataSource{
                 description,
                 date,
                 date,
-                expense
+                expense,
+                icon
             )).toInt()
     }
 
@@ -118,6 +121,10 @@ GroupDataSource{
 
     override suspend fun deleteGroup(groupId: Int) {
         groupDao.deleteGroup(groupId)
+    }
+
+    override suspend fun updateGroupIcon(groupId: Int, uri: Uri) {
+        groupDao.updateGroupIcon(groupId, uri)
     }
 
 }

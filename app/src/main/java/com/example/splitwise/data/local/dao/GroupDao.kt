@@ -1,5 +1,6 @@
 package com.example.splitwise.data.local.dao
 
+import android.net.Uri
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -67,5 +68,8 @@ interface GroupDao {
 
     @Query("SELECT * FROM `group` WHERE group_name LIKE '%' || :query || '%'")
     suspend fun getGroupsContains(query: String): List<Group>?
+
+    @Query("UPDATE `group` SET group_icon = :uri WHERE group_id = :groupId ")
+    suspend fun updateGroupIcon(groupId: Int, uri: Uri)
 
 }

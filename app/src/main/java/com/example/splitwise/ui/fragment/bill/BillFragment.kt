@@ -1,8 +1,10 @@
 package com.example.splitwise.ui.fragment.bill
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -41,6 +43,7 @@ class BillFragment : Fragment() {
 
         arguments?.takeIf { it.containsKey("ARG_URI") }?.apply {
             val uri = Uri.parse(getString("ARG_URI"))
+            Log.d(TAG, "onViewCreated: bill icon ${uri}")
             binding.billImageView.setImageURI(uri)
         }
 

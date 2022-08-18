@@ -1,5 +1,7 @@
 package com.example.splitwise.ui.fragment.adapter
 
+import android.content.ContentValues
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,12 +9,17 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.GroupCard1Binding
 import com.example.splitwise.databinding.GroupCardBinding
+import com.example.splitwise.util.downloadBitmap
 import com.example.splitwise.util.formatDate
 import com.example.splitwise.util.roundOff
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GroupsAdapter(
     val onExpenseClicked: (Int) -> Unit,
-    val onImageClicked: () -> Unit
+    val onImageClicked: (Int, String?, String) -> Unit
 ) : RecyclerView.Adapter<GroupsViewHolder>() {
     private var groups = listOf<Group>()
 
@@ -22,10 +29,13 @@ class GroupsAdapter(
 
         return GroupsViewHolder(binding).apply {
             binding.groupImageView.setOnClickListener {
-                onImageClicked()
+                onImageClicked(groups[absoluteAdapterPosition].groupId,
+                    groups[absoluteAdapterPosition].groupIcon?.toString(),
+                    groups[absoluteAdapterPosition].groupName
+                )
             }
             binding.textLayout.setOnClickListener{
-                onExpenseClicked(groups[adapterPosition].groupId)
+                onExpenseClicked(groups[absoluteAdapterPosition].groupId)
             }
         }
     }
@@ -55,6 +65,9 @@ class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder
         binding.groupNameTextView.text = group.groupName
         binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
         binding.groupCreationDateTextView.text = getDateStringResource(formatDate(group.creationDate))
+
+        if(group.groupIcon != null)
+        binding.groupImageView.setImageURI(group.groupIcon)
     }
 
     private fun getDateStringResource(formatDate: String): String {

@@ -31,7 +31,8 @@ class SettingsViewModel(context: Context) :
                 "Family trip to shirdi",
                 "description",
                 Date(),
-                0F
+                0F,
+                null
             )
 
             // Member Addition to Group
@@ -78,7 +79,7 @@ class SettingsViewModel(context: Context) :
             val expenseId2 = expenseRepository.createExpense(
                 groupId,
                 "Temple Tickets",
-                0,
+                2,
                 666f,
                 222f,
                 kamalId,
@@ -106,7 +107,8 @@ class SettingsViewModel(context: Context) :
                 "Goa tour with friends",
                 "description",
                 Date(),
-                0F
+                0F,
+                null
             )
 
             // Member Addition to Group
@@ -127,8 +129,8 @@ class SettingsViewModel(context: Context) :
             // Expense 1
             val expenseId21 = expenseRepository.createExpense(
                 groupId2,
-                "Scooba diving",
-                0,
+                "Scuba diving",
+                2,
                 3333f,
                 1111f,
                 nazriyaId,
@@ -152,8 +154,8 @@ class SettingsViewModel(context: Context) :
             // Expense 2
             val expenseId22 = expenseRepository.createExpense(
                 groupId2,
-                "Bunjee jump",
-                0,
+                "Bungee jump",
+                2,
                 6666f,
                 2222f,
                 reshmiId,

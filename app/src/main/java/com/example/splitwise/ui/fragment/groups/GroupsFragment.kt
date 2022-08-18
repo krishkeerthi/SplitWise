@@ -62,7 +62,7 @@ class GroupsFragment : Fragment() {
         val groupsAdapter = GroupsAdapter({ groupId: Int ->
             goToExpenseFragment(groupId)
         },
-            { gotoGroupIconFragment()}
+            { groupId: Int, groupIcon: String?, groupName: String -> gotoGroupIconFragment(groupId, groupIcon, groupName)}
         )
 //            { groupId: Int ->
 //                if (groupId == 12345 || groupId == 54321)
@@ -206,8 +206,8 @@ class GroupsFragment : Fragment() {
 
     }
 
-    private fun gotoGroupIconFragment() {
-        val action = GroupsFragmentDirections.actionGroupsFragmentToGroupIconFragment()
+    private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String) {
+        val action = GroupsFragmentDirections.actionGroupsFragmentToGroupIconFragment(groupId, groupIcon, groupName)
         view?.findNavController()?.navigate(action)
     }
 

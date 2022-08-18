@@ -246,7 +246,6 @@ class ExpenseDetailFragment : Fragment() {
                     Toast.makeText(requireContext(), "Bit map not found", Toast.LENGTH_SHORT)
                         .show()
             }
-
         }
 
     //On Android 10 (API level 29) and higher, the proper directory for sharing photos is the MediaStore.Images table.

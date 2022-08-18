@@ -1,12 +1,13 @@
 package com.example.splitwise.data.datasource
 
+import android.net.Uri
 import androidx.room.Query
 import com.example.splitwise.data.local.entity.Group
 import java.util.*
 
 interface GroupDataSource {
 
-    suspend fun createGroup(name: String, description: String, date: Date, expense: Float): Int
+    suspend fun createGroup(name: String, description: String, date: Date, expense: Float, icon: Uri?): Int
 
     suspend fun addGroupMember(groupId: Int, memberId: Int)
 
@@ -45,4 +46,6 @@ interface GroupDataSource {
     suspend fun getGroupsCreatedAfterAndAmountAbove(date: Date, amount: Float): List<Group>?
 
     suspend fun deleteGroup(groupId: Int)
+
+    suspend fun updateGroupIcon(groupId: Int, uri: Uri)
 }

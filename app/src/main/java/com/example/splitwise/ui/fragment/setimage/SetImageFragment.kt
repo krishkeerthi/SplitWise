@@ -3,6 +3,7 @@ package com.example.splitwise.ui.fragment.setimage
 import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -11,8 +12,9 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSetImageBinding
@@ -27,7 +29,11 @@ import java.util.*
 class SetImageFragment : Fragment() {
 
     private lateinit var binding: FragmentSetImageBinding
-    private val args:  SetImageFragmentArgs by navArgs()
+    private val args: SetImageFragmentArgs by navArgs()
+
+    private val viewModel: SetImageViewModel by viewModels{
+        SetImageViewModelFactory(requireContext(), args.imageUrl, args.groupId)
+    }
 
     private var msg = ""
     private var lastMsg = ""
@@ -41,15 +47,18 @@ class SetImageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding = FragmentSetImageBinding.bind(view)
 
+        //viewModel.setImage
         CoroutineScope(Dispatchers.IO).launch {
             Log.i(ContentValues.TAG, "Current thread ${Thread.currentThread().name}")
             val url = args.imageUrl
             val bitmap = downloadBitmap(url!!)
             withContext(Dispatchers.Main) {
-                Log.i(ContentValues.TAG, "Current thread in the main dispatcher: ${Thread.currentThread().name}")
+                Log.i(
+                    ContentValues.TAG,
+                    "Current thread in the main dispatcher: ${Thread.currentThread().name}"
+                )
                 binding.unsplashPhotoImageView.setImageBitmap(bitmap)
             }
         }
@@ -64,23 +73,34 @@ class SetImageFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        return when (item.itemId) {
             R.id.download_menu -> {
                 //saveImage()
                 downloadImage()
                 true
             }
-            else ->{
+            else -> {
                 super.onOptionsItemSelected(item)
             }
         }
     }
 
     @SuppressLint("Range")
-    private fun downloadImage(){
+    private fun downloadImage() {
         val url = args.imageUrl
 
         val directory = File(Environment.DIRECTORY_PICTURES)
+        val fileName = "IMG${Date().time}.png"
+
+       // Environment.getExternalStoragePublicDirectory()
+        val testUri = File(Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES
+        ), fileName).toUri()
+
+        Log.d(TAG, "downloadImage: test icon ${testUri}")
+
+        val iconUri = Uri.parse(directory.toString() + fileName)
+        Log.d(TAG, "downloadImage: uri is ${iconUri}")
 
         Log.d(ContentValues.TAG, "downloadImage: directory ${directory}")
         val directory1 = Environment.getExternalStoragePublicDirectory(
@@ -90,22 +110,24 @@ class SetImageFragment : Fragment() {
         Log.d(ContentValues.TAG, "downloadImage: directory1 ${directory1}")
         // val file = File(imagesDir, "IMG${Date().time}.png")
 
-        if(!directory.exists())
+        if (!directory.exists())
             directory.mkdirs()
 
-        val downloadManager = requireActivity().getSystemService(AppCompatActivity.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadManager =
+            requireActivity().getSystemService(AppCompatActivity.DOWNLOAD_SERVICE) as DownloadManager
         val downloadUri = Uri.parse(url)
 
         val request = DownloadManager.Request(downloadUri).apply {
             setAllowedNetworkTypes(
                 DownloadManager.Request.NETWORK_WIFI or
-                    DownloadManager.Request.NETWORK_MOBILE)
+                        DownloadManager.Request.NETWORK_MOBILE
+            )
                 .setAllowedOverRoaming(false)
                 .setTitle(url?.substring(url.lastIndexOf("/") + 1))
                 .setDescription("")
                 .setDestinationInExternalPublicDir(
                     directory.toString(),
-                    "IMG${Date().time}.png"
+                    fileName
                     // url?.substring(url.lastIndexOf("/")+ 1)
                 )
         }
@@ -120,6 +142,7 @@ class SetImageFragment : Fragment() {
                 cursor.moveToFirst()
                 if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
                     downloading = false
+                   // viewModel.updateGroupIcon(iconUri)
                 }
                 val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
                 msg = statusMessage(url!!, directory, status) // not null asserting url
@@ -131,6 +154,7 @@ class SetImageFragment : Fragment() {
                 }
                 cursor.close()
             }
+            viewModel.updateGroupIcon(testUri)
         }.start()
 
     }

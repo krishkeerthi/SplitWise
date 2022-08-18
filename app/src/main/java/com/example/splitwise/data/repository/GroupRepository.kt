@@ -1,6 +1,7 @@
 package com.example.splitwise.data.repository
 
 import android.content.Context
+import android.net.Uri
 import com.example.splitwise.data.datasource.GroupDataSource
 import com.example.splitwise.data.datasource.MemberDataSource
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
@@ -24,8 +25,8 @@ class GroupRepository(
         database.groupExpenseDao()
     )
 
-    suspend fun createGroup(name: String, description: String, date: Date, expense: Float): Int{
-        return withContext(Dispatchers.IO){dataSource.createGroup(name.titleCase(), description.titleCase(), date, expense)}
+    suspend fun createGroup(name: String, description: String, date: Date, expense: Float, icon: Uri?): Int{
+        return withContext(Dispatchers.IO){dataSource.createGroup(name.titleCase(), description.titleCase(), date, expense, icon)}
     }
 
     suspend fun addGroupMember(groupId: Int, memberId: Int){
@@ -112,5 +113,11 @@ class GroupRepository(
 
     suspend fun getGroupsContain(query: String): List<Group>? {
         return if(query == "") null else withContext(Dispatchers.IO){dataSource.getGroupsContains(query)}
+    }
+
+    suspend fun updateGroupIcon(groupId: Int, uri: Uri) {
+        withContext(Dispatchers.IO){
+            dataSource.updateGroupIcon(groupId, uri)
+        }
     }
 }

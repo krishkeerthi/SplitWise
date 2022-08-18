@@ -7,16 +7,21 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSearchImageBinding
 import com.example.splitwise.ui.fragment.adapter.UnsplashPhotoAdapter
 import com.example.splitwise.ui.fragment.adapter.UnsplashPhotoLoadStateAdapter
+import com.example.splitwise.ui.fragment.settings.SettingsViewModelFactory
 
 class SearchImageFragment : Fragment() {
     private lateinit var binding: FragmentSearchImageBinding
-    private val viewModel: SearchImageViewModel by viewModels()
+    private val viewModel: SearchImageViewModel by viewModels() //{
+//        SettingsViewModelFactory(requireContext())
+//    }
+    private val args: SearchImageFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +33,8 @@ class SearchImageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.showRelatedGroupIcons(args.groupName)
 
         binding = FragmentSearchImageBinding.bind(view)
 
@@ -104,7 +111,7 @@ class SearchImageFragment : Fragment() {
 
     private fun gotoSetImageFragment(imageUrl: String) {
         val action =
-            SearchImageFragmentDirections.actionSearchImageFragmentToSetImageFragment(imageUrl)
+            SearchImageFragmentDirections.actionSearchImageFragmentToSetImageFragment(imageUrl, args.groupId)
         view?.findNavController()?.navigate(action)
     }
 

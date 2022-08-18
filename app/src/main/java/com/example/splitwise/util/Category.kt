@@ -1,13 +1,13 @@
 package com.example.splitwise.util
 
 enum class Category {
-    FOOD,
-    TRAVEL,
-    TICKETS,
-    RENT,
-    FEES,
-    REPAIRS,
-    ENTERTAINMENT,
-    ESSENTIALS,
-    OTHERS
+    FOOD, //0
+    TRAVEL, //1
+    TICKETS,//2
+    RENT,//3
+    FEES,//4
+    REPAIRS,//5
+    ENTERTAINMENT,//6
+    ESSENTIALS,//7
+    OTHERS//8
 }

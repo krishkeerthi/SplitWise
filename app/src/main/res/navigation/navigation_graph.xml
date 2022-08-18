@@ -13,6 +13,12 @@
         <action
             android:id="@+id/action_searchImageFragment_to_setImageFragment"
             app:destination="@id/setImageFragment" />
+        <argument
+            android:name="groupId"
+            app:argType="integer" />
+        <argument
+            android:name="groupName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/setImageFragment"
@@ -22,6 +28,9 @@
             android:name="imageUrl"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="groupId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/groupsFragment"
@@ -288,5 +297,15 @@
         <action
             android:id="@+id/action_groupIconFragment_to_searchImageFragment"
             app:destination="@id/searchImageFragment" />
+        <argument
+            android:name="groupId"
+            app:argType="integer" />
+        <argument
+            android:name="groupIcon"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="groupName"
+            app:argType="string" />
     </fragment>
 </navigation>

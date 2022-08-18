@@ -1,5 +1,6 @@
 package com.example.splitwise.data.local.entity
 
+import android.net.Uri
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -18,7 +19,9 @@ data class Group(
     @ColumnInfo(name = "last_active_date")
     val lastActiveDate: Date,
     @ColumnInfo(name = "total_expense")
-    val totalExpense: Float
+    val totalExpense: Float,
+    @ColumnInfo(name = "group_icon")
+    var groupIcon: Uri? //  null means icon not set
 ): Parcelable{
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "group_id")
