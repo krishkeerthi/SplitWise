@@ -5,10 +5,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/expense_image_view"
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/expense_image_view_holder"
         android:layout_width="56dp"
         android:layout_height="56dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedSquare"
+        android:background="@color/view_color"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/expense_image_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
         android:src="@drawable/others"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,12 +34,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:hint="@string/expense_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expense_image_view"
+        app:layout_constraintTop_toBottomOf="@id/expense_image_view_holder"
         app:startIconDrawable="@drawable/ic_baseline_edit_24">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -158,15 +172,12 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-
-
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/members_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/expense_members"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/choose_payer_card" />
@@ -175,7 +186,7 @@
         android:id="@+id/members_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"

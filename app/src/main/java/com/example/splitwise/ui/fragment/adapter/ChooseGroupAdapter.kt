@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Group
@@ -56,6 +57,18 @@ class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
 
     fun bind(group: Group, selectedGroupIds: List<Int>) {
         binding.groupNameTextView.text = group.groupName
+
+        if(group.groupIcon != null) {
+            binding.groupImageView.setImageURI(group.groupIcon)
+            binding.groupImageHolder.visibility= View.INVISIBLE
+            binding.groupImageHolderImage.visibility = View.INVISIBLE
+            binding.groupImageView.visibility = View.VISIBLE
+        }
+        else{
+            binding.groupImageHolder.visibility= View.VISIBLE
+            binding.groupImageHolderImage.visibility = View.VISIBLE
+            binding.groupImageView.visibility = View.INVISIBLE
+        }
 
         if(group.groupId in selectedGroupIds)
             binding.selectedCheckBox.isChecked = true

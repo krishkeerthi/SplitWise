@@ -10,12 +10,12 @@
         android:id="@+id/members_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/members"
+        android:textAlignment="textEnd"
         android:textColor="@color/text_bold"
         android:textStyle="bold"
-        android:textAlignment="textEnd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -33,9 +33,10 @@ class SetImageViewModel(context: Context, val imageUrl: String?, val groupId: In
 //        }
 //    }
 
-    fun updateGroupIcon(uri: Uri) {
+    fun updateGroupIcon(uri: Uri, navigation: () -> Unit) {
         viewModelScope.launch {
             groupRepository.updateGroupIcon(groupId, uri)
+            navigation()
         }
     }
 

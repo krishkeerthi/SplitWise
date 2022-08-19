@@ -115,7 +115,18 @@ class CreateEditGroupFragment : Fragment() {
         viewModel.group.observe(viewLifecycleOwner) { group ->
             if(group != null){
                 binding.groupNameText.setText(group.groupName)
-                binding.groupImageView.setImageURI(group.groupIcon)
+
+                if(group.groupIcon != null) {
+                    binding.groupImageView.setImageURI(group.groupIcon)
+                    binding.groupImageHolder.visibility= View.INVISIBLE
+                    binding.groupImageHolderImage.visibility = View.INVISIBLE
+                    binding.groupImageView.visibility = View.VISIBLE
+                }
+                else{
+                    binding.groupImageHolder.visibility= View.VISIBLE
+                    binding.groupImageHolderImage.visibility = View.VISIBLE
+                    binding.groupImageView.visibility = View.INVISIBLE
+                }
             }
         }
 

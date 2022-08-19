@@ -3,6 +3,7 @@ package com.example.splitwise.ui.fragment.adapter
 import android.content.ContentValues
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
@@ -29,6 +30,12 @@ class GroupsAdapter(
 
         return GroupsViewHolder(binding).apply {
             binding.groupImageView.setOnClickListener {
+                onImageClicked(groups[absoluteAdapterPosition].groupId,
+                    groups[absoluteAdapterPosition].groupIcon?.toString(),
+                    groups[absoluteAdapterPosition].groupName
+                )
+            }
+            binding.groupImageHolder.setOnClickListener {
                 onImageClicked(groups[absoluteAdapterPosition].groupId,
                     groups[absoluteAdapterPosition].groupIcon?.toString(),
                     groups[absoluteAdapterPosition].groupName
@@ -66,8 +73,18 @@ class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder
         binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
         binding.groupCreationDateTextView.text = getDateStringResource(formatDate(group.creationDate))
 
-        if(group.groupIcon != null)
-        binding.groupImageView.setImageURI(group.groupIcon)
+        if(group.groupIcon != null) {
+            binding.groupImageView.setImageURI(group.groupIcon)
+            binding.groupImageHolder.visibility= View.INVISIBLE
+            binding.groupImageHolderImage.visibility = View.INVISIBLE
+            binding.groupImageView.visibility = View.VISIBLE
+        }
+        else {
+            binding.groupImageView.setImageResource(R.drawable.ic_baseline_people_24)
+            binding.groupImageHolder.visibility= View.VISIBLE
+            binding.groupImageHolderImage.visibility = View.VISIBLE
+            binding.groupImageView.visibility = View.INVISIBLE
+        }
     }
 
     private fun getDateStringResource(formatDate: String): String {

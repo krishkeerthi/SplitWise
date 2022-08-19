@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSetImageBinding
@@ -51,12 +52,15 @@ class SetImageFragment : Fragment() {
 
         //viewModel.setImage
         CoroutineScope(Dispatchers.IO).launch {
-            Log.i(ContentValues.TAG, "Current thread ${Thread.currentThread().name}")
+            Log.d(TAG, "Current thread ${Thread.currentThread().name}")
             val url = args.imageUrl
             val bitmap = downloadBitmap(url!!)
+
+            // turn off spinner here
+
             withContext(Dispatchers.Main) {
-                Log.i(
-                    ContentValues.TAG,
+                binding.indeterminateBar.visibility = View.GONE
+                Log.d(TAG,
                     "Current thread in the main dispatcher: ${Thread.currentThread().name}"
                 )
                 binding.unsplashPhotoImageView.setImageBitmap(bitmap)
@@ -74,8 +78,7 @@ class SetImageFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.download_menu -> {
-                //saveImage()
+            R.id.done_menu -> {
                 downloadImage()
                 true
             }
@@ -135,28 +138,60 @@ class SetImageFragment : Fragment() {
         val downloadId = downloadManager.enqueue(request)
         val query = DownloadManager.Query().setFilterById(downloadId)
 
-        Thread {
+        CoroutineScope(Dispatchers.IO).launch {
             var downloading = true
             while (downloading) {
                 val cursor: Cursor = downloadManager.query(query)
                 cursor.moveToFirst()
                 if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
                     downloading = false
-                   // viewModel.updateGroupIcon(iconUri)
+                    // viewModel.updateGroupIcon(iconUri)
                 }
                 val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
                 msg = statusMessage(url!!, directory, status) // not null asserting url
                 if (msg != lastMsg) {
-                    requireActivity().runOnUiThread {
+                    withContext(Dispatchers.Main){
                         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     }
                     lastMsg = msg ?: ""
                 }
                 cursor.close()
             }
-            viewModel.updateGroupIcon(testUri)
-        }.start()
+            viewModel.updateGroupIcon(testUri){
+                gotoGroupIconFragment()
+            }
 
+            //goto group icon
+            //gotoGroupIconFragment()
+        }
+
+//        Thread {
+//            var downloading = true
+//            while (downloading) {
+//                val cursor: Cursor = downloadManager.query(query)
+//                cursor.moveToFirst()
+//                if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+//                    downloading = false
+//                    // viewModel.updateGroupIcon(iconUri)
+//                }
+//                val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+//                msg = statusMessage(url!!, directory, status) // not null asserting url
+//                if (msg != lastMsg) {
+//                    requireActivity().runOnUiThread {
+//                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+//                    }
+//                    lastMsg = msg ?: ""
+//                }
+//                cursor.close()
+//            }
+//            viewModel.updateGroupIcon(testUri)
+//        }.start()
+
+    }
+
+    private fun gotoGroupIconFragment() {
+        val action = SetImageFragmentDirections.actionSetImageFragmentToGroupsFragment()
+        view?.findNavController()?.navigate(action)
     }
 
     private fun statusMessage(url: String, directory: File, status: Int): String {
@@ -166,9 +201,9 @@ class SetImageFragment : Fragment() {
             DownloadManager.STATUS_PAUSED -> "Paused"
             DownloadManager.STATUS_PENDING -> "Pending"
             DownloadManager.STATUS_RUNNING -> "Downloading..."
-            DownloadManager.STATUS_SUCCESSFUL -> "Image downloaded successfully in $directory" + File.separator + url.substring(
-                url.lastIndexOf("/") + 1
-            )
+            DownloadManager.STATUS_SUCCESSFUL -> "Group icon set" //Image downloaded successfully in $directory" + File.separator + url.substring(
+//                url.lastIndexOf("/") + 1
+//            )
             else -> "There's nothing to download"
         }
         return msg

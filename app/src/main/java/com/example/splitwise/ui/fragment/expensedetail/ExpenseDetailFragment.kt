@@ -112,7 +112,7 @@ class ExpenseDetailFragment : Fragment() {
 
         // bills
         viewModel.bills.observe(viewLifecycleOwner) { bills ->
-            if (bills != null) {
+            if (bills != null && bills.isNotEmpty()) {
                 billsAdapter.updateBills(bills)
                 binding.billsRecyclerView.visibility = View.VISIBLE
             }

@@ -40,7 +40,7 @@ class SearchImageFragment : Fragment() {
 
         val adapter = UnsplashPhotoAdapter { photo ->
             photo?.let {
-                gotoSetImageFragment(it.urls.full)
+                gotoSetImageFragment(it.urls.regular)
             }
         }
 

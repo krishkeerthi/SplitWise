@@ -68,7 +68,10 @@ class ExpensesFragment : Fragment() {
         val membersAdapter = MembersProfileAdapter()
 
         binding.expensesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = LinearLayoutManager(requireContext()).apply {
+                reverseLayout = true // it reverses but scrolled down to the last item
+                stackFromEnd = true // corrects above problem
+            }
             adapter = expensesAdapter
         }
 

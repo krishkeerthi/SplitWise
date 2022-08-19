@@ -16,6 +16,7 @@ import com.example.splitwise.databinding.BottomSheetBinding
 import com.example.splitwise.databinding.FragmentGroupIconBinding
 import com.example.splitwise.ui.fragment.groups.GroupsFragmentDirections
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.imageview.ShapeableImageView
 
 class GroupIconFragment : Fragment() {
 
@@ -57,9 +58,9 @@ class GroupIconFragment : Fragment() {
         val groupIconBottomSheet = BottomSheetDialog(requireContext())
         groupIconBottomSheet.setContentView(R.layout.edit_group_icon)
 
-        val webImage = groupIconBottomSheet.findViewById<CardView>(R.id.web_image_card)
-        val cameraImage = groupIconBottomSheet.findViewById<CardView>(R.id.camera_image_card)
-        val galleryImage = groupIconBottomSheet.findViewById<CardView>(R.id.gallery_image_card)
+        val webImage = groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.web_image_holder)
+        val cameraImage = groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.camera_image_holder)
+        val galleryImage = groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.gallery_image_holder)
 
         webImage?.setOnClickListener{
             gotoSearchImageFragment()
