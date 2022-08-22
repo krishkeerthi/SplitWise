@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsOverviewBinding
 import com.example.splitwise.ui.fragment.adapter.GroupsOverviewAdapter
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.utils.ColorTemplate
 
 class GroupsOverviewFragment : Fragment() {
 
@@ -54,6 +57,30 @@ class GroupsOverviewFragment : Fragment() {
 
         binding.searchButton.setOnClickListener {
            // gotoSearchImageFragment()
+        }
+
+
+        viewModel.pieEntries.observe(viewLifecycleOwner){ pieEntries ->
+            if(pieEntries != null && pieEntries.isNotEmpty()){
+                val dataSet = PieDataSet(pieEntries, "Categories")
+                dataSet.colors = ColorTemplate.COLORFUL_COLORS.toList()
+                val data = PieData(dataSet)
+
+                binding.piechart.apply {
+                    holeRadius = 0F
+                    transparentCircleRadius = 0F
+                }
+
+                binding.piechart.data = data
+                binding.piechart.invalidate()
+
+                binding.progressBar.visibility = View.INVISIBLE
+                binding.piechart.visibility = View.VISIBLE
+            }
+            else{
+                binding.progressBar.visibility = View.VISIBLE
+                binding.piechart.visibility = View.INVISIBLE
+            }
         }
     }
 

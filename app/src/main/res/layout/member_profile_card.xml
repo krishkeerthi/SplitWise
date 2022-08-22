@@ -35,7 +35,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:lines="1"
-        android:text="Keerthi"
+        tools:text="Keerthi"
         android:textAlignment="center"
         android:textColor="@color/text_bold"
         android:textStyle="bold"

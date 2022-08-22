@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.expenses
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -55,7 +56,8 @@ class ExpensesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         clicked = false
 
-       // viewModel.fetchData()
+        //viewModel.fetchData()
+        viewModel.loadMembers()
 
        // requireActivity().title = "Group Detail"
 
@@ -144,13 +146,13 @@ class ExpensesFragment : Fragment() {
 //        }
 
         // Menu
-        if (args.groupId == 12345 || args.groupId == 54321)
-            setHasOptionsMenu(true)
+//        if (args.groupId == 12345 || args.groupId == 54321)
+//            setHasOptionsMenu(true)
 
         // Chip selection
         binding.categoryChipGroup.forEach { child ->
             (child as Chip).setOnCheckedChangeListener { buttonView, isChecked ->
-                Log.d(TAG, "onViewCreated: checked outside")
+               // Log.d(TAG, "onViewCreated: checked outside")
                 val category = when(buttonView.text){
                     "Food" -> Category.FOOD
                     "Travel" -> Category.TRAVEL
@@ -166,13 +168,13 @@ class ExpensesFragment : Fragment() {
                 if(isChecked){
                     viewModel.incrementCheckedFiltersCount()
                     viewModel.checkedFilters.add(category)
-                    Log.d(TAG, "onViewCreated: checked ${buttonView.text}")
+                    Log.d(TAG, "onViewCreated: checked ${viewModel.checkedFilters.toString()}")
                     viewModel.filterByCategory()
                 }
                 else {
                     viewModel.decrementCheckedFiltersCount()
                     viewModel.checkedFilters.remove(category)
-                    Log.d(TAG, "onViewCreated: unchecked ${buttonView.text}")
+                    Log.d(TAG, "onViewCreated: unchecked ${viewModel.checkedFilters}")
                     viewModel.filterByCategory()
                 }
             }
@@ -224,6 +226,9 @@ class ExpensesFragment : Fragment() {
 //        }
 
 //        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(true)
+
+        // Menu
+        setHasOptionsMenu(true)
     }
 
     private fun onAddButtonClicked() {
@@ -258,25 +263,32 @@ class ExpensesFragment : Fragment() {
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.group_detail_fragment_menu, menu)
+        inflater.inflate(R.menu.expense_fragment_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-//            android.R.id.home ->{
-//                requireActivity().finish()
-//                true
-//            }
-            R.id.group_delete -> {
-                viewModel.deleteGroup(args.groupId)
-                gotoGroupsFragment()
+            R.id.share_menu -> {
+                viewModel.generateReport { report: String ->
+                    shareIntent(report)
+                }
                 true
             }
             else -> {
                 false
             }
         }
+    }
+
+
+    private fun shareIntent(report: String){
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, report)
+        }
+        startActivity(Intent.createChooser(intent, "Send To"))
     }
 
     private fun gotoAddExpenseFragment(groupId: Int) {

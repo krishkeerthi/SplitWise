@@ -3,14 +3,22 @@ package com.example.splitwise.ui.fragment.addmember
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ContentValues.TAG
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.MutableLiveData
 import com.example.splitwise.R
 import com.example.splitwise.ui.fragment.createeditgroup.CreateEditGroupViewModel
 import com.example.splitwise.util.nameCheck
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -20,6 +28,9 @@ class AddMemberDialog(
 
     //private val viewModel: CreateEditGroupViewModel by activityViewModels()
 
+    private val contactNameLiveData = MutableLiveData<String>()
+    private val contactPhoneLiveData = MutableLiveData<String>()
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
 
@@ -28,10 +39,37 @@ class AddMemberDialog(
         val nameEditText = addMemberDialog.findViewById<TextInputEditText>(R.id.member_name_text)
         val phoneEditText = addMemberDialog.findViewById<TextInputEditText>(R.id.member_phone_text)
 
+        val selectContactButton =
+            addMemberDialog.findViewById<MaterialButton>(R.id.select_contact_button)
+
         val nameLayout =
             addMemberDialog.findViewById<TextInputLayout>(R.id.outlined_member_name_text_field)
         val phoneLayout =
             addMemberDialog.findViewById<TextInputLayout>(R.id.outlined_member_phone_text_field)
+
+
+        selectContactButton.setOnClickListener {
+            Toast.makeText(requireContext(), "Working on it", Toast.LENGTH_SHORT).show()
+ //           selectContact()
+//
+//            if(contactName != "" && contactPhone != ""){
+//                phoneEditText.setText(contactPhone)
+//                nameEditText.setText(contactName)
+//            }
+//            else{
+//                Toast.makeText(requireContext(), "Error selecting contact", Toast.LENGTH_LONG).show()
+//            }
+        }
+
+//        contactNameLiveData.observe(viewLifecycleOwner) {
+//            if (it != "")
+//                nameEditText.setText(it)
+//        }
+//
+//        contactPhoneLiveData.observe(viewLifecycleOwner) {
+//            if (it != "")
+//                phoneEditText.setText(it)
+//        }
 
         builder.apply {
             setView(addMemberDialog)
@@ -102,5 +140,52 @@ class AddMemberDialog(
         return dialog
     }
 
+
+    private fun selectContact() {
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+        }
+        selectContactLauncher.launch(intent)
+    }
+
+    private val selectContactLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                val contactUri: Uri? = result.data?.data
+
+                val projections = listOf(
+                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                ).toTypedArray()
+
+                val cursor = requireContext().contentResolver.query(
+                    contactUri!!,
+                    projections,
+                    null,
+                    null,
+                    null
+                )
+
+                if (cursor != null) {
+                    cursor.moveToFirst()
+                    val numberColumnIndex =
+                        cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                    val number = cursor.getString(numberColumnIndex)
+                    contactPhoneLiveData.value = number
+
+                    val nameColumnIndex =
+                        cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                    val name = cursor.getString(nameColumnIndex)
+
+                    contactNameLiveData.value = name
+
+                    cursor.close()
+
+                } else
+                    Toast.makeText(requireContext(), "Error selecting contact", Toast.LENGTH_LONG)
+                        .show()
+            }
+
+        }
 
 }

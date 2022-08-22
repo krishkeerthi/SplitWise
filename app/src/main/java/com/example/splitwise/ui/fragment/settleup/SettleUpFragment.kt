@@ -143,7 +143,7 @@ class SettleUpFragment : Fragment() {
                 gotoSplitWiseFragment()
             }
             else
-                Toast.makeText(requireContext(), "Select Payee(s)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.select_payees), Toast.LENGTH_SHORT).show()
         }
 
 //        binding.settleButton.setOnClickListener {

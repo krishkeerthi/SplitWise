@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="2dp"
-                android:text="Shoe purchase"
+                tools:text="Shoe purchase"
                 android:textColor="@color/text_bold"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/expense_payer_text_view"
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="4dp"
-                android:text="27/09/2022"
+                tools:text="27/09/2022"
                 app:layout_constraintBottom_toBottomOf="@+id/expense_image_holder"
                 app:layout_constraintStart_toEndOf="@+id/expense_image_holder" />
 
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="- ₹4800"
+                tools:text="- ₹4800"
                 android:textColor="#F44336"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -133,21 +133,27 @@ class AddExpenseFragment : Fragment() {
                 .toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
             && viewModel.category != null && viewModel.payerId != null
         ) {
-            viewModel.createExpense(
-                binding.expenseNameText.text.toString(),
-                viewModel.category!!,
-                viewModel.payerId!!,
-                binding.expenseAmountText.text.toString().toFloat(),
-                viewModel.memberIds.toList()
-            ) {
-                gotoExpenseFragment()
-            }
+            if(viewModel.memberIds.isNotEmpty()){
+                viewModel.createExpense(
+                    binding.expenseNameText.text.toString(),
+                    viewModel.category!!,
+                    viewModel.payerId!!,
+                    binding.expenseAmountText.text.toString().toFloat(),
+                    viewModel.memberIds.toList()
+                ) {
+                    gotoExpenseFragment()
+                }
 
-            Toast.makeText(requireContext(), "Expense Added", Toast.LENGTH_SHORT).show()
-        } else
+                Toast.makeText(requireContext(), getString(R.string.expense_added), Toast.LENGTH_SHORT).show()
+            }
+            else{
+                Toast.makeText(requireContext(), getString(R.string.atleast_1_payee), Toast.LENGTH_SHORT).show()
+            }
+        }
+        else
             Toast.makeText(
                 requireContext(),
-                "Enter all fields to add expense",
+                getString(R.string.enter_all_fields_expense),
                 Toast.LENGTH_SHORT
             ).show()
     }

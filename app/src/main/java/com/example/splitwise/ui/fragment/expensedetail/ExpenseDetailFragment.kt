@@ -191,9 +191,9 @@ class ExpenseDetailFragment : Fragment() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                Toast.makeText(requireContext(), "Permission Granted, ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), "Permission denied, ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -238,7 +238,7 @@ class ExpenseDetailFragment : Fragment() {
                     else
                         Toast.makeText(
                             requireContext(),
-                            "Error adding image",
+                            getString(R.string.error_adding_image),
                             Toast.LENGTH_SHORT
                         )
                             .show()

@@ -74,7 +74,7 @@
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:lines="1"
-            android:text="Family Group"
+            tools:text="Family Group"
             android:textColor="@color/text_bold"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="₹12345"
+            tools:text="₹12345"
             app:layout_constraintBottom_toBottomOf="@id/text_layout"
             app:layout_constraintStart_toStartOf="@+id/text_layout" />
 
@@ -96,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="12/07/2022"
+            tools:text="12/07/2022"
             android:textSize="12sp"
             android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="@+id/group_name_text_view"

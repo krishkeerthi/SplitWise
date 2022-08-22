@@ -62,7 +62,15 @@ class ChooseMembersFragment : Fragment() {
 
         viewModel.membersAndStreaks.observe(viewLifecycleOwner) { membersAndStreaks ->
             if (membersAndStreaks != null) {
-                chooseMembersAdapter.updateMembersAndStreaks(membersAndStreaks)
+                if(membersAndStreaks.isNotEmpty()) {
+                    chooseMembersAdapter.updateMembersAndStreaks(membersAndStreaks)
+                    binding.chooseMembersRecyclerView.visibility = View.VISIBLE
+                    binding.emptyText.visibility = View.INVISIBLE
+                }
+                else{
+                    binding.chooseMembersRecyclerView.visibility = View.INVISIBLE
+                    binding.emptyText.visibility = View.VISIBLE
+                }
             }
         }
 

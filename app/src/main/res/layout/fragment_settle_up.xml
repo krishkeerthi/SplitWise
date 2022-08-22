@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="16dp"
-            android:text="Keerthi K"
+            tools:text="Keerthi K"
             android:textColor="@color/text_bold"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/from_member_phone_text_view"
@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="4dp"
-            android:text="9790307426"
+            tools:text="9790307426"
             app:layout_constraintBottom_toBottomOf="@+id/from_member_image_holder"
             app:layout_constraintStart_toEndOf="@+id/from_member_image_holder" />
 
@@ -151,7 +151,7 @@
         android:id="@+id/total_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Total"
+        android:text="@string/total"
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/amount_text_view"

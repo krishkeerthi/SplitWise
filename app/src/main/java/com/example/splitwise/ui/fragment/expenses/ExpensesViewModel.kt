@@ -13,6 +13,9 @@ import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.model.ExpenseMember
 import com.example.splitwise.util.Category
+import com.example.splitwise.util.formatDate
+import com.example.splitwise.util.printableMember
+import com.example.splitwise.util.roundOff
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,7 +55,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
     val expenseCount: LiveData<Int>
         get() = _expenseCount
 
-    val checkedFilters = mutableListOf<Category>()
+    val checkedFilters = mutableSetOf<Category>()
 
     private val _checkedFiltersCount = MutableLiveData<Int>(0)
 
@@ -60,7 +63,8 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
         get() = _checkedFiltersCount
 
     init {
-        fetchData()
+        //fetchData()
+        loadExpensesAndMembers()
         _running.value = false
     }
 
@@ -68,13 +72,29 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
         Log.d(TAG, "expenseviewmodel: created")
         viewModelScope.launch {
             _group.value = groupRepository.getGroup(groupId)
-
             setExpenseMembers(true)
-
             val memberIds = groupRepository.getGroupMembers(groupId)
             Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
             _groupMembers.value = getMembersFromIds(memberIds)
 
+        }
+    }
+
+    fun loadMembers() {
+        Log.d(TAG, "expenseviewmodel: created")
+        viewModelScope.launch {
+            _group.value = groupRepository.getGroup(groupId)
+            //setExpenseMembers(true)
+            val memberIds = groupRepository.getGroupMembers(groupId)
+            Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
+            _groupMembers.value = getMembersFromIds(memberIds)
+
+        }
+    }
+
+    private fun loadExpensesAndMembers(){
+        viewModelScope.launch {
+            setExpenseMembers(true)
         }
     }
 
@@ -96,6 +116,8 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
         }
     }
 
+
+
     private suspend fun toExpenseMember(expense: Expense, member: Member): ExpenseMember {
         return withContext(Dispatchers.IO) {
             ExpenseMember(
@@ -114,9 +136,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
     private suspend fun setExpenseMembers(initialLoad: Boolean = false) {
 
-        withContext(Dispatchers.Main) {
-
-
+        viewModelScope.launch {
             val ordinals = mutableListOf<Int>()
             for (category in checkedFilters) {
                 ordinals.add(category.ordinal)
@@ -177,6 +197,41 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
     fun incrementCheckedFiltersCount() {
         _checkedFiltersCount.value = _checkedFiltersCount.value?.plus(1)
+    }
+
+    fun generateReport(shareIntent: (String) -> Unit){
+        viewModelScope.launch {
+            var report =""
+            // generating report
+
+            val group = groupRepository.getGroup(groupId)
+
+            group?.let { it ->
+                report = "Group Name: ${it.groupName}(${formatDate(it.creationDate)})"
+
+                val membersId = groupRepository.getGroupMembers(it.groupId)
+                val members = getMembersFromIds(membersId).printableMember()
+
+                report += "\nGroup Members: $members\n"
+
+                val expenses = expenseRepository.getExpenses(groupId)
+                expenses?.let { expenses ->
+                    for(expense in expenses){
+                        report += "\nExpense Name: ${expense.expenseName}"
+
+                        val expenseMembersId = expenseRepository.getExpensePayees(expense.expenseId)
+                        val expenseMembers = getMembersFromIds(expenseMembersId).printableMember()
+
+                        report += "\nExpense Members: $expenseMembers"
+
+                        report += "\nTotal: ₹${expense.totalAmount.roundOff()}"
+                        report += "\nSplit Amount: ₹${expense.splitAmount.roundOff()}\n"
+                    }
+                }
+            }
+
+            shareIntent(report)
+         }
     }
 
 //    fun clearCategoryFilter() {

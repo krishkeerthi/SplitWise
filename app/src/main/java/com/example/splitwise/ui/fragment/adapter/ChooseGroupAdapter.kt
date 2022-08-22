@@ -18,11 +18,16 @@ class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
         val binding = ChooseGroupCardBinding.inflate(view, parent, false)
 
         return ChooseGroupViewHolder(binding).apply {
-            binding.selectedCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked)
+            itemView.setOnClickListener {
+                val isChecked = binding.selectedCheckBox.isChecked
+                if (!isChecked) {
+                    binding.selectedCheckBox.isChecked = true
                     onItemChecked(groups[adapterPosition], true)
-                else
+                }
+                else {
+                    binding.selectedCheckBox.isChecked = false
                     onItemChecked(groups[adapterPosition], false)
+                }
             }
         }
     }

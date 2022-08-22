@@ -15,6 +15,7 @@ import com.example.splitwise.databinding.FragmentSearchImageBinding
 import com.example.splitwise.ui.fragment.adapter.UnsplashPhotoAdapter
 import com.example.splitwise.ui.fragment.adapter.UnsplashPhotoLoadStateAdapter
 import com.example.splitwise.ui.fragment.settings.SettingsViewModelFactory
+import com.example.splitwise.util.removeIrrelevantWords
 
 class SearchImageFragment : Fragment() {
     private lateinit var binding: FragmentSearchImageBinding
@@ -34,7 +35,7 @@ class SearchImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.showRelatedGroupIcons(args.groupName)
+        viewModel.showRelatedGroupIcons(removeIrrelevantWords(args.groupName))
 
         binding = FragmentSearchImageBinding.bind(view)
 

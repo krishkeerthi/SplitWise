@@ -74,7 +74,7 @@ class SplitWiseFragment : Fragment() {
         // Rv
         val splitWiseAdapter = SplitWiseAdapter { payerId: Int, amountOwed: Float, name: String ->
             if (amountOwed == 0f)
-                Toast.makeText(requireContext(), "$name owes nothing", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "$name ${getString(R.string.owes_nothing)}", Toast.LENGTH_SHORT).show()
             else {
                     gotoSettleUpFragment(payerId)
             }

@@ -85,7 +85,7 @@ class GroupsFragment : Fragment() {
             adapter = groupsAdapter
         }
 
-        // Livedata
+        // Livedat<item name="android:actionBarStyle">@style/ActionBarTheme</item>a
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             if (groups != null && groups.isNotEmpty()) {
                 Log.d(TAG, "onViewCreated: groups livedata ${groups.size}")
@@ -111,11 +111,11 @@ class GroupsFragment : Fragment() {
                 val position = layout.findLastCompletelyVisibleItemPosition()
 
                 if(viewModel.groups.value != null){
-
+                    binding.dateTextView.visibility = View.VISIBLE
                     binding.dateTextView.text = getDateStringResource(formatDate(viewModel.groups.value!![position].creationDate))
                 }
 
-                binding.dateTextView.visibility = View.VISIBLE
+
             }
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

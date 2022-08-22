@@ -158,7 +158,7 @@ class SetImageFragment : Fragment() {
                 cursor.close()
             }
             viewModel.updateGroupIcon(testUri){
-                gotoGroupIconFragment()
+                gotoGroupsFragment()
             }
 
             //goto group icon
@@ -189,7 +189,7 @@ class SetImageFragment : Fragment() {
 
     }
 
-    private fun gotoGroupIconFragment() {
+    private fun gotoGroupsFragment() {
         val action = SetImageFragmentDirections.actionSetImageFragmentToGroupsFragment()
         view?.findNavController()?.navigate(action)
     }

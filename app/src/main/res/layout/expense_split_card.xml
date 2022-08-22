@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:text="Nair Mess"
+            tools:text="Nair Mess"
             app:layout_constraintStart_toEndOf="@+id/expense_image_view"
             app:layout_constraintTop_toTopOf="@+id/expense_image_view" />
 
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Food"
+            tools:text="Food"
             app:layout_constraintBottom_toTopOf="@id/expense_payer_text_view"
             app:layout_constraintStart_toEndOf="@+id/expense_image_view"
             app:layout_constraintTop_toBottomOf="@id/expense_name_text_view" />
@@ -72,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Keerthi"
+            tools:text="Keerthi"
             app:layout_constraintBottom_toBottomOf="@+id/expense_image_view"
             app:layout_constraintStart_toEndOf="@+id/expense_image_view" />
 
@@ -81,7 +81,7 @@
             android:id="@+id/total_amount_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="12345"
+            tools:text="12345"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/vertical_view"
             app:layout_constraintStart_toStartOf="parent"
@@ -92,7 +92,7 @@
             android:id="@+id/split_amount_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1234"
+            tools:text="1234"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/vertical_view"

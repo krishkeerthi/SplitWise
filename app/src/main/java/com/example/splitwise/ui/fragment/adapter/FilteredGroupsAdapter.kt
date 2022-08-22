@@ -8,6 +8,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.TextAppearanceSpan
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
@@ -63,6 +64,19 @@ class FilteredGroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.Vi
         binding.groupNameTextView.text = groupName
         binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
         binding.groupCreationDateTextView.text = formatDate(group.creationDate)
+
+        if(group.groupIcon != null) {
+            binding.groupImageView.setImageURI(group.groupIcon)
+            binding.groupImageHolder.visibility= View.INVISIBLE
+            binding.groupImageHolderImage.visibility = View.INVISIBLE
+            binding.groupImageView.visibility = View.VISIBLE
+        }
+        else {
+            binding.groupImageView.setImageResource(R.drawable.ic_baseline_people_24)
+            binding.groupImageHolder.visibility= View.VISIBLE
+            binding.groupImageHolderImage.visibility = View.VISIBLE
+            binding.groupImageView.visibility = View.INVISIBLE
+        }
     }
 
     private fun getSpannable(data: String, query: String): Spannable {

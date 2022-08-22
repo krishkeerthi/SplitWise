@@ -99,7 +99,7 @@ class CreateEditGroupFragment : Fragment() {
         // Livedata member exists
         viewModel.exists.observe(viewLifecycleOwner){ exists ->
             if(exists){
-                Toast.makeText(requireContext(), "Member Exists Already", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.member_exists_already), Toast.LENGTH_SHORT).show()
                 viewModel.exists.value = false
             }
         }
@@ -215,7 +215,7 @@ class CreateEditGroupFragment : Fragment() {
 
                 Toast.makeText(
                     requireContext(),
-                    "Group created successfully",
+                    getString(R.string.group_created_successfully),
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -224,11 +224,11 @@ class CreateEditGroupFragment : Fragment() {
             } else
                 Toast.makeText(
                     requireContext(),
-                    "Add atleast 2 members to create group",
+                    getString(R.string.add_atleast_2_group),
                     Toast.LENGTH_SHORT
                 ).show()
         } else {
-            Toast.makeText(requireContext(), "Group Name Missing", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.group_name_missing), Toast.LENGTH_SHORT).show()
         }
     }
 

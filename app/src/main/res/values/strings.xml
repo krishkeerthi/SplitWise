@@ -18,7 +18,7 @@
     <string name="add_member">Add Member</string>
     <string name="add_expense">Add Expense</string>
     <string name="total_expense">Total Expense</string>
-    <string name="add_bill">Add Bill</string>
+    <string name="add_bill">Upload Bill</string>
     <string name="choose_members">Choose Members</string>
     <string name="create">Create</string>
     <string name="settle_up">Settle Up</string>
@@ -59,5 +59,31 @@
     <string name="owed">Owed</string>
     <string name="lent">Lent</string>
     <string name="edit">Edit</string>
-
+    <string name="register">Register</string>
+    <string name="group_icon">Group Icon</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="web">Web</string>
+    <string name="no_contacts">No contacts to choose</string>
+    <string name="retry">Retry</string>
+    <string name="no_results">Results could not be loaded</string>
+    <string name="total">Total</string>
+    <string name="no_group_icon">No group icon selected</string>
+    <string name="selected_groups">Selected Groups</string>
+    <string name="data_imported">Data imported</string>
+    <string name="expense_added">Expense Added</string>
+    <string name="atleast_1_payee">Atleast 1 payee should be selected</string>
+    <string name="enter_all_fields_expense">Enter all fields to add expense</string>
+    <string name="member_exists_already">Member already exists</string>
+    <string name="group_created_successfully">Group created successfully</string>
+    <string name="owes_nothing">Owes nothing</string>
+    <string name="group_name_missing">Group name missing</string>
+    <string name="internet_unavailable">Internet unavailable</string>
+    <string name="add_atleast_2_group">Add atleast 2 members to create group</string>
+    <string name="permission_granted">Permission granted</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="error_adding_image">Error adding image</string>
+    <string name="error">Error</string>
+    <string name="select_payees">Select payee(s)</string>
+    <string name="select_contact">Select contact</string>
 </resources>

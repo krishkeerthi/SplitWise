@@ -112,7 +112,7 @@ class SettingsFragment : Fragment() {
             R.id.import_menu -> {
                 viewModel.insertSampleData()
                 updateDataInserted()
-                Toast.makeText(requireContext(), "Data Imported", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.data_imported), Toast.LENGTH_SHORT).show()
                 true
             }
             else ->{

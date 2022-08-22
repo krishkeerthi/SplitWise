@@ -3,6 +3,7 @@ package com.example.splitwise.ui.fragment.adapter
 import android.content.ContentValues
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -42,6 +43,11 @@ class UnsplashPhotoAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(photo: UnsplashPhoto) {
+
+            binding.unsplashPhoto.setImageDrawable(null)
+            binding.unsplashPhoto.visibility = View.INVISIBLE
+            binding.indeterminateBar.visibility = View.VISIBLE
+
             CoroutineScope(Dispatchers.IO).launch {
                 Log.i(ContentValues.TAG, "Current thread ${Thread.currentThread().name}")
                 val bitmap = downloadBitmap(photo.urls.regular)
@@ -50,6 +56,8 @@ class UnsplashPhotoAdapter(
                         ContentValues.TAG,
                         "Current thread in the main dispatcher: ${Thread.currentThread().name}"
                     )
+                    binding.unsplashPhoto.visibility = View.VISIBLE
+                    binding.indeterminateBar.visibility = View.INVISIBLE
                     binding.unsplashPhoto.setImageBitmap(bitmap)
                 }
             }

@@ -17,11 +17,16 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         val binding = ChooseMemberCardBinding.inflate(view, parent, false)
 
         return ChooseMembersViewHolder(binding).apply {
-            binding.selectedCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked)
+            itemView.setOnClickListener {
+                val isChecked = binding.selectedCheckBox.isChecked
+                if (!isChecked) {
+                    binding.selectedCheckBox.isChecked = true
                     onItemChecked(membersAndStreaks[adapterPosition].member, true)
-                else
+                }
+                else {
+                    binding.selectedCheckBox.isChecked = false
                     onItemChecked(membersAndStreaks[adapterPosition].member, false)
+                }
             }
         }
     }

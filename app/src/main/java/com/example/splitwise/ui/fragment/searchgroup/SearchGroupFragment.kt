@@ -148,7 +148,7 @@ class SearchGroupFragment : Fragment(), CustomOnBackPressed {
 
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: custom back press")
-        Toast.makeText(requireContext(), "Custom back pressed", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(), "Custom back pressed", Toast.LENGTH_SHORT).show()
     }
 
 }

@@ -19,13 +19,15 @@ class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) 
 
 
         return MembersCheckboxViewHolder(binding).apply {
-            binding.paidUnpaidCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
+            itemView.setOnClickListener {
+                val isChecked = binding.paidUnpaidCheckbox.isChecked
+                if (!isChecked) {
+                    binding.paidUnpaidCheckbox.isChecked = true
                     onItemChecked(members[adapterPosition].memberId, true)
-                    Log.d(TAG, "onCreateViewHolder: $adapterPosition")
-                } else {
+                }
+                else {
+                    binding.paidUnpaidCheckbox.isChecked = false
                     onItemChecked(members[adapterPosition].memberId, false)
-                    Log.d(TAG, "onCreateViewHolder: $adapterPosition")
                 }
             }
         }

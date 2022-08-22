@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import com.example.splitwise.R
+import com.example.splitwise.data.local.entity.Member
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
@@ -105,5 +106,46 @@ fun downloadBitmap(imageUrl: String): Bitmap? {
     } catch (e: Exception) {
         Log.e(ContentValues.TAG, "Exception $e")
         null
+    }
+}
+
+val unwantedWords = listOf<String>("group", "family", "trip", "tour", "team", "vacation", "friend", "friends", "to", "with", "plan", "meet", "the")
+
+fun removeIrrelevantWords(groupName: String): String{
+    val words = groupName.split(" ")
+    var finalString = ""
+    for(word in words){
+        if(word.lowercase() !in unwantedWords)
+            finalString += "$word "
+    }
+
+    return if(finalString != "") finalString
+    else "Tour"
+}
+
+fun MutableList<Member>?.printableMember(): String{
+    var members = ""
+    return if(this != null){
+        for(member in this){
+            members += "${member.name}, "
+        }
+        members.substring(startIndex = 0, endIndex = (members.length - 2))
+    }
+    else
+        members
+}
+
+fun getCategory(ordinal: Int): Category{
+    return when(ordinal){
+        Category.FOOD.ordinal -> Category.FOOD
+        Category.TRAVEL.ordinal -> Category.TRAVEL
+        Category.TICKETS.ordinal -> Category.TICKETS
+        Category.RENT.ordinal -> Category.RENT
+        Category.REPAIRS.ordinal -> Category.REPAIRS
+        Category.ESSENTIALS.ordinal -> Category.ESSENTIALS
+        Category.FEES.ordinal -> Category.FEES
+        Category.ENTERTAINMENT.ordinal -> Category.ENTERTAINMENT
+        Category.OTHERS.ordinal -> Category.OTHERS
+        else -> Category.OTHERS
     }
 }

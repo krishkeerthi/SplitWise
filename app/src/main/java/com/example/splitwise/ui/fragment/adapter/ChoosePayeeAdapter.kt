@@ -18,11 +18,16 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         val binding = ChoosePayeeCardBinding.inflate(view, parent, false)
 
         return ChoosePayeeViewHolder(binding).apply {
-            binding.selectedCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked)
+            itemView.setOnClickListener {
+                val isChecked = binding.selectedCheckBox.isChecked
+                if (!isChecked) {
+                    binding.selectedCheckBox.isChecked = true
                     onItemChecked(payees[adapterPosition], true)
-                else
+                }
+                else {
+                    binding.selectedCheckBox.isChecked = false
                     onItemChecked(payees[adapterPosition], false)
+                }
             }
         }
     }
