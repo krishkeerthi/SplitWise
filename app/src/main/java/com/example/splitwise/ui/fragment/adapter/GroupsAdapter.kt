@@ -89,7 +89,7 @@ class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder
 
     private fun getDateStringResource(formatDate: String): String {
         return when(formatDate){
-            "Today" -> resources.getString(R.string.today)
+            //"Today" -> resources.getString(R.string.today)
             "Yesterday" -> resources.getString(R.string.yesterday)
             else -> formatDate
         }

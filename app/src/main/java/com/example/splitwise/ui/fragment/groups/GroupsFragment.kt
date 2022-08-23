@@ -233,7 +233,7 @@ class GroupsFragment : Fragment() {
 
     private fun getDateStringResource(formatDate: String): String {
         return when(formatDate){
-            "Today" -> getString(R.string.today)
+            //"Today" -> getString(R.string.today)
             "Yesterday" -> getString(R.string.yesterday)
             else -> formatDate
         }

@@ -24,8 +24,9 @@ class ChoosePayeesFragment : Fragment() {
 
     private val args: ChoosePayeesFragmentArgs by navArgs()
 
+
     private val viewModel: ChoosePayeesViewModel by viewModels {
-        ChoosePayeesViewModelFactory(args.payees.toMutableList())
+        ChoosePayeesViewModelFactory(args.payeesAndAmounts.toMutableList())
     }
 
     private var contextualActionMode: ActionMode? = null
@@ -60,9 +61,15 @@ class ChoosePayeesFragment : Fragment() {
             adapter = payeesAdapter
         }
 
-        viewModel.members.observe(viewLifecycleOwner) { members ->
-            if (members != null) {
-                payeesAdapter.updatePayees(members, args.selectedPayeeIds.toList())
+//        viewModel.members.observe(viewLifecycleOwner) { members ->
+//            if (members != null) {
+//                payeesAdapter.updatePayees(members, args.selectedPayeeIds.toList())
+//            }
+//        }
+
+        viewModel.membersAndAmounts.observe(viewLifecycleOwner) { membersAndAmounts ->
+            if (membersAndAmounts != null) {
+                payeesAdapter.updatePayees(membersAndAmounts, args.selectedPayeeIds.toList())
             }
         }
 
@@ -146,7 +153,8 @@ class ChoosePayeesFragment : Fragment() {
     }
 
     private fun gotoChoosePayeesFragment(){
-        val action = ChoosePayeesFragmentDirections.actionChoosePayeesFragmentSelf(args.payees, args.payerId, args.groupIds, listOf<Int>().toIntArray())
+        val action = ChoosePayeesFragmentDirections.actionChoosePayeesFragmentSelf(args.payerId, args.groupIds, listOf<Int>().toIntArray(),
+            args.payeesAndAmounts)
         view?.findNavController()?.navigate(action)
     }
 }

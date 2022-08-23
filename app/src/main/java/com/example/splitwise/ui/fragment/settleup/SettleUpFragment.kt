@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.settleup
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSettleUpBinding
+import com.example.splitwise.model.MemberAndAmount
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragmentDirections
@@ -109,10 +112,22 @@ class SettleUpFragment : Fragment() {
         }
 
         // Payees
-        viewModel.payees.observe(viewLifecycleOwner) { payees ->
-            if (payees != null) {
+//        viewModel.payees.observe(viewLifecycleOwner) { payees ->
+//            if (payees != null) {
+//                binding.choosePayeeButton.setOnClickListener {
+//                    gotoChoosePayeeFragment(payees)
+//                    //openPayeesBottomSheet(payees)
+//                }
+//            }
+//        }
+
+
+        // Payees
+        viewModel.payeesAndAmounts.observe(viewLifecycleOwner) { payeesAndAmount ->
+            if (payeesAndAmount != null) {
                 binding.choosePayeeButton.setOnClickListener {
-                    gotoChoosePayeeFragment(payees)
+                    Log.d(TAG, "onViewCreated: payeesandamount ${payeesAndAmount.size}")
+                    gotoChoosePayeeFragment(payeesAndAmount)
                     //openPayeesBottomSheet(payees)
                 }
             }
@@ -177,9 +192,9 @@ class SettleUpFragment : Fragment() {
         return memberIds.toList()
     }
 
-    private fun gotoChoosePayeeFragment(payees: List<Member>){
+    private fun gotoChoosePayeeFragment(payeesAndAmounts: List<MemberAndAmount>){
         val action = SettleUpFragmentDirections.actionSettleUpFragmentToChoosePayeesFragment(
-            payees.toTypedArray(), viewModel.payerId, viewModel.groupIds().toIntArray(), getMemberIds(selectedMembers).toIntArray())
+            viewModel.payerId, viewModel.groupIds().toIntArray(), getMemberIds(selectedMembers).toIntArray(), payeesAndAmounts.toTypedArray(),)
 
         view?.findNavController()?.navigate(action)
     }

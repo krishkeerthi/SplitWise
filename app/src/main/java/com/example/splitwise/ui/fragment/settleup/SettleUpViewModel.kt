@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.settleup
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Group
@@ -8,6 +10,7 @@ import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.data.repository.TransactionRepository
+import com.example.splitwise.model.MemberAndAmount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,15 +40,20 @@ class SettleUpViewModel(
     val payees: LiveData<List<Member>?>
         get() = _payees
 
+    private val _payeesAndAmounts = MutableLiveData<List<MemberAndAmount>?>()
+    val payeesAndAmounts: LiveData<List<MemberAndAmount>?>
+        get() = _payeesAndAmounts
+
     private val _amount = MutableLiveData<Float?>()
     val amount: LiveData<Float?>
         get() = _amount
 
     init {
         getGroups()
+        Log.d(TAG, "group id size : ${groupIds.size} ")
     }
 
-    fun fetchData(){
+    fun fetchData() {
         viewModelScope.launch {
             val member = memberRepository.getMember(payerId)
             _payer.value = member
@@ -56,25 +64,58 @@ class SettleUpViewModel(
                 transactionRepository.getPayers(payerId, groupIds)
             }
 
-            _payees.value = getMembersFromIds(memberIds)
+            // Test code starts
+            var tempGroupsId: List<Int> = groupIds
+            if (groupIds.isEmpty()) {
+                groupRepository.getGroups()?.let {
+                    val groupIds = mutableListOf<Int>()
+                    for (group in it)
+                        groupIds.add(group.groupId)
+
+                    tempGroupsId = groupIds
+                }
+            }
+
+            // Test code ends
+
+            memberIds?.let { ids ->
+                val members = getMembersFromIds(ids)
+                Log.d(TAG, "fetchData: members size ${members?.size}")
+                val membersAndAmounts = mutableListOf<MemberAndAmount>()
+                members?.let { members ->
+                    for (m in members) {
+                        val amount = getAmount(m.memberId, tempGroupsId)
+
+                        if (amount != null)
+                            membersAndAmounts.add(MemberAndAmount(m, amount))
+
+                        Log.d(TAG, "fetchData: amount ${amount}")
+                    }
+
+                    _payeesAndAmounts.value = membersAndAmounts
+                }
+
+            }
+
+
+            // _payees.value = getMembersFromIds(memberIds)
         }
     }
 
-    private fun getGroups(){
+    private fun getGroups() {
         viewModelScope.launch {
             if (groupIds.isNotEmpty()) {
                 _groups.value = groupRepository.getGroups(groupIds)
-            }
-            else{
+            } else {
                 _groups.value = groupRepository.getGroups()
             }
         }
     }
 
-    fun groupIds(): List<Int>{
+    fun groupIds(): List<Int> {
         val groupIds = mutableListOf<Int>()
-        if(groups.value != null){
-            for(group in groups.value!!)
+        if (groups.value != null) {
+            for (group in groups.value!!)
                 groupIds.add(group.groupId)
         }
 
@@ -86,6 +127,11 @@ class SettleUpViewModel(
             _amount.value = transactionRepository.getOwed(payerId, receiverIds, groupIds)
         }
     }
+
+    private suspend fun getAmount(receiverId: Int, groupIds: List<Int>) =
+        withContext(Dispatchers.IO) {
+            transactionRepository.getOwed(payerId, listOf(receiverId), groupIds) // use groups.value
+        }
 
     fun getAmount(senderId: Int, receiverId: Int? = null, groupId: Int) {
         viewModelScope.launch {

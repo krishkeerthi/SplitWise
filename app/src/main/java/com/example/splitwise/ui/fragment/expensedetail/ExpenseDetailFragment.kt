@@ -115,9 +115,13 @@ class ExpenseDetailFragment : Fragment() {
             if (bills != null && bills.isNotEmpty()) {
                 billsAdapter.updateBills(bills)
                 binding.billsRecyclerView.visibility = View.VISIBLE
+                binding.billsTextView.visibility = View.VISIBLE
             }
-            else
+            else {
                 binding.billsRecyclerView.visibility = View.GONE
+                binding.billsTextView.visibility = View.INVISIBLE
+            }
+
         }
 
         // Expense

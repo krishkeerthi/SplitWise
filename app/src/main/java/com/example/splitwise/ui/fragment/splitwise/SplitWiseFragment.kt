@@ -128,7 +128,7 @@ class SplitWiseFragment : Fragment() {
     }
 
     private fun getGroupIds(groups: MutableList<Group>): List<Int> {
-        var groupIds = mutableListOf<Int>()
+        val groupIds = mutableListOf<Int>()
         for(group in groups){
             groupIds.add(group.groupId)
         }

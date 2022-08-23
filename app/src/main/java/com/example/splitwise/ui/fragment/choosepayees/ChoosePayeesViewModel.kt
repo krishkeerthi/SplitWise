@@ -8,14 +8,19 @@ import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.MemberRepository
+import com.example.splitwise.model.MemberAndAmount
 import kotlinx.coroutines.launch
 
-class ChoosePayeesViewModel(private val selectedPayees: MutableList<Member>)
+class ChoosePayeesViewModel(private val payeesAndAmounts: MutableList<MemberAndAmount>)
     : ViewModel(){
 
     private val _members=  MutableLiveData<List<Member>?>()
     val members: LiveData<List<Member>?>
         get() = _members
+
+    private val _membersAndAmounts=  MutableLiveData<List<MemberAndAmount>?>()
+    val membersAndAmounts: LiveData<List<MemberAndAmount>?>
+        get() = _membersAndAmounts
 
     private var selectedMembers = mutableListOf<Member>()
 
@@ -28,10 +33,19 @@ class ChoosePayeesViewModel(private val selectedPayees: MutableList<Member>)
     }
 
     fun fetchData(){
-        viewModelScope.launch {
-            _members.value = selectedPayees
-            Log.d(ContentValues.TAG, "fetchData: ${_members.value}")
-        }
+//        viewModelScope.launch {
+//            _members.value = selectedPayees
+//            Log.d(ContentValues.TAG, "fetchData: ${_members.value}")
+//        }
+
+//        val selectedPayees = mutableListOf<Member>()
+//        for(payee in payeesAndAmounts){
+//            selectedPayees.add(payee.member)
+//        }
+
+        //_members.value = selectedPayees
+
+        _membersAndAmounts.value = payeesAndAmounts
     }
 
     fun addMemberToSelected(member: Member) {
@@ -48,10 +62,10 @@ class ChoosePayeesViewModel(private val selectedPayees: MutableList<Member>)
 }
 
 class ChoosePayeesViewModelFactory(
-    private val selectedPayees: MutableList<Member>
+    private val payeesAndAmounts: MutableList<MemberAndAmount>
 ) : ViewModelProvider.Factory{
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ChoosePayeesViewModel(selectedPayees) as T
+        return ChoosePayeesViewModel(payeesAndAmounts) as T
     }
 }

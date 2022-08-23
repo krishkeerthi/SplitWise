@@ -43,14 +43,25 @@
         app:layout_constraintBottom_toTopOf="@+id/member_phone_text_view"
         app:layout_constraintStart_toEndOf="@+id/member_image_holder" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/phone_image_view"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="4dp"
+        android:src="@drawable/ic_baseline_local_phone_24"
+        app:layout_constraintBottom_toBottomOf="@+id/member_image_holder"
+        app:layout_constraintStart_toEndOf="@+id/member_image_holder" />
+
     <TextView
         android:id="@+id/member_phone_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginBottom="4dp"
-        tools:text="9790307426"
         app:layout_constraintBottom_toBottomOf="@+id/member_image_holder"
-        app:layout_constraintStart_toEndOf="@+id/member_image_holder" />
+        app:layout_constraintStart_toEndOf="@+id/phone_image_view"
+        android:autoLink="phone"
+        tools:text="9790307426" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

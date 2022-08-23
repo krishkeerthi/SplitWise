@@ -19,12 +19,14 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         return ChooseMembersViewHolder(binding).apply {
             itemView.setOnClickListener {
                 val isChecked = binding.selectedCheckBox.isChecked
-                if (!isChecked) {
-                    binding.selectedCheckBox.isChecked = true
+                binding.selectedCheckBox.isChecked = !isChecked
+            }
+
+            binding.selectedCheckBox.setOnCheckedChangeListener { compoundButton, isChecked ->
+                if (isChecked) {
                     onItemChecked(membersAndStreaks[adapterPosition].member, true)
                 }
                 else {
-                    binding.selectedCheckBox.isChecked = false
                     onItemChecked(membersAndStreaks[adapterPosition].member, false)
                 }
             }

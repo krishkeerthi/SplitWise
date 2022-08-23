@@ -282,9 +282,6 @@
             app:popUpTo="@id/choosePayeesFragment"
             app:popUpToInclusive="true" />
         <argument
-            android:name="payees"
-            app:argType="com.example.splitwise.data.local.entity.Member[]" />
-        <argument
             android:name="payerId"
             app:argType="integer" />
         <argument
@@ -293,6 +290,9 @@
         <argument
             android:name="selectedPayeeIds"
             app:argType="integer[]" />
+        <argument
+            android:name="payeesAndAmounts"
+            app:argType="com.example.splitwise.model.MemberAndAmount[]" />
     </fragment>
     <fragment
         android:id="@+id/groupIconFragment"

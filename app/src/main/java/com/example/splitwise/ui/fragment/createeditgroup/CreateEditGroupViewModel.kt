@@ -24,6 +24,9 @@ class CreateEditGroupViewModel(
     private val groupRepository = GroupRepository(database)
     private val memberRepository = MemberRepository(database)
 
+    var memberCountChange = false
+    var change = false
+
     //val memberIds = mutableListOf<Int>()
 
     private val _groupName = MutableLiveData<String?>()
@@ -62,6 +65,7 @@ init {
                 _members.value = getMembersFromIds(memberIds)
             } else if (groupId == -1 && selectedMembers != null ) {
                 _members.value = selectedMembers.toMutableList()
+                updateFlag()
                 Log.d(TAG, "onCreateDialog: membercheck group null, selected members not null")
             } else if (groupId != -1 && selectedMembers != null) {
                 _members.value = selectedMembers.toMutableList()
@@ -168,7 +172,8 @@ init {
                     })
                 }
             }
-
+            if(groupId == -1)
+                updateFlag()
 
 //            if(groupId == -1){
 //                memberIds.add(memberId)
@@ -247,6 +252,10 @@ init {
 
     }
 
+    private fun updateFlag(){
+        change = true
+        memberCountChange = true
+    }
 
 }
 

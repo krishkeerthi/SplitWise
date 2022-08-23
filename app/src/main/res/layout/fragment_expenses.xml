@@ -132,6 +132,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Food"
+                        app:checkedIconTint="@color/view_color"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
                     <com.google.android.material.chip.Chip
@@ -140,6 +141,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Travel"
+                        app:checkedIconTint="@color/view_color"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
                     <com.google.android.material.chip.Chip
@@ -148,6 +150,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tickets"
+                        app:checkedIconTint="@color/view_color"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
                     <com.google.android.material.chip.Chip
@@ -156,6 +159,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Rent"
+                        app:checkedIconTint="@color/view_color"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
                     <com.google.android.material.chip.Chip
@@ -164,6 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Fees"
+                        app:checkedIconTint="@color/view_color"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
                     <com.google.android.material.chip.Chip
@@ -172,6 +177,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Repair"
+                        app:checkedIconTint="@color/view_color"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
                     <com.google.android.material.chip.Chip
@@ -180,6 +186,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Entertainment"
+                        app:checkedIconTint="@color/view_color"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
                     <com.google.android.material.chip.Chip
@@ -188,6 +195,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Essentials"
+                        app:checkedIconTint="@color/view_color"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
                     <com.google.android.material.chip.Chip
@@ -196,6 +204,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Others"
+                        app:checkedIconTint="@color/view_color"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
                 </com.google.android.material.chip.ChipGroup>

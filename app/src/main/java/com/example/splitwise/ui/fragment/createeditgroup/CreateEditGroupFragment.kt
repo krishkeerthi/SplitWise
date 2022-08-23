@@ -35,20 +35,26 @@ class CreateEditGroupFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val callback = object: OnBackPressedCallback(true /* enabled by default */) {
+        val callback = object : OnBackPressedCallback(true /* enabled by default */) {
 
             override fun handleOnBackPressed() {
-                val builder =  AlertDialog.Builder(requireContext())
+                if (viewModel.change) {
+                    val builder = AlertDialog.Builder(requireContext())
 
-                builder.setTitle("Discard");
-                builder.setMessage("Do you want to discard changes? ")
-                builder.setPositiveButton("Discard"
-                ) { dialog, which ->
-                    //  Toast.makeText(requireContext(), "custom back pressed", Toast.LENGTH_SHORT).show()
-                    NavHostFragment.findNavController(this@CreateEditGroupFragment).popBackStack()
-                }
-                builder.setNegativeButton("Cancel",null)
-                builder.show()
+                    builder.setTitle("Discard");
+                    builder.setMessage("Do you want to discard changes? ")
+                    builder.setPositiveButton(
+                        "Discard"
+                    ) { dialog, which ->
+                        //  Toast.makeText(requireContext(), "custom back pressed", Toast.LENGTH_SHORT).show()
+                        NavHostFragment.findNavController(this@CreateEditGroupFragment)
+                            .popBackStack()
+                    }
+                    builder.setNegativeButton("Cancel", null)
+                    builder.show()
+                } else
+                    NavHostFragment.findNavController(this@CreateEditGroupFragment)
+                        .popBackStack()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback);
@@ -66,7 +72,10 @@ class CreateEditGroupFragment : Fragment() {
 
         viewModel.fetchData()
 
-        Log.d(TAG, "onCreateDialog: membercheck inside create edit grop , ${viewModel.members.value}")
+        Log.d(
+            TAG,
+            "onCreateDialog: membercheck inside create edit grop , ${viewModel.members.value}"
+        )
 
         Log.d(TAG, "onViewCreated: createdit group id : ${args.groupId}")
         super.onViewCreated(view, savedInstanceState)
@@ -97,9 +106,13 @@ class CreateEditGroupFragment : Fragment() {
         }
 
         // Livedata member exists
-        viewModel.exists.observe(viewLifecycleOwner){ exists ->
-            if(exists){
-                Toast.makeText(requireContext(), getString(R.string.member_exists_already), Toast.LENGTH_SHORT).show()
+        viewModel.exists.observe(viewLifecycleOwner) { exists ->
+            if (exists) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.member_exists_already),
+                    Toast.LENGTH_SHORT
+                ).show()
                 viewModel.exists.value = false
             }
         }
@@ -113,17 +126,16 @@ class CreateEditGroupFragment : Fragment() {
 //        }
 
         viewModel.group.observe(viewLifecycleOwner) { group ->
-            if(group != null){
+            if (group != null) {
                 binding.groupNameText.setText(group.groupName)
 
-                if(group.groupIcon != null) {
+                if (group.groupIcon != null) {
                     binding.groupImageView.setImageURI(group.groupIcon)
-                    binding.groupImageHolder.visibility= View.INVISIBLE
+                    binding.groupImageHolder.visibility = View.INVISIBLE
                     binding.groupImageHolderImage.visibility = View.INVISIBLE
                     binding.groupImageView.visibility = View.VISIBLE
-                }
-                else{
-                    binding.groupImageHolder.visibility= View.VISIBLE
+                } else {
+                    binding.groupImageHolder.visibility = View.VISIBLE
                     binding.groupImageHolderImage.visibility = View.VISIBLE
                     binding.groupImageView.visibility = View.INVISIBLE
                 }
@@ -172,8 +184,14 @@ class CreateEditGroupFragment : Fragment() {
                 if (nameCheck(binding.groupNameText.text?.trim().toString())) {
                     binding.outlinedGroupNameTextField.error = null
                     binding.outlinedGroupNameTextField.isErrorEnabled = false
+
+                    if (args.groupId == -1)
+                        viewModel.change = true
                 } else {
                     binding.outlinedGroupNameTextField.error = "Enter valid name"
+
+                    if (!viewModel.memberCountChange)
+                        viewModel.change = false
                 }
 
 //                binding.createGroupButton.visibility =
@@ -228,7 +246,11 @@ class CreateEditGroupFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
         } else {
-            Toast.makeText(requireContext(), getString(R.string.group_name_missing), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.group_name_missing),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -242,16 +264,16 @@ class CreateEditGroupFragment : Fragment() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        return when (item.itemId) {
             R.id.add_member -> {
                 AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
                 true
             }
-            R.id.create_group ->{
+            R.id.create_group -> {
                 createGroup()
                 true
             }
-            else ->{
+            else -> {
                 false
             }
         }

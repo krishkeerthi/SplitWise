@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.text.format.DateUtils
 import android.util.Log
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
@@ -18,28 +19,36 @@ fun nameCheck(value: String): Boolean {
 }
 
 fun formatDate(date: Date): String{
-    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.UK) // warning shown to add locale
+    //val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.UK) // warning shown to add locale
 
-    val currentDate = Calendar.getInstance()
-    val currentYear = currentDate[Calendar.YEAR]
-    val currentMonth = currentDate[Calendar.MONTH]
-    val currentDay = currentDate[Calendar.DAY_OF_MONTH]
+    val sdf = SimpleDateFormat("dd-LLL-yyyy", Locale.UK)
 
-    val createdDate = Calendar.getInstance()
-    createdDate.time = date
-    val year = createdDate[Calendar.YEAR]
-    val month = createdDate[Calendar.MONTH]
-    val day = createdDate[Calendar.DAY_OF_MONTH]
-
-    return if((currentYear == year) && (currentMonth == month)){
-        when {
-            currentDay == day -> "Today"
-            day == (currentDay - 1) -> "Yesterday"
-            else -> sdf.format(date).toString()
-        }
+    return when{
+        (DateUtils.isToday(date.time)) -> "${DateUtils.getRelativeTimeSpanString(date.time)}"
+        (DateUtils.isToday(date.time + DateUtils.DAY_IN_MILLIS)) -> "Yesterday"
+        else -> sdf.format(date).toString()
     }
-    else
-        sdf.format(date).toString()
+
+//    val currentDate = Calendar.getInstance()
+//    val currentYear = currentDate[Calendar.YEAR]
+//    val currentMonth = currentDate[Calendar.MONTH]
+//    val currentDay = currentDate[Calendar.DAY_OF_MONTH]
+//
+//    val createdDate = Calendar.getInstance()
+//    createdDate.time = date
+//    val year = createdDate[Calendar.YEAR]
+//    val month = createdDate[Calendar.MONTH]
+//    val day = createdDate[Calendar.DAY_OF_MONTH]
+//
+//    return if((currentYear == year) && (currentMonth == month)){
+//        when {
+//            currentDay == day -> "Today"
+//            day == (currentDay - 1) -> "Yesterday"
+//            else -> sdf.format(date).toString()
+//        }
+//    }
+//    else
+//        sdf.format(date).toString()
 }
 
 fun Float.roundOff(): String{

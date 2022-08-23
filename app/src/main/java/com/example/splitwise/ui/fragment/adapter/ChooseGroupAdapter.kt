@@ -1,5 +1,7 @@
 package com.example.splitwise.ui.fragment.adapter
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,12 +22,17 @@ class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
         return ChooseGroupViewHolder(binding).apply {
             itemView.setOnClickListener {
                 val isChecked = binding.selectedCheckBox.isChecked
-                if (!isChecked) {
-                    binding.selectedCheckBox.isChecked = true
+                binding.selectedCheckBox.isChecked = !isChecked
+            }
+
+            binding.selectedCheckBox.setOnCheckedChangeListener { compoundButton, isChecked ->
+               // Log.d(TAG, "onCreateViewHolder: group checkbox checked $isChecked")
+                if (isChecked) {
+                    //binding.selectedCheckBox.isChecked = true
                     onItemChecked(groups[adapterPosition], true)
                 }
                 else {
-                    binding.selectedCheckBox.isChecked = false
+                    //binding.selectedCheckBox.isChecked = false
                     onItemChecked(groups[adapterPosition], false)
                 }
             }

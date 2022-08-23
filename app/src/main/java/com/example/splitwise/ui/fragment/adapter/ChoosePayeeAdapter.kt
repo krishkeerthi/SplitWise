@@ -6,10 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.ChoosePayeeCardBinding
+import com.example.splitwise.model.MemberAndAmount
+import com.example.splitwise.util.roundOff
 
 class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
     RecyclerView.Adapter<ChoosePayeeViewHolder>() {
-    private var payees = listOf<Member>()
+    //private var payees = listOf<Member>()
+    private var payeesAndAmounts = listOf<MemberAndAmount>()
     private var selectedPayeesId = listOf<Int>()
     private var selectedAllPayees: Boolean = false
 
@@ -20,29 +23,35 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         return ChoosePayeeViewHolder(binding).apply {
             itemView.setOnClickListener {
                 val isChecked = binding.selectedCheckBox.isChecked
-                if (!isChecked) {
-                    binding.selectedCheckBox.isChecked = true
-                    onItemChecked(payees[adapterPosition], true)
+                binding.selectedCheckBox.isChecked = !isChecked
+            }
+
+            binding.selectedCheckBox.setOnCheckedChangeListener { compoundButton, isChecked ->
+                // Log.d(TAG, "onCreateViewHolder: group checkbox checked $isChecked")
+                if (isChecked) {
+                    //binding.selectedCheckBox.isChecked = true
+                    onItemChecked(payeesAndAmounts[adapterPosition].member, true)
                 }
                 else {
-                    binding.selectedCheckBox.isChecked = false
-                    onItemChecked(payees[adapterPosition], false)
+                    //binding.selectedCheckBox.isChecked = false
+                    onItemChecked(payeesAndAmounts[adapterPosition].member, false)
                 }
             }
         }
     }
 
     override fun onBindViewHolder(holder: ChoosePayeeViewHolder, position: Int) {
-        val payee = payees[position]
+        val payee = payeesAndAmounts[position].member
+        val amount = payeesAndAmounts[position].amount
 
         if(!selectedAllPayees)
-            holder.bind(payee, selectedPayeesId)
+            holder.bind(payee, amount, selectedPayeesId)
         else
             holder.bindAndCheck(payee)
     }
 
     override fun getItemCount(): Int {
-        return payees.size
+        return payeesAndAmounts.size
     }
 
     fun selectAllPayees() {
@@ -50,8 +59,9 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         notifyDataSetChanged()
     }
 
-    fun updatePayees(payees: List<Member>, selectedPayeesId: List<Int>) {
-        this.payees= payees
+    fun updatePayees(payeesAndAmounts: List<MemberAndAmount>, selectedPayeesId: List<Int>) {
+        //this.payees= payees
+        this.payeesAndAmounts = payeesAndAmounts
         this.selectedPayeesId = selectedPayeesId
         notifyDataSetChanged()
     }
@@ -60,8 +70,9 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
 class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(payee: Member, selectedPayees: List<Int>) {
+    fun bind(payee: Member, amount: Float, selectedPayees: List<Int>) {
         binding.payeeNameTextView.text = payee.name
+        binding.amountTextView.text = "₹" + amount.roundOff()
 
         if(payee.memberId in selectedPayees)
             binding.selectedCheckBox.isChecked = true
