@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.adapter
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -74,6 +75,7 @@ class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder
         binding.groupCreationDateTextView.text = getDateStringResource(formatDate(group.creationDate))
 
         if(group.groupIcon != null) {
+            Log.d(TAG, "bind: group icon${group.groupIcon.toString()}")
             binding.groupImageView.setImageURI(group.groupIcon)
             binding.groupImageHolder.visibility= View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE

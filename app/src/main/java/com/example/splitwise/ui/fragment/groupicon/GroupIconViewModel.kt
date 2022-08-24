@@ -19,6 +19,12 @@ class GroupIconViewModel(context: Context, val groupId: Int) : ViewModel() {
             navigation()
         }
     }
+
+    fun updateGroupIcon(uri: Uri){
+        viewModelScope.launch {
+            groupRepository.updateGroupIcon(groupId, uri)
+        }
+    }
 }
 
 class GroupIconViewModelFactory(

@@ -158,3 +158,14 @@ fun getCategory(ordinal: Int): Category{
         else -> Category.OTHERS
     }
 }
+
+fun String.formatNumber(): String{
+    var number = ""
+    "[^0-9]".toRegex().apply {
+        number = replace(this, "")
+    }
+
+    return if(number.length == 10) number
+    else number.substring(2)
+
+}

@@ -17,6 +17,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import com.example.splitwise.R
 import com.example.splitwise.ui.fragment.createeditgroup.CreateEditGroupViewModel
+import com.example.splitwise.util.formatNumber
 import com.example.splitwise.util.nameCheck
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -30,6 +31,8 @@ class AddMemberDialog(
 
     private val contactNameLiveData = MutableLiveData<String>()
     private val contactPhoneLiveData = MutableLiveData<String>()
+
+    // note: In dialog on create view callback is not called
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
@@ -49,9 +52,9 @@ class AddMemberDialog(
 
 
         selectContactButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Working on it", Toast.LENGTH_SHORT).show()
- //           selectContact()
-//
+           // Toast.makeText(requireContext(), "Working on it", Toast.LENGTH_SHORT).show()
+            selectContact()
+
 //            if(contactName != "" && contactPhone != ""){
 //                phoneEditText.setText(contactPhone)
 //                nameEditText.setText(contactName)
@@ -61,15 +64,15 @@ class AddMemberDialog(
 //            }
         }
 
-//        contactNameLiveData.observe(viewLifecycleOwner) {
-//            if (it != "")
-//                nameEditText.setText(it)
-//        }
-//
-//        contactPhoneLiveData.observe(viewLifecycleOwner) {
-//            if (it != "")
-//                phoneEditText.setText(it)
-//        }
+        contactNameLiveData.observe(this) {
+            if (it != "")
+                nameEditText.setText(it)
+        }
+
+        contactPhoneLiveData.observe(this) {
+            if (it != "")
+                phoneEditText.setText(it)
+        }
 
         builder.apply {
             setView(addMemberDialog)
@@ -170,7 +173,7 @@ class AddMemberDialog(
                     cursor.moveToFirst()
                     val numberColumnIndex =
                         cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-                    val number = cursor.getString(numberColumnIndex)
+                    val number = cursor.getString(numberColumnIndex).formatNumber()
                     contactPhoneLiveData.value = number
 
                     val nameColumnIndex =

@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFF</color>
     <color name="view_color">#52514e</color>
+    <color name="invert_color">#dee3e1</color>
     <color name="text_bold">#FFFFFFFF</color>
     <color name="blue">#4fc3f7</color>
     <color name="background">#000000</color>

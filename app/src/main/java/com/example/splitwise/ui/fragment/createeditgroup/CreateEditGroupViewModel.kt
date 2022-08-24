@@ -55,7 +55,7 @@ init {
         Log.d(TAG, "onCreateDialog: membercheck create edit viewmodel, members ${members.value}")
 
         viewModelScope.launch {
-            if (groupId != -1 && selectedMembers == null) {
+            if (groupId != -1 && selectedMembers == null) { // updaing group
                 val group = groupRepository.getGroup(groupId)
                 _groupName.value = group?.groupName
                 _group.value = group
@@ -63,11 +63,15 @@ init {
                 val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
 
                 _members.value = getMembersFromIds(memberIds)
-            } else if (groupId == -1 && selectedMembers != null ) {
+            } else if (groupId == -1 && selectedMembers != null ) { // selecting member while creating group
                 _members.value = selectedMembers.toMutableList()
                 updateFlag()
                 Log.d(TAG, "onCreateDialog: membercheck group null, selected members not null")
-            } else if (groupId != -1 && selectedMembers != null) {
+            } else if (groupId != -1 && selectedMembers != null) { // selecting member while updating group
+                val group = groupRepository.getGroup(groupId)
+                _groupName.value = group?.groupName
+                _group.value = group
+
                 _members.value = selectedMembers.toMutableList()
                 addMembersNotIncludedToGroup()
             } else {

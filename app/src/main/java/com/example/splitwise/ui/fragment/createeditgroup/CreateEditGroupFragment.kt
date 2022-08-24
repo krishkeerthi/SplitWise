@@ -2,6 +2,7 @@ package com.example.splitwise.ui.fragment.createeditgroup
 
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -125,11 +126,22 @@ class CreateEditGroupFragment : Fragment() {
 //            }
 //        }
 
+      //   group icon click (when not set)
+        binding.groupImageHolder.setOnClickListener {
+            gotoGroupIconFragment()
+        }
+        // group icon click (when set)
+        binding.groupImageView.setOnClickListener {
+            gotoGroupIconFragment()
+        }
+
         viewModel.group.observe(viewLifecycleOwner) { group ->
             if (group != null) {
+                Log.d(TAG, "onViewCreated: name set")
                 binding.groupNameText.setText(group.groupName)
 
                 if (group.groupIcon != null) {
+                    Log.d(TAG, "onViewCreated: image set")
                     binding.groupImageView.setImageURI(group.groupIcon)
                     binding.groupImageHolder.visibility = View.INVISIBLE
                     binding.groupImageHolderImage.visibility = View.INVISIBLE
@@ -142,13 +154,35 @@ class CreateEditGroupFragment : Fragment() {
             }
         }
 
-        // retains group name while returning from choose members screen
-        if (args.groupName != null) {
-            binding.groupNameText.setText(args.groupName)
+        // set image while creating group
+//        if(args.groupIcon != null)
+//            binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
 
-//            if (args.groupName.toString().trim() != "")
-//                binding.createGroupButton.visibility = View.VISIBLE
+        if (args.groupIcon != null) {
+            binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
+            binding.groupImageHolder.visibility = View.INVISIBLE
+            binding.groupImageHolderImage.visibility = View.INVISIBLE
+            binding.groupImageView.visibility = View.VISIBLE
+        } else {
+            binding.groupImageHolder.visibility = View.VISIBLE
+            binding.groupImageHolderImage.visibility = View.VISIBLE
+            binding.groupImageView.visibility = View.INVISIBLE
         }
+
+        // retains group name while returning from choose members screen
+//        if (args.groupName != null) {
+//            binding.groupNameText.setText(args.groupName)
+////            if (args.groupName.toString().trim() != "")
+////                binding.createGroupButton.visibility = View.VISIBLE
+//        }
+//
+//        // retains group image while returning from choose members screen
+//        viewModel.group.value?.let { group ->
+//            binding.groupImageView.setImageURI(group.groupIcon)
+//            binding.groupImageHolder.visibility = View.INVISIBLE
+//            binding.groupImageHolderImage.visibility = View.INVISIBLE
+//            binding.groupImageView.visibility = View.VISIBLE
+//        }
 
         // Button click
 //        binding.addMemberButton.setOnClickListener {
@@ -168,6 +202,7 @@ class CreateEditGroupFragment : Fragment() {
             binding.groupNameText.isClickable = false
             binding.groupNameText.isFocusable = false
         }
+
 
 //        binding.createGroupButton.setOnClickListener {
 //            createGroup()
@@ -297,5 +332,16 @@ class CreateEditGroupFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
+    private fun gotoGroupIconFragment() {
+        val groupName = binding.groupNameText.text?.trim().toString()
+        val groupIcon = if(args.groupId != -1){
+            viewModel.group.value?.groupIcon.toString()
+        }
+        else
+            null
+        val action =
+            CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupIconFragment(args.groupId, groupIcon, groupName,false)
+        view?.findNavController()?.navigate(action)
+    }
 
 }

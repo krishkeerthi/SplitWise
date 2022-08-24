@@ -157,9 +157,20 @@ class SetImageFragment : Fragment() {
                 }
                 cursor.close()
             }
-            viewModel.updateGroupIcon(testUri){
-                gotoGroupsFragment()
+            if(args.groupId != -1){
+                if(args.fromGroupsFragment)
+                    viewModel.updateGroupIcon(testUri){
+                        gotoGroupsFragment()
+                    }
+                else
+                    viewModel.updateGroupIcon(testUri){
+                        //gotoGroupsFragment()
+                        gotoCreateEditGroupFragment()
+                    }
             }
+            else
+                gotoCreateEditGroupFragment(testUri)
+
 
             //goto group icon
             //gotoGroupIconFragment()
@@ -191,6 +202,26 @@ class SetImageFragment : Fragment() {
 
     private fun gotoGroupsFragment() {
         val action = SetImageFragmentDirections.actionSetImageFragmentToGroupsFragment()
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun gotoCreateEditGroupFragment() {
+        val action = SetImageFragmentDirections.actionSetImageFragmentToCreateEditGroupFragment2(
+            args.groupId,
+            null,
+            args.groupName,
+            null
+        )
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun gotoCreateEditGroupFragment(uri: Uri) {
+        val action = SetImageFragmentDirections.actionSetImageFragmentToCreateEditGroupFragment2(
+            args.groupId,
+            null,
+            args.groupName,
+            uri.toString()
+        )
         view?.findNavController()?.navigate(action)
     }
 

@@ -85,7 +85,7 @@ class GroupsFragment : Fragment() {
             adapter = groupsAdapter
         }
 
-        // Livedat<item name="android:actionBarStyle">@style/ActionBarTheme</item>a
+        // Livedata<item name="android:actionBarStyle">@style/ActionBarTheme</item>a
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             if (groups != null && groups.isNotEmpty()) {
                 Log.d(TAG, "onViewCreated: groups livedata ${groups.size}")
@@ -207,7 +207,7 @@ class GroupsFragment : Fragment() {
     }
 
     private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String) {
-        val action = GroupsFragmentDirections.actionGroupsFragmentToGroupIconFragment(groupId, groupIcon, groupName)
+        val action = GroupsFragmentDirections.actionGroupsFragmentToGroupIconFragment(groupId, groupIcon, groupName, true)
         view?.findNavController()?.navigate(action)
     }
 
@@ -288,6 +288,7 @@ class GroupsFragment : Fragment() {
     private fun goToCreateEditGroupFragment(groupId: Int = -1) {
         val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(
             groupId,
+            null,
             null,
             null
         )

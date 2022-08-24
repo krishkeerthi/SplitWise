@@ -166,12 +166,14 @@ class ExpensesFragment : Fragment() {
                 }
 
                 if(isChecked){
+                    buttonView.setTextColor(requireActivity().resources.getColor(R.color.background))
                     viewModel.incrementCheckedFiltersCount()
                     viewModel.checkedFilters.add(category)
                     Log.d(TAG, "onViewCreated: checked ${viewModel.checkedFilters.toString()}")
                     viewModel.filterByCategory()
                 }
                 else {
+                    buttonView.setTextColor(requireActivity().resources.getColor(R.color.invert_color))
                     viewModel.decrementCheckedFiltersCount()
                     viewModel.checkedFilters.remove(category)
                     Log.d(TAG, "onViewCreated: unchecked ${viewModel.checkedFilters}")
@@ -310,6 +312,7 @@ class ExpensesFragment : Fragment() {
     private fun goToCreateEditGroupFragment(groupId: Int = -1) {
         val action = ExpensesFragmentDirections.actionExpensesFragmentToCreateEditGroupFragment(
             groupId,
+            null,
             null,
             null
         )

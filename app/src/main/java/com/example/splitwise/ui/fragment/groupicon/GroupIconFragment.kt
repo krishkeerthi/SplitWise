@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.groupicon
 
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -85,7 +86,11 @@ class GroupIconFragment : Fragment() {
                 gotoSearchImageFragment()
                 groupIconBottomSheet.dismiss()
             } else
-                Toast.makeText(requireContext(), getString(R.string.internet_unavailable), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.internet_unavailable),
+                    Toast.LENGTH_SHORT
+                ).show()
 
         }
 
@@ -171,7 +176,8 @@ class GroupIconFragment : Fragment() {
     private fun gotoSearchImageFragment() {
         val action = GroupIconFragmentDirections.actionGroupIconFragmentToSearchImageFragment(
             args.groupId,
-            args.groupName
+            if (args.groupName == "") "random" else args.groupName,
+            args.fromGroupsFragment
         )
         view?.findNavController()?.navigate(action)
     }
@@ -179,9 +185,17 @@ class GroupIconFragment : Fragment() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                Toast.makeText(requireContext(), getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.permission_granted),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                Toast.makeText(requireContext(), getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.permission_denied),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -198,11 +212,20 @@ class GroupIconFragment : Fragment() {
                     bitmap = imageBitmap
                     //val uri = saveImage(bitmap, "${Date().time}.png")
                     val uri = storeUsingMediaStore(bitmap)
-                    if (uri != null)
-                        viewModel.updateGroupIcon(uri) {
-                            gotoGroupsFragment()
+                    if (uri != null) {
+                        if (args.groupId != -1) {
+                            if (args.fromGroupsFragment)
+                                viewModel.updateGroupIcon(uri) {
+                                    gotoGroupsFragment()
+                                }
+                            else {
+                                viewModel.updateGroupIcon(uri)
+                                requireActivity().onBackPressed()
+                            }
                         }
-                    else
+                        else
+                            gotoCreateEditGroupFragment(uri)
+                    } else
                         Toast.makeText(
                             requireContext(),
                             getString(R.string.error_adding_image),
@@ -255,8 +278,13 @@ class GroupIconFragment : Fragment() {
     }
 
     private fun selectFile() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+        //Intent.ACTION_PICK,
+        //            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply { //ACTION_OPEN_DOCUMENT // ACTION_GET_CONTENT
             type = "image/*"
+            flags = (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         }
 
         selectFileLauncher.launch(intent)
@@ -268,12 +296,31 @@ class GroupIconFragment : Fragment() {
 
                 val uri = result.data?.data
 
+                //As you are using ACTION_GET_CONTENT, your access to the Uri ends when the component is destroyed (unless you pass
+                // the Uri to a new component). You must make a copy of the file from the Uri if you'd like to continue to access
+                // it beyond the lifetime of your component or switch to ACTION_OPEN_DOCUMENT and persist permissions (possible only
+                // with document Uris).
+
                 if (uri != null) {
-                    viewModel.updateGroupIcon(uri) {
-                        gotoGroupsFragment()
+                    requireActivity().contentResolver.takePersistableUriPermission(uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    if (args.groupId != -1) {
+                        if (args.fromGroupsFragment) {
+                            viewModel.updateGroupIcon(uri) {
+                                gotoGroupsFragment()
+                            }
+                        } else {
+                            viewModel.updateGroupIcon(uri)
+                            requireActivity().onBackPressed()
+                        }
+                    }
+                    else{
+                        gotoCreateEditGroupFragment(uri)
                     }
                 } else
-                    Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT)
+                        .show()
 
 
             }
@@ -282,6 +329,13 @@ class GroupIconFragment : Fragment() {
 
     private fun gotoGroupsFragment() {
         val action = GroupIconFragmentDirections.actionGroupIconFragmentToGroupsFragment()
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun gotoCreateEditGroupFragment(uri: Uri) {
+        val action = GroupIconFragmentDirections.actionGroupIconFragmentToCreateEditGroupFragment(
+            args.groupId, null, args.groupName, uri.toString()
+        )
         view?.findNavController()?.navigate(action)
     }
 }
