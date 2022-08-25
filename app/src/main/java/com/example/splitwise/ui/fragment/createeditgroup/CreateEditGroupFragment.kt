@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -22,6 +23,7 @@ import com.example.splitwise.databinding.FragmentCreateEditGroupBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
 import com.example.splitwise.ui.fragment.addmember.AddMemberDialog
+import com.example.splitwise.ui.fragment.viewmodel.CreateEditGroupActivityViewModel
 import com.example.splitwise.util.nameCheck
 
 class CreateEditGroupFragment : Fragment() {
@@ -32,6 +34,8 @@ class CreateEditGroupFragment : Fragment() {
     private val viewModel: CreateEditGroupViewModel by viewModels {
         CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.selectedMembers)
     }
+
+    private val activityViewModel: CreateEditGroupActivityViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +77,10 @@ class CreateEditGroupFragment : Fragment() {
 
         viewModel.fetchData()
 
+            // not works
+//        (requireActivity() as MainActivity).actionBar?.title = if(args.groupId == -1) "Create group"
+//        else "Edit group"
+
         Log.d(
             TAG,
             "onCreateDialog: membercheck inside create edit grop , ${viewModel.members.value}"
@@ -103,6 +111,8 @@ class CreateEditGroupFragment : Fragment() {
                 Log.d(TAG, "onViewCreated: addMember observed $members")
                 membersAdapter.updateMembers(members)
 
+                // Also update selected members this stores the added members before creating group
+                activityViewModel.selectedMembers = members
             }
         }
 
@@ -158,23 +168,31 @@ class CreateEditGroupFragment : Fragment() {
 //        if(args.groupIcon != null)
 //            binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
 
+        Log.d(TAG, "onViewCreated: group Icon create edit${args.groupIcon}")
+
         if (args.groupIcon != null) {
             binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE
+
         } else {
             binding.groupImageHolder.visibility = View.VISIBLE
             binding.groupImageHolderImage.visibility = View.VISIBLE
             binding.groupImageView.visibility = View.INVISIBLE
         }
 
+        // adding data to activity viewmodel only when not added previously
+        if(args.groupIcon != null && viewModel.members.value == null)
+            if(activityViewModel.selectedMembers.isNotEmpty())
+                viewModel.updateMembers(activityViewModel.selectedMembers)
+
         // retains group name while returning from choose members screen
-//        if (args.groupName != null) {
-//            binding.groupNameText.setText(args.groupName)
-////            if (args.groupName.toString().trim() != "")
-////                binding.createGroupButton.visibility = View.VISIBLE
-//        }
+        if (args.groupName != null) {
+            binding.groupNameText.setText(args.groupName)
+//            if (args.groupName.toString().trim() != "")
+//                binding.createGroupButton.visibility = View.VISIBLE
+        }
 //
 //        // retains group image while returning from choose members screen
 //        viewModel.group.value?.let { group ->
@@ -261,7 +279,8 @@ class CreateEditGroupFragment : Fragment() {
 
                 viewModel.createGroup(
                     binding.groupNameText.text.toString(),
-                    memberId
+                    memberId,
+                    args.groupIcon
                 ) {
                     gotoGroupsFragment()
                 }
@@ -320,7 +339,8 @@ class CreateEditGroupFragment : Fragment() {
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToChooseMembersFragment(
                 args.groupId,
                 viewModel.members.value?.toTypedArray(),
-                binding.groupNameText.text.toString()
+                binding.groupNameText.text.toString(),
+                args.groupIcon
             )
         view?.findNavController()?.navigate(action)
     }
@@ -338,7 +358,8 @@ class CreateEditGroupFragment : Fragment() {
             viewModel.group.value?.groupIcon.toString()
         }
         else
-            null
+            args.groupIcon  // when group icon already set before creating group
+
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupIconFragment(args.groupId, groupIcon, groupName,false)
         view?.findNavController()?.navigate(action)

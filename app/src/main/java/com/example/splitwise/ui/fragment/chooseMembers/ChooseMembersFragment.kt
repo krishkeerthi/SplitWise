@@ -2,6 +2,7 @@ package com.example.splitwise.ui.fragment.chooseMembers
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -38,6 +39,8 @@ class ChooseMembersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.fetchData()
+
+        Log.d(TAG, "onViewCreated: group Icon choose member${args.groupIcon}")
 
         Log.d(ContentValues.TAG, "onCreateDialog: membercheck inside  choose member onviewcreated, ${viewModel.getSelectedMembers().toList()}")
         //requireActivity().title = "Choose Members"
@@ -155,14 +158,14 @@ class ChooseMembersFragment : Fragment() {
     private fun gotoCreateEditGroupFragment(selectedMembers: Array<Member>) {
         val action =
             ChooseMembersFragmentDirections.actionChooseMembersFragmentToCreateEditGroupFragment(
-                args.groupId, selectedMembers, args.groupName, null // need to check
+                args.groupId, selectedMembers, args.groupName, args.groupIcon // need to check
             )
         view?.findNavController()?.navigate(action)
     }
 
     private fun gotoChooseMemberFragment() {
         val action = ChooseMembersFragmentDirections.actionChooseMembersFragmentSelf(
-            args.groupId, args.selectedMembers, args.groupName
+            args.groupId, args.selectedMembers, args.groupName, args.groupIcon
         )
         view?.findNavController()?.navigate(action)
     }

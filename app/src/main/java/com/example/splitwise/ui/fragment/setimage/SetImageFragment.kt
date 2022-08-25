@@ -168,8 +168,12 @@ class SetImageFragment : Fragment() {
                         gotoCreateEditGroupFragment()
                     }
             }
-            else
-                gotoCreateEditGroupFragment(testUri)
+            else {
+                Log.d(TAG, "downloadImage: error causing ${testUri}")
+                CoroutineScope(Dispatchers.Main).launch {
+                    gotoCreateEditGroupFragment(testUri)
+                }
+            }
 
 
             //goto group icon

@@ -86,4 +86,5 @@
     <string name="error">Error</string>
     <string name="select_payees">Select payee(s)</string>
     <string name="select_contact">Select contact</string>
+    <string name="need_to_implement">Need to implement</string>
 </resources>

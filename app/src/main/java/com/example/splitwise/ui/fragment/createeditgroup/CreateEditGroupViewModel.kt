@@ -2,6 +2,7 @@ package com.example.splitwise.ui.fragment.createeditgroup
 
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
@@ -142,6 +143,9 @@ init {
         }
     }
 
+    fun updateMembers(members: List<Member>){
+        _members.value = members.toMutableList()
+    }
 
     fun addMember(name: String, phoneNumber: Long) {
         viewModelScope.launch {
@@ -191,14 +195,15 @@ init {
 
     }
 
-    fun createGroup(name: String, ownerId: Int, gotoGroupFragment: () -> Unit) {
+    fun createGroup(name: String, ownerId: Int, groupIcon: String?, gotoGroupFragment: () -> Unit) {
         viewModelScope.launch {
+            val uri = groupIcon?.let { Uri.parse(it) }
             val groupId = groupRepository.createGroup(
                 name,
                 "description",
                 Date(),
                 0F,
-                null
+                uri
             )
 
             members.value?.let { members ->
