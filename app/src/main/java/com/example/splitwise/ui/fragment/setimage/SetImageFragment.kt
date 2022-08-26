@@ -20,6 +20,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSetImageBinding
 import com.example.splitwise.util.downloadBitmap
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -151,7 +152,7 @@ class SetImageFragment : Fragment() {
                 msg = statusMessage(url!!, directory, status) // not null asserting url
                 if (msg != lastMsg) {
                     withContext(Dispatchers.Main){
-                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                        Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
                     }
                     lastMsg = msg ?: ""
                 }

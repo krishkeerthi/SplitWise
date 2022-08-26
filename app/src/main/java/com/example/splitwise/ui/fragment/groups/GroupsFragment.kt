@@ -176,7 +176,7 @@ class GroupsFragment : Fragment() {
         if (viewModel.filterModel.amountFilterModel != null) {
             val amountFilterModel = viewModel.filterModel.amountFilterModel
             binding.amountFilterChip.text = "${
-                amountFilterModel!!.amountFilter.name.lowercase().titleCase()
+                amountFilterModel!!.amountFilter.name.titleCase()
             } ${amountFilterModel!!.amount}"
             binding.amountFilterChip.visibility = View.VISIBLE
         }
@@ -184,7 +184,7 @@ class GroupsFragment : Fragment() {
         if (viewModel.filterModel.dateFilterModel != null) {
             val dateFilterModel = viewModel.filterModel.dateFilterModel
             binding.dateFilterChip.text =
-                "${dateFilterModel!!.dateFilter.name.lowercase().titleCase()} ${
+                "${dateFilterModel!!.dateFilter.name.titleCase()} ${
                     formatDate(dateFilterModel!!.date)
                 }"
             binding.dateFilterChip.visibility = View.VISIBLE

@@ -16,12 +16,15 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/group_name_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
                 android:textColor="@color/text_bold"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -40,16 +43,19 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/group_expense_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                tools:text="₹12500"
+                android:layout_marginEnd="16dp"
                 android:textColor="@color/text_bold"
                 android:textSize="34sp"
                 android:textStyle="bold"
+                android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/group_total_expense" />
+                app:layout_constraintTop_toBottomOf="@+id/group_total_expense"
+                tools:text="₹12500" />
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/members_list_text_view"
                 android:layout_width="match_parent"
@@ -132,6 +138,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Food"
+                        app:checkedIconVisible="false"
                         app:checkedIconTint="@color/background"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
@@ -141,6 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Travel"
+                        app:checkedIconVisible="false"
                         app:checkedIconTint="@color/background"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
@@ -150,6 +158,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tickets"
+                        app:checkedIconVisible="false"
                         app:checkedIconTint="@color/background"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
@@ -159,6 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Rent"
+                        app:checkedIconVisible="false"
                         app:checkedIconTint="@color/background"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
@@ -168,6 +178,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Fees"
+                        app:checkedIconVisible="false"
                         app:checkedIconTint="@color/background"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
@@ -177,6 +188,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Repair"
+                        app:checkedIconVisible="false"
                         app:checkedIconTint="@color/background"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
@@ -186,6 +198,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Entertainment"
+                        app:checkedIconVisible="false"
                         app:checkedIconTint="@color/background"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
@@ -195,6 +208,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Essentials"
+                        app:checkedIconVisible="false"
                         app:checkedIconTint="@color/background"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 
@@ -204,6 +218,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Others"
+                        app:checkedIconVisible="false"
                         app:checkedIconTint="@color/background"
                         app:chipBackgroundColor="@color/chip_bg_state" />
 

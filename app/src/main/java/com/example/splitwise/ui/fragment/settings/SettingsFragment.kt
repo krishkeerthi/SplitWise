@@ -1,18 +1,17 @@
 package com.example.splitwise.ui.fragment.settings
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSettingsBinding
 import com.example.splitwise.ui.activity.main.MainActivity
+import com.google.android.material.snackbar.Snackbar
 
 
 class SettingsFragment : Fragment() {
@@ -46,12 +45,12 @@ class SettingsFragment : Fragment() {
 
         // Set default radio checked
 
-        when (sharedPreferences.getInt("THEME", R.style.Theme_SplitWise)) {
+        when (sharedPreferences.getInt("SHAPE", R.style.Theme_SplitWise)) {
             R.style.Theme_SplitWise -> {
-                binding.themeDefaultRadioButton.isChecked = true
+                binding.shapeDefaultRadioButton.isChecked = true
             }
             R.style.Theme_SplitWise_Boxed -> {
-                binding.themeBoxedRadioButton.isChecked = true
+                binding.shapeBoxedRadioButton.isChecked = true
             }
         }
 
@@ -65,15 +64,23 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        when (sharedPreferences.getString("THEME", "Light")) {
+            "Light" -> {
+                binding.themeLightButton.isChecked = true
+            }
+            "Dark" -> {
+                binding.themeDarkButton.isChecked = true
+            }
+        }
 
 
         // Radio checked listener
-        binding.themeGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.shapeGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
-                R.id.theme_default_radio_button -> {
+                R.id.shape_default_radio_button -> {
                     applyTheme(R.style.Theme_SplitWise)
                 }
-                R.id.theme_boxed_radio_button -> {
+                R.id.shape_boxed_radio_button -> {
                     applyTheme(R.style.Theme_SplitWise_Boxed)
                 }
                 else -> {
@@ -85,7 +92,7 @@ class SettingsFragment : Fragment() {
         binding.languageGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.language_default_radio_button -> {
-                   changeLanguage("English")
+                    changeLanguage("English")
                 }
                 R.id.language_tamil_radio_button -> {
                     changeLanguage("Tamil")
@@ -96,7 +103,22 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        if(!sharedPreferences.getBoolean("DATA_INSERTED", false)){
+        binding.themeGroup.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                R.id.theme_light_button -> {
+                    changeMode("Light")
+                }
+                R.id.theme_dark_button -> {
+                    changeMode("Dark")
+                }
+                else -> {
+                    changeMode("Light")
+                }
+            }
+        }
+
+
+        if (!sharedPreferences.getBoolean("DATA_INSERTED", false)) {
             setHasOptionsMenu(true)
         }
 
@@ -108,14 +130,14 @@ class SettingsFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        return when (item.itemId) {
             R.id.import_menu -> {
                 viewModel.insertSampleData()
                 updateDataInserted()
-                Toast.makeText(requireContext(), getString(R.string.data_imported), Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, getString(R.string.data_imported), Snackbar.LENGTH_SHORT).show()
                 true
             }
-            else ->{
+            else -> {
                 super.onOptionsItemSelected(item)
             }
         }
@@ -128,8 +150,8 @@ class SettingsFragment : Fragment() {
         super.onPrepareOptionsMenu(menu)
     }
 
-    private fun updateDataInserted(){
-        with(sharedPreferences.edit()){
+    private fun updateDataInserted() {
+        with(sharedPreferences.edit()) {
             putBoolean("DATA_INSERTED", true)
             apply()
         }
@@ -144,16 +166,25 @@ class SettingsFragment : Fragment() {
 
     private fun applyTheme(themeId: Int) {
         with(sharedPreferences.edit()) {
-            putInt("THEME", themeId)
+            putInt("SHAPE", themeId)
             apply()
         }
 
         restartActivity()
     }
 
-    private fun changeLanguage(language: String){
-        with(sharedPreferences.edit()){
+    private fun changeLanguage(language: String) {
+        with(sharedPreferences.edit()) {
             putString("LANGUAGE", language)
+            apply()
+        }
+
+        restartActivity()
+    }
+
+    private fun changeMode(theme: String) {
+        with(sharedPreferences.edit()) {
+            putString("THEME", theme)
             apply()
         }
 

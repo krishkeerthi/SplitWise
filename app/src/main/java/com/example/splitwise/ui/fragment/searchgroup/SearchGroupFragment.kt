@@ -8,14 +8,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -27,7 +26,7 @@ import com.example.splitwise.ui.fragment.adapter.FilteredGroupsAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.util.CustomOnBackPressed
 
-class SearchGroupFragment : Fragment(), CustomOnBackPressed {
+class SearchGroupFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchGroupBinding
     private val viewModel: SearchGroupViewModel by viewModels {
@@ -81,25 +80,32 @@ class SearchGroupFragment : Fragment(), CustomOnBackPressed {
 
         }
 
-        val watcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
+        // Search bar
+//        val watcher = object : TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//
+//            override fun afterTextChanged(s: Editable?) {
+//                val query = binding.toolbar.searchGroupText.text?.trim().toString()
+//                    Log.d(TAG, "afterTextChanged:search query changes")
+//                    viewModel.textEntered = query
+//                    viewModel.fetchData()
+//            }
+//        }
+//        binding.toolbar.searchGroupText.addTextChangedListener(watcher)
+//
+//
+//        // back button
+//        binding.toolbar.materialButton.setOnClickListener {
+//            goToGroupsFragment()
+//        }
 
-            override fun afterTextChanged(s: Editable?) {
-                val query = binding.toolbar.searchGroupText.text?.trim().toString()
-                    Log.d(TAG, "afterTextChanged:search query changes")
-                    viewModel.textEntered = query
-                    viewModel.fetchData()
-            }
-        }
-        binding.toolbar.searchGroupText.addTextChangedListener(watcher)
-
-        binding.toolbar.materialButton.setOnClickListener {
-            goToGroupsFragment()
-        }
+        // menu
+        setHasOptionsMenu(true)
 
 //        binding.groupSearchView.setOnQueryTextListener( object : androidx.appcompat.widget.SearchView.OnQueryTextListener{
 //            override fun onQueryTextSubmit(query: String?): Boolean {
@@ -115,6 +121,33 @@ class SearchGroupFragment : Fragment(), CustomOnBackPressed {
 //            }
 //
 //        })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        inflater.inflate(R.menu.search_group_menu, menu)
+
+        val searchItem = menu.findItem(R.id.search_menu)
+        val searchView = searchItem?.actionView as SearchView
+
+        // for expanded state
+        searchView.isIconified = false
+        searchView.requestFocus()
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.textEntered = query
+                    viewModel.fetchData()
+                }
+                return true
+            }
+        })
     }
 
     private fun goToExpenseFragment(groupId: Int) {
@@ -133,22 +166,23 @@ class SearchGroupFragment : Fragment(), CustomOnBackPressed {
 
 
 
-    @SuppressLint("RestrictedApi")
-    override fun onResume() {
-        super.onResume()
-        (activity as AppCompatActivity).supportActionBar?.hide()
+//    // Below methods not in use
+//    @SuppressLint("RestrictedApi")
+//    override fun onResume() {
+//        super.onResume()
+//        (activity as AppCompatActivity).supportActionBar?.hide()
+//
+//    }
+//
+//    @SuppressLint("RestrictedApi")
+//    override fun onStop() {
+//        super.onStop()
+//        (activity as AppCompatActivity).supportActionBar?.show()
+//    }
 
-    }
-
-    @SuppressLint("RestrictedApi")
-    override fun onStop() {
-        super.onStop()
-        (activity as AppCompatActivity).supportActionBar?.show()
-    }
-
-    override fun onBackPressed() {
-        Log.d(TAG, "onBackPressed: custom back press")
-        //Toast.makeText(requireContext(), "Custom back pressed", Toast.LENGTH_SHORT).show()
-    }
+//    override fun onBackPressed() {
+//        Log.d(TAG, "onBackPressed: custom back press")
+//        //Toast.makeText(requireContext(), "Custom back pressed", Toast.LENGTH_SHORT).show()
+//    }
 
 }

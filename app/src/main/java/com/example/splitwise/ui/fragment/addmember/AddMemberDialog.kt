@@ -20,6 +20,7 @@ import com.example.splitwise.ui.fragment.createeditgroup.CreateEditGroupViewMode
 import com.example.splitwise.util.formatNumber
 import com.example.splitwise.util.nameCheck
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -52,7 +53,7 @@ class AddMemberDialog(
 
 
         selectContactButton.setOnClickListener {
-           // Toast.makeText(requireContext(), "Working on it", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(requireContext(), "Working on it", Toast.LENGTH_SHORT).show()
             selectContact()
 
 //            if(contactName != "" && contactPhone != ""){
@@ -86,6 +87,10 @@ class AddMemberDialog(
                 viewModel.checkMember(name, phoneNumber) // true means member does not registered
 
                 Log.d(TAG, "onCreateDialog: membercheck dialog saved, ${viewModel.members.value}")
+            }
+
+            setNegativeButton(R.string.cancel) { dialogInterface, position ->
+                dialogInterface.cancel()
             }
         }
 

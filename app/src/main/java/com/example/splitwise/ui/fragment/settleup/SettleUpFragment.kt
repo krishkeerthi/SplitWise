@@ -21,6 +21,7 @@ import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragmentDirections
 import com.example.splitwise.util.roundOff
+import com.google.android.material.snackbar.Snackbar
 
 class SettleUpFragment : Fragment() {
 
@@ -158,7 +159,7 @@ class SettleUpFragment : Fragment() {
                 gotoSplitWiseFragment()
             }
             else
-                Toast.makeText(requireContext(), getString(R.string.select_payees), Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, getString(R.string.select_payees), Snackbar.LENGTH_SHORT).show()
         }
 
 //        binding.settleButton.setOnClickListener {

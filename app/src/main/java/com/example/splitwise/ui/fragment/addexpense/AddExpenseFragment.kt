@@ -22,6 +22,7 @@ import com.example.splitwise.ui.fragment.adapter.PayerArrayAdapter
 import com.example.splitwise.util.Category
 import com.example.splitwise.util.titleCase
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 
 class AddExpenseFragment : Fragment() {
 
@@ -143,19 +144,14 @@ class AddExpenseFragment : Fragment() {
                 ) {
                     gotoExpenseFragment()
                 }
-
-                Toast.makeText(requireContext(), getString(R.string.expense_added), Toast.LENGTH_SHORT).show()
-            }
+                Snackbar.make(binding.root, getString(R.string.expense_added), Snackbar.LENGTH_SHORT).show()
+           }
             else{
-                Toast.makeText(requireContext(), getString(R.string.atleast_1_payee), Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, getString(R.string.atleast_1_payee), Snackbar.LENGTH_SHORT).show()
             }
         }
         else
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.enter_all_fields_expense),
-                Toast.LENGTH_SHORT
-            ).show()
+            Snackbar.make(binding.root, getString(R.string.enter_all_fields_expense), Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

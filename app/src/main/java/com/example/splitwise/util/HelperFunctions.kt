@@ -7,6 +7,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.text.format.DateUtils
+import android.util.DisplayMetrics
 import android.util.Log
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
@@ -169,3 +170,7 @@ fun String.formatNumber(): String{
     else number.substring(2)
 
 }
+
+fun Int.dpToPx(displayMetrics: DisplayMetrics) = (this * displayMetrics.density).toInt()
+
+fun Int.pxToDp(displayMetrics :DisplayMetrics) = (this / displayMetrics.density).toInt()

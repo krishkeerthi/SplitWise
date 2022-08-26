@@ -6,4 +6,5 @@ import com.example.splitwise.data.local.entity.Member
 class CreateEditGroupActivityViewModel: ViewModel() {
 
     var selectedMembers = listOf<Member>()
+
 }

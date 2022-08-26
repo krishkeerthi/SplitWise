@@ -87,4 +87,8 @@
     <string name="select_payees">Select payee(s)</string>
     <string name="select_contact">Select contact</string>
     <string name="need_to_implement">Need to implement</string>
+    <string name="shape">Shape</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="cancel">Cancel</string>
 </resources>

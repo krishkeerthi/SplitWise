@@ -6,12 +6,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.MarginPageTransformer
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentBillsHolderBinding
 import com.example.splitwise.ui.fragment.bill.BillFragment
+import com.example.splitwise.util.dpToPx
 
 class BillsHolderFragment : Fragment() {
 
@@ -33,6 +36,10 @@ class BillsHolderFragment : Fragment() {
         Log.d(TAG, "onViewCreated: viewpager position is ${args.position}")
         val viewPager = binding.pager
         viewPager.adapter = BillsAdapter(this)
+
+        val margin = 16.dpToPx(resources.displayMetrics)
+        viewPager.setPageTransformer(MarginPageTransformer(margin))
+        //viewPager.setPadding(0, 0, 10, 0)
 
         if (viewPager.currentItem == 0) {
             Log.d(TAG, "onViewCreated: set position to ${args.position}")

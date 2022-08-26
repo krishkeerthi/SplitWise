@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -37,10 +38,15 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         val sharedPreference = getSharedPreferences(KEY, Context.MODE_PRIVATE)
         val memberId = sharedPreference.getInt("MEMBERID", -1)
 
-        // set theme
-        val theme = sharedPreference.getInt("THEME", R.style.Theme_SplitWise)
+        // set shape
+        val shape = sharedPreference.getInt("SHAPE", R.style.Theme_SplitWise)
 
-        setTheme(theme)
+        setTheme(shape)
+
+        // set mode
+        val theme = sharedPreference.getString("THEME", "Light")
+
+        setMode(theme)
 
         // set language
         val language = sharedPreference.getString("LANGUAGE", "English") as String
@@ -98,7 +104,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         actionBar?.setBackgroundDrawable(colorDrawable)
     }
 
-
+    private fun setMode(theme: String?) {
+        when(theme) {
+            "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+    }
 
 
     private fun changeLanguage(language: String) {

@@ -46,15 +46,17 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/expense_name_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="2dp"
-                tools:text="Shoe purchase"
                 android:textColor="@color/text_bold"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/expense_payer_text_view"
-                app:layout_constraintStart_toEndOf="@+id/expense_image_holder" />
+                app:layout_constraintEnd_toStartOf="@+id/total_expense_text_view"
+                app:layout_constraintStart_toEndOf="@+id/expense_image_holder"
+                tools:text="Shoe purchase" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/expense_payer_text_view"

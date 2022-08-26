@@ -27,6 +27,7 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupIconBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
 import java.util.*
 
@@ -86,11 +87,7 @@ class GroupIconFragment : Fragment() {
                 gotoSearchImageFragment()
                 groupIconBottomSheet.dismiss()
             } else
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.internet_unavailable),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Snackbar.make(binding.root, getString(R.string.internet_unavailable), Snackbar.LENGTH_SHORT).show()
 
         }
 
@@ -185,17 +182,9 @@ class GroupIconFragment : Fragment() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.permission_granted),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Snackbar.make(binding.root, getString(R.string.permission_granted), Snackbar.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.permission_denied),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Snackbar.make(binding.root, getString(R.string.permission_denied), Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -226,15 +215,9 @@ class GroupIconFragment : Fragment() {
                         else
                             gotoCreateEditGroupFragment(uri)
                     } else
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.error_adding_image),
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
+                        Snackbar.make(binding.root, getString(R.string.error_adding_image), Snackbar.LENGTH_SHORT).show()
                 } else
-                    Toast.makeText(requireContext(), "Bit map not found", Toast.LENGTH_SHORT)
-                        .show()
+                    Snackbar.make(binding.root, "Bit map not found", Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -319,9 +302,7 @@ class GroupIconFragment : Fragment() {
                         gotoCreateEditGroupFragment(uri)
                     }
                 } else
-                    Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT)
-                        .show()
-
+                    Snackbar.make(binding.root, getString(R.string.error), Snackbar.LENGTH_SHORT).show()
 
             }
 

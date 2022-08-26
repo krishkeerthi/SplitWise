@@ -32,6 +32,7 @@ import com.example.splitwise.ui.fragment.adapter.ExpenseMembersAdapter
 import com.example.splitwise.util.Category
 import com.example.splitwise.util.roundOff
 import com.example.splitwise.util.titleCase
+import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -195,9 +196,9 @@ class ExpenseDetailFragment : Fragment() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                Toast.makeText(requireContext(), getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, getString(R.string.permission_granted), Snackbar.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, getString(R.string.permission_denied), Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -240,15 +241,9 @@ class ExpenseDetailFragment : Fragment() {
                     if (uri != null)
                         viewModel.addBills(uri)
                     else
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.error_adding_image),
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
+                        Snackbar.make(binding.root, getString(R.string.error_adding_image), Snackbar.LENGTH_SHORT).show()
                 } else
-                    Toast.makeText(requireContext(), "Bit map not found", Toast.LENGTH_SHORT)
-                        .show()
+                    Snackbar.make(binding.root, "Bit map not found", Snackbar.LENGTH_SHORT).show()
             }
         }
 
