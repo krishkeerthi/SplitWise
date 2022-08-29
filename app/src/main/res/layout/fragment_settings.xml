@@ -45,6 +45,16 @@
             android:text="@string/boxed" />
     </RadioGroup>
 
+    <View
+        android:id="@+id/shape_horizontal_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/view_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/shape_group" />
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/language_label"
         android:layout_width="wrap_content"
@@ -54,7 +64,7 @@
         android:text="@string/language"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shape_group"/>
+        app:layout_constraintTop_toBottomOf="@id/shape_horizontal_view"/>
 
     <RadioGroup
         android:id="@+id/language_group"
@@ -84,6 +94,16 @@
             android:text="@string/tamil" />
     </RadioGroup>
 
+    <View
+        android:id="@+id/language_horizontal_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/view_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/language_group" />
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/themes_label"
         android:layout_width="wrap_content"
@@ -93,7 +113,7 @@
         android:text="@string/theme"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/language_group" />
+        app:layout_constraintTop_toBottomOf="@id/language_horizontal_view" />
 
     <RadioGroup
         android:id="@+id/theme_group"

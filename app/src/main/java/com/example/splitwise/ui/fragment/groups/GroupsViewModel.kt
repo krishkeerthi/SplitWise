@@ -25,7 +25,7 @@ class GroupsViewModel(context: Context) : ViewModel() {
         get() = _groups
 
     // Filter related properties
-    val remainingFilters = GroupFilter.values().toMutableList()
+    var remainingFilters = GroupFilter.values().toMutableList()
 
     val filterModel = FilterModel(null, null)
 
@@ -120,7 +120,13 @@ class GroupsViewModel(context: Context) : ViewModel() {
         remainingFilters.add(GroupFilter.AMOUNT)
 
         applyFilter()
+    }
 
+    fun resetFilters() {
+        filterModel.dateFilterModel = null
+        filterModel.amountFilterModel = null
+        remainingFilters = GroupFilter.values().toMutableList()
+        applyFilter()
     }
 
 }

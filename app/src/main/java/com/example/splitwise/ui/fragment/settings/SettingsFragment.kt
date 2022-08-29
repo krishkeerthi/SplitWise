@@ -1,17 +1,23 @@
 package com.example.splitwise.ui.fragment.settings
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.*
-import android.widget.Toast
+import androidx.annotation.StyleRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSettingsBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
+import java.util.*
 
 
 class SettingsFragment : Fragment() {
@@ -170,7 +176,7 @@ class SettingsFragment : Fragment() {
             apply()
         }
 
-        restartActivity()
+        setTheme(themeId)
     }
 
     private fun changeLanguage(language: String) {
@@ -179,7 +185,7 @@ class SettingsFragment : Fragment() {
             apply()
         }
 
-        restartActivity()
+        setLanguage(language)
     }
 
     private fun changeMode(theme: String) {
@@ -188,6 +194,38 @@ class SettingsFragment : Fragment() {
             apply()
         }
 
-        restartActivity()
+        setMode(theme)
     }
+
+    private fun setMode(theme: String?) {
+        when(theme) {
+            "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+    }
+
+    private fun setLanguage(language: String) {
+        val languageCode = when(language){
+            "English" -> "en"
+            "Tamil" -> "ta"
+            else -> "en"
+        }
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        Log.d(ContentValues.TAG, "changeLanguage: $languageCode")
+        val config = resources.configuration
+        config.setLocale(locale)
+        requireActivity().createConfigurationContext(config)
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+        requireActivity().recreate()
+    }
+
+    private fun setTheme(resId: Int) {
+        (requireActivity() as AppCompatActivity).delegate.setTheme(resId)
+
+        requireActivity().recreate()
+    }
+
 }

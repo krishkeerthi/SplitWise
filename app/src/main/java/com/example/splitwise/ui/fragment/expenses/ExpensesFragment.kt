@@ -8,24 +8,22 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.forEach
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentExpensesBinding
 import com.example.splitwise.ui.fragment.adapter.ExpensesAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersProfileAdapter
-import com.example.splitwise.ui.fragment.groups.GroupsFragmentDirections
 import com.example.splitwise.util.Category
-import com.example.splitwise.util.formatDate
 import com.example.splitwise.util.roundOff
 import com.google.android.material.chip.Chip
-import kotlin.math.exp
-import kotlin.properties.Delegates
+
 
 class ExpensesFragment : Fragment() {
     private lateinit var binding: FragmentExpensesBinding
@@ -231,12 +229,41 @@ class ExpensesFragment : Fragment() {
 
         // Menu
         setHasOptionsMenu(true)
+
+        // show and hide fab on scrollview scrolling
+
+        binding.expensesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                // Hide fab button
+                if(dy >0 && binding.addFabButton.visibility == View.VISIBLE)
+                    binding.addFabButton.hide()
+                else if(dy < 0 && binding.addFabButton.visibility != View.VISIBLE)
+                    binding.addFabButton.show()
+
+            }
+
+        })
+//        binding.scrollView.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
+//
+//            if(scrollY > oldScrollY)
+//                binding.addExpenseButton.hide()
+//            else
+//                binding.addExpenseButton.show()
+//
+//        }
+
+        binding.shadowView.setOnClickListener {
+            onAddButtonClicked()
+        }
     }
 
     private fun onAddButtonClicked() {
         clicked = !clicked
         setVisibility()
         setAnimation()
+
     }
 
     private fun setAnimation() {
@@ -250,16 +277,59 @@ class ExpensesFragment : Fragment() {
             binding.addExpenseButton.startAnimation(toBottom)
             binding.addFabButton.startAnimation(rotateClose)
         }
+
+//        binding.addMemberButton.postInvalidateOnAnimation()
+//        binding.addExpenseButton.postInvalidateOnAnimation()
+//        binding.addFabButton.postInvalidateOnAnimation()
+//
+//        binding.addMemberButton.postInvalidate()
+//        binding.addExpenseButton.postInvalidate()
+//        binding.addFabButton.postInvalidate()
+//
+//        binding.addMemberButton.invalidate()
+//        binding.addExpenseButton.invalidate()
+//        binding.addFabButton.invalidate()
     }
 
     private fun setVisibility() {
         if(clicked){
             binding.addMemberButton.visibility = View.VISIBLE
             binding.addExpenseButton.visibility = View.VISIBLE
+            binding.shadowView.visibility = View.VISIBLE
         }
         else{
+
+//            val p = binding.addMemberButton.layoutParams as CoordinatorLayout.LayoutParams
+//            p.anchorId = View.NO_ID
+//            binding.addMemberButton.layoutParams = p
             binding.addMemberButton.visibility = View.GONE
+            //binding.addMemberButton.visibility = View.GONE
+
+            //binding.addMemberButton
+            //binding.addMemberButton.isFocusable = false
+            //binding.addMemberButton.clipToOutline = false
+//            binding.addMemberButton.isActivated = false
+//            binding.addMemberButton.isEnabled = false
+//            binding.addMemberButton.isSelected = false
+
+//            val p1 = binding.addExpenseButton.layoutParams as CoordinatorLayout.LayoutParams
+//            p1.anchorId = View.NO_ID
+//            binding.addExpenseButton.layoutParams = p1
             binding.addExpenseButton.visibility = View.GONE
+
+          //  binding.addExpenseButton.visibility = View.GONE
+            //binding.addExpenseButton.hide()
+//            binding.addExpenseButton.isActivated = false
+//            binding.addExpenseButton.isEnabled = false
+//            binding.addExpenseButton.isSelected = false
+
+
+            //binding.addExpenseButton.isFocusable = false
+            binding.shadowView.visibility = View.GONE
+
+//            binding.expensesRecyclerView.isFocusable = true
+//            binding.expensesRecyclerView.requestFocus()
+
         }
     }
 

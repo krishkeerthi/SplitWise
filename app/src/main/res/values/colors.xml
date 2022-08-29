@@ -12,5 +12,7 @@
     <color name="text_bold">#FF000000</color>
     <color name="blue">#1976d2</color>
     <color name="background">#FFFFFF</color>
+    <color name="selected">#e0e0e0</color>
+    <color name="transparent">#B3FFFFFF</color>
 
 </resources>

@@ -53,20 +53,26 @@
                 android:layout_marginBottom="2dp"
                 android:textColor="@color/text_bold"
                 android:textStyle="bold"
+                android:ellipsize="end"
+                android:lines="1"
                 app:layout_constraintBottom_toTopOf="@+id/expense_payer_text_view"
                 app:layout_constraintEnd_toStartOf="@+id/total_expense_text_view"
                 app:layout_constraintStart_toEndOf="@+id/expense_image_holder"
-                tools:text="Shoe purchase" />
+                tools:text="Shoe purchase Shoe purchase Shoe purchase" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/expense_payer_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="4dp"
-                tools:text="27/09/2022"
+                android:ellipsize="end"
+                android:lines="1"
                 app:layout_constraintBottom_toBottomOf="@+id/expense_image_holder"
-                app:layout_constraintStart_toEndOf="@+id/expense_image_holder" />
+                app:layout_constraintEnd_toStartOf="@+id/total_expense_text_view"
+                app:layout_constraintStart_toEndOf="@+id/expense_image_holder"
+                tools:text="Keerthi" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/total_expense_text_view"

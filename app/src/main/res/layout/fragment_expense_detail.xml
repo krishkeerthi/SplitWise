@@ -7,12 +7,17 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/group_expense_title_text_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:textColor="@color/text_bold"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,10 +25,15 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/expense_payer_text_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/group_expense_title_text_view"
@@ -52,15 +62,26 @@
         app:layout_constraintTop_toBottomOf="@id/expense_total_text_view"
         tools:text="Food" />
 
+    <View
+        android:id="@+id/horizontal_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="#dee3e1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/expense_category_expense" />
+
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/members_share_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/members_share"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expense_category_expense" />
+        app:layout_constraintTop_toBottomOf="@id/horizontal_view" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/members_recycler_view"

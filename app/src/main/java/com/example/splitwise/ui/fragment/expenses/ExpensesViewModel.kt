@@ -12,10 +12,7 @@ import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.model.ExpenseMember
-import com.example.splitwise.util.Category
-import com.example.splitwise.util.formatDate
-import com.example.splitwise.util.printableMember
-import com.example.splitwise.util.roundOff
+import com.example.splitwise.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -201,34 +198,42 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
     fun generateReport(shareIntent: (String) -> Unit){
         viewModelScope.launch {
-            var report =""
+            var report ="👋Hello\n"
+            report += "\n😃Welcome to *SplitWise* ‼\n"
             // generating report
 
             val group = groupRepository.getGroup(groupId)
 
             group?.let { it ->
-                report = "Group Name: ${it.groupName}(${formatDate(it.creationDate)})"
+                report += "\n👨‍👩‍👧‍👦Group: ${it.groupName.trim().getBold()}"
 
                 val membersId = groupRepository.getGroupMembers(it.groupId)
                 val members = getMembersFromIds(membersId).printableMember()
 
-                report += "\nGroup Members: $members\n"
+                report += "\nMembers: $members"
+                report += "\nDate: ${formatDate(it.creationDate, true)}\n"
 
                 val expenses = expenseRepository.getExpenses(groupId)
                 expenses?.let { expenses ->
                     for(expense in expenses){
-                        report += "\nExpense Name: ${expense.expenseName}"
+                        report += "\n${getEmoji(expense.category)}Expense: ${expense.expenseName.trim().getBold()}"
 
                         val expenseMembersId = expenseRepository.getExpensePayees(expense.expenseId)
                         val expenseMembers = getMembersFromIds(expenseMembersId).printableMember()
 
-                        report += "\nExpense Members: $expenseMembers"
+                        report += "\nPayees: $expenseMembers"
 
-                        report += "\nTotal: ₹${expense.totalAmount.roundOff()}"
-                        report += "\nSplit Amount: ₹${expense.splitAmount.roundOff()}\n"
+                        memberRepository.getMember(expense.payer)?.let {
+                            report += "\nPayer: ${it.name.getBold()}"
+                        }
+
+                        report += "\nTotal: ₹ ${expense.totalAmount.roundOff()}"
+                        report += "\nSplit Amount: ₹ ${expense.splitAmount.roundOff().getBold()}\n"
                     }
                 }
             }
+
+            report += "\n♥Thank you for using *SplitWise*"
 
             shareIntent(report)
          }

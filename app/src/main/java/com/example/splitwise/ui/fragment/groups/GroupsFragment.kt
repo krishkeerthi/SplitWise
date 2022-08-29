@@ -24,6 +24,7 @@ import com.example.splitwise.databinding.FragmentGroupsBinding
 import com.example.splitwise.ui.fragment.adapter.*
 import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.*
@@ -50,7 +51,6 @@ class GroupsFragment : Fragment() {
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.fetchData() // fetching data in viewmodel init{} does not get called while returning from back stack
@@ -62,7 +62,13 @@ class GroupsFragment : Fragment() {
         val groupsAdapter = GroupsAdapter({ groupId: Int ->
             goToExpenseFragment(groupId)
         },
-            { groupId: Int, groupIcon: String?, groupName: String -> gotoGroupIconFragment(groupId, groupIcon, groupName)}
+            { groupId: Int, groupIcon: String?, groupName: String ->
+                gotoGroupIconFragment(
+                    groupId,
+                    groupIcon,
+                    groupName
+                )
+            }
         )
 //            { groupId: Int ->
 //                if (groupId == 12345 || groupId == 54321)
@@ -106,21 +112,28 @@ class GroupsFragment : Fragment() {
         binding.groupsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
-                val layout = recyclerView.layoutManager as LinearLayoutManager
-                val position = layout.findLastCompletelyVisibleItemPosition()
-
-                if(viewModel.groups.value != null){
-                    binding.dateTextView.visibility = View.VISIBLE
-                    binding.dateTextView.text = getDateStringResource(formatDate(viewModel.groups.value!![position].creationDate))
-                }
-
+// turned it off for now
+//                val layout = recyclerView.layoutManager as LinearLayoutManager
+//                val position = layout.findLastCompletelyVisibleItemPosition()
+//
+//                if (viewModel.groups.value != null) {
+//                    binding.dateTextView.visibility = View.VISIBLE
+//                    binding.dateTextView.text =
+//                        getDateStringResource(formatDate(viewModel.groups.value!![position].creationDate))
+//                }
+//
+//
+//                // Hide fab button
+//                if (dy > 0 && binding.addGroupFab.visibility == View.VISIBLE)
+//                    binding.addGroupFab.hide()
+//                else if (dy < 0 && binding.addGroupFab.visibility != View.VISIBLE)
+//                    binding.addGroupFab.show()
 
             }
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                binding.dateTextView.visibility = View.GONE
+//                binding.dateTextView.visibility = View.GONE
             }
         })
 
@@ -131,62 +144,21 @@ class GroupsFragment : Fragment() {
 
         // Menu
         setHasOptionsMenu(true)
-//        requireActivity().addMenuProvider(object : MenuProvider {
-//            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-//                menuInflater.inflate(R.menu.groups_fragment_menu, menu)
-//            }
-//
-//            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-//                return when (menuItem.itemId) {
-//                    R.id.group_fragment_search -> {
-//                        goToSearchGroupFragment()
-//                        true
-//                    }
-//                    R.id.group_fragment_filter -> {
-//                        openFilterBottomSheet()
-//                        true
-//                    }
-//                    else ->
-//                        false
-//                }
-//            }
-//
-//        })
-
-
         requireActivity().title = "Groups"
-//        binding.groupsToolbar.inflateMenu(R.menu.groups_fragment_menu)
-//
-//        // Menu click
-//        binding.groupsToolbar.setOnMenuItemClickListener { item ->
-//            when(item.itemId){
-//                R.id.group_fragment_search ->{
-//                    goToSearchGroupFragment()
-//                    true
-//                }
-//                R.id.group_fragment_filter ->{
-//                    openFilterBottomSheet()
-//                    true
-//                }
-//                else ->
-//                    false
-//            }
-//        }
 
         if (viewModel.filterModel.amountFilterModel != null) {
             val amountFilterModel = viewModel.filterModel.amountFilterModel
             binding.amountFilterChip.text = "${
-                amountFilterModel!!.amountFilter.name.titleCase()
-            } ${amountFilterModel!!.amount}"
+                amountFilterModel!!.amountFilter.name.lowercase().titleCase()} " +
+                    "${amountFilterModel!!.amount}"
             binding.amountFilterChip.visibility = View.VISIBLE
         }
 
         if (viewModel.filterModel.dateFilterModel != null) {
             val dateFilterModel = viewModel.filterModel.dateFilterModel
             binding.dateFilterChip.text =
-                "${dateFilterModel!!.dateFilter.name.titleCase()} ${
-                    formatDate(dateFilterModel!!.date)
-                }"
+                "${dateFilterModel!!.dateFilter.name.lowercase().titleCase()} ${
+                    formatDate(dateFilterModel!!.date)}"
             binding.dateFilterChip.visibility = View.VISIBLE
         }
 
@@ -196,18 +168,25 @@ class GroupsFragment : Fragment() {
             viewModel.removeDateFilter()
             it.visibility = View.GONE
         }
+        binding.dateFilterChip.isClickable = false
 
         binding.amountFilterChip.setOnCloseIconClickListener {
             Log.d(TAG, "onViewCreated: amount filter closed")
             viewModel.removeAmountFilter()
             it.visibility = View.GONE
         }
+        binding.amountFilterChip.isClickable = false
 
 
     }
 
     private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String) {
-        val action = GroupsFragmentDirections.actionGroupsFragmentToGroupIconFragment(groupId, groupIcon, groupName, true)
+        val action = GroupsFragmentDirections.actionGroupsFragmentToGroupIconFragment(
+            groupId,
+            groupIcon,
+            groupName,
+            true
+        )
         view?.findNavController()?.navigate(action)
     }
 
@@ -232,7 +211,7 @@ class GroupsFragment : Fragment() {
     }
 
     private fun getDateStringResource(formatDate: String): String {
-        return when(formatDate){
+        return when (formatDate) {
             //"Today" -> getString(R.string.today)
             "Yesterday" -> getString(R.string.yesterday)
             else -> formatDate
@@ -252,38 +231,90 @@ class GroupsFragment : Fragment() {
     // Bottom Sheet Dialogs
     private fun openFilterBottomSheet() {
         val filterBottomSheetDialog = BottomSheetDialog(requireContext())
-        filterBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+        filterBottomSheetDialog.setContentView(R.layout.group_filter_bottom_sheet)
 
         val filterTitle = filterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
-        val filterList = filterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
-        val filters = viewModel.remainingFilters
+        val filterRV = filterBottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_list)
+        val clearButton = filterBottomSheetDialog.findViewById<MaterialButton>(R.id.clear_filter)
 
         filterTitle?.text = getString(R.string.filter_by)
 
+        val filters = GroupFilter.values().toList()
+        val remainingFilters = viewModel.remainingFilters.toList()
+
         //Adapter
         val filterAdapter =
-            GroupFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, filters)
-        filterList?.apply {
+            GroupFilterAdapter(filters, remainingFilters) { filter ->
+                filterClicked(filter)
+                filterBottomSheetDialog.dismiss()
+            }
+
+        filterRV?.apply {
             Log.d(TAG, "openCategoryBottomSheet: list adapter set")
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = filterAdapter
-            onItemClickListener =
-                AdapterView.OnItemClickListener { parent, view, position, id ->
+        }
 
-                    when (filters[position]) {
-                        GroupFilter.AMOUNT -> {
-                            openAmountFilterBottomSheet()
-                        }
-                        GroupFilter.DATE -> {
-                            openDateFilterBottomSheet()
-                        }
-                    }
+        // clear button visibility
+        clearButton?.visibility = if (filters.size != remainingFilters.size) {
+            View.VISIBLE
+        } else {
+            View.INVISIBLE
+        }
 
-                    filterBottomSheetDialog.dismiss()
-                }
+        clearButton?.setOnClickListener {
+            viewModel.resetFilters()
+            binding.dateFilterChip.visibility = View.GONE
+            binding.amountFilterChip.visibility = View.GONE
+            filterBottomSheetDialog.dismiss()
+            //binding.groupsRecyclerView.smoothScrollToPosition(0)
+            //openFilterBottomSheet()
         }
 
         filterBottomSheetDialog.show()
     }
+
+    private fun filterClicked(filter: GroupFilter) {
+        when (filter) {
+            GroupFilter.DATE -> openDateFilterBottomSheet()
+            GroupFilter.AMOUNT -> openAmountFilterBottomSheet()
+        }
+    }
+
+//    private fun openFilterBottomSheet() {
+//        val filterBottomSheetDialog = BottomSheetDialog(requireContext())
+//        filterBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+//
+//        val filterTitle = filterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
+//        val filterList = filterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+//        val filters = viewModel.remainingFilters
+//
+//        filterTitle?.text = getString(R.string.filter_by)
+//
+//        //Adapter
+//        val filterAdapter =
+//            GroupFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, filters)
+//        filterList?.apply {
+//            Log.d(TAG, "openCategoryBottomSheet: list adapter set")
+//            adapter = filterAdapter
+//            onItemClickListener =
+//                AdapterView.OnItemClickListener { parent, view, position, id ->
+//
+//                    when (filters[position]) {
+//                        GroupFilter.AMOUNT -> {
+//                            openAmountFilterBottomSheet()
+//                        }
+//                        GroupFilter.DATE -> {
+//                            openDateFilterBottomSheet()
+//                        }
+//                    }
+//
+//                    filterBottomSheetDialog.dismiss()
+//                }
+//        }
+//
+//        filterBottomSheetDialog.show()
+//    }
 
     private fun goToCreateEditGroupFragment(groupId: Int = -1) {
         val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(
@@ -309,7 +340,11 @@ class GroupsFragment : Fragment() {
 
         //Adapter
         val filterAdapter =
-            AmountFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, amountFilters)
+            AmountFilterArrayAdapter(
+                requireContext(),
+                R.layout.icon_bottom_sheet_item,
+                amountFilters
+            )
         amountFilterList?.apply {
             Log.d(TAG, "openCategoryBottomSheet: list adapter set")
             adapter = filterAdapter
@@ -395,15 +430,20 @@ class GroupsFragment : Fragment() {
         val amountLayout =
             amountDialog.findViewById<TextInputLayout>(R.id.outlined_amount_text_field)
 
-        builder.setPositiveButton("Save") { dialogInterface, _ ->
+        builder.setPositiveButton(getString(R.string.save)) { dialogInterface, _ ->
             val amount = amountEditText.text.toString().toFloat()
 
             viewModel.applyAmountFilter(amount)
             createAmountFilterChip(viewModel.selectedAmountFilter, amount)
         }
 
+        builder.setNegativeButton(getString(R.string.cancel)){ dialogInterface, _ ->
+            dialogInterface.cancel()
+        }
+
         val dialog = builder.create()
         dialog.show()
+
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
 
@@ -415,16 +455,20 @@ class GroupsFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                val amount = amountEditText.text.toString()
+                val amountText = amountEditText.text.toString()
 
-                if (amount.isEmpty())
+                val amount = if(amountText.isNotEmpty()) amountText.toInt() else 0
+
+
+
+                if (amount == 0 || amountText.isEmpty())
                     amountLayout.error = "Enter Amount"
                 else {
                     amountLayout.error = null
                     amountLayout.isErrorEnabled = false
                 }
 
-                dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled = amount.isNotEmpty()
+                dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled = amountText.isNotEmpty()
             }
         }
         amountEditText.addTextChangedListener(amountWatcher)
@@ -445,12 +489,12 @@ class GroupsFragment : Fragment() {
 //
 //        chipGroup.addView(chip)
 
-        binding.dateFilterChip.text = "${dateFilter.name} ${formatDate(date)}"
+        binding.dateFilterChip.text = "${dateFilter.name.lowercase().titleCase()} ${formatDate(date, dateOnly = true)}"
         binding.dateFilterChip.visibility = View.VISIBLE
     }
 
     private fun createAmountFilterChip(amountFilter: AmountFilter, amount: Float) {
-        binding.amountFilterChip.text = "${amountFilter.name} $amount"
+        binding.amountFilterChip.text = "${amountFilter.name.lowercase().titleCase()} ${amount.roundOff()}"
         binding.amountFilterChip.visibility = View.VISIBLE
     }
 

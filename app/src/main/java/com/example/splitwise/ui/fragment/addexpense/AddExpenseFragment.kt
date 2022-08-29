@@ -190,7 +190,7 @@ class AddExpenseFragment : Fragment() {
             onItemClickListener =
                 AdapterView.OnItemClickListener { parent, view, position, id ->
                     viewModel.category = categories[position].ordinal
-                    binding.chooseCategoryText.text = categories[position].name.titleCase()
+                    binding.chooseCategoryText.text = categories[position].name.lowercase().titleCase()
                     categoryBottomSheetDialog.dismiss()
                 }
         }

@@ -51,15 +51,19 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/from_member_name_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="16dp"
-            tools:text="Keerthi K"
+            android:layout_marginEnd="16dp"
             android:textColor="@color/text_bold"
             android:textStyle="bold"
+            android:ellipsize="end"
+            android:lines="1"
             app:layout_constraintBottom_toTopOf="@+id/from_member_phone_text_view"
-            app:layout_constraintStart_toEndOf="@+id/from_member_image_holder" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/from_member_image_holder"
+            tools:text="Keerthi K" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/phone_image_view"

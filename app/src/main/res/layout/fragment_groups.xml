@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
 
-<!--    <com.google.android.material.card.MaterialCardView-->
-<!--        android:id="@+id/chip_group_card"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginEnd="16dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent">-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/date_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="11/07/2022" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/date_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="11/07/2022" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/filter_chip_group"
@@ -35,7 +29,7 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/date_text_view">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/amount_filter_chip"
@@ -49,6 +43,7 @@
             <com.google.android.material.chip.Chip
                 android:id="@+id/date_filter_chip"
                 style="@style/Widget.MaterialComponents.Chip.Entry"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checkable="false"
@@ -56,41 +51,44 @@
                 android:visibility="gone" />
 
         </com.google.android.material.chip.ChipGroup>
-<!--    </com.google.android.material.card.MaterialCardView>-->
+        <!--    </com.google.android.material.card.MaterialCardView>-->
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/groups_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filter_chip_group"
-        tools:listitem="@layout/group_card_1"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/groups_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/filter_chip_group"
+            android:descendantFocusability="blocksDescendants"
+            tools:listitem="@layout/group_card_1"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/empty_group_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/empty_group"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_group_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@android:drawable/ic_input_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/empty_group_image_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/empty_group"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 <!--res/values/styles.xml-->

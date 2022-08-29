@@ -128,12 +128,12 @@ class AddMemberDialog(
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if (phoneEditText.text?.trim().toString().length != 10)
-                    phoneLayout.error = "Enter valid phone number"
-                else {
-                    phoneLayout.error = null
-                    phoneLayout.isErrorEnabled = false
-                }
+//                if (phoneEditText.text?.trim().toString().length != 10)
+//                    phoneLayout.error = "Enter valid phone number"
+//                else {
+//                    phoneLayout.error = null
+//                    phoneLayout.isErrorEnabled = false
+//                }
                 dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled =
                     nameCheck(nameEditText.text?.trim().toString()) &&
                             (phoneEditText.text?.trim().toString().length == 10)

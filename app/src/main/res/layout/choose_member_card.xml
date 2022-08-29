@@ -47,17 +47,20 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/member_name_text_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="16dp"
-        tools:text="Member Name"
+        android:layout_marginEnd="8dp"
         android:textColor="@color/text_bold"
         android:textStyle="bold"
+        android:ellipsize="end"
+        android:lines="1"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/member_streak_text_view"
         app:layout_constraintStart_toEndOf="@+id/member_image_holder"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        tools:text="Member Name" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/member_streak_text_view"
