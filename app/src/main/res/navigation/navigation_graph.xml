@@ -252,6 +252,9 @@
         <argument
             android:name="position"
             app:argType="integer" />
+        <argument
+            android:name="expenseId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/searchGroupFragment"

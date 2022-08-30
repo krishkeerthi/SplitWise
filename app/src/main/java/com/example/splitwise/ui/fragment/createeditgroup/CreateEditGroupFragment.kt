@@ -47,10 +47,9 @@ class CreateEditGroupFragment : Fragment() {
                 if (viewModel.change) {
                     val builder = AlertDialog.Builder(requireContext())
 
-                    builder.setTitle("Discard");
-                    builder.setMessage("Do you want to discard changes? ")
-                    builder.setPositiveButton(
-                        "Discard"
+                    builder.setTitle(getString(R.string.discard));
+                    builder.setMessage(getString(R.string.discard_changes))
+                    builder.setPositiveButton(getString(R.string.discard)
                     ) { dialog, which ->
 
                         // clear activity viewmodel selected members
@@ -60,7 +59,7 @@ class CreateEditGroupFragment : Fragment() {
                         NavHostFragment.findNavController(this@CreateEditGroupFragment)
                             .popBackStack()
                     }
-                    builder.setNegativeButton("Cancel", null)
+                    builder.setNegativeButton(getString(R.string.cancel), null)
                     builder.show()
                 } else
                     NavHostFragment.findNavController(this@CreateEditGroupFragment)

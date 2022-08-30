@@ -23,6 +23,7 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
 import com.example.splitwise.ui.fragment.adapter.*
 import com.example.splitwise.util.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -233,6 +234,8 @@ class GroupsFragment : Fragment() {
         val filterBottomSheetDialog = BottomSheetDialog(requireContext())
         filterBottomSheetDialog.setContentView(R.layout.group_filter_bottom_sheet)
 
+        filterBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
         val filterTitle = filterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
         val filterRV = filterBottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_list)
         val clearButton = filterBottomSheetDialog.findViewById<MaterialButton>(R.id.clear_filter)
@@ -330,6 +333,8 @@ class GroupsFragment : Fragment() {
         val amountFilterBottomSheetDialog = BottomSheetDialog(requireContext())
         amountFilterBottomSheetDialog.setContentView(R.layout.bottom_sheet)
 
+        amountFilterBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
         val amountFilterTitle =
             amountFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
         val amountFilterList =
@@ -363,6 +368,8 @@ class GroupsFragment : Fragment() {
     private fun openDateFilterBottomSheet() {
         val dateFilterBottomSheetDialog = BottomSheetDialog(requireContext())
         dateFilterBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+
+        dateFilterBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         val dateFilterTitle =
             dateFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)

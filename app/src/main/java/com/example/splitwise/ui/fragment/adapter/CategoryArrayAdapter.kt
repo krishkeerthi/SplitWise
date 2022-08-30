@@ -24,9 +24,11 @@ class CategoryArrayAdapter(
             binding = IconBottomSheetItemBinding.inflate(inflater, parent, false)
 
             convertView = binding.root
+
             binding.itemTextView.text = categories[position].name.lowercase().titleCase()
             binding.itemImageView.setImageResource(getCategoryDrawableResource(categories[position].ordinal))
         }
+
 
         return convertView
 

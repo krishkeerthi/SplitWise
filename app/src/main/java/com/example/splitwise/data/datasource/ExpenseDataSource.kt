@@ -2,6 +2,7 @@ package com.example.splitwise.data.datasource
 
 import android.net.Uri
 import com.example.splitwise.data.local.entity.Expense
+import com.example.splitwise.model.BillUri
 import java.net.URI
 import java.util.*
 
@@ -18,9 +19,13 @@ interface ExpenseDataSource {
 
     suspend fun getExpenseBills(expenseId: Int): List<Uri>?
 
+    suspend fun getExpenseBillsWithId(expenseId: Int): List<BillUri>?
+
     suspend fun getExpenses(groupId: Int): List<Expense>?
 
     suspend fun getExpense(expenseId: Int): Expense?
+
+    suspend fun deleteExpenseBill(billId: Int)
 
     suspend fun getExpensesByCategory(groupId: Int, category: Int): List<Expense>?
 

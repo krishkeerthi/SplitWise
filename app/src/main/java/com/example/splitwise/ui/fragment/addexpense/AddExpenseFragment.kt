@@ -21,6 +21,7 @@ import com.example.splitwise.ui.fragment.adapter.MembersCheckboxAdapter
 import com.example.splitwise.ui.fragment.adapter.PayerArrayAdapter
 import com.example.splitwise.util.Category
 import com.example.splitwise.util.titleCase
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 
@@ -175,6 +176,7 @@ class AddExpenseFragment : Fragment() {
         val categoryBottomSheetDialog = BottomSheetDialog(requireContext())
         categoryBottomSheetDialog.setContentView(R.layout.bottom_sheet)
 
+        categoryBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         val categoryTitle =
             categoryBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
         val categoryList = categoryBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
@@ -201,6 +203,8 @@ class AddExpenseFragment : Fragment() {
     private fun openPayerBottomSheet(payers: List<Member>) {
         val payerBottomSheetDialog = BottomSheetDialog(requireContext())
         payerBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+
+        payerBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         val payerTitle = payerBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
         val payerList = payerBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)

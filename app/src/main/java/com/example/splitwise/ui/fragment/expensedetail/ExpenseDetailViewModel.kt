@@ -52,13 +52,16 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int) : Vie
             val memberIds: List<Int>? = expenseRepository.getExpensePayees(expenseId)
             _payees.value = getMembersFromIds(memberIds)
 
-            fetchBills()
+            //fetchBills()
 
         }
     }
 
-    private suspend fun fetchBills() {
-        _bills.value = expenseRepository.getExpenseBills(expenseId)
+    fun fetchBills() {
+        viewModelScope.launch {
+            _bills.value = expenseRepository.getExpenseBills(expenseId)
+        }
+
     }
 
     private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {

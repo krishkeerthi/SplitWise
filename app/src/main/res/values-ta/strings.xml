@@ -92,4 +92,8 @@
     <string name="light">பகல்</string>
     <string name="dark">இரவு</string>
     <string name="cancel">ரத்து செய்</string>
+    <string name="no_bills">பில்கள் எதுவும் இல்லை</string>
+    <string name="discard">நிராகரிக்கவும்</string>
+    <string name="discard_changes">மாற்றங்களை நிராகரிக்க விரும்புகிறீர்களா?</string>
+    <string name="delete_message">நீங்கள் நிச்சயமாக நீக்க விரும்புகிறீர்களா?</string>
 </resources>

@@ -85,6 +85,8 @@ class ExpenseDetailFragment : Fragment() {
 
         //requireActivity().title = "Expense Detail"
 
+        viewModel.fetchBills()
+
         // Rv
         val membersAdapter = ExpenseMembersAdapter()
         val billsAdapter = BillsAdapter { position: Int ->
@@ -332,7 +334,7 @@ class ExpenseDetailFragment : Fragment() {
         Log.d(TAG, "gotoBillsHolderFragment: position is $position")
         val action =
             ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToBillsHolderFragment(
-                viewModel.getBills().toTypedArray(), position
+                viewModel.getBills().toTypedArray(), position, args.expenseId
             )
 
         view?.findNavController()?.navigate(action)

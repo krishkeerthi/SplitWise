@@ -3,11 +3,12 @@ package com.example.splitwise.ui.fragment.billsholder
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.core.view.setPadding
+import android.view.*
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.MarginPageTransformer
@@ -21,6 +22,10 @@ class BillsHolderFragment : Fragment() {
     private lateinit var binding: FragmentBillsHolderBinding
     private val args: BillsHolderFragmentArgs by navArgs()
 
+    private val viewModel: BillsHolderViewModel by viewModels {
+        BillsHolderViewModelFactory(requireContext(), args.expenseId, args.position)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,30 +38,85 @@ class BillsHolderFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBillsHolderBinding.bind(view)
 
-        Log.d(TAG, "onViewCreated: viewpager position is ${args.position}")
+        //Log.d(TAG, "onViewCreated: viewpager position is ${args.position}")
         val viewPager = binding.pager
-        viewPager.adapter = BillsAdapter(this)
+
+        viewModel.bills.observe(viewLifecycleOwner){ bills ->
+            if(bills != null && bills.isNotEmpty()){
+                val bills = viewModel.getBills()
+                viewPager.adapter = BillsAdapter(this, bills)
+
+                if (viewPager.currentItem == 0) {
+                    //Log.d(TAG, "onViewCreated: set position to ${args.position}")
+                    viewPager.setCurrentItem(viewModel.position, false)
+                }
+                binding.emptyBillsTextView.visibility = View.GONE
+                binding.pager.visibility = View.VISIBLE
+            }
+            else{
+                binding.emptyBillsTextView.visibility = View.VISIBLE
+                binding.pager.visibility = View.GONE
+            }
+
+        }
+
+        //viewPager.adapter = BillsAdapter(this)
 
         val margin = 16.dpToPx(resources.displayMetrics)
         viewPager.setPageTransformer(MarginPageTransformer(margin))
         //viewPager.setPadding(0, 0, 10, 0)
 
-        if (viewPager.currentItem == 0) {
-            Log.d(TAG, "onViewCreated: set position to ${args.position}")
-            viewPager.setCurrentItem(args.position, false)
-        }
+//        if (viewPager.currentItem == 0) {
+//            Log.d(TAG, "onViewCreated: set position to ${args.position}")
+//            viewPager.setCurrentItem(args.position, false)
+//        }
 
+
+        // Menu
+        setHasOptionsMenu(true)
     }
 
-    inner class BillsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.bills_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.delete_bill ->{
+                //Toast.makeText(requireContext(), "${binding.pager.currentItem}", Toast.LENGTH_SHORT).show()
+                deleteDialog()
+
+                true
+            }
+            else ->{
+                false
+            }
+        }
+    }
+
+    private fun deleteDialog(){
+        val builder = AlertDialog.Builder(requireContext())
+
+        builder.setTitle(R.string.delete);
+        builder.setMessage(R.string.delete_message)
+        builder.setPositiveButton(R.string.delete) { dialog, which ->
+            viewModel.deleteBill(binding.pager.currentItem)
+        }
+        builder.setNegativeButton(R.string.cancel, null)
+        builder.show()
+    }
+
+    inner class BillsAdapter(fragment: Fragment, private val bills: List<String>) : FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int {
-            return args.bills.size
+            return bills.size //args.bills.size
         }
 
         override fun createFragment(position: Int): Fragment {
             val fragment = BillFragment()
             fragment.arguments = Bundle().apply {
-                putString("ARG_URI", args.bills[position])
+                putString("ARG_URI", bills[position])
+                //putString("ARG_URI", args.bills[position])
             }
 
             return fragment

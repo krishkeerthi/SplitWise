@@ -12,6 +12,7 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.*
@@ -28,6 +29,7 @@ import com.example.splitwise.databinding.FragmentGroupIconBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
+import java.io.File
 import java.io.IOException
 import java.util.*
 
@@ -233,6 +235,9 @@ class GroupIconFragment : Fragment() {
         }
 
         val contentValue = ContentValues().apply {
+//            val directory = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.toString())
+//            //val path = directory.absolutePath
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
             put(MediaStore.MediaColumns.DISPLAY_NAME, "${Date().time}.png")
             put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
 

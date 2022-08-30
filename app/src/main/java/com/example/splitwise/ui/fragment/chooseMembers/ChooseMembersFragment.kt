@@ -22,6 +22,7 @@ class ChooseMembersFragment : Fragment() {
     private lateinit var binding: FragmentChooseMembersBinding
     private val args: ChooseMembersFragmentArgs by navArgs()
     private var contextualActionMode: ActionMode? = null
+    private var menuVisible = false
 
     private val viewModel: ChooseMembersViewModel by viewModels {
         ChooseMembersViewModelFactory(requireContext(), args.selectedMembers)
@@ -83,37 +84,44 @@ class ChooseMembersFragment : Fragment() {
         // Live observer to update menu
 
         viewModel.selectedMembersCount.observe(viewLifecycleOwner) {
-            if (it > 0) {
-                if (contextualActionMode == null)
-                    contextualActionMode = requireActivity().startActionMode(actionModeCallback)
-
-            } else {
-                contextualActionMode?.finish()
-                contextualActionMode = null
-            }
+//            if (it > 0) {
+//                if (contextualActionMode == null)
+//                    contextualActionMode = requireActivity().startActionMode(actionModeCallback)
+//
+//            } else {
+//                contextualActionMode?.finish()
+//                contextualActionMode = null
+//            }
+            menuVisible = it > 0
+            requireActivity().invalidateOptionsMenu()
 
         }
 
-       // setHasOptionsMenu(true)
+
+        setHasOptionsMenu(true)
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-//        inflater.inflate(R.menu.add_expense_fragment_menu, menu)
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return when(item.itemId){
-//            R.id.add_expense -> {
-//                Toast.makeText(requireContext(), "working", Toast.LENGTH_SHORT).show()
-//                true
-//            }
-//            else ->{
-//                super.onOptionsItemSelected(item)
-//            }
-//        }
-//
-//    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.choose_members_fragment_menu, menu)
+
+        val doneMenu = menu.findItem(R.id.choose_member_fragment_done)
+
+        doneMenu.isVisible = menuVisible
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.choose_member_fragment_done -> {
+                gotoCreateEditGroupFragment(viewModel.getSelectedMembers())
+                true
+            }
+            else ->{
+                super.onOptionsItemSelected(item)
+            }
+        }
+
+    }
 
     private val actionModeCallback = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {

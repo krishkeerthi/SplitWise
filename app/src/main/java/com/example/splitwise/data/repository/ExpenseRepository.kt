@@ -7,6 +7,7 @@ import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Expense
 import com.example.splitwise.data.local.localdatasource.ExpenseLocalDataSource
 import com.example.splitwise.data.local.localdatasource.GroupLocalDataSource
+import com.example.splitwise.model.BillUri
 import com.example.splitwise.util.titleCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,6 +46,10 @@ class ExpenseRepository(
         return withContext(Dispatchers.IO){dataSource.getExpenseBills(expenseId)}
     }
 
+    suspend fun getExpenseBillsWithId(expenseId: Int): List<BillUri>?{
+        return withContext(Dispatchers.IO){dataSource.getExpenseBillsWithId(expenseId)}
+    }
+
     suspend fun getExpense(expenseId: Int): Expense?{
         return withContext(Dispatchers.IO){dataSource.getExpense(expenseId)}
     }
@@ -64,5 +69,9 @@ class ExpenseRepository(
     // Need to implement
     suspend fun getExpensesWithConstraint(groupId: Int): List<Expense>?{
         return dataSource.getExpenses(groupId)
+    }
+
+    suspend fun deleteBill(billId: Int) {
+        dataSource.deleteExpenseBill(billId)
     }
 }

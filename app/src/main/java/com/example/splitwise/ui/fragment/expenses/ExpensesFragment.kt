@@ -262,7 +262,7 @@ class ExpensesFragment : Fragment() {
     private fun onAddButtonClicked() {
         clicked = !clicked
         setVisibility()
-        setAnimation()
+        //setAnimation()
 
     }
 
@@ -295,7 +295,10 @@ class ExpensesFragment : Fragment() {
         if(clicked){
             binding.addMemberButton.visibility = View.VISIBLE
             binding.addExpenseButton.visibility = View.VISIBLE
+
             binding.shadowView.visibility = View.VISIBLE
+
+            binding.addFabButton.setImageResource(R.drawable.ic_baseline_close_24)
         }
         else{
 
@@ -330,6 +333,7 @@ class ExpensesFragment : Fragment() {
 //            binding.expensesRecyclerView.isFocusable = true
 //            binding.expensesRecyclerView.requestFocus()
 
+            binding.addFabButton.setImageResource(R.drawable.ic_baseline_add_24)
         }
     }
 

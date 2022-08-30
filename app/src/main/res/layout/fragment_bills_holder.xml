@@ -11,4 +11,14 @@
         android:layout_height="match_parent"
         />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/empty_bills_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_bills"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+
 </FrameLayout>

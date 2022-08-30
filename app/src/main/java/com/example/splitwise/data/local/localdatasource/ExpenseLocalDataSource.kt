@@ -8,6 +8,7 @@ import com.example.splitwise.data.local.dao.ExpensePayeeDao
 import com.example.splitwise.data.local.entity.Expense
 import com.example.splitwise.data.local.entity.ExpenseBill
 import com.example.splitwise.data.local.entity.ExpensePayee
+import com.example.splitwise.model.BillUri
 import java.net.URI
 import java.util.*
 
@@ -61,12 +62,20 @@ class ExpenseLocalDataSource(
         return expenseBillDao.getBills(expenseId)
     }
 
+    override suspend fun getExpenseBillsWithId(expenseId: Int): List<BillUri>? {
+        return expenseBillDao.getBillsWithId(expenseId)
+    }
+
     override suspend fun getExpenses(groupId: Int): List<Expense>? {
         return expenseDao.getAllExpenses(groupId)
     }
 
     override suspend fun getExpense(expenseId: Int): Expense? {
         return expenseDao.getExpense(expenseId)
+    }
+
+    override suspend fun deleteExpenseBill(billId: Int) {
+        expenseBillDao.deleteBill(billId)
     }
 
     override suspend fun getExpensesByCategory(groupId: Int, category: Int): List<Expense>? {

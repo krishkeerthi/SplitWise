@@ -91,4 +91,9 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="cancel">Cancel</string>
+    <string name="no_bills">No bills found</string>
+    <string name="discard">Discard</string>
+    <string name="discard_changes">Do you want to discard changes?</string>
+    <string name="delete_message">Are you sure want to delete?</string>
+
 </resources>

@@ -94,24 +94,30 @@ class SetImageFragment : Fragment() {
         val url = args.imageUrl
 
         val directory = File(Environment.DIRECTORY_PICTURES)
+        //val directory = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+        Log.d(TAG, "downloadImage: directory ${directory}")
         val fileName = "IMG${Date().time}.png"
 
        // Environment.getExternalStoragePublicDirectory()
-        val testUri = File(Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_PICTURES
-        ), fileName).toUri()
+//        val testUri = File(Environment.getExternalStoragePublicDirectory(
+//            Environment.DIRECTORY_PICTURES
+//        ), fileName).toUri()
 
-        Log.d(TAG, "downloadImage: test icon ${testUri}")
+        //val x = File(Environment.getExternalStorageDirectory(), fileName).toUri()
+        val testUri = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, fileName).toUri()
+
+        Log.d(TAG, "downloadImage: test uri ${testUri}")
 
         val iconUri = Uri.parse(directory.toString() + fileName)
-        Log.d(TAG, "downloadImage: uri is ${iconUri}")
+       // Log.d(TAG, "downloadImage: uri is ${iconUri}")
 
         Log.d(ContentValues.TAG, "downloadImage: directory ${directory}")
         val directory1 = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_PICTURES
         )//.toString() + File.separator //+ IMAGES_FOLDER_NAME
 
-        Log.d(ContentValues.TAG, "downloadImage: directory1 ${directory1}")
+        //val directory1 = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        //Log.d(ContentValues.TAG, "downloadImage: directory1 ${directory1}")
         // val file = File(imagesDir, "IMG${Date().time}.png")
 
         if (!directory.exists())
@@ -129,11 +135,17 @@ class SetImageFragment : Fragment() {
                 .setAllowedOverRoaming(false)
                 .setTitle(url?.substring(url.lastIndexOf("/") + 1))
                 .setDescription("")
-                .setDestinationInExternalPublicDir(
+                .setDestinationInExternalFilesDir(
+                    requireActivity(),
                     directory.toString(),
                     fileName
-                    // url?.substring(url.lastIndexOf("/")+ 1)
                 )
+            /// test is just replicate the above
+//                .setDestinationInExternalPublicDir(
+//                    directory.toString(),
+//                    fileName
+//                    // url?.substring(url.lastIndexOf("/")+ 1)
+//                )
         }
 
         val downloadId = downloadManager.enqueue(request)
