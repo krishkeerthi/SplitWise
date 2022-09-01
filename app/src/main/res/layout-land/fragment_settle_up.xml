@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/from_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/payer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/from_member_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/from_text_view">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/from_member_image_holder"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/view_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/Circular" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/from_member_image_view"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/ic_baseline_person_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/from_member_name_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/text_bold"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/from_member_phone_text_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/from_member_image_holder"
+            tools:text="Keerthi K" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/phone_image_view"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="4dp"
+            android:src="@drawable/ic_baseline_local_phone_24"
+            app:layout_constraintBottom_toBottomOf="@+id/from_member_image_holder"
+            app:layout_constraintStart_toEndOf="@+id/from_member_image_holder" />
+
+        <TextView
+            android:id="@+id/from_member_phone_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="4dp"
+            android:autoLink="phone"
+            app:layout_constraintBottom_toBottomOf="@+id/from_member_image_holder"
+            app:layout_constraintStart_toEndOf="@+id/phone_image_view"
+            tools:text="9790307426" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/horizontal_view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#dee3e1"
+        app:layout_constraintTop_toBottomOf="@id/payees_recycler_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/to_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/payee"
+        app:layout_constraintStart_toEndOf="@+id/vertical_view"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/clear_payees"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clear"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@id/to_text_view"
+        app:layout_constraintBottom_toBottomOf="@+id/to_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/empty_payees"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_payee_selected"
+        app:layout_constraintBottom_toBottomOf="@+id/payees_recycler_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/vertical_view"
+        app:layout_constraintTop_toBottomOf="@id/clear_payees" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/payees_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/choose_payee_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/vertical_view"
+        app:layout_constraintTop_toBottomOf="@+id/to_text_view"
+        tools:listitem="@layout/group_member_card"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/vertical_view"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@color/view_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/horizontal_view"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/choose_payee_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/choose_payee"
+        app:layout_constraintBottom_toBottomOf="@+id/amount_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amount_text_view" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/select_all_payees_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Select All Payees"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_payee_button"
+        android:visibility="gone"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/total_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/total"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/amount_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amount_text_view"
+        tools:visibility="visible" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/amount_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="4dp"
+        android:textAlignment="textEnd"
+        android:textColor="@color/text_bold"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/settle_button"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_view"
+        app:layout_constraintStart_toEndOf="@+id/total_text_view"
+        tools:text="₹12500"
+        tools:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/settle_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="2dp"
+        android:text="@string/settle"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

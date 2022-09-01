@@ -67,7 +67,9 @@ class ChooseMembersFragment : Fragment() {
         viewModel.membersAndStreaks.observe(viewLifecycleOwner) { membersAndStreaks ->
             if (membersAndStreaks != null) {
                 if(membersAndStreaks.isNotEmpty()) {
-                    chooseMembersAdapter.updateMembersAndStreaks(membersAndStreaks)
+                    chooseMembersAdapter.updateMembersAndStreaks(membersAndStreaks, viewModel.checkedMembersIds())
+
+                    Log.d(TAG, "onViewCreated: mcount${viewModel.checkedMembersIds().size}")
                     binding.chooseMembersRecyclerView.visibility = View.VISIBLE
                     binding.emptyText.visibility = View.INVISIBLE
                 }
@@ -113,7 +115,7 @@ class ChooseMembersFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.choose_member_fragment_done -> {
-                gotoCreateEditGroupFragment(viewModel.getSelectedMembers())
+                gotoCreateEditGroupFragment(viewModel.getCheckedMembers())
                 true
             }
             else ->{
@@ -140,7 +142,7 @@ class ChooseMembersFragment : Fragment() {
             return when (item?.itemId) {
                 R.id.choose_member_fragment_done -> {
                     mode?.finish()
-                    gotoCreateEditGroupFragment(viewModel.getSelectedMembers())
+                    gotoCreateEditGroupFragment(viewModel.getCheckedMembers()) //viewModel.getSelectedMembers()
                     true
                 }
                 else -> false

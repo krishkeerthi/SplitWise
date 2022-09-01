@@ -11,6 +11,7 @@ import com.example.splitwise.model.MemberAndStreak
 class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
     RecyclerView.Adapter<ChooseMembersViewHolder>() {
     private var membersAndStreaks = listOf<MemberAndStreak>()
+    private var checkedMembersId = listOf<Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseMembersViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -36,15 +37,16 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
     override fun onBindViewHolder(holder: ChooseMembersViewHolder, position: Int) {
         val member = membersAndStreaks[position]
 
-        holder.bind(member)
+        holder.bind(member, checkedMembersId)
     }
 
     override fun getItemCount(): Int {
         return membersAndStreaks.size
     }
 
-    fun updateMembersAndStreaks(membersAndStreaks: List<MemberAndStreak>) {
+    fun updateMembersAndStreaks(membersAndStreaks: List<MemberAndStreak>, checkedMembersId: List<Int>) {
         this.membersAndStreaks = membersAndStreaks
+        this.checkedMembersId = checkedMembersId
         notifyDataSetChanged()
     }
 }
@@ -52,9 +54,12 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
 class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(memberAndStreak: MemberAndStreak) {
+    fun bind(memberAndStreak: MemberAndStreak, checkedMembersId: List<Int>) {
         binding.memberNameTextView.text = memberAndStreak.member.name
         binding.memberStreakTextView.text =  "🔥" + memberAndStreak.streak.toString()
+
+        if(memberAndStreak.member.memberId in checkedMembersId)
+            binding.selectedCheckBox.isChecked = true
     }
 
 }

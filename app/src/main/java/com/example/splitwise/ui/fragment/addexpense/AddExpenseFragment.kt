@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.addexpense
 
 import android.content.ContentValues.TAG
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -13,12 +14,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentAddExpenseBinding
-import com.example.splitwise.ui.fragment.adapter.CategoryArrayAdapter
-import com.example.splitwise.ui.fragment.adapter.MembersCheckboxAdapter
-import com.example.splitwise.ui.fragment.adapter.PayerArrayAdapter
+import com.example.splitwise.ui.fragment.adapter.*
 import com.example.splitwise.util.Category
 import com.example.splitwise.util.titleCase
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -56,8 +57,9 @@ class AddExpenseFragment : Fragment() {
                 viewModel.memberIds.remove(memberId)
         }
 
+        val spanCount = if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 5
         binding.membersRecyclerView.apply {
-            layoutManager = GridLayoutManager(requireContext(), 3)
+            layoutManager = GridLayoutManager(requireContext(), spanCount)
             adapter = membersCheckboxAdapter
         }
 
@@ -174,54 +176,74 @@ class AddExpenseFragment : Fragment() {
 
     private fun openCategoryBottomSheet() {
         val categoryBottomSheetDialog = BottomSheetDialog(requireContext())
-        categoryBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+        categoryBottomSheetDialog.setContentView(R.layout.rv_bottom_sheet)
 
         categoryBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         val categoryTitle =
             categoryBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
-        val categoryList = categoryBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+        val categoryRV = categoryBottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_list)
         val categories = Category.values().toList()
 
         categoryTitle?.text = getString(R.string.select_category)
 
         //Adapter
-        val categoryAdapter = CategoryArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, categories)
-        categoryList?.apply {
-            Log.d(TAG, "openCategoryBottomSheet: list adapter set")
-            adapter = categoryAdapter
-            onItemClickListener =
-                AdapterView.OnItemClickListener { parent, view, position, id ->
-                    viewModel.category = categories[position].ordinal
-                    binding.chooseCategoryText.text = categories[position].name.lowercase().titleCase()
-                    categoryBottomSheetDialog.dismiss()
-                }
+        //val categoryAdapter = CategoryArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, categories)
+        val categoryAdapter = CategoryAdapter(categories){ category ->
+            viewModel.category = category.ordinal
+            binding.chooseCategoryText.text = category.name.lowercase().titleCase()
+            categoryBottomSheetDialog.dismiss()
         }
+
+        categoryRV?.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = categoryAdapter
+        }
+//        categoryList?.apply {
+//            Log.d(TAG, "openCategoryBottomSheet: list adapter set")
+//            adapter = categoryAdapter
+//            onItemClickListener =
+//                AdapterView.OnItemClickListener { parent, view, position, id ->
+//                    viewModel.category = categories[position].ordinal
+//                    binding.chooseCategoryText.text = categories[position].name.lowercase().titleCase()
+//                    categoryBottomSheetDialog.dismiss()
+//                }
+//        }
 
         categoryBottomSheetDialog.show()
     }
 
     private fun openPayerBottomSheet(payers: List<Member>) {
         val payerBottomSheetDialog = BottomSheetDialog(requireContext())
-        payerBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+        payerBottomSheetDialog.setContentView(R.layout.rv_bottom_sheet)
 
         payerBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         val payerTitle = payerBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
-        val payerList = payerBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+        val payerRv = payerBottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_list)
 
         payerTitle?.text = getString(R.string.select_payer)
         //Adapter
-        val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, payers)
-        payerList?.apply {
-            Log.d(TAG, "openPayerBottomSheet: list adapter set")
-            adapter = payerAdapter
-            onItemClickListener =
-                AdapterView.OnItemClickListener { parent, view, position, id ->
-                    viewModel.payerId = payers[position].memberId
-                    binding.choosePayerText.text = payers[position].name
-                    payerBottomSheetDialog.dismiss()
-                }
+//        val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, payers)
+        val payerAdapter = PayerAdapter(payers){ payer ->
+            viewModel.payerId = payer.memberId
+            binding.choosePayerText.text = payer.name
+            payerBottomSheetDialog.dismiss()
         }
+
+        payerRv?.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = payerAdapter
+        }
+//        payerList?.apply {
+//            Log.d(TAG, "openPayerBottomSheet: list adapter set")
+//            adapter = payerAdapter
+//            onItemClickListener =
+//                AdapterView.OnItemClickListener { parent, view, position, id ->
+//                    viewModel.payerId = payers[position].memberId
+//                    binding.choosePayerText.text = payers[position].name
+//                    payerBottomSheetDialog.dismiss()
+//                }
+//        }
 
         payerBottomSheetDialog.show()
     }

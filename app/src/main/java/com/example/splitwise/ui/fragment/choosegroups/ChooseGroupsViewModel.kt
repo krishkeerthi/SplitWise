@@ -20,7 +20,7 @@ class ChooseGroupsViewModel(context: Context)
     val groups: LiveData<List<Group>?>
             get() = _groups
 
-    private var selectedGroups = mutableListOf<Group>()
+    private var selectedGroups = mutableSetOf<Group>()
 
     private var _selectedGroupsCount = MutableLiveData<Int>()
     val selectedGroupsCount: LiveData<Int>

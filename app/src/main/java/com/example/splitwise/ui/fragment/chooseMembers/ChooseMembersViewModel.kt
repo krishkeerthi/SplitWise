@@ -24,6 +24,8 @@ class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) 
     val selectedMembersCount: LiveData<Int>
         get() = _selectedMembersCount
 
+
+    private var checkedMembers = mutableSetOf<Member>()
     init {
         _selectedMembersCount.value = 0
     }
@@ -49,16 +51,20 @@ class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) 
     }
 
     fun addMemberToSelected(member: Member) {
-        selectedMembersList.add(member)
+        //selectedMembersList.add(member)
+        checkedMembers.add(member)
         _selectedMembersCount.value = _selectedMembersCount.value?.plus(1)
     }
 
     fun removeMemberFromSelected(member: Member) {
-        selectedMembersList.remove(member)
+        //selectedMembersList.remove(member)
+        checkedMembers.remove(member)
         _selectedMembersCount.value = _selectedMembersCount.value?.minus(1)
     }
 
     fun getSelectedMembers() = selectedMembersList.toTypedArray()
+
+    fun getCheckedMembers() = checkedMembers.toTypedArray()
 
     private suspend fun sortByStreak(members: List<Member>) {
         viewModelScope.launch {
@@ -82,6 +88,16 @@ class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) 
             _membersAndStreaks.value = membersAndStreaks
         }.join()
     }
+
+    fun checkedMembersIds(): List<Int>{
+        val membersIds = mutableListOf<Int>()
+        for(member in checkedMembers){
+            membersIds.add(member.memberId)
+        }
+        return membersIds
+    }
+
+    //fun getCheckedMembers() = checkedMembers.toList()
 }
 
 class ChooseMembersViewModelFactory(

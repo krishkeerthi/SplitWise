@@ -95,5 +95,6 @@
     <string name="discard">Discard</string>
     <string name="discard_changes">Do you want to discard changes?</string>
     <string name="delete_message">Are you sure want to delete?</string>
+    <string name="enter_amount">Enter amount</string>
 
 </resources>

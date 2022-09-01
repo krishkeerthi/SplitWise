@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/group_name_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:textColor="@color/text_bold"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/group_expense_text_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Goa trip" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/group_total_expense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/total_expense"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/group_expense_text_view"
+                app:layout_constraintStart_toStartOf="@+id/group_expense_text_view"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/group_expense_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:textColor="@color/text_bold"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/group_total_expense"
+                tools:text="₹12500" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/members_list_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/members"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/group_expense_text_view" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/members_recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/members_list_text_view"
+                tools:listitem="@layout/member_profile_card"
+                tools:visibility="gone" />
+
+            <View
+                android:id="@+id/horizontal_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="#dee3e1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/members_recycler_view" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/expenses_list_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/expenses"
+                app:layout_constraintBottom_toBottomOf="@id/clear_expenses_filter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/clear_expenses_filter" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/clear_expenses_filter"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/clear"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/horizontal_view"
+                tools:visibility="visible" />
+
+            <HorizontalScrollView
+                android:id="@+id/horizontal_scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:scrollbars="none"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/clear_expenses_filter"
+                tools:visibility="visible">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/category_chip_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/category_food"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Food"
+                        app:checkedIconTint="@color/background"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_bg_state" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/category_travel"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Travel"
+                        app:checkedIconTint="@color/background"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_bg_state" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/category_tickets"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tickets"
+                        app:checkedIconTint="@color/background"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_bg_state" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/category_rent"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rent"
+                        app:checkedIconTint="@color/background"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_bg_state" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/category_fees"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fees"
+                        app:checkedIconTint="@color/background"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_bg_state" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/category_repair"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Repair"
+                        app:checkedIconTint="@color/background"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_bg_state" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/category_entertainment"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Entertainment"
+                        app:checkedIconTint="@color/background"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_bg_state" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/category_essentials"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Essentials"
+                        app:checkedIconTint="@color/background"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_bg_state" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/category_others"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Others"
+                        app:checkedIconTint="@color/background"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_bg_state" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </HorizontalScrollView>
+
+            <!--            app:checkedIconTint="@color/view_color"-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/expenses_recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/horizontal_scroll_view"
+                tools:itemCount="1"
+                tools:listitem="@layout/expense_card_1" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/no_expense_image_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/empty_expense"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/expenses_list_text_view" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <View
+        android:id="@+id/shadowView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"
+        android:visibility="invisible" />
+
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/add_member_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="152dp"
+        android:text="@string/add_member"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/add_expense_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="88dp"
+        android:text="@string/add_expense"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_fab_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Add member and expense"
+        android:src="@android:drawable/ic_input_add" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/group_expense_title_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:textColor="@color/text_bold"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/expense_total_text_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Thalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti BiryaniThalappakatti Biryani" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/expense_payer_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/expense_total_text_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/group_expense_title_text_view"
+                tools:text="Keerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi KKeerthi K" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/expense_total_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:textColor="@color/text_bold"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/expense_category_expense"
+                tools:text="₹12500" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/expense_category_expense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/expense_total_text_view"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Food" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/members_share_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/members_share"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/expense_payer_text_view" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/members_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/members_share_text_view"
+                tools:listitem="@layout/expense_member_card" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/bills_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/bills"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/add_bill_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/add_bill_button"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_bill_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="@string/add_bill"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/members_recycler_view" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/bills_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/add_bill_button"
+                tools:itemCount="10"
+                tools:listitem="@layout/bill_profile_card" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,7 +22,7 @@ class ChoosePayeesViewModel(private val payeesAndAmounts: MutableList<MemberAndA
     val membersAndAmounts: LiveData<List<MemberAndAmount>?>
         get() = _membersAndAmounts
 
-    private var selectedMembers = mutableListOf<Member>()
+    private var selectedMembers = mutableSetOf<Member>()
 
     private var _selectedMembersCount = MutableLiveData<Int>()
     val selectedMembersCount: LiveData<Int>
@@ -58,6 +58,13 @@ class ChoosePayeesViewModel(private val payeesAndAmounts: MutableList<MemberAndA
         _selectedMembersCount.value = _selectedMembersCount.value?.minus(1)
     }
 
+    fun selectedPayeesIds(): List<Int>{
+        val payeesIds = mutableListOf<Int>()
+        for(member in selectedMembers){
+            payeesIds.add(member.memberId)
+        }
+        return payeesIds
+    }
     fun getSelectedMembers() = selectedMembers.toList()
 }
 

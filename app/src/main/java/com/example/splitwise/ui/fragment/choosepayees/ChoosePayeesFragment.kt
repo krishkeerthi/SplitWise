@@ -16,6 +16,7 @@ import com.example.splitwise.ui.fragment.choosegroups.ChooseGroupsFragmentArgs
 import com.example.splitwise.ui.fragment.choosegroups.ChooseGroupsFragmentDirections
 import com.example.splitwise.ui.fragment.choosegroups.ChooseGroupsViewModel
 import com.example.splitwise.ui.fragment.choosegroups.ChooseGroupsViewModelFactory
+import com.example.splitwise.util.mergeList
 
 
 class ChoosePayeesFragment : Fragment() {
@@ -69,7 +70,13 @@ class ChoosePayeesFragment : Fragment() {
 
         viewModel.membersAndAmounts.observe(viewLifecycleOwner) { membersAndAmounts ->
             if (membersAndAmounts != null) {
-                payeesAdapter.updatePayees(membersAndAmounts, args.selectedPayeeIds.toList())
+                //payeesAdapter.updatePayees(membersAndAmounts, args.selectedPayeeIds.toList())
+                if(args.selectedPayeeIds.toList().isNotEmpty() && viewModel.selectedPayeesIds().isNotEmpty())
+                    payeesAdapter.updatePayees(membersAndAmounts, mergeList(args.selectedPayeeIds.toList() ,viewModel.selectedPayeesIds().toList()))
+                else if(args.selectedPayeeIds.toList().isNotEmpty())
+                    payeesAdapter.updatePayees(membersAndAmounts, args.selectedPayeeIds.toList())
+                else
+                    payeesAdapter.updatePayees(membersAndAmounts, viewModel.selectedPayeesIds().toList())
             }
         }
 

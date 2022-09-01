@@ -70,6 +70,7 @@ class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
     fun bind(group: Group, selectedGroupIds: List<Int>) {
         binding.groupNameTextView.text = group.groupName
 
+        Log.d(TAG, "bind: checking inside bind")
         if(group.groupIcon != null) {
             binding.groupImageView.setImageURI(group.groupIcon)
             binding.groupImageHolder.visibility= View.INVISIBLE
@@ -82,8 +83,10 @@ class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
             binding.groupImageView.visibility = View.INVISIBLE
         }
 
-        if(group.groupId in selectedGroupIds)
+        if(group.groupId in selectedGroupIds) {
+            Log.d(TAG, "bind: checking inside is checked")
             binding.selectedCheckBox.isChecked = true
+        }
     }
 
     fun bindAndCheck(group: Group) {

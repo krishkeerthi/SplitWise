@@ -5,7 +5,9 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ConfigurationInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -26,6 +28,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupIconBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
@@ -77,6 +80,9 @@ class GroupIconFragment : Fragment() {
     private fun openBottomSheet() {
         val groupIconBottomSheet = BottomSheetDialog(requireContext())
         groupIconBottomSheet.setContentView(R.layout.edit_group_icon)
+
+        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            groupIconBottomSheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         val webImage = groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.web_image_holder)
         val cameraImage =

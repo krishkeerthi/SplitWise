@@ -189,6 +189,17 @@ fun String.formatNumber(): String {
     else number.substring(2)
 
 }
+fun mergeList(previouslySelected: List<Int>, currentlySelected: List<Int>): List<Int> {
+    val newList = mutableListOf<Int>()
+
+    for(i in previouslySelected)
+        newList.add(i)
+
+    for(i in currentlySelected)
+        newList.add(i)
+
+    return newList
+}
 
 fun Int.dpToPx(displayMetrics: DisplayMetrics) = (this * displayMetrics.density).toInt()
 
@@ -233,3 +244,5 @@ fun String.getBold(): String{
     "\uD835\uDE01\uD835\uDDF2\uD835\uDE00\uD835\uDE01"
     return "*$this*"
 }
+
+

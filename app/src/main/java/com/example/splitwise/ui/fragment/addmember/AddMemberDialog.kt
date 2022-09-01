@@ -36,6 +36,8 @@ class AddMemberDialog(
     // note: In dialog on create view callback is not called
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        retainInstance = true
+
         val builder = AlertDialog.Builder(requireContext())
 
         val addMemberDialog = layoutInflater.inflate(R.layout.add_member_dialog, null)
@@ -68,11 +70,15 @@ class AddMemberDialog(
         contactNameLiveData.observe(this) {
             if (it != "")
                 nameEditText.setText(it)
+            else
+                Log.d(TAG, "onCreateDialog: name empty")
         }
 
         contactPhoneLiveData.observe(this) {
             if (it != "")
                 phoneEditText.setText(it)
+            else
+                Log.d(TAG, "onCreateDialog: phone empty")
         }
 
         builder.apply {
@@ -153,6 +159,7 @@ class AddMemberDialog(
         val intent = Intent(Intent.ACTION_PICK).apply {
             type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
         }
+        Log.d(TAG, "selectContact: select contact empty")
         selectContactLauncher.launch(intent)
     }
 
@@ -161,6 +168,7 @@ class AddMemberDialog(
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val contactUri: Uri? = result.data?.data
 
+                Log.d(TAG, ": inside launcher empty")
                 val projections = listOf(
                     ContactsContract.CommonDataKinds.Phone.NUMBER,
                     ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
@@ -181,19 +189,24 @@ class AddMemberDialog(
                     val number = cursor.getString(numberColumnIndex).formatNumber()
                     contactPhoneLiveData.value = number
 
+                    Log.d(TAG, "$number: empty")
                     val nameColumnIndex =
                         cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
                     val name = cursor.getString(nameColumnIndex)
 
                     contactNameLiveData.value = name
 
+                    Log.d(TAG, "$name: empty")
                     cursor.close()
 
                 } else
                     Toast.makeText(requireContext(), "Error selecting contact", Toast.LENGTH_LONG)
                         .show()
             }
+            else
+                Log.d(TAG, "result not ok: empty")
 
         }
+
 
 }

@@ -1,19 +1,13 @@
 package com.example.splitwise.ui.fragment.groups
 
-import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.Dialog
 import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -21,13 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
-import com.example.splitwise.ui.fragment.adapter.*
+import com.example.splitwise.ui.fragment.adapter.AmountFilterArrayAdapter
+import com.example.splitwise.ui.fragment.adapter.DateFilterArrayAdapter
+import com.example.splitwise.ui.fragment.adapter.GroupFilterAdapter
+import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
+import com.example.splitwise.ui.fragment.addamount.AddAmountDialog
 import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import java.util.*
 
 class GroupsFragment : Fragment() {
@@ -124,11 +120,11 @@ class GroupsFragment : Fragment() {
 //                }
 //
 //
-//                // Hide fab button
-//                if (dy > 0 && binding.addGroupFab.visibility == View.VISIBLE)
-//                    binding.addGroupFab.hide()
-//                else if (dy < 0 && binding.addGroupFab.visibility != View.VISIBLE)
-//                    binding.addGroupFab.show()
+                // Hide fab button
+                if (dy > 0 && binding.addGroupFab.visibility == View.VISIBLE)
+                    binding.addGroupFab.hide()
+                else if (dy < 0 && binding.addGroupFab.visibility != View.VISIBLE)
+                    binding.addGroupFab.show()
 
             }
 
@@ -150,7 +146,8 @@ class GroupsFragment : Fragment() {
         if (viewModel.filterModel.amountFilterModel != null) {
             val amountFilterModel = viewModel.filterModel.amountFilterModel
             binding.amountFilterChip.text = "${
-                amountFilterModel!!.amountFilter.name.lowercase().titleCase()} " +
+                amountFilterModel!!.amountFilter.name.lowercase().titleCase()
+            } " +
                     "${amountFilterModel!!.amount}"
             binding.amountFilterChip.visibility = View.VISIBLE
         }
@@ -159,7 +156,8 @@ class GroupsFragment : Fragment() {
             val dateFilterModel = viewModel.filterModel.dateFilterModel
             binding.dateFilterChip.text =
                 "${dateFilterModel!!.dateFilter.name.lowercase().titleCase()} ${
-                    formatDate(dateFilterModel!!.date)}"
+                    formatDate(dateFilterModel!!.date)
+                }"
             binding.dateFilterChip.visibility = View.VISIBLE
         }
 
@@ -178,6 +176,13 @@ class GroupsFragment : Fragment() {
         }
         binding.amountFilterChip.isClickable = false
 
+
+        // ripple effect
+
+//        val attrs = IntArray(androidx.appcompat.R.attr.selectableItemBackground)
+//        val typedArray = requireActivity().obtainStyledAttributes(attrs)
+//        val bgRes = typedArray.getResourceId(0, 0)
+//        binding.root.setBackgroundResource(bgRes)
 
     }
 
@@ -426,59 +431,62 @@ class GroupsFragment : Fragment() {
     }
 
     private fun openAmountDialog() {
-        val builder = AlertDialog.Builder(requireContext())
-
-        builder.setTitle("Enter Amount")
-
-        val amountDialog = layoutInflater.inflate(R.layout.add_amount_dialog, null)
-        builder.setView(amountDialog)
-
-        val amountEditText = amountDialog.findViewById<TextInputEditText>(R.id.amount_text)
-        val amountLayout =
-            amountDialog.findViewById<TextInputLayout>(R.id.outlined_amount_text_field)
-
-        builder.setPositiveButton(getString(R.string.save)) { dialogInterface, _ ->
-            val amount = amountEditText.text.toString().toFloat()
-
-            viewModel.applyAmountFilter(amount)
-            createAmountFilterChip(viewModel.selectedAmountFilter, amount)
-        }
-
-        builder.setNegativeButton(getString(R.string.cancel)){ dialogInterface, _ ->
-            dialogInterface.cancel()
-        }
-
-        val dialog = builder.create()
-        dialog.show()
-
-
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
-
-        val amountWatcher = object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                val amountText = amountEditText.text.toString()
-
-                val amount = if(amountText.isNotEmpty()) amountText.toInt() else 0
-
-
-
-                if (amount == 0 || amountText.isEmpty())
-                    amountLayout.error = "Enter Amount"
-                else {
-                    amountLayout.error = null
-                    amountLayout.isErrorEnabled = false
-                }
-
-                dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled = amountText.isNotEmpty()
-            }
-        }
-        amountEditText.addTextChangedListener(amountWatcher)
+        AddAmountDialog(viewModel) { amountFilter, amount ->
+            createAmountFilterChip(amountFilter, amount)
+        }.show(childFragmentManager, "Add Amount Alert Dialog")
+//        val builder = AlertDialog.Builder(requireContext())
+//
+//        builder.setTitle("Enter Amount")
+//
+//        val amountDialog = layoutInflater.inflate(R.layout.add_amount_dialog, null)
+//        builder.setView(amountDialog)
+//
+//        val amountEditText = amountDialog.findViewById<TextInputEditText>(R.id.amount_text)
+//        val amountLayout =
+//            amountDialog.findViewById<TextInputLayout>(R.id.outlined_amount_text_field)
+//
+//        builder.setPositiveButton(getString(R.string.save)) { dialogInterface, _ ->
+//            val amount = amountEditText.text.toString().toFloat()
+//
+//            viewModel.applyAmountFilter(amount)
+//            createAmountFilterChip(viewModel.selectedAmountFilter, amount)
+//        }
+//
+//        builder.setNegativeButton(getString(R.string.cancel)){ dialogInterface, _ ->
+//            dialogInterface.cancel()
+//        }
+//
+//        val dialog = builder.create()
+//        dialog.show()
+//
+//
+//        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+//
+//        val amountWatcher = object : TextWatcher {
+//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//            }
+//
+//            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//            }
+//
+//            override fun afterTextChanged(s: Editable?) {
+//                val amountText = amountEditText.text.toString()
+//
+//                val amount = if(amountText.isNotEmpty()) amountText.toInt() else 0
+//
+//
+//
+//                if (amount == 0 || amountText.isEmpty())
+//                    amountLayout.error = "Enter Amount"
+//                else {
+//                    amountLayout.error = null
+//                    amountLayout.isErrorEnabled = false
+//                }
+//
+//                dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled = amountText.isNotEmpty()
+//            }
+//        }
+//        amountEditText.addTextChangedListener(amountWatcher)
 
     }
 
@@ -496,12 +504,14 @@ class GroupsFragment : Fragment() {
 //
 //        chipGroup.addView(chip)
 
-        binding.dateFilterChip.text = "${dateFilter.name.lowercase().titleCase()} ${formatDate(date, dateOnly = true)}"
+        binding.dateFilterChip.text =
+            "${dateFilter.name.lowercase().titleCase()} ${formatDate(date, dateOnly = true)}"
         binding.dateFilterChip.visibility = View.VISIBLE
     }
 
     private fun createAmountFilterChip(amountFilter: AmountFilter, amount: Float) {
-        binding.amountFilterChip.text = "${amountFilter.name.lowercase().titleCase()} ${amount.roundOff()}"
+        binding.amountFilterChip.text =
+            "${amountFilter.name.lowercase().titleCase()} ${amount.roundOff()}"
         binding.amountFilterChip.visibility = View.VISIBLE
     }
 

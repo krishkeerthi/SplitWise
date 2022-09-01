@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.choosegroups
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -12,6 +14,7 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentChooseGroupsBinding
 import com.example.splitwise.ui.fragment.adapter.ChooseGroupAdapter
 import com.example.splitwise.ui.fragment.chooseMembers.ChooseMembersFragmentDirections
+import com.example.splitwise.util.mergeList
 
 
 class ChooseGroupsFragment : Fragment() {
@@ -51,6 +54,8 @@ class ChooseGroupsFragment : Fragment() {
             }
         }
 
+        // restore checked groups during screen orientation change
+
         binding.chooseGroupsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext()).apply {
                 reverseLayout = true // it reverses but scrolled down to the last item
@@ -61,7 +66,15 @@ class ChooseGroupsFragment : Fragment() {
 
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             if (groups != null) {
-                groupsAdapter.updateGroups(groups, args.selectedGroupIds.toList())
+                Log.d(TAG, "onViewCreated: checking ")
+                if(args.selectedGroupIds.toList().isNotEmpty() && viewModel.selectedGroupIds().isNotEmpty())
+                groupsAdapter.updateGroups(groups, mergeList(args.selectedGroupIds.toList() ,viewModel.selectedGroupIds().toList()))
+                else if(args.selectedGroupIds.toList().isNotEmpty())
+                    groupsAdapter.updateGroups(groups, args.selectedGroupIds.toList())
+                else
+                    groupsAdapter.updateGroups(groups, viewModel.selectedGroupIds().toList())
+
+
             }
         }
 
