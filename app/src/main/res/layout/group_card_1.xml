@@ -4,9 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
+    android:foreground="@drawable/ripple_effect"
+    android:background="@drawable/ripple_effect"
+    android:clickable="true"
+    android:focusable="true"
+
     >
-
-
+<!--    android:foreground="?attr/selectableItemBackground"-->
+<!--    android:background="@drawable/ripple_effect"-->
+<!--    android:background="?android:attr/selectableItemBackground"-->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/group_image_view"
         android:layout_width="48dp"

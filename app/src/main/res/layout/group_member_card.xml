@@ -53,6 +53,7 @@
         android:layout_height="18dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="4dp"
+        android:visibility="gone"
         android:src="@drawable/ic_baseline_local_phone_24"
         app:layout_constraintBottom_toBottomOf="@+id/member_image_holder"
         app:layout_constraintStart_toEndOf="@+id/member_image_holder" />
@@ -61,7 +62,7 @@
         android:id="@+id/member_phone_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/member_image_holder"
         app:layout_constraintStart_toEndOf="@+id/phone_image_view"

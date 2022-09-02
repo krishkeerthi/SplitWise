@@ -17,6 +17,7 @@ import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSettleUpBinding
 import com.example.splitwise.model.MemberAndAmount
+import com.example.splitwise.ui.fragment.adapter.ChoosePayeeAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragmentDirections
@@ -54,41 +55,49 @@ class SettleUpFragment : Fragment() {
         // Load data based on selected members
         selectedMembers = args.selectedMembers.toList()
 
-        val payeesAdapter = GroupMembersAdapter() // reusing the adapter here
+        //val payeesAdapter = GroupMembersAdapter() // reusing the adapter here
 
-        if(selectedMembers.isNotEmpty()){
-//            var payeesText = ""
-//            for(member in selectedMembers){
-//                payeesText += "● ${member.name} "
-//            }
-//            binding.selectedPayeesText.text = payeesText
-//            binding.selectedPayeesCard.visibility = View.VISIBLE
-
-            payeesAdapter.updateMembers(selectedMembers)
-            viewModel.getAmount(getMemberIds(selectedMembers))
-
-            binding.clearPayees.visibility = View.VISIBLE
-            binding.payeesRecyclerView.visibility = View.VISIBLE
-            binding.totalTextView.visibility = View.VISIBLE
-            binding.amountTextView.visibility = View.VISIBLE
-            binding.settleButton.visibility = View.VISIBLE
-
-            binding.emptyPayees.visibility = View.GONE
+        val payeesAndAmountsAdapter = ChoosePayeeAdapter { member, isChecked ->
+            if (isChecked) {
+                viewModel.addPayeeToSelected(member)
+            } else {
+                viewModel.removePayeeFromSelected(member)
+            }
         }
-        else{
-            binding.clearPayees.visibility = View.INVISIBLE
-            binding.payeesRecyclerView.visibility = View.GONE
-            binding.totalTextView.visibility = View.GONE
-            binding.amountTextView.visibility = View.GONE
-            binding.settleButton.visibility = View.INVISIBLE
 
-            binding.emptyPayees.visibility = View.VISIBLE
-        }
+//        if(selectedMembers.isNotEmpty()){
+////            var payeesText = ""
+////            for(member in selectedMembers){
+////                payeesText += "● ${member.name} "
+////            }
+////            binding.selectedPayeesText.text = payeesText
+////            binding.selectedPayeesCard.visibility = View.VISIBLE
+//
+//            payeesAdapter.updateMembers(selectedMembers)
+//            viewModel.getAmount(getMemberIds(selectedMembers))
+//
+//            binding.clearPayees.visibility = View.VISIBLE
+//            binding.payeesRecyclerView.visibility = View.VISIBLE
+//            binding.totalTextView.visibility = View.VISIBLE
+//            binding.amountTextView.visibility = View.VISIBLE
+//            binding.settleButton.visibility = View.VISIBLE
+//
+//            binding.emptyPayees.visibility = View.GONE
+//        }
+//        else{
+//            binding.clearPayees.visibility = View.INVISIBLE
+//            binding.payeesRecyclerView.visibility = View.GONE
+//            binding.totalTextView.visibility = View.GONE
+//            binding.amountTextView.visibility = View.GONE
+//            binding.settleButton.visibility = View.INVISIBLE
+//
+//            binding.emptyPayees.visibility = View.VISIBLE
+//        }
 
         // payees
         binding.payeesRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = payeesAdapter
+            adapter = payeesAndAmountsAdapter
         }
 
         // Group
@@ -126,22 +135,65 @@ class SettleUpFragment : Fragment() {
         // Payees
         viewModel.payeesAndAmounts.observe(viewLifecycleOwner) { payeesAndAmount ->
             if (payeesAndAmount != null) {
-                binding.choosePayeeButton.setOnClickListener {
-                    Log.d(TAG, "onViewCreated: payeesandamount ${payeesAndAmount.size}")
-                    gotoChoosePayeeFragment(payeesAndAmount)
-                    //openPayeesBottomSheet(payees)
-                }
+
+                payeesAndAmountsAdapter.updatePayees(payeesAndAmount, viewModel.selectedPayeesIds())
+                // previously choose button was there
+//                binding.choosePayeeButton.setOnClickListener {
+//                    Log.d(TAG, "onViewCreated: payeesandamount ${payeesAndAmount.size}")
+//                    gotoChoosePayeeFragment(payeesAndAmount)
+//                    //openPayeesBottomSheet(payees)
+//                }
             }
         }
 
+        viewModel.selectedPayeesCount.observe(viewLifecycleOwner) { count ->
+            if (count != null && count > 0) {
+                Log.d(TAG, "onViewCreated: count ${viewModel.selectedPayeesIds()}")
+                viewModel.getAmount(viewModel.selectedPayeesIds())
+
+                binding.clearPayees.visibility = View.VISIBLE
+
+                binding.totalTextView.visibility = View.VISIBLE
+                binding.amountTextView.visibility = View.VISIBLE
+                binding.settleButton.visibility = View.VISIBLE
+
+                if(count == viewModel.payeesAndAmounts.value!!.size)
+                    binding.selectAllPayees.visibility = View.GONE
+                else
+                    binding.selectAllPayees.visibility = View.VISIBLE
+
+            } else {
+                binding.clearPayees.visibility = View.GONE
+                binding.totalTextView.visibility = View.GONE
+                binding.amountTextView.visibility = View.GONE
+                binding.settleButton.visibility = View.INVISIBLE
+            }
+        }
         // clear button
         binding.clearPayees.setOnClickListener {
             gotoSelf()
+//            viewModel.clearPayees()
+//            payeesAndAmountsAdapter.updatePayees(viewModel.payeesAndAmounts.value!!, viewModel.selectedPayeesIds())
+            // Not the best code
+            Log.d(TAG, "onViewCreated: cleared count")
+        }
+
+        // Select All
+        binding.selectAllPayees.setOnClickListener {
+            payeesAndAmountsAdapter.selectAllPayees()
+            binding.totalTextView.visibility = View.VISIBLE
+            binding.amountTextView.visibility = View.VISIBLE
+            //viewModel.setSelectedPayeesCount()
         }
 
         // Amount
         viewModel.amount.observe(viewLifecycleOwner) { amount ->
-            binding.amountTextView.text = "₹" + (amount?.roundOff() ?: "")
+            if (amount != null) {
+
+                val total = "₹" + amount.roundOff()
+                binding.amountTextView.text = total
+            }
+
         }
 
 //        binding.selectAllPayeesCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -153,14 +205,27 @@ class SettleUpFragment : Fragment() {
 //            }
 //        }
 
+
         binding.settleButton.setOnClickListener {
-            if(selectedMembers.isNotEmpty())
-            viewModel.settle(getMemberIds(selectedMembers)){
+            viewModel.settle(viewModel.selectedPayeesIds()) {
                 gotoSplitWiseFragment()
             }
-            else
-                Snackbar.make(binding.root, getString(R.string.select_payees), Snackbar.LENGTH_SHORT).show()
         }
+
+//        binding.settleButton.setOnClickListener {
+//            viewModel.settle(getMemberIds(selectedMembers)){
+//                gotoSplitWiseFragment()
+//            }
+//        }
+
+//        binding.settleButton.setOnClickListener {
+//            if(selectedMembers.isNotEmpty())
+//                viewModel.settle(getMemberIds(selectedMembers)){
+//                    gotoSplitWiseFragment()
+//                }
+//            else
+//                Snackbar.make(binding.root, getString(R.string.select_payees), Snackbar.LENGTH_SHORT).show()
+//        }
 
 //        binding.settleButton.setOnClickListener {
 //            if (binding.selectAllPayeesCheckbox.isChecked)
@@ -187,15 +252,19 @@ class SettleUpFragment : Fragment() {
 
     private fun getMemberIds(members: List<Member>): List<Int> {
         var memberIds = mutableListOf<Int>()
-        for(member in members){
+        for (member in members) {
             memberIds.add(member.memberId)
         }
         return memberIds.toList()
     }
 
-    private fun gotoChoosePayeeFragment(payeesAndAmounts: List<MemberAndAmount>){
+    private fun gotoChoosePayeeFragment(payeesAndAmounts: List<MemberAndAmount>) {
         val action = SettleUpFragmentDirections.actionSettleUpFragmentToChoosePayeesFragment(
-            viewModel.payerId, viewModel.groupIds().toIntArray(), getMemberIds(selectedMembers).toIntArray(), payeesAndAmounts.toTypedArray(),)
+            viewModel.payerId,
+            viewModel.groupIds().toIntArray(),
+            getMemberIds(selectedMembers).toIntArray(),
+            payeesAndAmounts.toTypedArray(),
+        )
 
         view?.findNavController()?.navigate(action)
     }
@@ -237,13 +306,18 @@ class SettleUpFragment : Fragment() {
 //    }
 
     private fun gotoSplitWiseFragment() {
-        val action = SettleUpFragmentDirections.actionSettleUpFragmentToSplitWiseFragment(listOf<Group>().toTypedArray())
+        val action =
+            SettleUpFragmentDirections.actionSettleUpFragmentToSplitWiseFragment(listOf<Group>().toTypedArray())
         view?.findNavController()?.navigate(action)
     }
 
     private fun gotoSelf() {
         val action =
-            SettleUpFragmentDirections.actionSettleUpFragmentSelf(args.payerId, args.groupIds, listOf<Member>().toTypedArray()) // Passing empty list of members when going to settle up fragment
+            SettleUpFragmentDirections.actionSettleUpFragmentSelf(
+                args.payerId,
+                args.groupIds,
+                listOf<Member>().toTypedArray()
+            ) // Passing empty list of members when going to settle up fragment
         view?.findNavController()?.navigate(action)
     }
 

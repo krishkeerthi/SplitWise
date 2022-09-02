@@ -11,6 +11,8 @@ import android.text.Html
 import android.text.format.DateUtils
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
+import android.view.View
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import org.w3c.dom.Text
@@ -245,4 +247,11 @@ fun String.getBold(): String{
     return "*$this*"
 }
 
+//fun View.ripple(): View {
+//    val value = TypedValue()
+//    context.theme.resolveAttribute(android.R.attr.selectableItemBackground, value, true)
+//    setBackgroundResource(value.resourceId)
+//    isFocusable = true // Required for some view types
+//    return this
+//}
 

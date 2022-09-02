@@ -65,6 +65,11 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         this.selectedPayeesId = selectedPayeesId
         notifyDataSetChanged()
     }
+
+    fun updatePayees(selectedPayeesId: List<Int>){
+        this.selectedPayeesId = selectedPayeesId
+        notifyDataSetChanged()
+    }
 }
 
 class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :

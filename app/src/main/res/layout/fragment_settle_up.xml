@@ -72,6 +72,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="4dp"
             android:src="@drawable/ic_baseline_local_phone_24"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/from_member_image_holder"
             app:layout_constraintStart_toEndOf="@+id/from_member_image_holder" />
 
@@ -79,12 +80,12 @@
             android:id="@+id/from_member_phone_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginBottom="4dp"
-            tools:text="9790307426"
             android:autoLink="phone"
             app:layout_constraintBottom_toBottomOf="@+id/from_member_image_holder"
-            app:layout_constraintStart_toEndOf="@+id/phone_image_view" />
+            app:layout_constraintStart_toEndOf="@+id/phone_image_view"
+            tools:text="9790307426" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -104,10 +105,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="@string/payee"
-        app:layout_constraintBottom_toBottomOf="@+id/clear_payees"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/clear_payees" />
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_view" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/select_all_payees"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_all"
+        app:layout_constraintBottom_toBottomOf="@+id/to_text_view"
+        app:layout_constraintEnd_toStartOf="@id/clear_payees"
+        app:layout_constraintTop_toTopOf="@+id/to_text_view"
+        tools:visibility="visible" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/clear_payees"
@@ -115,9 +127,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/clear"
-        android:visibility="invisible"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/to_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontal_view"
+        app:layout_constraintTop_toTopOf="@+id/to_text_view"
         tools:visibility="visible" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -125,7 +138,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/no_payee_selected"
-        app:layout_constraintBottom_toTopOf="@id/choose_payee_button"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/amount_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/clear_payees" />
@@ -134,14 +148,13 @@
         android:id="@+id/payees_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="gone"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@id/choose_payee_button"
+        app:layout_constraintBottom_toTopOf="@+id/amount_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clear_payees"
-        tools:listitem="@layout/group_member_card"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/to_text_view"
+        tools:listitem="@layout/choose_payee_card" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/choose_payee_button"
@@ -149,6 +162,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:text="@string/choose_payee"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/total_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -167,26 +181,27 @@
         android:id="@+id/total_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:text="@string/total"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/amount_text_view"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/amount_text_view"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amount_text_view"
         tools:visibility="visible" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/amount_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:textColor="@color/text_bold"
         android:textSize="34sp"
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/settle_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         tools:text="₹12500"
         tools:visibility="visible" />
 

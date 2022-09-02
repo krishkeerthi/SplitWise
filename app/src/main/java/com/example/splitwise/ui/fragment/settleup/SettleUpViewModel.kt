@@ -48,6 +48,13 @@ class SettleUpViewModel(
     val amount: LiveData<Float?>
         get() = _amount
 
+    private var selectedPayees = mutableSetOf<Member>()
+
+    private var _selectedPayeesCount = MutableLiveData<Int>()
+    val selectedPayeesCount: LiveData<Int>
+        get() = _selectedPayeesCount
+
+    var tempGroupsId: List<Int> = groupIds
     init {
         getGroups()
         Log.d(TAG, "group id size : ${groupIds.size} ")
@@ -65,7 +72,7 @@ class SettleUpViewModel(
             }
 
             // Test code starts
-            var tempGroupsId: List<Int> = groupIds
+
             if (groupIds.isEmpty()) {
                 groupRepository.getGroups()?.let {
                     val groupIds = mutableListOf<Int>()
@@ -124,7 +131,8 @@ class SettleUpViewModel(
 
     fun getAmount(receiverIds: List<Int>) {
         viewModelScope.launch {
-            _amount.value = transactionRepository.getOwed(payerId, receiverIds, groupIds)
+            Log.d(TAG, "getAmount: payerId = $payerId, receiverIds = ${receiverIds} groupIds = $tempGroupsId")
+            _amount.value = transactionRepository.getOwed(payerId, receiverIds, tempGroupsId)
         }
     }
 
@@ -150,6 +158,10 @@ class SettleUpViewModel(
                 }
             }
         }
+    }
+
+    fun setSelectedPayeesCount(){
+        _selectedPayeesCount.value = selectedPayees.size
     }
 
     fun settle(
@@ -200,6 +212,36 @@ class SettleUpViewModel(
             } else
                 null
         }
+    }
+
+    fun addPayeeToSelected(member: Member) {
+        selectedPayees.add(member)
+        _selectedPayeesCount.value = selectedPayees.size
+        //_selectedPayeesCount.value = _selectedPayeesCount.value?.plus(1) ?: 1
+
+        Log.d(TAG, "addPayeeToSelected: payees added selected count ${_selectedPayeesCount.value}")
+    }
+
+    fun removePayeeFromSelected(member: Member) {
+        selectedPayees.remove(member)
+        _selectedPayeesCount.value = selectedPayees.size
+        //_selectedPayeesCount.value = _selectedPayeesCount.value?.minus(1)
+        Log.d(TAG, "addPayeeToSelected: payees removed selected count ${_selectedPayeesCount.value}")
+    }
+
+    fun selectedPayeesIds(): List<Int>{
+        val payeesIds = mutableListOf<Int>()
+        for(member in selectedPayees){
+            payeesIds.add(member.memberId)
+        }
+        return payeesIds
+    }
+    fun getSelectedPayees() = selectedPayees.toList()
+
+    fun clearPayees() {
+        selectedPayees = mutableSetOf()
+        _selectedPayeesCount.value = selectedPayees.size
+        getAmount(selectedPayeesIds())
     }
 
 }
