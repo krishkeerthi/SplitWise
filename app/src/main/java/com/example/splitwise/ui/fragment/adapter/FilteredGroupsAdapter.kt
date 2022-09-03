@@ -17,11 +17,13 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.GroupCard1Binding
 import com.example.splitwise.util.formatDate
+import com.example.splitwise.util.ripple
 import com.example.splitwise.util.roundOff
 import java.util.*
 
 class FilteredGroupsAdapter(
-    val onExpenseClicked: (Int) -> Unit
+    val onGroupClicked: (Int) -> Unit,
+    val onImageClicked: (Int, String?, String) -> Unit
 ) : RecyclerView.Adapter<FilteredGroupsViewHolder>() {
     private var groups = listOf<Group>()
     private var query = ""
@@ -31,8 +33,28 @@ class FilteredGroupsAdapter(
         val binding = GroupCard1Binding.inflate(view, parent, false)
 
         return FilteredGroupsViewHolder(binding).apply {
-            itemView.setOnClickListener {
-                onExpenseClicked(groups[adapterPosition].groupId)
+//            itemView.setOnClickListener {
+//                onGroupClicked(groups[adapterPosition].groupId)
+//            }
+            binding.groupImageView.setOnClickListener {
+                it.ripple(it.context)
+                onImageClicked(
+                    groups[absoluteAdapterPosition].groupId,
+                    groups[absoluteAdapterPosition].groupIcon?.toString(),
+                    groups[absoluteAdapterPosition].groupName
+                )
+            }
+            binding.groupImageHolder.setOnClickListener {
+                it.ripple(it.context)
+                onImageClicked(
+                    groups[absoluteAdapterPosition].groupId,
+                    groups[absoluteAdapterPosition].groupIcon?.toString(),
+                    groups[absoluteAdapterPosition].groupName
+                )
+            }
+            binding.textLayout.setOnClickListener {
+                it.ripple(it.context)
+                onGroupClicked(groups[absoluteAdapterPosition].groupId)
             }
         }
     }

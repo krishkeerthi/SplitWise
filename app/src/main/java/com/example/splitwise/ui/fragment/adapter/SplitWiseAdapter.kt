@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.databinding.MemberOweLendCardBinding
 import com.example.splitwise.model.MemberPaymentStatsDetail
+import com.example.splitwise.util.ripple
 import com.example.splitwise.util.roundOff
 
 class SplitWiseAdapter(
@@ -18,6 +19,7 @@ class SplitWiseAdapter(
 
         return SplitWiseViewHolder(binding).apply {
             itemView.setOnClickListener {
+                //itemView.ripple(itemView.context)
                 onTransactionClicked(
                     membersPaymentStatsDetail[adapterPosition].memberId,
                     membersPaymentStatsDetail[adapterPosition].amountOwed,

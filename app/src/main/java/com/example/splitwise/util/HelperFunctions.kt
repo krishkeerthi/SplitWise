@@ -1,9 +1,11 @@
 package com.example.splitwise.util
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.content.res.TypedArray
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.fonts.Font
@@ -13,8 +15,11 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
+import com.google.android.material.internal.ContextUtils
+import com.google.android.material.internal.ContextUtils.getActivity
 import org.w3c.dom.Text
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -255,3 +260,16 @@ fun String.getBold(): String{
 //    return this
 //}
 
+@SuppressLint("RestrictedApi")
+fun View.ripple(context: Context){
+    val attrs = intArrayOf(android.R.attr.selectableItemBackground)
+    val typedArray: TypedArray? = getActivity(context)?.obtainStyledAttributes(attrs)
+    val backgroundResource = typedArray?.getResourceId(0, 0)
+    if(backgroundResource != null)
+        this.setBackgroundResource(backgroundResource)
+}
+
+fun View.hideKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(windowToken, 0)
+}

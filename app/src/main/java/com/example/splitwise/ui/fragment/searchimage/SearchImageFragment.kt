@@ -112,7 +112,8 @@ class SearchImageFragment : Fragment() {
 
     private fun gotoSetImageFragment(imageUrl: String) {
         val action =
-            SearchImageFragmentDirections.actionSearchImageFragmentToSetImageFragment(imageUrl, args.groupId, args.fromGroupsFragment, args.groupName)
+            SearchImageFragmentDirections.actionSearchImageFragmentToSetImageFragment(imageUrl, args.groupId,
+                args.fromGroupsFragment, args.groupName, args.fromGroupsSearchFragment)
         view?.findNavController()?.navigate(action)
     }
 

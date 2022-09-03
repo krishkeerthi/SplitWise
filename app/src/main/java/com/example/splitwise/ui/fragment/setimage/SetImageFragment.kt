@@ -171,15 +171,22 @@ class SetImageFragment : Fragment() {
                 cursor.close()
             }
             if(args.groupId != -1){
-                if(args.fromGroupsFragment)
+                if(args.fromGroupsSearchFragment){
                     viewModel.updateGroupIcon(testUri){
-                        gotoGroupsFragment()
+                        gotoGroupsSearchFragment()
                     }
-                else
-                    viewModel.updateGroupIcon(testUri){
-                        //gotoGroupsFragment()
-                        gotoCreateEditGroupFragment()
-                    }
+                }
+                else{
+                    if(args.fromGroupsFragment)
+                        viewModel.updateGroupIcon(testUri){
+                            gotoGroupsFragment()
+                        }
+                    else
+                        viewModel.updateGroupIcon(testUri){
+                            //gotoGroupsFragment()
+                            gotoCreateEditGroupFragment()
+                        }
+                }
             }
             else {
                 Log.d(TAG, "downloadImage: error causing ${testUri}")
@@ -239,6 +246,11 @@ class SetImageFragment : Fragment() {
             args.groupName,
             uri.toString()
         )
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun gotoGroupsSearchFragment(){
+        val action = SetImageFragmentDirections.actionSetImageFragmentToSearchGroupFragment()
         view?.findNavController()?.navigate(action)
     }
 

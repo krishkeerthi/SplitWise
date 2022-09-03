@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.adapter
 
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,20 +11,25 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.GroupCard1Binding
 import com.example.splitwise.util.formatDate
+import com.example.splitwise.util.ripple
 import com.example.splitwise.util.roundOff
 
+
 class GroupsAdapter(
-    val onExpenseClicked: (Int) -> Unit,
+    val onGroupClicked: (Int) -> Unit,
     val onImageClicked: (Int, String?, String) -> Unit
 ) : RecyclerView.Adapter<GroupsViewHolder>() {
     private var groups = listOf<Group>()
 
+    @SuppressLint("RestrictedApi")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupsViewHolder {
         val view = LayoutInflater.from(parent.context)
         val binding = GroupCard1Binding.inflate(view, parent, false)
 
         return GroupsViewHolder(binding).apply {
+
             binding.groupImageView.setOnClickListener {
+                it.ripple(it.context)
                 onImageClicked(
                     groups[absoluteAdapterPosition].groupId,
                     groups[absoluteAdapterPosition].groupIcon?.toString(),
@@ -31,6 +37,7 @@ class GroupsAdapter(
                 )
             }
             binding.groupImageHolder.setOnClickListener {
+                it.ripple(it.context)
                 onImageClicked(
                     groups[absoluteAdapterPosition].groupId,
                     groups[absoluteAdapterPosition].groupIcon?.toString(),
@@ -38,8 +45,8 @@ class GroupsAdapter(
                 )
             }
             binding.textLayout.setOnClickListener {
-                onExpenseClicked(groups[absoluteAdapterPosition].groupId)
-                //it.ripple()
+                it.ripple(it.context)
+                onGroupClicked(groups[absoluteAdapterPosition].groupId)
             }
         }
     }

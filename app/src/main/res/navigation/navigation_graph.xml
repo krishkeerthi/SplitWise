@@ -26,6 +26,9 @@
         <argument
             android:name="fromGroupsFragment"
             app:argType="boolean" />
+        <argument
+            android:name="fromGroupsSearchFragment"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/setImageFragment"
@@ -62,6 +65,14 @@
         <argument
             android:name="groupName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_setImageFragment_to_searchGroupFragment"
+            app:destination="@id/searchGroupFragment"
+            app:popUpTo="@id/searchGroupFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="fromGroupsSearchFragment"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/groupsFragment"
@@ -369,6 +380,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_searchGroupFragment_to_groupIconFragment"
+            app:destination="@id/groupIconFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -481,5 +495,8 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <argument
+            android:name="fromGroupsSearchFragment"
+            app:argType="boolean" />
     </fragment>
 </navigation>

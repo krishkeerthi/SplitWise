@@ -182,7 +182,8 @@ class GroupIconFragment : Fragment() {
         val action = GroupIconFragmentDirections.actionGroupIconFragmentToSearchImageFragment(
             args.groupId,
             if (args.groupName == "") "random" else args.groupName,
-            args.fromGroupsFragment
+            args.fromGroupsFragment,
+            args.fromGroupsSearchFragment
         )
         view?.findNavController()?.navigate(action)
     }

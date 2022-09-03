@@ -1,36 +1,41 @@
 package com.example.splitwise.ui.fragment.searchgroup
 
-import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.ContentValues.TAG
-import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSearchGroupBinding
 import com.example.splitwise.ui.fragment.adapter.FilteredGroupsAdapter
-import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
-import com.example.splitwise.util.CustomOnBackPressed
+import com.example.splitwise.util.hideKeyboard
 
 class SearchGroupFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchGroupBinding
-    private val viewModel: SearchGroupViewModel by viewModels {
+    private lateinit var sharedPreferences: SharedPreferences
+    private val viewModel: SearchGroupViewModel by activityViewModels {
         SearchGroupViewModelFactory(requireContext())
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val callback = object : OnBackPressedCallback(true /* enabled by default */) {
+
+            override fun handleOnBackPressed() {
+                viewModel.textEntered = ""
+                NavHostFragment.findNavController(this@SearchGroupFragment)
+                    .popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onCreateView(
@@ -45,14 +50,26 @@ class SearchGroupFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //viewModel.fetchData()
+//        sharedPreferences = requireActivity().getSharedPreferences(
+//            "com.example.splitwise.sharedprefkey",
+//            Context.MODE_PRIVATE
+//        )
+
 
         binding = FragmentSearchGroupBinding.bind(view)
 
         // Rv
-        val groupsAdapter = FilteredGroupsAdapter { groupId: Int ->
+        val groupsAdapter = FilteredGroupsAdapter({ groupId: Int ->
             goToExpenseFragment(groupId)
-        }
+        },
+            { groupId: Int, groupIcon: String?, groupName: String ->
+                gotoGroupIconFragment(
+                    groupId,
+                    groupIcon,
+                    groupName
+                )
+            }
+        )
 
         binding.searchGroupsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -66,13 +83,12 @@ class SearchGroupFragment : Fragment() {
                 groupsAdapter.updateGroups(groups, viewModel.textEntered)
                 binding.searchGroupsRecyclerView.visibility = View.VISIBLE
                 binding.noResultImage.visibility = View.GONE
-            } else if(groups != null && groups.isEmpty() ) { // to handle when query not entered
+            } else if (groups != null && groups.isEmpty()) { // to handle when query not entered
                 Log.d(TAG, "onViewCreated:$$$ groups != null && groups.isEmpty()")
                 groupsAdapter.updateGroups(listOf(), "")
                 binding.searchGroupsRecyclerView.visibility = View.GONE
                 binding.noResultImage.visibility = View.VISIBLE
-            }
-            else{
+            } else {
                 Log.d(TAG, "onViewCreated:$$$ else")
                 binding.searchGroupsRecyclerView.visibility = View.GONE
                 binding.noResultImage.visibility = View.GONE
@@ -135,14 +151,26 @@ class SearchGroupFragment : Fragment() {
         searchView.isIconified = false
         searchView.requestFocus()
 
+
+        searchView.setQuery(viewModel.textEntered, true)
+        viewModel.fetchData()
+
+//        val query = sharedPreferences.getString("GROUPQUERY", "")
+//        if(query != "")
+//            searchView.setQuery(query, true)
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                searchView.hideKeyboard()
+                //viewModel.fetchData()
                 return true
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
                 if (query != null) {
                     viewModel.textEntered = query
+                    // saving query in shared preference
+                    //changeGroupQuery(query)
                     viewModel.fetchData()
                 }
                 return true
@@ -156,14 +184,31 @@ class SearchGroupFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
+    private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String) {
+        val action = SearchGroupFragmentDirections.actionSearchGroupFragmentToGroupIconFragment(
+            groupId,
+            groupIcon,
+            groupName,
+            true,
+            true
+        )
+        view?.findNavController()?.navigate(action)
+    }
+
+    private fun changeGroupQuery(query: String) {
+        with(sharedPreferences.edit()) {
+            putString("GROUPQUERY", query)
+            apply()
+        }
+    }
+
     private fun goToGroupsFragment() {
         activity?.onBackPressed()
-     //   activity?.supportFragmentManager?.popBackStackImmediate()
+        //   activity?.supportFragmentManager?.popBackStackImmediate()
 //        val action =
 //            SearchGroupFragmentDirections.actionSearchGroupFragmentToGroupsFragment()
 //        view?.findNavController()?.navigate(action)
     }
-
 
 
 //    // Below methods not in use

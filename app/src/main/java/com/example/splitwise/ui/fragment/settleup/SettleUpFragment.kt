@@ -163,6 +163,7 @@ class SettleUpFragment : Fragment() {
                     binding.selectAllPayees.visibility = View.VISIBLE
 
             } else {
+                binding.selectAllPayees.visibility = View.VISIBLE
                 binding.clearPayees.visibility = View.GONE
                 binding.totalTextView.visibility = View.GONE
                 binding.amountTextView.visibility = View.GONE

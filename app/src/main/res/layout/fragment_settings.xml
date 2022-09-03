@@ -43,7 +43,8 @@
                     android:layout_height="wrap_content"
                     android:layoutDirection="rtl"
                     android:text="@string/Default"
-                    android:textAlignment="textStart" />
+                    android:textAlignment="textStart"
+                 />
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/shape_boxed_radio_button"

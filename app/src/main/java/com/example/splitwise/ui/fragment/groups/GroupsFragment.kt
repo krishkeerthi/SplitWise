@@ -15,10 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
-import com.example.splitwise.ui.fragment.adapter.AmountFilterArrayAdapter
-import com.example.splitwise.ui.fragment.adapter.DateFilterArrayAdapter
-import com.example.splitwise.ui.fragment.adapter.GroupFilterAdapter
-import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
+import com.example.splitwise.ui.fragment.adapter.*
 import com.example.splitwise.ui.fragment.addamount.AddAmountDialog
 import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -191,7 +188,8 @@ class GroupsFragment : Fragment() {
             groupId,
             groupIcon,
             groupName,
-            true
+            true,
+            false
         )
         view?.findNavController()?.navigate(action)
     }
@@ -336,72 +334,106 @@ class GroupsFragment : Fragment() {
 
     private fun openAmountFilterBottomSheet() {
         val amountFilterBottomSheetDialog = BottomSheetDialog(requireContext())
-        amountFilterBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+        amountFilterBottomSheetDialog.setContentView(R.layout.rv_bottom_sheet)
 
         amountFilterBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         val amountFilterTitle =
             amountFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
-        val amountFilterList =
-            amountFilterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+        val amountFilterRv =
+            amountFilterBottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_list)
         val amountFilters = AmountFilter.values().toList()
 
         amountFilterTitle?.text = getString(R.string.filter_by_amount)
 
         //Adapter
-        val filterAdapter =
-            AmountFilterArrayAdapter(
-                requireContext(),
-                R.layout.icon_bottom_sheet_item,
-                amountFilters
-            )
-        amountFilterList?.apply {
-            Log.d(TAG, "openCategoryBottomSheet: list adapter set")
-            adapter = filterAdapter
-            onItemClickListener =
-                AdapterView.OnItemClickListener { parent, view, position, id ->
+//        val filterAdapter =
+//            AmountFilterArrayAdapter(
+//                requireContext(),
+//                R.layout.icon_bottom_sheet_item,
+//                amountFilters
+//            )
+//        amountFilterList?.apply {
+//            Log.d(TAG, "openCategoryBottomSheet: list adapter set")
+//            adapter = filterAdapter
+//            onItemClickListener =
+//                AdapterView.OnItemClickListener { parent, view, position, id ->
+//
+//                    viewModel.selectedAmountFilter = amountFilters[position]
+//                    openAmountDialog()
+//                    amountFilterBottomSheetDialog.dismiss()
+//                }
+//        }
 
-                    viewModel.selectedAmountFilter = amountFilters[position]
-                    openAmountDialog()
-                    amountFilterBottomSheetDialog.dismiss()
-                }
+        val filterAdapter = AmountFilterAdapter(
+            amountFilters
+        ) { filter ->
+            amountFilterClicked(filter)
+            amountFilterBottomSheetDialog.dismiss()
+        }
+
+        amountFilterRv?.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = filterAdapter
         }
 
         amountFilterBottomSheetDialog.show()
     }
 
+    private fun amountFilterClicked(filter: AmountFilter) {
+        viewModel.selectedAmountFilter = filter
+        openAmountDialog()
+    }
+
     private fun openDateFilterBottomSheet() {
         val dateFilterBottomSheetDialog = BottomSheetDialog(requireContext())
-        dateFilterBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+        dateFilterBottomSheetDialog.setContentView(R.layout.rv_bottom_sheet)
 
         dateFilterBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         val dateFilterTitle =
             dateFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
-        val dateFilterList =
-            dateFilterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+        val dateFilterRv =
+            dateFilterBottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_list)
         val dateFilters = DateFilter.values().toList()
 
         dateFilterTitle?.text = getString(R.string.filter_by_date)
 
         //Adapter
-        val filterAdapter =
-            DateFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, dateFilters)
-        dateFilterList?.apply {
-            Log.d(TAG, "openCategoryBottomSheet: list adapter set")
-            adapter = filterAdapter
-            onItemClickListener =
-                AdapterView.OnItemClickListener { parent, view, position, id ->
+//        val filterAdapter =
+//            DateFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, dateFilters)
+//        dateFilterList?.apply {
+//            Log.d(TAG, "openCategoryBottomSheet: list adapter set")
+//            adapter = filterAdapter
+//            onItemClickListener =
+//                AdapterView.OnItemClickListener { parent, view, position, id ->
+//
+//                    viewModel.selectedDateFilter = dateFilters[position]
+//                    openDatePicker()
+//
+//                    dateFilterBottomSheetDialog.dismiss()
+//                }
+//        }
 
-                    viewModel.selectedDateFilter = dateFilters[position]
-                    openDatePicker()
-
-                    dateFilterBottomSheetDialog.dismiss()
-                }
+        val filterAdapter = DateFilterAdapter(
+            dateFilters
+        ) { filter ->
+            dateFilterClicked(filter)
+            dateFilterBottomSheetDialog.dismiss()
         }
 
+        dateFilterRv?.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = filterAdapter
+        }
         dateFilterBottomSheetDialog.show()
     }
+
+    private fun dateFilterClicked(filter: DateFilter) {
+        viewModel.selectedDateFilter = filter
+        openDatePicker()
+    }
+
 
     private val dateSetListener =
         DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->  // SAM

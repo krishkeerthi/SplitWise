@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.databinding.ExpenseCard1Binding
 import com.example.splitwise.model.ExpenseMember
 import com.example.splitwise.util.getCategoryDrawableResource
+import com.example.splitwise.util.ripple
 import com.example.splitwise.util.roundOff
 
 class ExpensesAdapter(
@@ -19,6 +20,8 @@ class ExpensesAdapter(
 
         return ExpensesViewHolder(binding).apply {
             itemView.setOnClickListener {
+                //binding.expenseCard.ripple(binding.root.context)
+                //itemView.ripple(itemView.context)
                 onExpenseClicked(expenseMembers[adapterPosition].expenseId)
             }
         }

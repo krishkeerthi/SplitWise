@@ -66,7 +66,7 @@ class CreateEditGroupFragment : Fragment() {
                         .popBackStack()
             }
         }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback);
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onCreateView(
@@ -366,6 +366,7 @@ class CreateEditGroupFragment : Fragment() {
                 args.groupId,
                 groupIcon,
                 groupName,
+                false,
                 false
             )
         view?.findNavController()?.navigate(action)
