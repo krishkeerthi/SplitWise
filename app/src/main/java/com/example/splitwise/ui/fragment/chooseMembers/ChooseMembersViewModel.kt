@@ -25,7 +25,7 @@ class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) 
         get() = _selectedMembersCount
 
 
-    private var checkedMembers = mutableSetOf<Member>()
+    var checkedMembers = mutableSetOf<Member>()
     init {
         _selectedMembersCount.value = 0
     }

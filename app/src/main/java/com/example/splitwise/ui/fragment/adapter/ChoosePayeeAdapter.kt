@@ -79,8 +79,8 @@ class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
         binding.payeeNameTextView.text = payee.name
         binding.amountTextView.text = "₹" + amount.roundOff()
 
-        if(payee.memberId in selectedPayees)
-            binding.selectedCheckBox.isChecked = true
+        binding.selectedCheckBox.isChecked = payee.memberId in selectedPayees
+
     }
 
     fun bindAndCheck(payee: Member) {

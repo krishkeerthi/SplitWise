@@ -58,8 +58,8 @@ class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding) :
         binding.memberNameTextView.text = memberAndStreak.member.name
         binding.memberStreakTextView.text =  "🔥" + memberAndStreak.streak.toString()
 
-        if(memberAndStreak.member.memberId in checkedMembersId)
-            binding.selectedCheckBox.isChecked = true
+        binding.selectedCheckBox.isChecked = memberAndStreak.member.memberId in checkedMembersId
+
     }
 
 }

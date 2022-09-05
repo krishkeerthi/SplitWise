@@ -89,18 +89,31 @@ class ChooseGroupsFragment : Fragment() {
 
         // Live observer to update menu
         viewModel.selectedGroupsCount.observe(viewLifecycleOwner) { selectedGroupCount ->
-            if (selectedGroupCount != null && selectedGroupCount > 0) {
+            val selectedCount = viewModel.selectedGroups.size
+
+            if (selectedCount > 0) {
                 if (contextualActionMode == null) {
                     contextualActionMode = requireActivity().startActionMode(actionModeCallback)
                 }
                 else{
-                    contextualActionMode?.title = "${viewModel.selectedGroupsCount.value} ${getString(R.string.selected)}"
+                    contextualActionMode?.title = "$selectedCount ${getString(R.string.selected)}"
                 }
             } else {
                 contextualActionMode?.finish()
                 contextualActionMode = null
             }
 
+//            if (selectedGroupCount != null && selectedGroupCount > 0) {
+//                if (contextualActionMode == null) {
+//                    contextualActionMode = requireActivity().startActionMode(actionModeCallback)
+//                }
+//                else{
+//                    contextualActionMode?.title = "${viewModel.selectedGroups.size} ${getString(R.string.selected)}"
+//                }
+//            } else {
+//                contextualActionMode?.finish()
+//                contextualActionMode = null
+//            }
         }
 
         // Options menu

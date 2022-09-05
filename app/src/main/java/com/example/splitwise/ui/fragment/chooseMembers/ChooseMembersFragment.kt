@@ -95,12 +95,27 @@ class ChooseMembersFragment : Fragment() {
 //                contextualActionMode?.finish()
 //                contextualActionMode = null
 //            }
-            if(it > 0)
-                (requireActivity() as AppCompatActivity).supportActionBar?.title = "$it ${getString(R.string.selected)}"
+            val selectedCount = viewModel.checkedMembers.size
+            if(selectedCount > 0){
+                (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                    "${viewModel.checkedMembers.size} ${getString(R.string.selected)}"
+            }
             else
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.choose_members)
-            menuVisible = it > 0
+
+            menuVisible = selectedCount > 0
             requireActivity().invalidateOptionsMenu()
+
+//            if(it > 0) {
+//                (requireActivity() as AppCompatActivity).supportActionBar?.title =
+//                    "${viewModel.checkedMembers.size} ${getString(R.string.selected)}"
+//            }
+//            else{
+//
+//            }
+//                (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.choose_members)
+//            menuVisible = it > 0
+//            requireActivity().invalidateOptionsMenu()
 
         }
 

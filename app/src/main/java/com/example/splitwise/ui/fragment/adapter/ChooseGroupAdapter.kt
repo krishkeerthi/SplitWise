@@ -26,12 +26,11 @@ class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
             }
 
             binding.selectedCheckBox.setOnCheckedChangeListener { compoundButton, isChecked ->
-               // Log.d(TAG, "onCreateViewHolder: group checkbox checked $isChecked")
+                // Log.d(TAG, "onCreateViewHolder: group checkbox checked $isChecked")
                 if (isChecked) {
                     //binding.selectedCheckBox.isChecked = true
                     onItemChecked(groups[adapterPosition], true)
-                }
-                else {
+                } else {
                     //binding.selectedCheckBox.isChecked = false
                     onItemChecked(groups[adapterPosition], false)
                 }
@@ -71,21 +70,25 @@ class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
         binding.groupNameTextView.text = group.groupName
 
         Log.d(TAG, "bind: checking inside bind")
-        if(group.groupIcon != null) {
+        if (group.groupIcon != null) {
             binding.groupImageView.setImageURI(group.groupIcon)
-            binding.groupImageHolder.visibility= View.INVISIBLE
+            binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE
-        }
-        else{
-            binding.groupImageHolder.visibility= View.VISIBLE
+        } else {
+            binding.groupImageHolder.visibility = View.VISIBLE
             binding.groupImageHolderImage.visibility = View.VISIBLE
             binding.groupImageView.visibility = View.INVISIBLE
         }
 
-        if(group.groupId in selectedGroupIds) {
+        if (group.groupId in selectedGroupIds) {
             Log.d(TAG, "bind: checking inside is checked")
             binding.selectedCheckBox.isChecked = true
+        }
+        else{
+            binding.selectedCheckBox.isChecked = false
+            // setting default checked state to unchecked, otherwise while recycling view, previously selected checked states are shown
+
         }
     }
 
