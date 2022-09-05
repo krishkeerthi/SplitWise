@@ -44,6 +44,7 @@ class SetImageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.group_icon)
         return inflater.inflate(R.layout.fragment_set_image, container, false)
     }
 

@@ -52,6 +52,7 @@ class GroupIconFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.group_icon)
         return inflater.inflate(R.layout.fragment_group_icon, container, false)
     }
 

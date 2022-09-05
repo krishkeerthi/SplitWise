@@ -8,6 +8,7 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
@@ -47,6 +48,7 @@ class ExpensesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.expenses)
         return inflater.inflate(R.layout.fragment_expenses, container, false)
     }
 

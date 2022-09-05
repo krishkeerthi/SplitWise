@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -42,6 +43,7 @@ class SplitWiseFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.splitwise)
         return inflater.inflate(R.layout.fragment_split_wise, container, false)
     }
 

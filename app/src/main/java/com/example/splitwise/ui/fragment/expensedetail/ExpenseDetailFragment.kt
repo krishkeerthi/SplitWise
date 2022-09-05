@@ -58,6 +58,7 @@ class ExpenseDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.expense_detail)
         return inflater.inflate(R.layout.fragment_expense_detail, container, false)
     }
 

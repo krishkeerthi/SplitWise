@@ -2,6 +2,7 @@ package com.example.splitwise.ui.fragment.searchimage
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -29,6 +30,7 @@ class SearchImageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.search)
         return inflater.inflate(R.layout.fragment_search_image, container, false)
     }
 

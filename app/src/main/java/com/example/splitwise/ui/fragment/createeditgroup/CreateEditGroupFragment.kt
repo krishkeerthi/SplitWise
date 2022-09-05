@@ -11,6 +11,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -74,6 +75,11 @@ class CreateEditGroupFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        if(args.groupId != -1)
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.edit_group)
+        else
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.create_group)
+
         return inflater.inflate(R.layout.fragment_create_edit_group, container, false)
     }
 

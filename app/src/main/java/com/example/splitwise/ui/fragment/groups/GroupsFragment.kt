@@ -8,6 +8,7 @@ import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -41,6 +42,7 @@ class GroupsFragment : Fragment() {
 //        val view = inflater.inflate(R.layout.fragment_groups, container, false)
 //        binding = FragmentGroupsBinding.bind(view)
 
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.groups)
         return inflater.inflate(R.layout.fragment_groups, container, false)
     }
 

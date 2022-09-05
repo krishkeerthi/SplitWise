@@ -50,6 +50,8 @@
     <string name="tamil">Tamil</string>
     <string name="english">English</string>
     <string name="create_edit_group">Create Group</string>
+    <string name="create_group">Create Group</string>
+    <string name="edit_group">Edit Group</string>
     <string name="group_overview">Group Overview</string>
     <string name="expense_overview">Expense Overview</string>
     <string name="Default">Default</string>
@@ -96,5 +98,5 @@
     <string name="discard_changes">Do you want to discard changes?</string>
     <string name="delete_message">Are you sure want to delete?</string>
     <string name="enter_amount">Enter amount</string>
-
+    <string name="share">Share</string>
 </resources>

@@ -34,6 +34,8 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.settings)
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
@@ -41,8 +43,6 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentSettingsBinding.bind(view)
-
-        requireActivity().title = "Settings"
 
         sharedPreferences = requireActivity().getSharedPreferences(
             "com.example.splitwise.sharedprefkey",

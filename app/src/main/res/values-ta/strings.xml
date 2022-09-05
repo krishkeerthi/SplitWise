@@ -51,6 +51,8 @@
     <string name="tamil">தமிழ்</string>
     <string name="english">ஆங்கிலம்</string>
     <string name="create_edit_group">குழு உருவாக்கு</string>
+    <string name="create_group">குழு உருவாக்கு</string>
+    <string name="edit_group">குழு மாற்று</string>
     <string name="group_overview">கண்ணோட்டம்</string>
     <string name="expense_overview">கண்ணோட்டம்</string>
     <string name="Default">இயல்புநிலை</string>
@@ -97,4 +99,5 @@
     <string name="discard_changes">மாற்றங்களை நிராகரிக்க விரும்புகிறீர்களா?</string>
     <string name="delete_message">நீங்கள் நிச்சயமாக நீக்க விரும்புகிறீர்களா?</string>
     <string name="enter_amount">தொகையை உள்ளிடவும்</string>
+    <string name="share">பகிர்</string>
 </resources>

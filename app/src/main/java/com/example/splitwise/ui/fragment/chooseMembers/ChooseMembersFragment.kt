@@ -33,6 +33,7 @@ class ChooseMembersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.choose_members)
         return inflater.inflate(R.layout.fragment_choose_members, container, false)
     }
 
