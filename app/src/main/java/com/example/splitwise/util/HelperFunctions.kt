@@ -273,3 +273,27 @@ fun View.hideKeyboard() {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(windowToken, 0)
 }
+
+@SuppressLint("RestrictedApi")
+fun String.translate(context: Context): String{
+    val resource = getActivity(context)?.resources
+
+    return when(this){
+        "Date" -> resource?.getString(R.string.date).toString()
+        "Above" -> resource?.getString(R.string.above).toString()
+        "Below" -> resource?.getString(R.string.below).toString()
+        "After" -> resource?.getString(R.string.after).toString()
+        "Before" -> resource?.getString(R.string.before).toString()
+        "Amount" -> resource?.getString(R.string.amount).toString()
+        "Food" -> resource?.getString(R.string.food).toString()
+        "Travel" -> resource?.getString(R.string.travel).toString()
+        "Tickets" -> resource?.getString(R.string.tickets).toString()
+        "Rent" -> resource?.getString(R.string.rent).toString()
+        "Fees" -> resource?.getString(R.string.fees).toString()
+        "Repairs" -> resource?.getString(R.string.repairs).toString()
+        "Entertainment" -> resource?.getString(R.string.entertainment).toString()
+        "Essentials" -> resource?.getString(R.string.essentials).toString()
+        "Others" -> resource?.getString(R.string.others).toString()
+        else -> resource?.getString(R.string.others).toString()
+    }
+}

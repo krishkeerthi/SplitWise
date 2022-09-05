@@ -4,7 +4,6 @@ import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentChooseGroupsBinding
 import com.example.splitwise.ui.fragment.adapter.ChooseGroupAdapter
-import com.example.splitwise.ui.fragment.chooseMembers.ChooseMembersFragmentDirections
 import com.example.splitwise.util.mergeList
 
 
@@ -36,7 +34,8 @@ class ChooseGroupsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.select_group)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.select_group)
         return inflater.inflate(R.layout.fragment_choose_groups, container, false)
     }
 
@@ -69,9 +68,17 @@ class ChooseGroupsFragment : Fragment() {
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             if (groups != null) {
                 Log.d(TAG, "onViewCreated: checking ")
-                if(args.selectedGroupIds.toList().isNotEmpty() && viewModel.selectedGroupIds().isNotEmpty())
-                groupsAdapter.updateGroups(groups, mergeList(args.selectedGroupIds.toList() ,viewModel.selectedGroupIds().toList()))
-                else if(args.selectedGroupIds.toList().isNotEmpty())
+                if (args.selectedGroupIds.toList().isNotEmpty() && viewModel.selectedGroupIds()
+                        .isNotEmpty()
+                )
+                    groupsAdapter.updateGroups(
+                        groups,
+                        mergeList(
+                            args.selectedGroupIds.toList(),
+                            viewModel.selectedGroupIds().toList()
+                        )
+                    )
+                else if (args.selectedGroupIds.toList().isNotEmpty())
                     groupsAdapter.updateGroups(groups, args.selectedGroupIds.toList())
                 else
                     groupsAdapter.updateGroups(groups, viewModel.selectedGroupIds().toList())
@@ -83,9 +90,12 @@ class ChooseGroupsFragment : Fragment() {
         // Live observer to update menu
         viewModel.selectedGroupsCount.observe(viewLifecycleOwner) { selectedGroupCount ->
             if (selectedGroupCount != null && selectedGroupCount > 0) {
-                if (contextualActionMode == null)
+                if (contextualActionMode == null) {
                     contextualActionMode = requireActivity().startActionMode(actionModeCallback)
-
+                }
+                else{
+                    contextualActionMode?.title = "${viewModel.selectedGroupsCount.value} ${getString(R.string.selected)}"
+                }
             } else {
                 contextualActionMode?.finish()
                 contextualActionMode = null
@@ -121,19 +131,24 @@ class ChooseGroupsFragment : Fragment() {
     }
 
     private val actionModeCallback = object : ActionMode.Callback {
+
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             mode?.apply {
+                Log.d(TAG, "onCreateActionMode: action mode create")
                 menuInflater?.inflate(
                     R.menu.choose_members_fragment_menu,
                     menu
                 ) // Since done is the only menu, I just reused choose_members_fragment_menu
-                title = getString(R.string.select_group)
+                title =
+                    "${viewModel.selectedGroupsCount.value} ${getString(R.string.selected)}" //getString(R.string.select_group)
 
             }
             return true
         }
 
         override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            Log.d(TAG, "onPrepareActionMode: action mode prepare")
+            mode?.title = "${viewModel.selectedGroupsCount.value} ${getString(R.string.selected)}"
             return false // false when no updation performed
         }
 
@@ -149,18 +164,18 @@ class ChooseGroupsFragment : Fragment() {
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-             gotoChooseGroupsFragment()
+            gotoChooseGroupsFragment()
         }
     }
 
-    private fun gotoSplitWiseFragment(){
+    private fun gotoSplitWiseFragment() {
         val action = ChooseGroupsFragmentDirections.actionChooseGroupsFragmentToSplitWiseFragment(
             viewModel.getSelectedGroups().toTypedArray()
         )
         view?.findNavController()?.navigate(action)
     }
 
-    private fun gotoChooseGroupsFragment(){
+    private fun gotoChooseGroupsFragment() {
         val action = ChooseGroupsFragmentDirections.actionChooseGroupsFragmentSelf(IntArray(0))
         view?.findNavController()?.navigate(action)
     }

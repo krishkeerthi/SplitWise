@@ -246,7 +246,7 @@ class ExpenseDetailFragment : Fragment() {
                     else
                         Snackbar.make(binding.root, getString(R.string.error_adding_image), Snackbar.LENGTH_SHORT).show()
                 } else
-                    Snackbar.make(binding.root, "Bit map not found", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, getString(R.string.bitmap_not_found), Snackbar.LENGTH_SHORT).show()
             }
         }
 

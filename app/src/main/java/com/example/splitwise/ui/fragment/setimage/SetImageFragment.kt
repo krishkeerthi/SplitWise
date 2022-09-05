@@ -258,14 +258,14 @@ class SetImageFragment : Fragment() {
     private fun statusMessage(url: String, directory: File, status: Int): String {
         var msg = ""
         msg = when (status) {
-            DownloadManager.STATUS_FAILED -> "Download has been failed, please try again"
-            DownloadManager.STATUS_PAUSED -> "Paused"
-            DownloadManager.STATUS_PENDING -> "Pending"
-            DownloadManager.STATUS_RUNNING -> "Downloading..."
-            DownloadManager.STATUS_SUCCESSFUL -> "Group icon set" //Image downloaded successfully in $directory" + File.separator + url.substring(
+            DownloadManager.STATUS_FAILED -> getString(R.string.download_failed)
+            DownloadManager.STATUS_PAUSED -> getString(R.string.paused)
+            DownloadManager.STATUS_PENDING -> getString(R.string.pending)
+            DownloadManager.STATUS_RUNNING -> getString(R.string.downloading)
+            DownloadManager.STATUS_SUCCESSFUL -> getString(R.string.group_icon_set) //Image downloaded successfully in $directory" + File.separator + url.substring(
 //                url.lastIndexOf("/") + 1
 //            )
-            else -> "There's nothing to download"
+            else -> getString(R.string.nothing_to_download)
         }
         return msg
     }

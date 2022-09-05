@@ -8,6 +8,7 @@ import com.example.splitwise.databinding.IconSelectedBottomSheetItemBinding
 import com.example.splitwise.util.GroupFilter
 import com.example.splitwise.util.getGroupFilterDrawableResource
 import com.example.splitwise.util.titleCase
+import com.example.splitwise.util.translate
 
 class GroupFilterAdapter(
     private val filters: List<GroupFilter>,
@@ -80,7 +81,7 @@ class GroupFilterAdapter(
 class GroupFilterViewHolder(val binding: IconBottomSheetItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(filter: GroupFilter) {
-        binding.itemTextView.text = filter.name.lowercase().titleCase()
+        binding.itemTextView.text = filter.name.lowercase().titleCase().translate(binding.root.context)
         binding.itemImageView.setImageResource(getGroupFilterDrawableResource(filter.ordinal))
     }
 }
@@ -88,6 +89,6 @@ class GroupFilterViewHolder(val binding: IconBottomSheetItemBinding) :
 class GroupFilterSelectedViewHolder(val binding: IconSelectedBottomSheetItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(filter: GroupFilter) {
-        binding.itemTextView.text = filter.name.lowercase().titleCase()
+        binding.itemTextView.text = filter.name.lowercase().titleCase().translate(binding.root.context)
     }
 }

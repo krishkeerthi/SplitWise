@@ -44,7 +44,7 @@ class CategoryViewHolder(val binding: com.example.splitwise.databinding.IconBott
 
 
     fun bind(category: Category) {
-        binding.itemTextView.text = category.name.lowercase().titleCase()
+        binding.itemTextView.text = category.name.lowercase().titleCase().translate(binding.root.context)
         binding.itemImageView.setImageResource(getCategoryDrawableResource(category.ordinal))
     }
 

@@ -154,14 +154,14 @@ class ExpensesFragment : Fragment() {
             (child as Chip).setOnCheckedChangeListener { buttonView, isChecked ->
                // Log.d(TAG, "onViewCreated: checked outside")
                 val category = when(buttonView.text){
-                    "Food" -> Category.FOOD
-                    "Travel" -> Category.TRAVEL
-                    "Tickets" -> Category.TICKETS
-                    "Rent" -> Category.RENT
-                    "Fees" -> Category.FEES
-                    "Repair" -> Category.REPAIRS
-                    "Entertainment" -> Category.ENTERTAINMENT
-                    "Essentials" -> Category.ESSENTIALS
+                    getString(R.string.food) -> Category.FOOD
+                    getString(R.string.travel) -> Category.TRAVEL
+                    getString(R.string.tickets) -> Category.TICKETS
+                    getString(R.string.rent) -> Category.RENT
+                    getString(R.string.fees) -> Category.FEES
+                    getString(R.string.repairs) -> Category.REPAIRS
+                    getString(R.string.entertainment) -> Category.ENTERTAINMENT
+                    getString(R.string.essentials) -> Category.ESSENTIALS
                     else -> Category.OTHERS
                 }
 

@@ -145,16 +145,16 @@ class GroupsFragment : Fragment() {
         if (viewModel.filterModel.amountFilterModel != null) {
             val amountFilterModel = viewModel.filterModel.amountFilterModel
             binding.amountFilterChip.text = "${
-                amountFilterModel!!.amountFilter.name.lowercase().titleCase()
+                amountFilterModel!!.amountFilter.name.lowercase().titleCase().translate(requireContext())
             } " +
-                    "${amountFilterModel!!.amount}"
+                    "₹${amountFilterModel!!.amount}"
             binding.amountFilterChip.visibility = View.VISIBLE
         }
 
         if (viewModel.filterModel.dateFilterModel != null) {
             val dateFilterModel = viewModel.filterModel.dateFilterModel
             binding.dateFilterChip.text =
-                "${dateFilterModel!!.dateFilter.name.lowercase().titleCase()} ${
+                "${dateFilterModel!!.dateFilter.name.lowercase().titleCase().translate(requireContext())} ${
                     formatDate(dateFilterModel!!.date)
                 }"
             binding.dateFilterChip.visibility = View.VISIBLE
@@ -539,13 +539,13 @@ class GroupsFragment : Fragment() {
 //        chipGroup.addView(chip)
 
         binding.dateFilterChip.text =
-            "${dateFilter.name.lowercase().titleCase()} ${formatDate(date, dateOnly = true)}"
+            "${dateFilter.name.lowercase().titleCase().translate(requireContext())} ${formatDate(date, dateOnly = true)}"
         binding.dateFilterChip.visibility = View.VISIBLE
     }
 
     private fun createAmountFilterChip(amountFilter: AmountFilter, amount: Float) {
         binding.amountFilterChip.text =
-            "${amountFilter.name.lowercase().titleCase()} ${amount.roundOff()}"
+            "${amountFilter.name.lowercase().titleCase().translate(requireContext())} ₹${amount.roundOff()}"
         binding.amountFilterChip.visibility = View.VISIBLE
     }
 

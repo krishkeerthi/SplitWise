@@ -99,4 +99,26 @@
     <string name="delete_message">Are you sure want to delete?</string>
     <string name="enter_amount">Enter amount</string>
     <string name="share">Share</string>
+    <string name="download_failed">Download has been failed, please try again</string>
+    <string name="paused">Paused</string>
+    <string name="pending">Pending</string>
+    <string name="downloading">Downloading</string>
+    <string name="group_icon_set">Group icon set</string>
+    <string name="nothing_to_download">There\'s nothing to download</string>
+    <string name="bitmap_not_found">Bitmap not found</string>
+    <string name="selected">Selected</string>
+    <string name="food">Food</string>
+    <string name="travel">Travel</string>
+    <string name="tickets">Tickets</string>
+    <string name="rent">Rent</string>
+    <string name="fees">Fees</string>
+    <string name="repairs">Repairs</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="essentials">Essentials</string>
+    <string name="others">Others</string>
+    <string name="date">Date</string>
+    <string name="below">Below</string>
+    <string name="above">Above</string>
+    <string name="before">Before</string>
+    <string name="after">After</string>
 </resources>

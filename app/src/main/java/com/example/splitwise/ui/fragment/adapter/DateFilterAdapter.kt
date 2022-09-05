@@ -7,6 +7,7 @@ import com.example.splitwise.databinding.IconBottomSheetItemBinding
 import com.example.splitwise.util.DateFilter
 import com.example.splitwise.util.getDateFilterDrawableResource
 import com.example.splitwise.util.titleCase
+import com.example.splitwise.util.translate
 
 class DateFilterAdapter(
     private val dateFilters: List<DateFilter>,
@@ -37,7 +38,7 @@ class DateFilterViewHolder(val binding: IconBottomSheetItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(dateFilter: DateFilter) {
-        binding.itemTextView.text = dateFilter.name.lowercase().titleCase()
+        binding.itemTextView.text = dateFilter.name.lowercase().titleCase().translate(binding.root.context)
         binding.itemImageView.setImageResource(getDateFilterDrawableResource(dateFilter.ordinal))
     }
 

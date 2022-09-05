@@ -4,9 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.databinding.IconBottomSheetItemBinding
-import com.example.splitwise.util.AmountFilter
-import com.example.splitwise.util.getDateFilterDrawableResource
-import com.example.splitwise.util.titleCase
+import com.example.splitwise.util.*
 
 class AmountFilterAdapter(
     private val amountFilters: List<AmountFilter>,
@@ -37,8 +35,8 @@ class AmountFilterViewHolder(val binding: IconBottomSheetItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(amountFilter: AmountFilter) {
-        binding.itemTextView.text = amountFilter.name.lowercase().titleCase()
-        binding.itemImageView.setImageResource(getDateFilterDrawableResource(amountFilter.ordinal))
+        binding.itemTextView.text = amountFilter.name.lowercase().titleCase().translate(binding.root.context)
+        binding.itemImageView.setImageResource(getAmountFilterDrawableResource(amountFilter.ordinal))
     }
 
 }

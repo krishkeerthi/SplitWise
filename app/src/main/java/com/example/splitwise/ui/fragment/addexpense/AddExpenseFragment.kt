@@ -23,6 +23,7 @@ import com.example.splitwise.databinding.FragmentAddExpenseBinding
 import com.example.splitwise.ui.fragment.adapter.*
 import com.example.splitwise.util.Category
 import com.example.splitwise.util.titleCase
+import com.example.splitwise.util.translate
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
@@ -192,7 +193,7 @@ class AddExpenseFragment : Fragment() {
         //val categoryAdapter = CategoryArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, categories)
         val categoryAdapter = CategoryAdapter(categories){ category ->
             viewModel.category = category.ordinal
-            binding.chooseCategoryText.text = category.name.lowercase().titleCase()
+            binding.chooseCategoryText.text = category.name.lowercase().titleCase().translate(requireContext())
             categoryBottomSheetDialog.dismiss()
         }
 

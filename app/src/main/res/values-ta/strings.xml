@@ -100,4 +100,26 @@
     <string name="delete_message">நீங்கள் நிச்சயமாக நீக்க விரும்புகிறீர்களா?</string>
     <string name="enter_amount">தொகையை உள்ளிடவும்</string>
     <string name="share">பகிர்</string>
+    <string name="download_failed">பதிவிறக்கம் தோல்வியடைந்தது, மீண்டும் முயற்சிக்கவும்</string>
+    <string name="paused">இடைநிறுத்தப்பட்டது</string>
+    <string name="pending">நிலுவையில் உள்ளது</string>
+    <string name="downloading">பதிவிறக்குகிறது</string>
+    <string name="group_icon_set">குழு ஐகான் சேர்க்கப்பட்டது</string>
+    <string name="nothing_to_download">பதிவிறக்கம் செய்ய எதுவும் இல்லை</string>
+    <string name="bitmap_not_found">பிட்மேப் கிடைக்கவில்லை</string>
+    <string name="selected">தேர்ந்தெடுக்கப்பட்டது</string>
+    <string name="food">உணவு</string>
+    <string name="travel">பயணம்</string>
+    <string name="tickets">டிக்கெட்டுகள்</string>
+    <string name="rent">வாடகை</string>
+    <string name="fees">கட்டணம்</string>
+    <string name="repairs">பழுது</string>
+    <string name="entertainment">பொழுதுபோக்கு</string>
+    <string name="essentials">அத்தியாவசியங்கள்</string>
+    <string name="others">மற்றவைகள்</string>
+    <string name="date">தேதி</string>
+    <string name="below">கீழே</string>
+    <string name="above">மேலே</string>
+    <string name="before">முன்பு</string>
+    <string name="after">பிறகு</string>
 </resources>

@@ -95,6 +95,10 @@ class ChooseMembersFragment : Fragment() {
 //                contextualActionMode?.finish()
 //                contextualActionMode = null
 //            }
+            if(it > 0)
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = "$it ${getString(R.string.selected)}"
+            else
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.choose_members)
             menuVisible = it > 0
             requireActivity().invalidateOptionsMenu()
 
