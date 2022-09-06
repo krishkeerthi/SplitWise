@@ -165,6 +165,9 @@ class GroupsFragment : Fragment() {
             Log.d(TAG, "onViewCreated: date filter closed")
             viewModel.removeDateFilter()
             it.visibility = View.GONE
+
+            if(viewModel.filterModel.amountFilterModel == null)
+                binding.horizontalView.visibility = View.GONE
         }
         binding.dateFilterChip.isClickable = false
 
@@ -172,6 +175,9 @@ class GroupsFragment : Fragment() {
             Log.d(TAG, "onViewCreated: amount filter closed")
             viewModel.removeAmountFilter()
             it.visibility = View.GONE
+
+            if(viewModel.filterModel.dateFilterModel == null)
+                binding.horizontalView.visibility = View.GONE
         }
         binding.amountFilterChip.isClickable = false
 
@@ -541,12 +547,16 @@ class GroupsFragment : Fragment() {
         binding.dateFilterChip.text =
             "${dateFilter.name.lowercase().titleCase().translate(requireContext())} ${formatDate(date, dateOnly = true)}"
         binding.dateFilterChip.visibility = View.VISIBLE
+
+        binding.horizontalView.visibility = View.VISIBLE
     }
 
     private fun createAmountFilterChip(amountFilter: AmountFilter, amount: Float) {
         binding.amountFilterChip.text =
             "${amountFilter.name.lowercase().titleCase().translate(requireContext())} ₹${amount.roundOff()}"
         binding.amountFilterChip.visibility = View.VISIBLE
+
+        binding.horizontalView.visibility = View.VISIBLE
     }
 
 

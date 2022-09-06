@@ -5,9 +5,11 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSearchGroupBinding
 import com.example.splitwise.ui.fragment.adapter.FilteredGroupsAdapter
+import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.hideKeyboard
 
 class SearchGroupFragment : Fragment() {
@@ -32,6 +35,11 @@ class SearchGroupFragment : Fragment() {
 
             override fun handleOnBackPressed() {
                 viewModel.textEntered = ""
+
+                // to hide keyboard
+                binding.root.hideKeyboard()
+
+                // for navigation
                 NavHostFragment.findNavController(this@SearchGroupFragment)
                     .popBackStack()
             }
@@ -44,6 +52,7 @@ class SearchGroupFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
         (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.search)
         return inflater.inflate(R.layout.fragment_search_group, container, false)
     }
@@ -149,8 +158,29 @@ class SearchGroupFragment : Fragment() {
         val searchItem = menu.findItem(R.id.search_menu)
         val searchView = searchItem?.actionView as SearchView
 
+
+
+        Log.d(TAG, "onCreateOptionsMenu: expanded ${searchItem.isActionViewExpanded}")
+        searchItem.expandActionView()
+//        searchItem.setIcon(null)
+//        searchView.invalidateOutline()
+        searchView.updatePadding(left = (-16).dpToPx(resources.displayMetrics))
+        Log.d(TAG, "onCreateOptionsMenu: ${searchItem.itemId}")
         // for expanded state
         searchView.isIconified = false
+
+        // test
+//        val searchFrameLL = searchView.rootView as LinearLayout
+//        val params = LinearLayout.LayoutParams(
+//            LinearLayout.LayoutParams.WRAP_CONTENT,
+//            LinearLayout.LayoutParams.MATCH_PARENT
+//        )
+//        params.setMargins(0, 0, 8, 0) //params.setMargins(left, top, right, bottom)
+//
+//        // params.setMarginStart(0);  //(or just use individual like this
+//        // params.setMarginStart(0);  //(or just use individual like this
+//        searchFrameLL.layoutParams = params
+        //
         searchView.requestFocus()
 
 

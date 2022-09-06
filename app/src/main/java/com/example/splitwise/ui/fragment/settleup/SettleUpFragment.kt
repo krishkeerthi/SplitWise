@@ -47,6 +47,7 @@ class SettleUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d(TAG, "onViewCreated: selected ${args.groupIds.toList()}")
         binding = FragmentSettleUpBinding.bind(view)
 
         // toolbar title
@@ -210,7 +211,14 @@ class SettleUpFragment : Fragment() {
 
 
         binding.settleButton.setOnClickListener {
+            Log.d(TAG, "onViewCreated: selected ${viewModel.selectedPayeesIds()}")
             viewModel.settle(viewModel.selectedPayeesIds()) {
+                Snackbar.make(
+                    binding.root,
+                    "${getString(R.string.settled_successfully)}",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+
                 gotoSplitWiseFragment()
             }
         }

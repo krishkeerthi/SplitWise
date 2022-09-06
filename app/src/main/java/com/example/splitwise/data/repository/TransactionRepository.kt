@@ -31,6 +31,7 @@ class TransactionRepository(
     }
 
     suspend fun settle(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>){
+        Log.d(TAG, "settle: selected repository ${receiverIds}")
         dataSource.settle(senderId, receiverIds, groupIds)
     }
 

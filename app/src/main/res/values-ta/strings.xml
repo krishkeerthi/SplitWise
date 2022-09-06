@@ -122,4 +122,5 @@
     <string name="above">மேலே</string>
     <string name="before">முன்பு</string>
     <string name="after">பிறகு</string>
+    <string name="settled_successfully">வெற்றிகரமாக தீர்வு காணப்பட்டது</string>
 </resources>

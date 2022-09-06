@@ -51,6 +51,17 @@
                 android:visibility="gone" />
 
         </com.google.android.material.chip.ChipGroup>
+
+        <View
+            android:id="@+id/horizontal_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/view_color"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/filter_chip_group" />
         <!--    </com.google.android.material.card.MaterialCardView>-->
 
         <androidx.recyclerview.widget.RecyclerView
@@ -60,7 +71,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/filter_chip_group"
+            app:layout_constraintTop_toBottomOf="@id/horizontal_view"
             android:descendantFocusability="blocksDescendants"
             tools:listitem="@layout/group_card_1"/>
 

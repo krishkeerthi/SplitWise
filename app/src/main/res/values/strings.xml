@@ -121,4 +121,5 @@
     <string name="above">Above</string>
     <string name="before">Before</string>
     <string name="after">After</string>
+    <string name="settled_successfully">Settled successfully</string>
 </resources>

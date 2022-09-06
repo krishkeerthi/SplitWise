@@ -27,6 +27,7 @@ class TransactionLocalDataSource(
 
     override suspend fun settle(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>) {
         transactionDao.reduceAmount(senderId, receiverIds, groupIds)
+        Log.d(TAG, "settle: selected local datasource ${receiverIds}")
     }
 
     override suspend fun settleAllInGroup(senderId: Int, groupId: Int) {

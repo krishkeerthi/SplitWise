@@ -7,6 +7,10 @@
         android:icon="@drawable/ic_baseline_search_24"
         android:title="@string/search"
         app:showAsAction="always"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+        android:iconifiedByDefault="false"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        />
 
+<!--    app:actionViewClass="androidx.appcompat.widget.SearchView"-->
+<!--    android:actionLayout="@layout/search_group_toolbar"-->
 </menu>

@@ -169,9 +169,12 @@ class SettleUpViewModel(
         gotoSplitWiseFragment: () -> Unit
     ) {
         viewModelScope.launch {
-            transactionRepository.settle(payerId, receiverIds, groupIds)
+            transactionRepository.settle(payerId, receiverIds, tempGroupsId) //groupIds
+            Log.d(TAG, "settle: selected groups ${tempGroupsId}")
         }
+        Log.d(TAG, "settle: selected fragment not called")
         gotoSplitWiseFragment()
+        Log.d(TAG, "settle: selected fragment called")
     }
 
     fun settle(
