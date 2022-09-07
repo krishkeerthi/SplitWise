@@ -122,4 +122,6 @@
     <string name="before">Before</string>
     <string name="after">After</string>
     <string name="settled_successfully">Settled successfully</string>
+    <string name="member_icon">Member icon</string>
+    <string name="test">above %s</string>
 </resources>

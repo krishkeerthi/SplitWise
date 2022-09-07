@@ -63,7 +63,7 @@
     <string name="lent">கொடுத்தது</string>
     <string name="edit">மாற்று</string>
     <string name="register">பதிவு செய்</string>
-    <string name="group_icon">குழு சின்னம்</string>
+    <string name="group_icon">குழு ஐகான்</string>
     <string name="camera">கேமரா</string>
     <string name="gallery">கேலரி</string>
     <string name="web">இணையம்</string>
@@ -123,4 +123,6 @@
     <string name="before">முன்பு</string>
     <string name="after">பிறகு</string>
     <string name="settled_successfully">வெற்றிகரமாக தீர்வு காணப்பட்டது</string>
+    <string name="member_icon">உறுப்பினர் ஐகான்</string>
+    <string name="test">%s மேலே</string>
 </resources>

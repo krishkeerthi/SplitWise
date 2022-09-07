@@ -63,18 +63,30 @@
     <!--    Shape-->
     <style name="ShapeAppearance.Boxed.SmallComponent"
         parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerFamily">cut</item>
-        <item name="cornerSize">8dp</item>
+        <item name="cornerSizeBottomLeft">8dp</item>
+        <item name="cornerSizeBottomRight">8dp</item>
+        <item name="cornerSizeTopLeft">8dp</item>
+        <item name="cornerSizeTopRight">8dp</item>
+<!--        <item name="cornerFamily">cut</item>-->
+<!--        <item name="cornerSize">8dp</item>-->
     </style>
     <style name="ShapeAppearance.Boxed.MediumComponent"
         parent="ShapeAppearance.MaterialComponents.MediumComponent">
-        <item name="cornerFamily">cut</item>
-        <item name="cornerSize">12dp</item>
+        <item name="cornerSizeBottomLeft">8dp</item>
+        <item name="cornerSizeBottomRight">8dp</item>
+        <item name="cornerSizeTopLeft">8dp</item>
+        <item name="cornerSizeTopRight">8dp</item>
+<!--        <item name="cornerFamily">cut</item>-->
+<!--        <item name="cornerSize">12dp</item>-->
     </style>
     <style name="ShapeAppearance.Boxed.LargeComponent"
         parent="ShapeAppearance.MaterialComponents.LargeComponent">
-        <item name="cornerFamily">cut</item>
-        <item name="cornerSize">16dp</item>
+        <item name="cornerSizeBottomLeft">8dp</item>
+        <item name="cornerSizeBottomRight">8dp</item>
+        <item name="cornerSizeTopLeft">8dp</item>
+        <item name="cornerSizeTopRight">8dp</item>
+<!--        <item name="cornerFamily">cut</item>-->
+<!--        <item name="cornerSize">16dp</item>-->
     </style>
 
 </resources>

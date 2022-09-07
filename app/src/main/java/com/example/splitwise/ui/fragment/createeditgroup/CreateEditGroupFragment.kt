@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
@@ -33,7 +34,8 @@ class CreateEditGroupFragment : Fragment() {
     private lateinit var binding: FragmentCreateEditGroupBinding
     private val args: CreateEditGroupFragmentArgs by navArgs()
 
-    private val viewModel: CreateEditGroupViewModel by viewModels {
+//    private lateinit var viewModel: CreateEditGroupViewModel
+    private val viewModel: CreateEditGroupViewModel by viewModels { // checking with activity viewmodel
         CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.selectedMembers)
     }
 
@@ -41,6 +43,11 @@ class CreateEditGroupFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // viewmodel initialization with provider
+//        val factory = CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.selectedMembers)
+//        viewModel = ViewModelProvider(requireActivity(), factory)[CreateEditGroupViewModel::class.java]
+        // ends here
 
         val callback = object : OnBackPressedCallback(true /* enabled by default */) {
 
