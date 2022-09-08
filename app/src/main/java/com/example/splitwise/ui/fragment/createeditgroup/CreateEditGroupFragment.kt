@@ -25,6 +25,7 @@ import com.example.splitwise.databinding.FragmentCreateEditGroupBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
 import com.example.splitwise.ui.fragment.addmember.AddMemberDialog
+import com.example.splitwise.ui.fragment.addmember.AddMemberFragment
 import com.example.splitwise.ui.fragment.viewmodel.CreateEditGroupActivityViewModel
 import com.example.splitwise.util.nameCheck
 import com.google.android.material.snackbar.Snackbar
@@ -35,7 +36,7 @@ class CreateEditGroupFragment : Fragment() {
     private val args: CreateEditGroupFragmentArgs by navArgs()
 
 //    private lateinit var viewModel: CreateEditGroupViewModel
-    private val viewModel: CreateEditGroupViewModel by viewModels { // checking with activity viewmodel
+    private val viewModel: CreateEditGroupViewModel by activityViewModels { // checking with activity viewmodel
         CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.selectedMembers)
     }
 
@@ -61,17 +62,22 @@ class CreateEditGroupFragment : Fragment() {
                     ) { dialog, which ->
 
                         // clear activity viewmodel selected members
-                        activityViewModel.selectedMembers = listOf()
-
+                  //      activityViewModel.selectedMembers = listOf()
+                        
+                        viewModel.reset()
                         //  Toast.makeText(requireContext(), "custom back pressed", Toast.LENGTH_SHORT).show()
                         NavHostFragment.findNavController(this@CreateEditGroupFragment)
                             .popBackStack()
                     }
                     builder.setNegativeButton(getString(R.string.cancel), null)
                     builder.show()
-                } else
+                } else {
+                    viewModel.reset()
+                    Log.d(TAG, "handleOnBackPressed: reset back pressed")
+                    // reset viewmodel data, because this viewmodel is activity viewmodel now
                     NavHostFragment.findNavController(this@CreateEditGroupFragment)
                         .popBackStack()
+                }
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
@@ -92,7 +98,8 @@ class CreateEditGroupFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        viewModel.fetchData()
+        //viewModel.fetchData()
+        viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
 
         // not works
 //        (requireActivity() as MainActivity).actionBar?.title = if(args.groupId == -1) "Create group"
@@ -129,7 +136,7 @@ class CreateEditGroupFragment : Fragment() {
                 membersAdapter.updateMembers(members)
 
                 // Also update selected members this stores the added members before creating group
-                activityViewModel.selectedMembers = members
+         //       activityViewModel.selectedMembers = members
             }
         }
 
@@ -195,10 +202,10 @@ class CreateEditGroupFragment : Fragment() {
             binding.groupImageView.visibility = View.INVISIBLE
         }
 
-        // adding data to activity viewmodel only when not added previously
-        if (args.groupIcon != null && viewModel.members.value == null)
-            if (activityViewModel.selectedMembers.isNotEmpty())
-                viewModel.updateMembers(activityViewModel.selectedMembers)
+        // adding data   if (args.groupIcon != null && viewModel.members.value == null)
+        ////            if (activityViewModel.selectedMembers.isNotEmpty())
+        ////                viewto activity viewmodel only when not added previously
+//      Model.updateMembers(activityViewModel.selectedMembers)
 
         // retains group name while returning from choose members screen
         if (args.groupName != null) {
@@ -304,7 +311,7 @@ class CreateEditGroupFragment : Fragment() {
                     Snackbar.LENGTH_SHORT
                 ).show()
 
-                activityViewModel.selectedMembers = listOf()
+               // activityViewModel.selectedMembers = listOf()
                 // gotoGroupsFragment()
                 // calling here goes to groups fragment without completing the group creation process
             } else
@@ -335,7 +342,8 @@ class CreateEditGroupFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add_member -> {
-                AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
+                //AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
+                AddMemberFragment(viewModel)
                 true
             }
             R.id.create_group -> {
@@ -361,6 +369,8 @@ class CreateEditGroupFragment : Fragment() {
     }
 
     private fun gotoGroupsFragment() {
+        // reset after creating group
+        viewModel.reset()
         Log.d(TAG, "gotoGroupsFragment: called group created")
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupsFragment()
