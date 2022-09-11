@@ -99,10 +99,12 @@ class ExpensesFragment : Fragment() {
                 expensesAdapter.updateExpenseMembers(expenseMembers)
                 binding.expensesRecyclerView.visibility = View.VISIBLE
                 binding.noExpenseImageView.visibility = View.GONE
+                binding.noExpenseTextView.visibility = View.GONE
             }
             else{
                 binding.expensesRecyclerView.visibility = View.GONE
                 binding.noExpenseImageView.visibility = View.VISIBLE
+                binding.noExpenseTextView.visibility = View.VISIBLE
             }
         }
 

@@ -10,6 +10,20 @@
 
 
     <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/payee_image_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/view_color"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/Circular" />
+
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/payee_image_holder"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -23,7 +37,7 @@
         app:shapeAppearanceOverlay="@style/Circular" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/payee_image_view"
+        android:id="@+id/payee_image_holder_image"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginStart="20dp"

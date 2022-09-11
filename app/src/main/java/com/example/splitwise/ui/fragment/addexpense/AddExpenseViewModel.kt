@@ -10,6 +10,7 @@ import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.data.repository.TransactionRepository
+import com.example.splitwise.util.Category
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,9 +31,9 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
 
     var memberIds = mutableSetOf<Int>()
 
-    var payerId: Int? = null
+    var payer: Member? = null
 
-    var category: Int? = null
+    var category: Category? = null
 
     init {
         getGroupMembers()
@@ -75,10 +76,13 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
     private fun getGroupMembers() {
         viewModelScope.launch {
             val ids = groupRepository.getGroupMembers(groupId)
-            _members.value = getMembersFromIds(ids)
 
             if(ids != null)
                 memberIds = ids.toMutableSet()
+
+            _members.value = getMembersFromIds(ids)
+
+
         }
     }
 

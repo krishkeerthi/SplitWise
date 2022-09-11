@@ -27,7 +27,7 @@
     <string name="choose_members">நபர் தேர்ந்தெடு</string>
     <string name="create">உருவாக்கு</string>
     <string name="settle_up">தொகை தீர்வு</string>
-    <string name="splitwise">நேர்த்தியான பிரிவு</string>
+    <string name="splitwise">ஸ்பிலிட்வைஸ்</string>
     <string name="payer">செலுத்துபவர் </string>
     <string name="payee">பெறுபவர்</string>
     <string name="choose_payee">பெறுபவரை தேர்வு செய்</string>
@@ -125,4 +125,21 @@
     <string name="settled_successfully">வெற்றிகரமாக தீர்வு காணப்பட்டது</string>
     <string name="member_icon">உறுப்பினர் ஐகான்</string>
     <string name="test">%s மேலே</string>
+    <string name="member_profile">உறுப்பினர் சுயவிவரம்</string>
+    <string name="edit_member">உறுப்பினர் பெயர், தொலைபேசி மற்றும் உறுப்பினர் சுயவிவரத்தை நீங்கள் திருத்தலாம்</string>
+    <string name="profile_updated">சுயவிவரம் புதுப்பிக்கப்பட்டது</string>
+    <string name="member_updated">உறுப்பினர் புதுப்பிக்கப்பட்டது</string>
+    <string name="proceed">தொடரவும்</string>
+    <string name="storage_permission">புகைப்படங்களைச் சேமிக்க, உங்கள் சாதனத்தின் சேமிப்பக அணுகலை ஸ்பிலிட்வைஸ்க்கு வழங்கவும்</string>
+    <string name="date_filter">%2$s க்கு %1$s</string>
+    <string name="amount_filter">₹%2$s க்கு %1$s</string>
+    <string name="send">அனுப்பு</string>
+    <string name="enter_feedback">கருத்தை உள்ளிடவும்</string>
+    <string name="empty_feedback">தொடர கருத்தை உள்ளிடவும்</string>
+    <string name="feedback">கருத்து</string>
+    <string name="no_groups">குழுக்கள் எதுவும் இல்லை</string>
+    <string name="no_expenses">செலவுகள் எதுவும் இல்லை</string>
+    <string name="enter_valid_name">சரியான பெயரை உள்ளிடவும்</string>
+    <string name="enter_10_numbers">10 எண்களை உள்ளிடவும்</string>
+    <string name="all_settled">அனைத்தும் தீர்க்கப்பட்டன</string>
 </resources>

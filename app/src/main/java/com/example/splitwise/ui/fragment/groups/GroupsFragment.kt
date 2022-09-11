@@ -2,6 +2,7 @@ package com.example.splitwise.ui.fragment.groups
 
 import android.app.DatePickerDialog
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -97,12 +98,17 @@ class GroupsFragment : Fragment() {
                 groupsAdapter.updateGroups(groups)
                 binding.groupsRecyclerView.visibility = View.VISIBLE
                 binding.emptyGroupImageView.visibility = View.GONE
+                binding.noGroupsTextView.visibility = View.GONE
                 binding.dateTextView.visibility = View.VISIBLE
 
+                // experimental because during orientation change filter not showing
+                updateAmountFilter()
+                updateDateFilter()
             } else {
                 Log.d(TAG, "onViewCreated: groups livedata null")
                 binding.groupsRecyclerView.visibility = View.GONE
                 binding.emptyGroupImageView.visibility = View.VISIBLE
+                binding.noGroupsTextView.visibility = View.VISIBLE
                 binding.dateTextView.visibility = View.GONE
             }
         }
@@ -145,23 +151,9 @@ class GroupsFragment : Fragment() {
         setHasOptionsMenu(true)
         requireActivity().title = "Groups"
 
-        if (viewModel.filterModel.amountFilterModel != null) {
-            val amountFilterModel = viewModel.filterModel.amountFilterModel
-            binding.amountFilterChip.text = "${
-                amountFilterModel!!.amountFilter.name.lowercase().titleCase().translate(requireContext())
-            } " +
-                    "₹${amountFilterModel!!.amount}"
-            binding.amountFilterChip.visibility = View.VISIBLE
-        }
+        updateAmountFilter()
 
-        if (viewModel.filterModel.dateFilterModel != null) {
-            val dateFilterModel = viewModel.filterModel.dateFilterModel
-            binding.dateFilterChip.text =
-                "${dateFilterModel!!.dateFilter.name.lowercase().titleCase().translate(requireContext())} ${
-                    formatDate(dateFilterModel!!.date)
-                }"
-            binding.dateFilterChip.visibility = View.VISIBLE
-        }
+        updateDateFilter()
 
         // Chip closing
         binding.dateFilterChip.setOnCloseIconClickListener {
@@ -192,6 +184,37 @@ class GroupsFragment : Fragment() {
 //        val bgRes = typedArray.getResourceId(0, 0)
 //        binding.root.setBackgroundResource(bgRes)
 
+    }
+
+    private fun updateDateFilter() {
+        if (viewModel.filterModel.dateFilterModel != null) {
+            val dateFilterModel = viewModel.filterModel.dateFilterModel
+            binding.dateFilterChip.text = String.format(getString(R.string.date_filter),
+                dateFilterModel!!.dateFilter.name.lowercase().titleCase().translate(requireContext()),
+                formatDate(dateFilterModel!!.date, dateOnly = true)
+            )
+//                "${dateFilterModel!!.dateFilter.name.lowercase().titleCase().translate(requireContext())} ${
+//                    formatDate(dateFilterModel!!.date, dateOnly = true)
+//                }"
+            binding.dateFilterChip.visibility = View.VISIBLE
+            binding.horizontalView.visibility = View.VISIBLE
+        }
+    }
+
+    private fun updateAmountFilter() {
+        if (viewModel.filterModel.amountFilterModel != null) {
+            val amountFilterModel = viewModel.filterModel.amountFilterModel
+            binding.amountFilterChip.text = String.format(getString(R.string.amount_filter),
+                amountFilterModel!!.amountFilter.name.lowercase().titleCase().translate(requireContext()),
+                amountFilterModel!!.amount.roundOff()
+            )
+//                "${
+//                amountFilterModel!!.amountFilter.name.lowercase().titleCase().translate(requireContext())
+//            } " +
+//                    "₹${amountFilterModel!!.amount}"
+            binding.amountFilterChip.visibility = View.VISIBLE
+            binding.horizontalView.visibility = View.VISIBLE
+        }
     }
 
     private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String) {
@@ -283,6 +306,7 @@ class GroupsFragment : Fragment() {
             viewModel.resetFilters()
             binding.dateFilterChip.visibility = View.GONE
             binding.amountFilterChip.visibility = View.GONE
+            binding.horizontalView.visibility = View.GONE
             filterBottomSheetDialog.dismiss()
             //binding.groupsRecyclerView.smoothScrollToPosition(0)
             //openFilterBottomSheet()
@@ -474,8 +498,8 @@ class GroupsFragment : Fragment() {
     }
 
     private fun openAmountDialog() {
-        AddAmountDialog(viewModel) { amountFilter, amount ->
-            createAmountFilterChip(amountFilter, amount)
+        AddAmountDialog(viewModel) { amountFilter, amount, dialogContext ->
+            createAmountFilterChip(amountFilter, amount, dialogContext)
         }.show(childFragmentManager, "Add Amount Alert Dialog")
 //        val builder = AlertDialog.Builder(requireContext())
 //
@@ -548,15 +572,24 @@ class GroupsFragment : Fragment() {
 //        chipGroup.addView(chip)
 
         binding.dateFilterChip.text =
-            "${dateFilter.name.lowercase().titleCase().translate(requireContext())} ${formatDate(date, dateOnly = true)}"
+            String.format(getString(R.string.date_filter), dateFilter.name.lowercase().titleCase().translate(requireContext()),
+                formatDate(date, dateOnly = true)
+            )
+        //    "${dateFilter.name.lowercase().titleCase().translate(requireContext())} ${formatDate(date, dateOnly = true)}"
         binding.dateFilterChip.visibility = View.VISIBLE
 
         binding.horizontalView.visibility = View.VISIBLE
     }
 
-    private fun createAmountFilterChip(amountFilter: AmountFilter, amount: Float) {
+    private fun createAmountFilterChip(amountFilter: AmountFilter, amount: Float, dialogContext: Context) {
         binding.amountFilterChip.text =
-            "${amountFilter.name.lowercase().titleCase().translate(requireContext())} ₹${amount.roundOff()}"
+            String.format(dialogContext.getString(R.string.amount_filter), amountFilter.name.lowercase().titleCase().translate(dialogContext),
+                amount.roundOff()
+            )
+
+        //viewModel.applyAmountFilter(amount)
+        // Error: Fragment not attached to a context, when calling getString() without requireActivity()
+  //          "${amountFilter.name.lowercase().titleCase().translate(requireContext())} ₹${amount.roundOff()}"
         binding.amountFilterChip.visibility = View.VISIBLE
 
         binding.horizontalView.visibility = View.VISIBLE

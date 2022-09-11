@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
@@ -59,6 +60,14 @@ class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding) :
         binding.memberStreakTextView.text =  "🔥" + memberAndStreak.streak.toString()
 
         binding.selectedCheckBox.isChecked = memberAndStreak.member.memberId in checkedMembersId
+
+        if(memberAndStreak.member.memberProfile != null){
+            binding.memberImageView.setImageURI(memberAndStreak.member.memberProfile)
+
+            binding.memberImageView.visibility = View.VISIBLE
+            binding.memberImageHolder.visibility = View.INVISIBLE
+            binding.memberImageHolderImage.visibility = View.INVISIBLE
+        }
 
     }
 

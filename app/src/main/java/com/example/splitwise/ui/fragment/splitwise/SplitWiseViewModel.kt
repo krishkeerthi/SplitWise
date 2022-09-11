@@ -91,6 +91,7 @@ class SplitWiseViewModel(context: Context) : ViewModel() {
                             MemberPaymentStatsDetail(
                                 i.memberId,
                                 it.name,
+                                it.memberProfile,
                                 i.amountLend,
                                 i.amountOwed
                             )

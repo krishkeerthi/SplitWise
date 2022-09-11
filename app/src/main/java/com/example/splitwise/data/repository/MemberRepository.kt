@@ -1,7 +1,9 @@
 package com.example.splitwise.data.repository
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.view.Display
 import androidx.room.util.dropFtsSyncTriggers
@@ -25,8 +27,8 @@ class MemberRepository(
         database.memberStreakDao()
     )
 
-    suspend fun addMember(name: String, phoneNumber: Long): Int{
-        return withContext(Dispatchers.IO){dataSource.addMember(name.titleCase(), phoneNumber)}
+    suspend fun addMember(name: String, phoneNumber: Long, uri: Uri?): Int{
+        return withContext(Dispatchers.IO){dataSource.addMember(name.titleCase(), phoneNumber, uri)}
     }
 
     suspend fun getMember(memberId: Int): Member? {
@@ -70,6 +72,20 @@ class MemberRepository(
             val result = dataSource.getMember(name.titleCase(), phoneNumber)
             Log.d(TAG, "checkMemberExistence: ${result != null}")
             result != null
+        }
+    }
+
+    suspend fun updateMember(memberId: Int, name: String, phone: Long) {
+        Log.d(ContentValues.TAG, "onViewCreated: repo update member${name}  ${phone}")
+        withContext(Dispatchers.IO){
+            dataSource.updateMember(memberId, name, phone)
+        }
+
+    }
+
+    suspend fun updateMemberProfile(memberId: Int, uri: Uri) {
+        withContext(Dispatchers.IO){
+            dataSource.updateProfile(memberId, uri)
         }
     }
 

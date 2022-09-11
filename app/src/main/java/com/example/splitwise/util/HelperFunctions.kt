@@ -38,10 +38,11 @@ fun formatDate(date: Date, dateOnly: Boolean = false): String {
         sdf.format(date).toString()
     else
         when {
-            (DateUtils.isToday(date.time)) -> "${DateUtils.getRelativeTimeSpanString(date.time)}"
+            (DateUtils.isToday(date.time)) -> "${DateUtils.getRelativeTimeSpanString(date.time, Date().time, 0)}"
             (DateUtils.isToday(date.time + DateUtils.DAY_IN_MILLIS)) -> "Yesterday"
             else -> sdf.format(date).toString()
         }
+
 
 //    val currentDate = Calendar.getInstance()
 //    val currentYear = currentDate[Calendar.YEAR]
@@ -297,3 +298,5 @@ fun String.translate(context: Context): String{
         else -> resource?.getString(R.string.others).toString()
     }
 }
+
+fun recipients() = arrayOf("keerthik97117@gmail.com")

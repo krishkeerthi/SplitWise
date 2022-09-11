@@ -2,6 +2,7 @@ package com.example.splitwise.ui.fragment.addamount
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,7 +13,7 @@ import com.example.splitwise.util.AmountFilter
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-class AddAmountDialog(private val viewModel: GroupsViewModel, val createChip: (AmountFilter, Float) -> Unit): DialogFragment(){
+class AddAmountDialog(private val viewModel: GroupsViewModel, val createChip: (AmountFilter, Float, Context) -> Unit): DialogFragment(){
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         retainInstance = true
@@ -30,8 +31,9 @@ class AddAmountDialog(private val viewModel: GroupsViewModel, val createChip: (A
         builder.setPositiveButton(getString(R.string.save)) { dialogInterface, _ ->
             val amount = amountEditText.text.toString().toFloat()
 
-            createChip(viewModel.selectedAmountFilter, amount)
+
             viewModel.applyAmountFilter(amount)
+            createChip(viewModel.selectedAmountFilter, amount, requireContext())
             //createAmountFilterChip(viewModel.selectedAmountFilter, amount)
         }
 

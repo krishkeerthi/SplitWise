@@ -155,10 +155,11 @@ class ChoosePayeesFragment : Fragment() {
     }
 
     private fun gotoSettleUpFragment(){
-        val action = ChoosePayeesFragmentDirections.actionChoosePayeesFragmentToSettleUpFragment(
-            args.payerId, args.groupIds, viewModel.getSelectedMembers().toTypedArray()
-        )
-        view?.findNavController()?.navigate(action)
+        // commenting because this fragment won't be used, other this needs to be handled properly
+//        val action = ChoosePayeesFragmentDirections.actionChoosePayeesFragmentToSettleUpFragment(
+//            args.payerId, args.groupIds, viewModel.getSelectedMembers().toTypedArray()
+//        )
+//        view?.findNavController()?.navigate(action)
     }
 
     private fun gotoChoosePayeesFragment(){

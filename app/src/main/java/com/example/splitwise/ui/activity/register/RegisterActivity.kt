@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityRegisterBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.util.nameCheck
@@ -45,7 +46,7 @@ class RegisterActivity : AppCompatActivity() {
                     nameLayout.error = null
                     nameLayout.isErrorEnabled = false
                 } else {
-                    nameLayout.error = "Enter valid name"
+                    nameLayout.error = getString(R.string.enter_valid_name)
                 }
 
                 binding.registerButton.isEnabled =
@@ -69,7 +70,7 @@ class RegisterActivity : AppCompatActivity() {
                     phoneLayout.isErrorEnabled = false
 
                 } else {
-                    phoneLayout.error = "Enter 10 numbers"
+                    phoneLayout.error = getString(R.string.enter_10_numbers)
 
                 }
 

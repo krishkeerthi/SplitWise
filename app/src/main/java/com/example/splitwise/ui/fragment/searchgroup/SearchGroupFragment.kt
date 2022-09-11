@@ -211,6 +211,7 @@ class SearchGroupFragment : Fragment() {
     }
 
     private fun goToExpenseFragment(groupId: Int) {
+        view?.hideKeyboard()
         val action =
             SearchGroupFragmentDirections.actionSearchGroupFragmentToExpensesFragment(groupId)
         view?.findNavController()?.navigate(action)

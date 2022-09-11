@@ -71,53 +71,26 @@ class AddExpenseFragment : Fragment() {
 
             if (members != null) {
                 // Updating member check box adapter
-                membersCheckboxAdapter.updateMembers(members)
+                membersCheckboxAdapter.updateMembers(members, viewModel.memberIds.toList())
 
                 // Updating payer adapter
                 binding.choosePayerCard.setOnClickListener {
                     openPayerBottomSheet(members)
                 }
-//                val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.dropdown, members)
-//                binding.payerSpinner.apply {
-//                    adapter = payerAdapter
-//                    onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
-//                        override fun onItemSelected(
-//                            parent: AdapterView<*>?,
-//                            view: View?,
-//                            position: Int,
-//                            id: Long
-//                        ) {
-//                            viewModel.payerId = members[position].memberId
-//                            Log.d(TAG, "onItemSelected: payer selected")
-//                        }
-//
-//                        override fun onNothingSelected(parent: AdapterView<*>?) {
-//                        }
-//
-//                    }
-//                }
+
             }
         }
 
-//        // Dropdown
-//        binding.categorySpinner.apply {
-//            adapter = CategoryArrayAdapter(requireContext(), R.layout.dropdown, categories)
-//            onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
-//                override fun onItemSelected(
-//                    parent: AdapterView<*>?,
-//                    view: View?,
-//                    position: Int,
-//                    id: Long
-//                ) {
-//                    viewModel.category = categories[position].ordinal
-//                    Log.d(TAG, "onItemSelected: category selected")
-//                }
-//
-//                override fun onNothingSelected(parent: AdapterView<*>?) {
-//                }
-//
-//            }
-//        }
+        //retain category and payer upon orientation change
+
+        if(viewModel.category != null){
+            binding.chooseCategoryText.text = viewModel.category!!.name.lowercase().titleCase().translate(requireContext())
+        }
+
+        if(viewModel.payer != null){
+            binding.choosePayerText.text = viewModel.payer!!.name
+        }
+
 
         // Choose category
         // Dropdown
@@ -138,13 +111,13 @@ class AddExpenseFragment : Fragment() {
     private fun createExpense() {
         if (binding.expenseNameText.text?.trim()
                 .toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
-            && viewModel.category != null && viewModel.payerId != null
+            && viewModel.category != null && viewModel.payer != null
         ) {
             if(viewModel.memberIds.isNotEmpty()){
                 viewModel.createExpense(
                     binding.expenseNameText.text.toString(),
-                    viewModel.category!!,
-                    viewModel.payerId!!,
+                    viewModel.category!!.ordinal,
+                    viewModel.payer!!.memberId,
                     binding.expenseAmountText.text.toString().toFloat(),
                     viewModel.memberIds.toList()
                 ) {
@@ -192,7 +165,7 @@ class AddExpenseFragment : Fragment() {
         //Adapter
         //val categoryAdapter = CategoryArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, categories)
         val categoryAdapter = CategoryAdapter(categories){ category ->
-            viewModel.category = category.ordinal
+            viewModel.category = category
             binding.chooseCategoryText.text = category.name.lowercase().titleCase().translate(requireContext())
             categoryBottomSheetDialog.dismiss()
         }
@@ -228,7 +201,7 @@ class AddExpenseFragment : Fragment() {
         //Adapter
 //        val payerAdapter = PayerArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, payers)
         val payerAdapter = PayerAdapter(payers){ payer ->
-            viewModel.payerId = payer.memberId
+            viewModel.payer = payer
             binding.choosePayerText.text = payer.name
             payerBottomSheetDialog.dismiss()
         }

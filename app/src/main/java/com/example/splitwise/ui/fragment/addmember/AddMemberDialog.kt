@@ -90,7 +90,7 @@ class AddMemberDialog(
                 val name = nameEditText.text.toString()
                 val phoneNumber = phoneEditText.text.toString().toLong()
 
-                viewModel.checkMember(name, phoneNumber) // true means member does not registered
+                viewModel.checkMember(name, phoneNumber, null) // true means member does not registered
 
                 Log.d(TAG, "onCreateDialog: membercheck dialog saved, ${viewModel.members.value}")
             }
@@ -116,7 +116,7 @@ class AddMemberDialog(
                     nameLayout.error = null
                     nameLayout.isErrorEnabled = false
                 } else
-                    nameLayout.error = "Enter valid name"
+                    nameLayout.error = getString(R.string.enter_valid_name)
 
                 dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled =
                     nameCheck(nameEditText.text?.trim().toString()) &&
@@ -145,7 +145,6 @@ class AddMemberDialog(
                             (phoneEditText.text?.trim().toString().length == 10)
 
             }
-
         }
 
         nameEditText.addTextChangedListener(nameWatcher)

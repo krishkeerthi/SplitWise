@@ -79,7 +79,7 @@ class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder
             getDateStringResource(formatDate(group.creationDate))
 
         if (group.groupIcon != null) {
-            Log.d(TAG, "bind: group icon${group.groupIcon.toString()}")
+            Log.d(TAG, "bind: group icon${group.groupIcon}")
             binding.groupImageView.setImageURI(group.groupIcon)
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE

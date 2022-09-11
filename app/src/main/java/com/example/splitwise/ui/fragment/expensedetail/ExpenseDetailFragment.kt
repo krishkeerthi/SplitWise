@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.expensedetail
 
+import android.Manifest
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.ContentValues.TAG
@@ -11,13 +12,16 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -58,7 +62,8 @@ class ExpenseDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.expense_detail)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.expense_detail)
         return inflater.inflate(R.layout.fragment_expense_detail, container, false)
     }
 
@@ -120,8 +125,7 @@ class ExpenseDetailFragment : Fragment() {
                 billsAdapter.updateBills(bills)
                 binding.billsRecyclerView.visibility = View.VISIBLE
                 binding.billsTextView.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 binding.billsRecyclerView.visibility = View.GONE
                 binding.billsTextView.visibility = View.INVISIBLE
             }
@@ -135,7 +139,8 @@ class ExpenseDetailFragment : Fragment() {
                 binding.groupExpenseTitleTextView.text = it.expenseName
                 membersAdapter.updateTotal(it.totalAmount)
                 binding.expenseTotalTextView.text = "₹" + it.totalAmount.roundOff()
-                binding.expenseCategoryExpense.text = Category.values()[it.category].name.lowercase().titleCase()
+                binding.expenseCategoryExpense.text =
+                    Category.values()[it.category].name.lowercase().titleCase()
             }
         }
 
@@ -183,28 +188,71 @@ class ExpenseDetailFragment : Fragment() {
                     cameraLauncher.launch(intent)
                     Log.d(TAG, "onViewCreated: reached")
                 }
-                //                shouldShowRequestPermissionRationale(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
-                //
-                //                }
+
                 else -> {
-                    requestPermissionLauncher.launch(
-                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            requireActivity(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    ) {
+                        settingsDialog()
+                    } else {
+                        requestDialog()
+                    }
                 }
             }
         }
 
     }
 
+    private fun settingsDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+
+        builder.setMessage(getString(R.string.storage_permission))
+        builder.setPositiveButton(getString(R.string.settings)) { dialog, which ->
+            gotoSettings()
+        }
+        builder.setNegativeButton(getString(R.string.cancel), null)
+        builder.show()
+    }
+
+    private fun requestDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+
+        builder.setMessage(getString(R.string.storage_permission))
+        builder.setPositiveButton(getString(R.string.proceed)) { dialog, which ->
+            //requestPermissionLauncher.unregister()
+            requestPermissionLauncher.launch(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+
+        }
+        builder.setNegativeButton(getString(R.string.cancel), null)
+        builder.show()
+    }
+
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                Snackbar.make(binding.root, getString(R.string.permission_granted), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.permission_granted),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                binding.addBillButton.performClick()
             } else {
-                Snackbar.make(binding.root, getString(R.string.permission_denied), Snackbar.LENGTH_SHORT).show()
+                gotoSettings()
+                //Snackbar.make(binding.root, getString(R.string.permission_denied), Snackbar.LENGTH_SHORT).show()
             }
         }
 
+    private fun gotoSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val uri = Uri.fromParts("package", requireActivity().packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
 
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -244,9 +292,17 @@ class ExpenseDetailFragment : Fragment() {
                     if (uri != null)
                         viewModel.addBills(uri)
                     else
-                        Snackbar.make(binding.root, getString(R.string.error_adding_image), Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.error_adding_image),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
                 } else
-                    Snackbar.make(binding.root, getString(R.string.bitmap_not_found), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.bitmap_not_found),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
             }
         }
 

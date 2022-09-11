@@ -123,11 +123,20 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        binding.feedback.setOnClickListener{
+            gotoFeedbackFragment()
+        }
+
 
         if (!sharedPreferences.getBoolean("DATA_INSERTED", false)) {
             setHasOptionsMenu(true)
         }
 
+    }
+
+    private fun gotoFeedbackFragment() {
+        val action = SettingsFragmentDirections.actionSettingsFragmentToFeedbackFragment()
+        view?.findNavController()?.navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

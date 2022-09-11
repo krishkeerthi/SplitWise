@@ -104,8 +104,17 @@ class SplitWiseFragment : Fragment() {
 
         // Livedata transactions
         viewModel.membersPaymentStatsDetail.observe(viewLifecycleOwner) { membersPaymentStatsDetail ->
-            if (membersPaymentStatsDetail != null) {
+            if (membersPaymentStatsDetail != null && membersPaymentStatsDetail.isNotEmpty()) {
                 splitWiseAdapter.updateMembersPaymentStatsDetail(membersPaymentStatsDetail)
+
+                binding.membersRecyclerView.visibility = View.VISIBLE
+                binding.noPendingImageView.visibility = View.GONE
+                binding.noPendingTextView.visibility = View.GONE
+            }
+            else{
+                binding.membersRecyclerView.visibility = View.GONE
+                binding.noPendingImageView.visibility = View.VISIBLE
+                binding.noPendingTextView.visibility = View.VISIBLE
             }
         }
 
@@ -170,8 +179,9 @@ class SplitWiseFragment : Fragment() {
     private fun gotoSettleUpFragment(payerId: Int) {
         val action =
             SplitWiseFragmentDirections.actionSplitWiseFragmentToSettleUpFragment(
-                payerId, getGroupIds(selectedGroups).toIntArray(),
-                listOf<Member>().toTypedArray()
+                payerId,
+                listOf<Member>().toTypedArray(),
+                selectedGroups.toTypedArray() //getGroupIds(selectedGroups).toIntArray() previously group ids only passed
             ) // Passing empty list of members when going to settle up fragment
         view?.findNavController()?.navigate(action)
     }

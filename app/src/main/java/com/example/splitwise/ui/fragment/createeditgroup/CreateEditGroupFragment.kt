@@ -8,14 +8,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
@@ -24,8 +21,6 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentCreateEditGroupBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
-import com.example.splitwise.ui.fragment.addmember.AddMemberDialog
-import com.example.splitwise.ui.fragment.addmember.AddMemberFragment
 import com.example.splitwise.ui.fragment.viewmodel.CreateEditGroupActivityViewModel
 import com.example.splitwise.util.nameCheck
 import com.google.android.material.snackbar.Snackbar
@@ -35,7 +30,7 @@ class CreateEditGroupFragment : Fragment() {
     private lateinit var binding: FragmentCreateEditGroupBinding
     private val args: CreateEditGroupFragmentArgs by navArgs()
 
-//    private lateinit var viewModel: CreateEditGroupViewModel
+    //    private lateinit var viewModel: CreateEditGroupViewModel
     private val viewModel: CreateEditGroupViewModel by activityViewModels { // checking with activity viewmodel
         CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.selectedMembers)
     }
@@ -58,12 +53,13 @@ class CreateEditGroupFragment : Fragment() {
 
                     builder.setTitle(getString(R.string.discard));
                     builder.setMessage(getString(R.string.discard_changes))
-                    builder.setPositiveButton(getString(R.string.discard)
+                    builder.setPositiveButton(
+                        getString(R.string.discard)
                     ) { dialog, which ->
 
                         // clear activity viewmodel selected members
-                  //      activityViewModel.selectedMembers = listOf()
-                        
+                        //      activityViewModel.selectedMembers = listOf()
+
                         viewModel.reset()
                         //  Toast.makeText(requireContext(), "custom back pressed", Toast.LENGTH_SHORT).show()
                         NavHostFragment.findNavController(this@CreateEditGroupFragment)
@@ -88,10 +84,12 @@ class CreateEditGroupFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        if(args.groupId != -1)
-            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.edit_group)
+        if (args.groupId != -1)
+            (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                getString(R.string.edit_group)
         else
-            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.create_group)
+            (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                getString(R.string.create_group)
 
         return inflater.inflate(R.layout.fragment_create_edit_group, container, false)
     }
@@ -121,7 +119,9 @@ class CreateEditGroupFragment : Fragment() {
             requireActivity().title = "Edit Group"
 
         // Rv
-        val membersAdapter = GroupMembersAdapter()
+        val membersAdapter = GroupMembersAdapter { memberId ->
+            memberClicked(memberId)
+        }
 
         binding.groupMembersRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -136,14 +136,18 @@ class CreateEditGroupFragment : Fragment() {
                 membersAdapter.updateMembers(members)
 
                 // Also update selected members this stores the added members before creating group
-         //       activityViewModel.selectedMembers = members
+                //       activityViewModel.selectedMembers = members
             }
         }
 
         // Livedata member exists
         viewModel.exists.observe(viewLifecycleOwner) { exists ->
             if (exists) {
-                Snackbar.make(binding.root, getString(R.string.member_exists_already), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.member_exists_already),
+                    Snackbar.LENGTH_SHORT
+                ).show()
                 viewModel.exists.value = false
             }
         }
@@ -261,7 +265,7 @@ class CreateEditGroupFragment : Fragment() {
                     if (args.groupId == -1)
                         viewModel.change = true
                 } else {
-                    binding.outlinedGroupNameTextField.error = "Enter valid name"
+                    binding.outlinedGroupNameTextField.error = getString(R.string.enter_valid_name)
 
                     if (!viewModel.memberCountChange)
                         viewModel.change = false
@@ -285,6 +289,30 @@ class CreateEditGroupFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
+    }
+
+    private fun memberClicked(memberId: Int) {
+        if (args.groupId != -1) {
+            gotoMemberProfileFragment(memberId)
+        }
+//        else { // No else case needed
+//            Snackbar.make(
+//                binding.root,
+//                getString(R.string.error),
+//                Snackbar.LENGTH_SHORT
+//            ).show()
+//        }
+    }
+
+    private fun gotoMemberProfileFragment(memberId: Int) {
+        val action =
+            CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToMemberProfileFragment(
+                memberId,
+                args.groupId,
+                args.groupName,
+                args.groupIcon
+            )
+        view?.findNavController()?.navigate(action)
     }
 
     private fun createGroup() {
@@ -311,7 +339,7 @@ class CreateEditGroupFragment : Fragment() {
                     Snackbar.LENGTH_SHORT
                 ).show()
 
-               // activityViewModel.selectedMembers = listOf()
+                // activityViewModel.selectedMembers = listOf()
                 // gotoGroupsFragment()
                 // calling here goes to groups fragment without completing the group creation process
             } else
@@ -343,7 +371,7 @@ class CreateEditGroupFragment : Fragment() {
         return when (item.itemId) {
             R.id.add_member -> {
                 //AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
-                AddMemberFragment(viewModel)
+                gotoAddMemberFragment()
                 true
             }
             R.id.create_group -> {
@@ -354,6 +382,17 @@ class CreateEditGroupFragment : Fragment() {
                 false
             }
         }
+    }
+
+    private fun gotoAddMemberFragment() {
+        val action =
+            CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToAddMemberFragment(
+                args.groupId,
+                args.groupName,
+                args.groupIcon
+            )
+
+        view?.findNavController()?.navigate(action)
     }
 
     private fun gotoChooseMembersFragment() {
@@ -380,7 +419,16 @@ class CreateEditGroupFragment : Fragment() {
     private fun gotoGroupIconFragment() {
         val groupName = binding.groupNameText.text?.trim().toString()
         val groupIcon = if (args.groupId != -1) {
-            viewModel.group.value?.groupIcon.toString()
+            if(viewModel.group.value != null){
+                if(viewModel.group.value!!.groupIcon != null)
+                    viewModel.group.value!!.groupIcon.toString()
+                else
+                    null
+            }
+            else{
+                null
+            }
+
         } else
             args.groupIcon  // when group icon already set before creating group
 

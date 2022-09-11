@@ -36,16 +36,16 @@ class SettingsViewModel(context: Context) :
             )
 
             // Member Addition to Group
-            val shanthiId = memberRepository.addMember("Shanthi", 3839393939)
+            val shanthiId = memberRepository.addMember("Shanthi", 3839393939, null)
             memberRepository.addMemberStreak(shanthiId)
             groupRepository.addGroupMember(groupId, shanthiId)
 
 
-            val arjunId = memberRepository.addMember("Arjun", 2930492043)
+            val arjunId = memberRepository.addMember("Arjun", 2930492043, null)
             memberRepository.addMemberStreak(arjunId)
             groupRepository.addGroupMember(groupId, arjunId)
 
-            val kamalId = memberRepository.addMember("Kamal", 2493020303)
+            val kamalId = memberRepository.addMember("Kamal", 2493020303, null)
             memberRepository.addMemberStreak(kamalId)
             groupRepository.addGroupMember(groupId, kamalId)
 
@@ -112,16 +112,16 @@ class SettingsViewModel(context: Context) :
             )
 
             // Member Addition to Group
-            val reshmiId = memberRepository.addMember("Reshmi", 3839393939)
+            val reshmiId = memberRepository.addMember("Reshmi", 3839393939, null)
             memberRepository.addMemberStreak(reshmiId)
             groupRepository.addGroupMember(groupId2, reshmiId)
 
 
-            val krithiId = memberRepository.addMember("Krithi", 2930492043)
+            val krithiId = memberRepository.addMember("Krithi", 2930492043, null)
             memberRepository.addMemberStreak(krithiId)
             groupRepository.addGroupMember(groupId2, krithiId)
 
-            val nazriyaId = memberRepository.addMember("Nazriya", 2493020303)
+            val nazriyaId = memberRepository.addMember("Nazriya", 2493020303, null)
             memberRepository.addMemberStreak(nazriyaId)
             groupRepository.addGroupMember(groupId2, nazriyaId)
 

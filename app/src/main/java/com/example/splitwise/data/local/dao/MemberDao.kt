@@ -1,5 +1,6 @@
 package com.example.splitwise.data.local.dao
 
+import android.net.Uri
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -26,4 +27,14 @@ interface MemberDao {
 
     @Query("SELECT * FROM member WHERE name = :name AND phone = :phoneNumber")
     suspend fun getMember(name: String, phoneNumber: Long): Member?
+
+    @Query("UPDATE member SET member_profile = :uri WHERE member_id = :memberId")
+    suspend fun updateMemberProfile(memberId: Int, uri: Uri)
+
+    @Query("UPDATE member SET member_profile = :uri WHERE member_id = :memberId")
+    suspend fun deleteMemberProfile(memberId: Int, uri: Uri)
+
+    @Query("UPDATE member SET name = :name, phone = :phone WHERE member_id = :memberId")
+    suspend fun updateMember(memberId: Int, name: String, phone: Long)
+
 }

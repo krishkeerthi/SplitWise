@@ -1,5 +1,8 @@
 package com.example.splitwise.data.local.localdatasource
 
+import android.content.ContentValues
+import android.net.Uri
+import android.util.Log
 import androidx.room.PrimaryKey
 import com.example.splitwise.data.datasource.MemberDataSource
 import com.example.splitwise.data.local.dao.MemberDao
@@ -11,10 +14,10 @@ class MemberLocalDataSource(
     private val memberDao: MemberDao,
     private val memberStreakDao: MemberStreakDao
 ): MemberDataSource {
-    override suspend fun addMember(name: String, phoneNumber: Long): Int {
+    override suspend fun addMember(name: String, phoneNumber: Long, uri: Uri?): Int {
         return memberDao.insert(
             Member(
-                name, phoneNumber
+                name, phoneNumber, uri
             )).toInt()
     }
 
@@ -40,6 +43,18 @@ class MemberLocalDataSource(
 
     override suspend fun updateMemberStreak(memberId: Int, streak: Int) {
         memberStreakDao.update(memberId, streak)
+    }
+
+    override suspend fun updateMember(memberId: Int, name: String, phone: Long) {
+        Log.d(ContentValues.TAG, "onViewCreated: lds update member${name}  ${phone}")
+        memberDao.updateMember(memberId, name, phone)
+
+        val x = memberDao.getMember(memberId)
+        Log.d(ContentValues.TAG, "onViewCreated: vm update member${x?.name}  ${x?.phone}")
+    }
+
+    override suspend fun updateProfile(memberId: Int, uri: Uri) {
+        memberDao.updateMemberProfile(memberId, uri)
     }
 
     override suspend fun getMember(name: String, phoneNumber: Long): Member? {

@@ -252,12 +252,20 @@ class SettleUpViewModel(
 class SettleUpViewModelFactory(
     private val context: Context,
     private val payerId: Int,
-    private val groupIds: List<Int>
+    private val selectedGroups: List<Group>
 ) :
     ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SettleUpViewModel(context, payerId, groupIds) as T
+        return SettleUpViewModel(context, payerId, getGroupIds()) as T
+    }
+
+    private fun getGroupIds(): List<Int>{
+        val groupIds = mutableListOf<Int>()
+        for(group in selectedGroups)
+            groupIds.add(group.groupId)
+
+        return groupIds.toList()
     }
 }

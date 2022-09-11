@@ -17,7 +17,7 @@ class RegisterActivityViewModel(context: Context) : ViewModel() {
 
     fun registerMember(name: String, phone: Long) {
         viewModelScope.launch {
-            val memberId = memberRepository.addMember("$name(You)", phone)
+            val memberId = memberRepository.addMember("$name(You)", phone, null)
             memberRepository.addMemberStreak(memberId)
 
             _memberId.value = memberId

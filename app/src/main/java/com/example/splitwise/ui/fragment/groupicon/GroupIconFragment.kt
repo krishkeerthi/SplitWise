@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.groupicon
 
+import android.Manifest
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.ContentValues.TAG
@@ -16,15 +17,21 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavHostController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupIconBinding
@@ -52,7 +59,8 @@ class GroupIconFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.group_icon)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.group_icon)
         return inflater.inflate(R.layout.fragment_group_icon, container, false)
     }
 
@@ -82,7 +90,7 @@ class GroupIconFragment : Fragment() {
         val groupIconBottomSheet = BottomSheetDialog(requireContext())
         groupIconBottomSheet.setContentView(R.layout.edit_group_icon)
 
-        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
             groupIconBottomSheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         val webImage = groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.web_image_holder)
@@ -96,7 +104,11 @@ class GroupIconFragment : Fragment() {
                 gotoSearchImageFragment()
                 groupIconBottomSheet.dismiss()
             } else
-                Snackbar.make(binding.root, getString(R.string.internet_unavailable), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.internet_unavailable),
+                    Snackbar.LENGTH_SHORT
+                ).show()
 
         }
 
@@ -144,11 +156,43 @@ class GroupIconFragment : Fragment() {
                 Log.d(TAG, "onViewCreated: reached")
             }
             else -> {
-                requestPermissionLauncher.launch(
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        requireActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                ) {
+                    settingsDialog()
+                } else {
+                    requestDialog()
+                }
             }
         }
+    }
+
+    private fun settingsDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+
+        builder.setMessage(getString(R.string.storage_permission))
+        builder.setPositiveButton(getString(R.string.settings)) { dialog, which ->
+            gotoSettings()
+        }
+        builder.setNegativeButton(getString(R.string.cancel), null)
+        builder.show()
+    }
+
+    private fun requestDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+
+        builder.setMessage(getString(R.string.storage_permission))
+        builder.setPositiveButton(getString(R.string.proceed)) { dialog, which ->
+            //requestPermissionLauncher.unregister()
+            requestPermissionLauncher.launch(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+
+        }
+        builder.setNegativeButton(getString(R.string.cancel), null)
+        builder.show()
     }
 
     private fun isNetworkAvailable(): Boolean {
@@ -192,12 +236,25 @@ class GroupIconFragment : Fragment() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                Snackbar.make(binding.root, getString(R.string.permission_granted), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.permission_granted),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                openCamera()
             } else {
-                Snackbar.make(binding.root, getString(R.string.permission_denied), Snackbar.LENGTH_SHORT).show()
+                gotoSettings()
+                //Snackbar.make(binding.root, getString(R.string.permission_denied), Snackbar.LENGTH_SHORT).show()
             }
         }
 
+    private fun gotoSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val uri = Uri.fromParts("package", requireActivity().packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
 
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -213,21 +270,36 @@ class GroupIconFragment : Fragment() {
                     val uri = storeUsingMediaStore(bitmap)
                     if (uri != null) {
                         if (args.groupId != -1) {
-                            if (args.fromGroupsFragment)
+                            if(args.fromGroupsSearchFragment){
                                 viewModel.updateGroupIcon(uri) {
-                                    gotoGroupsFragment()
+                                    gotoSearchGroupsFragment()
                                 }
-                            else {
-                                viewModel.updateGroupIcon(uri)
-                                requireActivity().onBackPressed()
                             }
-                        }
-                        else
+                            else{
+                                if (args.fromGroupsFragment)
+                                    viewModel.updateGroupIcon(uri) {
+                                        gotoGroupsFragment()
+                                    }
+                                else {
+                                    viewModel.updateGroupIcon(uri)
+                                    NavHostFragment.findNavController(this).popBackStack()
+                                    //requireActivity().onBackPressed()  for back press I used this, this is wrong
+                                }
+                            }
+                        } else
                             gotoCreateEditGroupFragment(uri)
                     } else
-                        Snackbar.make(binding.root, getString(R.string.error_adding_image), Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.error_adding_image),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
                 } else
-                    Snackbar.make(binding.root, getString(R.string.bitmap_not_found), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.bitmap_not_found),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
             }
         }
 
@@ -276,12 +348,13 @@ class GroupIconFragment : Fragment() {
     private fun selectFile() {
         //Intent.ACTION_PICK,
         //            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply { //ACTION_OPEN_DOCUMENT // ACTION_GET_CONTENT
-            type = "image/*"
-            flags = (Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-        }
+        val intent =
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply { //ACTION_OPEN_DOCUMENT // ACTION_GET_CONTENT
+                type = "image/*"
+                flags = (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            }
 
         selectFileLauncher.launch(intent)
     }
@@ -298,24 +371,34 @@ class GroupIconFragment : Fragment() {
                 // with document Uris).
 
                 if (uri != null) {
-                    requireActivity().contentResolver.takePersistableUriPermission(uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    requireActivity().contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
 
                     if (args.groupId != -1) {
-                        if (args.fromGroupsFragment) {
+                        if(args.fromGroupsSearchFragment){
                             viewModel.updateGroupIcon(uri) {
-                                gotoGroupsFragment()
+                                gotoSearchGroupsFragment()
                             }
-                        } else {
-                            viewModel.updateGroupIcon(uri)
-                            requireActivity().onBackPressed()
                         }
-                    }
-                    else{
+                        else{
+                            if (args.fromGroupsFragment) {
+                                viewModel.updateGroupIcon(uri) {
+                                    gotoGroupsFragment()
+                                }
+                            } else {
+                                viewModel.updateGroupIcon(uri)
+                                NavHostFragment.findNavController(this).popBackStack()
+                                //requireActivity().onBackPressed() for back press I used this, this is wrong
+                            }
+                        }
+                    } else {
                         gotoCreateEditGroupFragment(uri)
                     }
                 } else
-                    Snackbar.make(binding.root, getString(R.string.error), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, getString(R.string.error), Snackbar.LENGTH_SHORT)
+                        .show()
 
             }
 
@@ -326,10 +409,16 @@ class GroupIconFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
+    private fun gotoSearchGroupsFragment() {
+        val action = GroupIconFragmentDirections.actionGroupIconFragmentToSearchGroupFragment()
+        view?.findNavController()?.navigate(action)
+    }
+
     private fun gotoCreateEditGroupFragment(uri: Uri) {
         val action = GroupIconFragmentDirections.actionGroupIconFragmentToCreateEditGroupFragment(
             args.groupId, null, args.groupName, uri.toString()
         )
         view?.findNavController()?.navigate(action)
     }
+
 }

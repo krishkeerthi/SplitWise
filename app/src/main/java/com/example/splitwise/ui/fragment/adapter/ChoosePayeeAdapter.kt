@@ -1,6 +1,9 @@
 package com.example.splitwise.ui.fragment.adapter
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Group
@@ -79,12 +82,30 @@ class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
         binding.payeeNameTextView.text = payee.name
         binding.amountTextView.text = "₹" + amount.roundOff()
 
+        if(payee.memberProfile != null){
+            binding.payeeImageView.setImageURI(payee.memberProfile)
+
+            binding.payeeImageView.visibility = View.VISIBLE
+            binding.payeeImageHolder.visibility = View.INVISIBLE
+            binding.payeeImageHolderImage.visibility = View.INVISIBLE
+        }
+
         binding.selectedCheckBox.isChecked = payee.memberId in selectedPayees
 
     }
 
     fun bindAndCheck(payee: Member) {
         binding.payeeNameTextView.text = payee.name
+        if(payee.memberProfile != null){
+            binding.payeeImageView.setImageURI(payee.memberProfile)
+
+            binding.payeeImageView.visibility = View.VISIBLE
+            binding.payeeImageHolder.visibility = View.INVISIBLE
+            binding.payeeImageHolderImage.visibility = View.INVISIBLE
+        }
+
         binding.selectedCheckBox.isChecked = true
+
+
     }
 }

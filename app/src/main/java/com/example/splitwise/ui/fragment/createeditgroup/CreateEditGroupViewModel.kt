@@ -114,6 +114,7 @@ init {
 
     fun updatedFetchData(gId: Int, selectedMembers: List<Member>?) {
 
+        Log.d(TAG, "updatedFetchData: groupid ${gId} selectedMemebers ${selectedMembers}")
         // update group Id
         groupId = gId
 
@@ -194,12 +195,14 @@ init {
         // since this is called when group id != -1, so atleast 2 members will be there.
         groupMemberIds?.let { memberIds ->
 
-            val sMembers = selectedMembers.toList()
+            val sMembers = selectedMembers
 
            // if (sMembers != null) {
                 for (member in sMembers) {
-                    if (member.memberId !in memberIds)
+                    if (member.memberId !in memberIds) {
+                        Log.d(TAG, "addMembersNotIncludedToGroup: newMember id ${member.memberId} existing members ${memberIds}")
                         groupRepository.addGroupMember(groupId, member.memberId)
+                    }
                 }
           //  }
 
@@ -228,11 +231,11 @@ init {
         _members.value = members.toMutableList()
     }
 
-    fun addMember(name: String, phoneNumber: Long) {
+    fun addMember(name: String, phoneNumber: Long, uri: Uri?) {
         viewModelScope.launch {
 
             if (groupId != -1) {
-                val memberId = memberRepository.addMember(name, phoneNumber)
+                val memberId = memberRepository.addMember(name, phoneNumber, uri)
                 memberRepository.getMember(memberId)?.let {
                     Log.d(TAG, "addMember: $it")
                     val existingMembers = members.value
@@ -251,12 +254,12 @@ init {
                 val existingMembers = members.value
 
                 if (existingMembers != null) {
-                    existingMembers.add(Member(name, phoneNumber).apply {
+                    existingMembers.add(Member(name, phoneNumber, uri).apply {
                         memberId = Random().nextInt()
                     })
                     _members.value = existingMembers
                 } else {
-                    _members.value = mutableListOf(Member(name, phoneNumber).apply {
+                    _members.value = mutableListOf(Member(name, phoneNumber, uri).apply {
                         memberId = Random().nextInt()
                     })
                 }
@@ -292,7 +295,7 @@ init {
                     val member = memberRepository.getMember(i.memberId)
                     if (member == null) {
                         // add to members table
-                        val mId = memberRepository.addMember(i.name, i.phone)
+                        val mId = memberRepository.addMember(i.name, i.phone, i.memberProfile)
                         // add to member streak table
                         memberRepository.addMemberStreak(mId)
                         groupRepository.addGroupMember(groupId, mId)
@@ -326,13 +329,13 @@ init {
             0
     }
 
-    fun checkMember(name: String, phoneNumber: Long) {
+    fun checkMember(name: String, phoneNumber: Long, uri: Uri?) {
         viewModelScope.launch {
             val memberExist = memberRepository.checkMemberExistence(name, phoneNumber)
 
             if(!memberExist){
                 Log.d(TAG, "checkMember: checkMemberExistence member does not exist")
-                addMember(name, phoneNumber)
+                addMember(name, phoneNumber, uri)
             }
             else{
                 Log.d(TAG, "checkMember: checkMemberExistence member exists")

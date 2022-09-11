@@ -8,8 +8,8 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/group_image_view"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,20 +19,20 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/group_image_holder"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_marginTop="16dp"
+        android:background="@color/view_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/Circular"
-        android:background="@color/view_color" />
+        app:shapeAppearanceOverlay="@style/Circular" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/group_image_holder_image"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="36dp"
         android:src="@drawable/ic_baseline_people_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,7 +56,7 @@
             android:id="@+id/group_name_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"/>
+            android:inputType="textCapSentences|text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textview.MaterialTextView

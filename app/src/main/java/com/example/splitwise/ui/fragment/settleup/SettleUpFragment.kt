@@ -32,7 +32,7 @@ class SettleUpFragment : Fragment() {
 
     private var selectedMembers = listOf<Member>()
     private val viewModel: SettleUpViewModel by viewModels {
-        SettleUpViewModelFactory(requireContext(), args.payerId, args.groupIds.toList())
+        SettleUpViewModelFactory(requireContext(), args.payerId, args.selectedGroups.toList())
     }
 
     override fun onCreateView(
@@ -47,7 +47,7 @@ class SettleUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d(TAG, "onViewCreated: selected ${args.groupIds.toList()}")
+            //Log.d(TAG, "onViewCreated: selected ${args.selectedGroups.toList()}")
         binding = FragmentSettleUpBinding.bind(view)
 
         // toolbar title
@@ -121,6 +121,14 @@ class SettleUpFragment : Fragment() {
             payer?.let {
                 binding.fromMemberNameTextView.text = it.name
                 binding.fromMemberPhoneTextView.text = it.phone.toString()
+
+                if(it.memberProfile != null){
+                    binding.fromMemberImageView.setImageURI(it.memberProfile)
+
+                    binding.fromMemberImageView.visibility = View.VISIBLE
+                    binding.fromMemberImageHolder.visibility = View.INVISIBLE
+                    binding.fromMemberImageHolderImage.visibility = View.INVISIBLE
+                }
             }
         }
 
@@ -318,7 +326,7 @@ class SettleUpFragment : Fragment() {
 
     private fun gotoSplitWiseFragment() {
         val action =
-            SettleUpFragmentDirections.actionSettleUpFragmentToSplitWiseFragment(listOf<Group>().toTypedArray())
+            SettleUpFragmentDirections.actionSettleUpFragmentToSplitWiseFragment(args.selectedGroups)
         view?.findNavController()?.navigate(action)
     }
 
@@ -326,8 +334,8 @@ class SettleUpFragment : Fragment() {
         val action =
             SettleUpFragmentDirections.actionSettleUpFragmentSelf(
                 args.payerId,
-                args.groupIds,
-                listOf<Member>().toTypedArray()
+                listOf<Member>().toTypedArray(),
+                args.selectedGroups
             ) // Passing empty list of members when going to settle up fragment
         view?.findNavController()?.navigate(action)
     }
