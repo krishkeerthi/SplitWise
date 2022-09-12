@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.LinearLayout
+import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -43,6 +43,7 @@ class SearchGroupFragment : Fragment() {
                 NavHostFragment.findNavController(this@SearchGroupFragment)
                     .popBackStack()
             }
+
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
@@ -53,7 +54,8 @@ class SearchGroupFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.search)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.search)
         return inflater.inflate(R.layout.fragment_search_group, container, false)
     }
 
@@ -167,24 +169,20 @@ class SearchGroupFragment : Fragment() {
         searchView.updatePadding(left = (-16).dpToPx(resources.displayMetrics))
         Log.d(TAG, "onCreateOptionsMenu: ${searchItem.itemId}")
         // for expanded state
+        //searchView.setIconifiedByDefault(false) // it shows search icon
         searchView.isIconified = false
 
-        // test
-//        val searchFrameLL = searchView.rootView as LinearLayout
-//        val params = LinearLayout.LayoutParams(
-//            LinearLayout.LayoutParams.WRAP_CONTENT,
-//            LinearLayout.LayoutParams.MATCH_PARENT
-//        )
-//        params.setMargins(0, 0, 8, 0) //params.setMargins(left, top, right, bottom)
-//
-//        // params.setMarginStart(0);  //(or just use individual like this
-//        // params.setMarginStart(0);  //(or just use individual like this
-//        searchFrameLL.layoutParams = params
-        //
+        val closeButton =
+            searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+
         searchView.requestFocus()
 
 
         searchView.setQuery(viewModel.textEntered, true)
+
+        if (viewModel.textEntered == "")
+            closeButton.visibility = View.INVISIBLE
+
         viewModel.fetchData()
 
 //        val query = sharedPreferences.getString("GROUPQUERY", "")
@@ -200,11 +198,15 @@ class SearchGroupFragment : Fragment() {
 
             override fun onQueryTextChange(query: String?): Boolean {
                 if (query != null) {
+
+                    closeButton.visibility = if (query == "") View.INVISIBLE else View.VISIBLE
+
                     viewModel.textEntered = query
                     // saving query in shared preference
                     //changeGroupQuery(query)
                     viewModel.fetchData()
                 }
+
                 return true
             }
         })

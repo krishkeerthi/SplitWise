@@ -37,7 +37,7 @@ class SearchImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.showRelatedGroupIcons(removeIrrelevantWords(args.groupName))
+        viewModel.showRelatedGroupIcons(removeIrrelevantWords(getGroupName()))
 
         binding = FragmentSearchImageBinding.bind(view)
 
@@ -85,6 +85,13 @@ class SearchImageFragment : Fragment() {
 
         // menu
         setHasOptionsMenu(true)
+    }
+
+    private fun getGroupName(): String {
+        return if(args.groupName == "")
+            "random"
+        else
+            args.groupName
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

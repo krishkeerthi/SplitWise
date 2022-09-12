@@ -86,6 +86,7 @@ class GroupsFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext()).apply {
                 reverseLayout = true // it reverses but scrolled down to the last item
                 stackFromEnd = true // corrects above problem
+                //scrollToPosition(1)
             }
 
             adapter = groupsAdapter
@@ -100,6 +101,12 @@ class GroupsFragment : Fragment() {
                 binding.emptyGroupImageView.visibility = View.GONE
                 binding.noGroupsTextView.visibility = View.GONE
                 binding.dateTextView.visibility = View.VISIBLE
+
+//                Log.d(TAG, "onViewCreated: rv ${binding.groupsRecyclerView.hasPendingAdapterUpdates()}")
+//                Log.d(TAG, "onViewCreated: rv ${binding.groupsRecyclerView.invalidate()}")
+//                Log.d(TAG, "onViewCreated: rv ${binding.groupsRecyclerView.bringToFront()}")
+//                binding.groupsRecyclerView.postInvalidateDelayed(10)
+//                binding.groupsRecyclerView.forceLayout()
 
                 // experimental because during orientation change filter not showing
                 updateAmountFilter()

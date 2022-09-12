@@ -226,7 +226,7 @@ class GroupIconFragment : Fragment() {
     private fun gotoSearchImageFragment() {
         val action = GroupIconFragmentDirections.actionGroupIconFragmentToSearchImageFragment(
             args.groupId,
-            if (args.groupName == "") "random" else args.groupName,
+            args.groupName, //if (args.groupName == "") "random" else args.groupName
             args.fromGroupsFragment,
             args.fromGroupsSearchFragment
         )
