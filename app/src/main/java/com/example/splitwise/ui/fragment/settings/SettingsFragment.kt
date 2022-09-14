@@ -10,13 +10,19 @@ import android.view.*
 import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSettingsBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialSharedAxis
 import java.util.*
 
 
@@ -135,8 +141,17 @@ class SettingsFragment : Fragment() {
     }
 
     private fun gotoFeedbackFragment() {
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+//        val transitionName = getString(R.string.feedback_transition_name)
+//        val extras = FragmentNavigatorExtras(binding.feedback to transitionName)
         val action = SettingsFragmentDirections.actionSettingsFragmentToFeedbackFragment()
-        view?.findNavController()?.navigate(action)
+        findNavController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -83,24 +83,14 @@
         <action
             android:id="@+id/action_groupsFragment_to_createEditGroupFragment"
             app:destination="@id/createEditGroupFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            />
         <action
             android:id="@+id/action_groupsFragment_to_expensesFragment"
-            app:destination="@id/expensesFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:destination="@id/expensesFragment" />
         <action
             android:id="@+id/action_groupsFragment_to_searchGroupFragment"
             app:destination="@id/searchGroupFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            />
         <action
             android:id="@+id/action_groupsFragment_to_groupIconFragment"
             app:destination="@id/groupIconFragment"
@@ -116,17 +106,11 @@
         <action
             android:id="@+id/action_splitWiseFragment_to_settleUpFragment"
             app:destination="@id/settleUpFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            />
         <action
             android:id="@+id/action_splitWiseFragment_to_chooseGroupsFragment"
             app:destination="@id/chooseGroupsFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            />
         <argument
             android:name="selectedGroups"
             app:argType="com.example.splitwise.data.local.entity.Group[]" />
@@ -171,10 +155,7 @@
         <action
             android:id="@+id/action_createEditGroupFragment_to_chooseMembersFragment"
             app:destination="@id/chooseMembersFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            />
         <argument
             android:name="selectedMembers"
             app:argType="com.example.splitwise.data.local.entity.Member[]"
@@ -185,11 +166,7 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_createEditGroupFragment_to_groupIconFragment"
-            app:destination="@id/groupIconFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            app:destination="@id/groupIconFragment" />
         <argument
             android:name="groupIcon"
             app:argType="string"
@@ -216,17 +193,11 @@
         <action
             android:id="@+id/action_expensesFragment_to_addExpenseFragment"
             app:destination="@id/addExpenseFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            />
         <action
             android:id="@+id/action_expensesFragment_to_expenseDetailFragment"
             app:destination="@id/expenseDetailFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            />
         <argument
             android:name="groupId"
             app:argType="integer"
@@ -242,11 +213,7 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_expensesFragment_to_createEditGroupFragment"
-            app:destination="@id/createEditGroupFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            app:destination="@id/createEditGroupFragment" />
     </fragment>
     <fragment
         android:id="@+id/addExpenseFragment"
@@ -275,11 +242,7 @@
             />
         <action
             android:id="@+id/action_expenseDetailFragment_to_billsHolderFragment"
-            app:destination="@id/billsHolderFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            app:destination="@id/billsHolderFragment" />
     </fragment>
     <fragment
         android:id="@+id/settleUpFragment"
@@ -415,10 +378,7 @@
         <action
             android:id="@+id/action_settingsFragment_to_feedbackFragment"
             app:destination="@id/feedbackFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            />
     </fragment>
     <fragment
         android:id="@+id/chooseGroupsFragment"
@@ -566,10 +526,7 @@
             app:destination="@id/createEditGroupFragment"
             app:popUpTo="@id/createEditGroupFragment"
             app:popUpToInclusive="true"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            />
         <argument
             android:name="memberId"
             app:argType="integer" />

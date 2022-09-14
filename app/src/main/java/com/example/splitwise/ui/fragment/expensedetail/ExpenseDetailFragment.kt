@@ -7,6 +7,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -24,9 +25,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
@@ -37,6 +41,8 @@ import com.example.splitwise.util.Category
 import com.example.splitwise.util.roundOff
 import com.example.splitwise.util.titleCase
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -55,6 +61,17 @@ class ExpenseDetailFragment : Fragment() {
 
     private val viewModel: ExpenseDetailViewModel by viewModels {
         ExpenseDetailViewModelFactory(requireContext(), args.expenseId)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.background))
+        }
     }
 
     override fun onCreateView(
@@ -87,6 +104,11 @@ class ExpenseDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // start enter transition only when data loaded, and just started to draw (for bills)
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        //
+
         binding = FragmentExpenseDetailBinding.bind(view)
 
         //requireActivity().title = "Expense Detail"
@@ -95,8 +117,8 @@ class ExpenseDetailFragment : Fragment() {
 
         // Rv
         val membersAdapter = ExpenseMembersAdapter()
-        val billsAdapter = BillsAdapter { position: Int ->
-            gotoBillsHolderFragment(position)
+        val billsAdapter = BillsAdapter { position: Int, billImageView: View ->
+            gotoBillsHolderFragment(position, billImageView)
         }
 
         binding.membersRecyclerView.apply {
@@ -387,13 +409,24 @@ class ExpenseDetailFragment : Fragment() {
     }
 
 
-    private fun gotoBillsHolderFragment(position: Int) {
+    private fun gotoBillsHolderFragment(position: Int, billImageView: View) {
+
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val transitionName = getString(R.string.bill_holder_transition_name)
+        val extras = FragmentNavigatorExtras(billImageView to transitionName)
+
         Log.d(TAG, "gotoBillsHolderFragment: position is $position")
         val action =
             ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToBillsHolderFragment(
                 viewModel.getBills().toTypedArray(), position, args.expenseId
             )
 
-        view?.findNavController()?.navigate(action)
+        findNavController().navigate(action, extras)
     }
 }

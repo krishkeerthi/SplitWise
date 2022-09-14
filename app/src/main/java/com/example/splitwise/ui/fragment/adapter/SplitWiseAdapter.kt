@@ -5,14 +5,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.splitwise.R
 import com.example.splitwise.databinding.MemberOweLendCardBinding
 import com.example.splitwise.model.MemberPaymentStatsDetail
 import com.example.splitwise.util.ripple
 import com.example.splitwise.util.roundOff
 
 class SplitWiseAdapter(
-    val onTransactionClicked: (Int, Float, String) -> Unit
+    val onTransactionClicked: (Int, Float, String, View) -> Unit
 ) : RecyclerView.Adapter<SplitWiseViewHolder>() {
     private var membersPaymentStatsDetail = listOf<MemberPaymentStatsDetail>()
 
@@ -26,7 +28,8 @@ class SplitWiseAdapter(
                 onTransactionClicked(
                     membersPaymentStatsDetail[adapterPosition].memberId,
                     membersPaymentStatsDetail[adapterPosition].amountOwed,
-                    membersPaymentStatsDetail[adapterPosition].memberName
+                    membersPaymentStatsDetail[adapterPosition].memberName,
+                    itemView
                 )
             }
         }
@@ -52,7 +55,11 @@ class SplitWiseAdapter(
 class SplitWiseViewHolder(val binding: MemberOweLendCardBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
+    val resources = binding.root.resources
     fun bind(memberPaymentStatsDetail: MemberPaymentStatsDetail) {
+        // transition name
+        ViewCompat.setTransitionName(binding.root, String.format(resources.getString(R.string.member_payment_stat_transition_name), memberPaymentStatsDetail.memberId))
+
         binding.memberTextView.text = memberPaymentStatsDetail.memberName
         binding.oweTextView.text = "₹" + memberPaymentStatsDetail.amountOwed.roundOff()
         binding.lendTextView.text = "₹" + memberPaymentStatsDetail.amountLend.roundOff()

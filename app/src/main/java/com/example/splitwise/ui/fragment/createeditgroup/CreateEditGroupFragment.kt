@@ -2,6 +2,7 @@ package com.example.splitwise.ui.fragment.createeditgroup
 
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -11,19 +12,31 @@ import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.doOnPreDraw
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.Slide
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentCreateEditGroupBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
+import com.example.splitwise.ui.fragment.groups.GroupsFragment
 import com.example.splitwise.ui.fragment.viewmodel.CreateEditGroupActivityViewModel
 import com.example.splitwise.util.nameCheck
+import com.example.splitwise.util.themeColor
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialSharedAxis
 
 class CreateEditGroupFragment : Fragment() {
 
@@ -91,10 +104,44 @@ class CreateEditGroupFragment : Fragment() {
             (requireActivity() as AppCompatActivity).supportActionBar?.title =
                 getString(R.string.create_group)
 
-        return inflater.inflate(R.layout.fragment_create_edit_group, container, false)
+        val binding = FragmentCreateEditGroupBinding.inflate(inflater, container, false)
+
+        return binding.root.apply {
+            transitionName = "create_edit_group_transition"
+        }
+        //return inflater.inflate(R.layout.fragment_create_edit_group, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        // start enter transition only when data loaded, and just started to draw
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        //
+
+        binding = FragmentCreateEditGroupBinding.bind(view)
+        // transition code starts
+
+
+        val startingView = getStartView()
+        enterTransition = MaterialContainerTransform().apply {
+            startView = startingView
+            endView = binding.root
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            containerColor = resources.getColor(R.color.background)
+            startContainerColor = resources.getColor(R.color.view_color)
+            endContainerColor = resources.getColor(R.color.background)
+        }
+
+        returnTransition = Slide().apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_medium).toLong()
+            addTarget(binding.root)
+        }
+
+
+        // transition code ends
+
 
         //viewModel.fetchData()
         viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
@@ -111,16 +158,14 @@ class CreateEditGroupFragment : Fragment() {
         Log.d(TAG, "onViewCreated: createdit group id : ${args.groupId}")
         super.onViewCreated(view, savedInstanceState)
 
-        binding = FragmentCreateEditGroupBinding.bind(view)
-
         if (args.groupId == -1)
             requireActivity().title = "Create Group"
         else
             requireActivity().title = "Edit Group"
 
         // Rv
-        val membersAdapter = GroupMembersAdapter { memberId ->
-            memberClicked(memberId)
+        val membersAdapter = GroupMembersAdapter { memberId, memberView ->
+            memberClicked(memberId, memberView)
         }
 
         binding.groupMembersRecyclerView.apply {
@@ -160,13 +205,17 @@ class CreateEditGroupFragment : Fragment() {
 //            }
 //        }
 
-        //   group icon click (when not set)
+        //      group icon click (when not set)
         binding.groupImageHolder.setOnClickListener {
-            gotoGroupIconFragment()
+            if(binding.groupImageHolderImage.isVisible)
+            gotoGroupIconFragment(binding.groupImageHolderImage)
         }
+//        binding.groupImageHolderImage.setOnClickListener {
+//            gotoGroupIconFragment(binding.groupImageHolderImage)
+//        }
         // group icon click (when set)
         binding.groupImageView.setOnClickListener {
-            gotoGroupIconFragment()
+            gotoGroupIconFragment(binding.groupImageView)
         }
 
         viewModel.group.observe(viewLifecycleOwner) { group ->
@@ -291,20 +340,32 @@ class CreateEditGroupFragment : Fragment() {
 
     }
 
-    private fun memberClicked(memberId: Int) {
-        if (args.groupId != -1) {
-            gotoMemberProfileFragment(memberId)
-        }
-//        else { // No else case needed
-//            Snackbar.make(
-//                binding.root,
-//                getString(R.string.error),
-//                Snackbar.LENGTH_SHORT
-//            ).show()
-//        }
+    private fun getStartView(): View? {
+
+        return if (args.groupId == -1)
+            activity?.findViewById(R.id.add_group_fab)
+        else
+            activity?.findViewById(R.id.add_member_button)
     }
 
-    private fun gotoMemberProfileFragment(memberId: Int) {
+    private fun memberClicked(memberId: Int, memberView: View) {
+        if (args.groupId != -1) {
+
+            gotoMemberProfileFragment(memberId, memberView)
+        }
+    }
+
+    private fun gotoMemberProfileFragment(memberId: Int, memberView: View) {
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val transitionName = getString(R.string.member_profile_transition_name)
+        val extras = FragmentNavigatorExtras(memberView to transitionName)
+
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToMemberProfileFragment(
                 memberId,
@@ -312,7 +373,7 @@ class CreateEditGroupFragment : Fragment() {
                 args.groupName,
                 args.groupIcon
             )
-        view?.findNavController()?.navigate(action)
+        findNavController().navigate(action, extras)
     }
 
     private fun createGroup() {
@@ -385,6 +446,14 @@ class CreateEditGroupFragment : Fragment() {
     }
 
     private fun gotoAddMemberFragment() {
+
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToAddMemberFragment(
                 args.groupId,
@@ -396,6 +465,13 @@ class CreateEditGroupFragment : Fragment() {
     }
 
     private fun gotoChooseMembersFragment() {
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
         Log.d(TAG, "onCreateDialog: membercheck choose member clicked, ${viewModel.members.value}")
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToChooseMembersFragment(
@@ -416,21 +492,30 @@ class CreateEditGroupFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
-    private fun gotoGroupIconFragment() {
+    private fun gotoGroupIconFragment(imageView: View) {
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
         val groupName = binding.groupNameText.text?.trim().toString()
         val groupIcon = if (args.groupId != -1) {
-            if(viewModel.group.value != null){
-                if(viewModel.group.value!!.groupIcon != null)
+            if (viewModel.group.value != null) {
+                if (viewModel.group.value!!.groupIcon != null)
                     viewModel.group.value!!.groupIcon.toString()
                 else
                     null
-            }
-            else{
+            } else {
                 null
             }
 
         } else
             args.groupIcon  // when group icon already set before creating group
+
+        val groupIconTransitionName = getString(R.string.group_icon_transition_name)
+        val extras = FragmentNavigatorExtras(imageView to groupIconTransitionName)
 
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupIconFragment(
@@ -440,7 +525,7 @@ class CreateEditGroupFragment : Fragment() {
                 false,
                 false
             )
-        view?.findNavController()?.navigate(action)
+        findNavController().navigate(action, extras)
     }
 
 }

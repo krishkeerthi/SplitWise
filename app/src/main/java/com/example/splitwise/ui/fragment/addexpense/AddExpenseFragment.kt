@@ -2,6 +2,7 @@ package com.example.splitwise.ui.fragment.addexpense
 
 import android.content.ContentValues.TAG
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -17,6 +18,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Slide
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentAddExpenseBinding
@@ -27,6 +29,7 @@ import com.example.splitwise.util.translate
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
 
 class AddExpenseFragment : Fragment() {
 
@@ -51,6 +54,22 @@ class AddExpenseFragment : Fragment() {
 
         binding = FragmentAddExpenseBinding.bind(view)
 
+        // transition code starts
+        enterTransition = MaterialContainerTransform().apply {
+            startView = activity?.findViewById(R.id.add_expense_button)
+            endView = binding.root
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            containerColor = resources.getColor(R.color.background)
+            startContainerColor = resources.getColor(R.color.view_color)
+            endContainerColor = resources.getColor(R.color.background)
+        }
+
+        returnTransition = Slide().apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_medium).toLong()
+            addTarget(binding.root)
+        }
+        // transition code ends
         requireActivity().title = "Add Expense"
         // Rv
         val membersCheckboxAdapter = MembersCheckboxAdapter { memberId: Int, isChecked: Boolean ->

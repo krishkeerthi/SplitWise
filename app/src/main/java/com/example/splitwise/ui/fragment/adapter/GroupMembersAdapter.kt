@@ -3,7 +3,9 @@ package com.example.splitwise.ui.fragment.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.ExpenseMemberCardBinding
 import com.example.splitwise.databinding.GroupMemberCardBinding
@@ -11,7 +13,7 @@ import com.example.splitwise.util.ripple
 import com.example.splitwise.util.roundOff
 
 class GroupMembersAdapter(
-    val memberClicked: (Int) -> Unit
+    val memberClicked: (Int, View) -> Unit
 ): RecyclerView.Adapter<GroupMembersViewHolder>() {
     private var members = listOf<Member>()
 
@@ -22,7 +24,7 @@ class GroupMembersAdapter(
         return GroupMembersViewHolder(binding).apply {
             itemView.setOnClickListener {
                 it.ripple(it.context)
-                memberClicked(members[absoluteAdapterPosition].memberId)
+                memberClicked(members[absoluteAdapterPosition].memberId, itemView)
             }
         }
     }
@@ -46,7 +48,10 @@ class GroupMembersAdapter(
 
 class GroupMembersViewHolder(val binding: GroupMemberCardBinding) : RecyclerView.ViewHolder(binding.root) {
 
+    val resources = binding.root.resources
     fun bind(member: Member) {
+
+        ViewCompat.setTransitionName(binding.root, String.format(resources.getString(R.string.create_edit_group_members_transition_name), member.memberId))
         binding.memberNameTextView.text = member.name
         binding.memberPhoneTextView.text = member.phone.toString()
 

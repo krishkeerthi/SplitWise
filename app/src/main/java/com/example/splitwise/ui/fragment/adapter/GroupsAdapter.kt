@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
@@ -16,8 +17,8 @@ import com.example.splitwise.util.roundOff
 
 
 class GroupsAdapter(
-    val onGroupClicked: (Int) -> Unit,
-    val onImageClicked: (Int, String?, String) -> Unit
+    val onGroupClicked: (Int, View) -> Unit,
+    val onImageClicked: (Int, String?, String, View) -> Unit
 ) : RecyclerView.Adapter<GroupsViewHolder>() {
     private var groups = listOf<Group>()
 
@@ -28,12 +29,16 @@ class GroupsAdapter(
 
         return GroupsViewHolder(binding).apply {
 
+            // setting transition name
             binding.groupImageView.setOnClickListener {
                 it.ripple(it.context)
                 onImageClicked(
                     groups[absoluteAdapterPosition].groupId,
                     groups[absoluteAdapterPosition].groupIcon?.toString(),
-                    groups[absoluteAdapterPosition].groupName
+                    groups[absoluteAdapterPosition].groupName,
+
+                    if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
+                    else binding.groupImageHolderImage
                 )
             }
             binding.groupImageHolder.setOnClickListener {
@@ -41,12 +46,15 @@ class GroupsAdapter(
                 onImageClicked(
                     groups[absoluteAdapterPosition].groupId,
                     groups[absoluteAdapterPosition].groupIcon?.toString(),
-                    groups[absoluteAdapterPosition].groupName
+                    groups[absoluteAdapterPosition].groupName,
+
+                    if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
+                    else binding.groupImageHolderImage
                 )
             }
             binding.textLayout.setOnClickListener {
                 it.ripple(it.context)
-                onGroupClicked(groups[absoluteAdapterPosition].groupId)
+                onGroupClicked(groups[absoluteAdapterPosition].groupId, itemView)
             }
         }
     }
@@ -73,6 +81,22 @@ class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder
     val resources = binding.root.resources
 
     fun bind(group: Group) {
+        ViewCompat.setTransitionName(
+            binding.root,
+            String.format(resources.getString(R.string.group_card_transition_name), group.groupId)
+        )
+        ViewCompat.setTransitionName(
+            binding.groupImageView,
+            String.format(resources.getString(R.string.group_image_transition_name), group.groupId)
+        )
+        ViewCompat.setTransitionName(
+            binding.groupImageHolderImage,
+            String.format(
+                resources.getString(R.string.group_empty_image_transition_name),
+                group.groupId
+            )
+        )
+
         binding.groupNameTextView.text = group.groupName
         binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
         binding.groupCreationDateTextView.text =

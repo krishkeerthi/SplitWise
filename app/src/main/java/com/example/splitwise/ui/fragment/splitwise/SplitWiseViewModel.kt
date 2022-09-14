@@ -3,6 +3,7 @@ package com.example.splitwise.ui.fragment.splitwise
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Group
@@ -14,8 +15,9 @@ import com.example.splitwise.model.MemberPaymentStatsDetail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 
-class SplitWiseViewModel(context: Context) : ViewModel() {
+class SplitWiseViewModel(context: Context, private val selectedGroups: List<Group>) : ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val memberRepository = MemberRepository(database)
@@ -40,7 +42,24 @@ class SplitWiseViewModel(context: Context) : ViewModel() {
         get() = _groupName
 
     init {
-       // fetchData()
+//        try {
+//            selectedGroups = args.selectedGroups.toMutableList()
+//            if (selectedGroups.isNotEmpty()) {
+//                var groupsText = ""
+//                for (group in selectedGroups) {
+//                    groupsText += "● ${group.groupName} "
+//                }
+//                binding.selectedGroupsText.text = groupsText
+//                binding.selectedGroupsCard.visibility = View.VISIBLE
+//            }
+//
+//            Log.d(TAG, "onViewCreated: fetchData in try")
+//            viewModel.fetchData(getGroupIds(selectedGroups))
+//
+//        } catch (e: Exception) {
+//            Log.d(TAG, "onViewCreated: fetchData in try")
+//            viewModel.fetchData()
+//        }
     }
 
     fun loadGroupName() {
@@ -105,11 +124,11 @@ class SplitWiseViewModel(context: Context) : ViewModel() {
     }
 }
 
-class SplitWiseViewModelFactory(private val context: Context) :
+class SplitWiseViewModelFactory(private val context: Context, private val selectedGroups: List<Group>) :
     ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SplitWiseViewModel(context) as T
+        return SplitWiseViewModel(context, selectedGroups) as T
     }
 }

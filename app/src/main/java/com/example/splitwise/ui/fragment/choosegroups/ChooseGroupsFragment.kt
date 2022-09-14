@@ -14,6 +14,7 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentChooseGroupsBinding
 import com.example.splitwise.ui.fragment.adapter.ChooseGroupAdapter
 import com.example.splitwise.util.mergeList
+import com.google.android.material.transition.MaterialSharedAxis
 
 
 class ChooseGroupsFragment : Fragment() {
@@ -28,6 +29,17 @@ class ChooseGroupsFragment : Fragment() {
     private var contextualActionMode: ActionMode? = null
     private lateinit var groupsAdapter: ChooseGroupAdapter
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -10,6 +10,7 @@ import android.content.pm.ConfigurationInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -39,6 +40,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -52,6 +54,17 @@ class GroupIconFragment : Fragment() {
 
     private val viewModel: GroupIconViewModel by viewModels {
         GroupIconViewModelFactory(requireContext(), args.groupId)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.view_color))
+        }
     }
 
     override fun onCreateView(

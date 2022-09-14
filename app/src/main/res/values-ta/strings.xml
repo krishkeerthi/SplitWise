@@ -142,4 +142,21 @@
     <string name="enter_valid_name">சரியான பெயரை உள்ளிடவும்</string>
     <string name="enter_10_numbers">10 எண்களை உள்ளிடவும்</string>
     <string name="all_settled">அனைத்தும் தீர்க்கப்பட்டன</string>
+    <string name="group_card_transition_name">group_card_transition_%1$s</string>
+    <string name="expense_card_transition_name">expense_card_transition_%1$s</string>
+    <string name="expenses_transition_name">expenses_transition</string>
+    <string name="bill_image_transition_name">bill_image_transition_%1$s</string>
+    <string name="bill_holder_transition_name">bill_holder_transition</string>
+    <string name="expense_detail_transition_name">expense_detail_transition</string>
+    <string name="create_edit_group_icon_transition_name">create_edit_group_icon_transition</string>
+    <string name="create_edit_group_empty_icon_transition_name">create_edit_group_empty_icon_transition</string>
+    <string name="group_icon_transition_name">group_icon_transition</string>
+    <string name="group_image_transition_name">group_image_transition_%1$s</string>
+    <string name="group_empty_image_transition_name">group_empty_image_transition_%1$s</string>
+    <string name="create_edit_group_members_transition_name">create_edit_group_member_transition_%1$s</string>
+    <string name="member_profile_transition_name">member_profile_transition</string>
+    <string name="member_payment_stat_transition_name">member_payment_stat_transition_name_%1$s</string>
+    <string name="settle_up_transition_name">settle_up_transition_name</string>
+    <string name="feedback_transition_name">feedback_transition_name</string>
+    <string name="settings_feedback_transition_name">settings_feedback_transition_name</string>
 </resources>

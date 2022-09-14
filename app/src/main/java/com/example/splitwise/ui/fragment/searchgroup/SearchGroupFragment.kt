@@ -20,6 +20,7 @@ import com.example.splitwise.databinding.FragmentSearchGroupBinding
 import com.example.splitwise.ui.fragment.adapter.FilteredGroupsAdapter
 import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.hideKeyboard
+import com.google.android.material.transition.MaterialSharedAxis
 
 class SearchGroupFragment : Fragment() {
 
@@ -31,6 +32,15 @@ class SearchGroupFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+
         val callback = object : OnBackPressedCallback(true /* enabled by default */) {
 
             override fun handleOnBackPressed() {

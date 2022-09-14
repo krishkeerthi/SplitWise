@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.billsholder
 
 import android.content.ContentValues.TAG
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -17,6 +18,7 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentBillsHolderBinding
 import com.example.splitwise.ui.fragment.bill.BillFragment
 import com.example.splitwise.util.dpToPx
+import com.google.android.material.transition.MaterialContainerTransform
 
 class BillsHolderFragment : Fragment() {
 
@@ -25,6 +27,18 @@ class BillsHolderFragment : Fragment() {
 
     private val viewModel: BillsHolderViewModel by viewModels {
         BillsHolderViewModelFactory(requireContext(), args.expenseId, args.position)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.background))
+        }
+
     }
 
     override fun onCreateView(

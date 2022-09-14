@@ -43,6 +43,10 @@ class GroupsViewModel(context: Context) : ViewModel() {
 //        }
 //    }
 
+    init {
+        fetchData()
+    }
+
     fun fetchData() {
         Log.d(TAG, "groupsviewmodel: called")
         viewModelScope.launch {

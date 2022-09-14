@@ -2,12 +2,16 @@ package com.example.splitwise.ui.fragment.adapter
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.splitwise.R
 import com.example.splitwise.databinding.BillProfileCardBinding
 
 class BillsAdapter(
-    val onItemClicked: (Int) -> Unit
+    val onItemClicked: (Int, View) -> Unit
 ) : RecyclerView.Adapter<BillsViewHolder>() {
     private var uris = listOf<Uri>()
 
@@ -17,7 +21,7 @@ class BillsAdapter(
 
         return BillsViewHolder(binding).apply {
             itemView.setOnClickListener {
-                onItemClicked(adapterPosition)
+                onItemClicked(absoluteAdapterPosition, itemView)
             }
         }
     }
@@ -40,7 +44,10 @@ class BillsAdapter(
 
 class BillsViewHolder(val binding: BillProfileCardBinding) : RecyclerView.ViewHolder(binding.root) {
 
+    private val resources = binding.root.resources
+
     fun bind(uri: Uri) {
+        ViewCompat.setTransitionName(binding.root, String.format(resources.getString(R.string.bill_image_transition_name), uri.toString()))
         binding.billImageView.setImageURI(uri)
     }
 

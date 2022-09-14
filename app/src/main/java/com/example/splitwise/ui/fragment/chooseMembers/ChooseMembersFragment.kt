@@ -17,6 +17,7 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentChooseMembersBinding
 import com.example.splitwise.ui.fragment.adapter.ChooseMembersAdapter
+import com.google.android.material.transition.MaterialSharedAxis
 
 class ChooseMembersFragment : Fragment() {
     private lateinit var binding: FragmentChooseMembersBinding
@@ -26,6 +27,18 @@ class ChooseMembersFragment : Fragment() {
 
     private val viewModel: ChooseMembersViewModel by viewModels {
         ChooseMembersViewModelFactory(requireContext(), args.selectedMembers)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
     }
 
     override fun onCreateView(

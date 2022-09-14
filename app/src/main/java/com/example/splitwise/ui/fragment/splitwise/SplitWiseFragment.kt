@@ -11,9 +11,12 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
@@ -24,6 +27,8 @@ import com.example.splitwise.ui.fragment.adapter.GroupArrayAdapter
 import com.example.splitwise.ui.fragment.adapter.SplitWiseAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,8 +39,18 @@ class SplitWiseFragment : Fragment() {
     private lateinit var binding: FragmentSplitWiseBinding
     private val args: SplitWiseFragmentArgs by navArgs()
     private var selectedGroups = mutableListOf<Group>()
+
+    init {
+        try {
+            selectedGroups = args.selectedGroups.toMutableList()
+        }
+        catch(e: Exception){
+            Log.d(TAG, "Error: No selected groups, because it the first screen")
+        }
+    }
+
     private val viewModel: SplitWiseViewModel by viewModels {
-        SplitWiseViewModelFactory(requireContext())
+        SplitWiseViewModelFactory(requireContext(), args.selectedGroups.toMutableList())
     }
 
     override fun onCreateView(
@@ -49,6 +64,11 @@ class SplitWiseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // start enter transition only when data loaded, and just started to draw
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        //
 
         binding = FragmentSplitWiseBinding.bind(view)
 
@@ -74,7 +94,7 @@ class SplitWiseFragment : Fragment() {
         }
 
         // Rv
-        val splitWiseAdapter = SplitWiseAdapter { payerId: Int, amountOwed: Float, name: String ->
+        val splitWiseAdapter = SplitWiseAdapter { payerId: Int, amountOwed: Float, name: String, paymentStatView: View ->
             if (amountOwed == 0f)
                 Snackbar.make(
                     binding.root,
@@ -82,7 +102,7 @@ class SplitWiseFragment : Fragment() {
                     Snackbar.LENGTH_SHORT
                 ).show()
             else {
-                gotoSettleUpFragment(payerId)
+                gotoSettleUpFragment(payerId, paymentStatView)
             }
 
         }
@@ -136,6 +156,13 @@ class SplitWiseFragment : Fragment() {
     }
 
     private fun gotoChooseGroupsFragment() {
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
         val action = SplitWiseFragmentDirections.actionSplitWiseFragmentToChooseGroupsFragment(
             getGroupIds(selectedGroups).toIntArray()
         )
@@ -176,14 +203,24 @@ class SplitWiseFragment : Fragment() {
         groupBottomSheetDialog.show()
     }
 
-    private fun gotoSettleUpFragment(payerId: Int) {
+    private fun gotoSettleUpFragment(payerId: Int, paymentStatView: View) {
+
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val transitionName = getString(R.string.settle_up_transition_name)
+        val extras = FragmentNavigatorExtras(paymentStatView to transitionName)
         val action =
             SplitWiseFragmentDirections.actionSplitWiseFragmentToSettleUpFragment(
                 payerId,
                 listOf<Member>().toTypedArray(),
                 selectedGroups.toTypedArray() //getGroupIds(selectedGroups).toIntArray() previously group ids only passed
             ) // Passing empty list of members when going to settle up fragment
-        view?.findNavController()?.navigate(action)
+        findNavController().navigate(action, extras)
     }
 
     private fun gotoSelf() {

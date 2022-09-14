@@ -2,6 +2,7 @@ package com.example.splitwise.ui.fragment.expenses
 
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -10,10 +11,12 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +27,8 @@ import com.example.splitwise.ui.fragment.adapter.MembersProfileAdapter
 import com.example.splitwise.util.Category
 import com.example.splitwise.util.roundOff
 import com.google.android.material.chip.Chip
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
 
 
 class ExpensesFragment : Fragment() {
@@ -43,6 +48,19 @@ class ExpensesFragment : Fragment() {
     private var clicked: Boolean = false
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //sharedElementEnterTransition = MaterialContainerTransform()
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.background))
+        }
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,6 +74,11 @@ class ExpensesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         clicked = false
 
+        // start enter transition only when data loaded, and just started to draw
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        //
+
         //viewModel.fetchData()
         viewModel.loadMembers()
 
@@ -64,8 +87,8 @@ class ExpensesFragment : Fragment() {
         binding = FragmentExpensesBinding.bind(view)
 
         // Rv
-        val expensesAdapter = ExpensesAdapter { expenseId: Int ->
-            gotoExpenseDetailFragment(expenseId)
+        val expensesAdapter = ExpensesAdapter { expenseId: Int, expenseView: View ->
+            gotoExpenseDetailFragment(expenseId, expenseView)
         }
         val membersAdapter = MembersProfileAdapter()
 
@@ -123,8 +146,15 @@ class ExpensesFragment : Fragment() {
                     "This is dummy group. Create actual group to add expense",
                     Toast.LENGTH_SHORT
                 ).show()
-            else
+            else {
+                exitTransition = MaterialElevationScale(false).apply {
+                    duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+                }
+                reenterTransition = MaterialElevationScale(true).apply {
+                    duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+                }
                 gotoAddExpenseFragment(args.groupId)
+            }
         }
 
         binding.addFabButton.setOnClickListener {
@@ -132,6 +162,12 @@ class ExpensesFragment : Fragment() {
         }
 
         binding.addMemberButton.setOnClickListener{
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            }
+            reenterTransition = MaterialElevationScale(true).apply {
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            }
             goToCreateEditGroupFragment(args.groupId)
         }
 
@@ -381,10 +417,19 @@ class ExpensesFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
-    private fun gotoExpenseDetailFragment(expenseId: Int) {
+    private fun gotoExpenseDetailFragment(expenseId: Int, expenseView: View) {
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val expenseDetailTransitionName = getString(R.string.expense_detail_transition_name)
+        val extras = FragmentNavigatorExtras(expenseView to expenseDetailTransitionName)
         val action =
             ExpensesFragmentDirections.actionExpensesFragmentToExpenseDetailFragment(expenseId)
-        view?.findNavController()?.navigate(action)
+        view?.findNavController()?.navigate(action, extras)
     }
 
     private fun goToCreateEditGroupFragment(groupId: Int = -1) {

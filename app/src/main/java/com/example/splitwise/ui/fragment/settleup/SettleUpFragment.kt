@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.settleup
 
 import android.content.ContentValues.TAG
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +25,7 @@ import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragmentDirections
 import com.example.splitwise.util.roundOff
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
 
 class SettleUpFragment : Fragment() {
 
@@ -33,6 +35,17 @@ class SettleUpFragment : Fragment() {
     private var selectedMembers = listOf<Member>()
     private val viewModel: SettleUpViewModel by viewModels {
         SettleUpViewModelFactory(requireContext(), args.payerId, args.selectedGroups.toList())
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.background))
+        }
     }
 
     override fun onCreateView(

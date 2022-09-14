@@ -11,9 +11,13 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
@@ -24,6 +28,8 @@ import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialSharedAxis
 import java.util.*
 
 class GroupsFragment : Fragment() {
@@ -51,7 +57,14 @@ class GroupsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.fetchData() // fetching data in viewmodel init{} does not get called while returning from back stack
+
+        // start enter transition only when data loaded, and just started to draw
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        //
+
+
+        //viewModel.fetchData() // fetching data in viewmodel init{} does not get called while returning from back stack
         //viewModel = ViewModelProvider(this, GroupsViewModelFactory(requireContext()))[GroupsViewModel::class.java]
         binding = FragmentGroupsBinding.bind(view)
 
@@ -59,14 +72,15 @@ class GroupsFragment : Fragment() {
 //            String.format(resources.getString(R.string.test), "1234"), Toast.LENGTH_SHORT).show()
 
         // Rv
-        val groupsAdapter = GroupsAdapter({ groupId: Int ->
-            goToExpenseFragment(groupId)
+        val groupsAdapter = GroupsAdapter({ groupId: Int, groupView: View ->
+            goToExpenseFragment(groupId, groupView)
         },
-            { groupId: Int, groupIcon: String?, groupName: String ->
+            { groupId: Int, groupIcon: String?, groupName: String, groupView: View ->
                 gotoGroupIconFragment(
                     groupId,
                     groupIcon,
-                    groupName
+                    groupName,
+                    groupView
                 )
             }
         )
@@ -151,6 +165,14 @@ class GroupsFragment : Fragment() {
 
         // Button click
         binding.addGroupFab.setOnClickListener {
+
+            // transition
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            }
+            reenterTransition = MaterialElevationScale(true).apply {
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            }
             goToCreateEditGroupFragment()
         }
 
@@ -224,7 +246,16 @@ class GroupsFragment : Fragment() {
         }
     }
 
-    private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String) {
+    private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String, groupImageView: View) {
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val transitionName = getString(R.string.group_icon_transition_name)
+        val extras = FragmentNavigatorExtras(groupImageView to transitionName)
         val action = GroupsFragmentDirections.actionGroupsFragmentToGroupIconFragment(
             groupId,
             groupIcon,
@@ -232,7 +263,7 @@ class GroupsFragment : Fragment() {
             true,
             false
         )
-        view?.findNavController()?.navigate(action)
+        view?.findNavController()?.navigate(action, extras)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -264,13 +295,32 @@ class GroupsFragment : Fragment() {
     }
 
     private fun goToSearchGroupFragment() {
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+
         val action = GroupsFragmentDirections.actionGroupsFragmentToSearchGroupFragment()
         view?.findNavController()?.navigate(action)
     }
 
-    private fun goToExpenseFragment(groupId: Int) {
+    private fun goToExpenseFragment(groupId: Int, groupView: View) {
+
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+
+        val expensesTransitionName = getString(R.string.expenses_transition_name)
+        val extras = FragmentNavigatorExtras(groupView to expensesTransitionName)
         val action = GroupsFragmentDirections.actionGroupsFragmentToExpensesFragment(groupId)
-        view?.findNavController()?.navigate(action)
+        view?.findNavController()?.navigate(action, extras)
     }
 
     // Bottom Sheet Dialogs
@@ -372,6 +422,14 @@ class GroupsFragment : Fragment() {
             null
         )
         view?.findNavController()?.navigate(action)
+//        val extras = FragmentNavigatorExtras(requireView() to requireView().transitionName)
+//        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(
+//            groupId,
+//            null,
+//            null,
+//            null
+//        )
+//        findNavController().navigate(action, extras)
     }
 
     private fun openAmountFilterBottomSheet() {
