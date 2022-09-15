@@ -5,6 +5,7 @@ import android.app.DownloadManager
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.database.Cursor
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -21,6 +22,7 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSetImageBinding
 import com.example.splitwise.util.downloadBitmap
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,6 +41,18 @@ class SetImageFragment : Fragment() {
 
     private var msg = ""
     private var lastMsg = ""
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.background))
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

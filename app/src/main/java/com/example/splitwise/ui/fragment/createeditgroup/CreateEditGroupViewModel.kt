@@ -53,6 +53,8 @@ class CreateEditGroupViewModel(
 
 init {
     Log.d(TAG, "membercheck: init create edit view model called")
+
+    //updatedFetchData(groupId, selectedMembers?.toList())
 }
     fun fetchData() {
         Log.d(TAG, "onViewCreated: viewmodel $groupId")

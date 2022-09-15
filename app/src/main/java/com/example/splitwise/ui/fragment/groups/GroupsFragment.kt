@@ -165,14 +165,6 @@ class GroupsFragment : Fragment() {
 
         // Button click
         binding.addGroupFab.setOnClickListener {
-
-            // transition
-            exitTransition = MaterialElevationScale(false).apply {
-                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            }
-            reenterTransition = MaterialElevationScale(true).apply {
-                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            }
             goToCreateEditGroupFragment()
         }
 
@@ -415,21 +407,25 @@ class GroupsFragment : Fragment() {
 //    }
 
     private fun goToCreateEditGroupFragment(groupId: Int = -1) {
+        // transition
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val transitionName = getString(R.string.create_edit_group_transition_name)
+        val extras = FragmentNavigatorExtras(binding.addGroupFab to transitionName)
+
         val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(
             groupId,
             null,
             null,
             null
         )
-        view?.findNavController()?.navigate(action)
-//        val extras = FragmentNavigatorExtras(requireView() to requireView().transitionName)
-//        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(
-//            groupId,
-//            null,
-//            null,
-//            null
-//        )
-//        findNavController().navigate(action, extras)
+        findNavController().navigate(action, extras)
+
     }
 
     private fun openAmountFilterBottomSheet() {

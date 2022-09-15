@@ -66,7 +66,7 @@ class SettleUpFragment : Fragment() {
         // toolbar title
         requireActivity().title = "Settle Up"
 
-        viewModel.fetchData()
+        //viewModel.fetchData()
 
         // Load data based on selected members
         selectedMembers = args.selectedMembers.toList()

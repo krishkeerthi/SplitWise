@@ -3,6 +3,8 @@ package com.example.splitwise.ui.fragment.createeditgroup
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.RectShape
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -57,6 +59,13 @@ class CreateEditGroupFragment : Fragment() {
 //        val factory = CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.selectedMembers)
 //        viewModel = ViewModelProvider(requireActivity(), factory)[CreateEditGroupViewModel::class.java]
         // ends here
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.background))
+        }
 
         val callback = object : OnBackPressedCallback(true /* enabled by default */) {
 
@@ -120,28 +129,34 @@ class CreateEditGroupFragment : Fragment() {
         //
 
         binding = FragmentCreateEditGroupBinding.bind(view)
+
+
         // transition code starts
 
-
-        val startingView = getStartView()
-        enterTransition = MaterialContainerTransform().apply {
-            startView = startingView
-            endView = binding.root
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = Color.TRANSPARENT
-            containerColor = resources.getColor(R.color.background)
-            startContainerColor = resources.getColor(R.color.view_color)
-            endContainerColor = resources.getColor(R.color.background)
-        }
-
-        returnTransition = Slide().apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_medium).toLong()
-            addTarget(binding.root)
-        }
+//        val startingView = getStartView()
+//        enterTransition = MaterialContainerTransform().apply {
+//            startView = startingView
+//            endView = binding.root
+//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//            scrimColor = Color.TRANSPARENT
+//            containerColor = resources.getColor(R.color.background)
+//            startContainerColor = resources.getColor(R.color.view_color)
+//            endContainerColor = resources.getColor(R.color.background)
+//        }
+//
+//        returnTransition = Slide().apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_medium).toLong()
+//            addTarget(binding.root)
+//        }
 
 
         // transition code ends
 
+        // corner color blue fix
+        binding.groupImageHolder.background = ShapeDrawable(RectShape()).also {
+            it.paint.color = resources.getColor(R.color.view_color)
+        }
+        // ends
 
         //viewModel.fetchData()
         viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())

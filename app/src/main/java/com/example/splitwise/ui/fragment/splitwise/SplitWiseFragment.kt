@@ -25,6 +25,7 @@ import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSplitWiseBinding
 import com.example.splitwise.ui.fragment.adapter.GroupArrayAdapter
 import com.example.splitwise.ui.fragment.adapter.SplitWiseAdapter
+import com.example.splitwise.util.getGroupIds
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
@@ -40,17 +41,8 @@ class SplitWiseFragment : Fragment() {
     private val args: SplitWiseFragmentArgs by navArgs()
     private var selectedGroups = mutableListOf<Group>()
 
-    init {
-        try {
-            selectedGroups = args.selectedGroups.toMutableList()
-        }
-        catch(e: Exception){
-            Log.d(TAG, "Error: No selected groups, because it the first screen")
-        }
-    }
-
     private val viewModel: SplitWiseViewModel by viewModels {
-        SplitWiseViewModelFactory(requireContext(), args.selectedGroups.toMutableList())
+        SplitWiseViewModelFactory(requireContext(), args.selectedGroups)
     }
 
     override fun onCreateView(
@@ -74,24 +66,38 @@ class SplitWiseFragment : Fragment() {
 
         requireActivity().title = "SplitWise"
 
-        try {
-            selectedGroups = args.selectedGroups.toMutableList()
-            if (selectedGroups.isNotEmpty()) {
-                var groupsText = ""
-                for (group in selectedGroups) {
-                    groupsText += "● ${group.groupName} "
-                }
-                binding.selectedGroupsText.text = groupsText
+
+        // displaying selected groups if present
+        viewModel.selectedGroupsCardVisibility.observe(viewLifecycleOwner){
+            if(it == View.VISIBLE) {
                 binding.selectedGroupsCard.visibility = View.VISIBLE
+                binding.selectedGroupsText.text = viewModel.selectedGroupsText
             }
-
-            Log.d(TAG, "onViewCreated: fetchData in try")
-            viewModel.fetchData(getGroupIds(selectedGroups))
-
-        } catch (e: Exception) {
-            Log.d(TAG, "onViewCreated: fetchData in try")
-            viewModel.fetchData()
         }
+
+
+        // assign selected groups
+        args.selectedGroups?.let {
+            selectedGroups = it.toMutableList()
+        }
+//        try {
+//            selectedGroups = args.selectedGroups.toMutableList()
+//            if (selectedGroups.isNotEmpty()) {
+//                var groupsText = ""
+//                for (group in selectedGroups) {
+//                    groupsText += "● ${group.groupName} "
+//                }
+//                binding.selectedGroupsText.text = groupsText
+//                binding.selectedGroupsCard.visibility = View.VISIBLE
+//            }
+//
+//            Log.d(TAG, "onViewCreated: fetchData in try")
+//            viewModel.fetchData(getGroupIds(selectedGroups))
+//
+//        } catch (e: Exception) {
+//            Log.d(TAG, "onViewCreated: fetchData in try")
+//            viewModel.fetchData()
+//        }
 
         // Rv
         val splitWiseAdapter = SplitWiseAdapter { payerId: Int, amountOwed: Float, name: String, paymentStatView: View ->
@@ -169,13 +175,13 @@ class SplitWiseFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
-    private fun getGroupIds(groups: MutableList<Group>): List<Int> {
-        val groupIds = mutableListOf<Int>()
-        for (group in groups) {
-            groupIds.add(group.groupId)
-        }
-        return groupIds.toList()
-    }
+//    private fun getGroupIds(groups: MutableList<Group>): List<Int> {
+//        val groupIds = mutableListOf<Int>()
+//        for (group in groups) {
+//            groupIds.add(group.groupId)
+//        }
+//        return groupIds.toList()
+//    }
 
     private fun openGroupsBottomSheet(groups: List<Group>) {
         val groupBottomSheetDialog = BottomSheetDialog(requireContext())

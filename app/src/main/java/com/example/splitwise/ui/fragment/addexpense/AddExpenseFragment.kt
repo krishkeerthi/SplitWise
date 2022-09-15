@@ -40,6 +40,18 @@ class AddExpenseFragment : Fragment() {
         AddExpenseViewModelFactory(requireContext(), args.groupId)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.background))
+        }
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,20 +67,20 @@ class AddExpenseFragment : Fragment() {
         binding = FragmentAddExpenseBinding.bind(view)
 
         // transition code starts
-        enterTransition = MaterialContainerTransform().apply {
-            startView = activity?.findViewById(R.id.add_expense_button)
-            endView = binding.root
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = Color.TRANSPARENT
-            containerColor = resources.getColor(R.color.background)
-            startContainerColor = resources.getColor(R.color.view_color)
-            endContainerColor = resources.getColor(R.color.background)
-        }
-
-        returnTransition = Slide().apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_medium).toLong()
-            addTarget(binding.root)
-        }
+//        enterTransition = MaterialContainerTransform().apply {
+//            startView = activity?.findViewById(R.id.add_expense_button)
+//            endView = binding.root
+//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//            scrimColor = Color.TRANSPARENT
+//            containerColor = resources.getColor(R.color.background)
+//            startContainerColor = resources.getColor(R.color.view_color)
+//            endContainerColor = resources.getColor(R.color.background)
+//        }
+//
+//        returnTransition = Slide().apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_medium).toLong()
+//            addTarget(binding.root)
+//        }
         // transition code ends
         requireActivity().title = "Add Expense"
         // Rv

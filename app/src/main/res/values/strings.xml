@@ -158,4 +158,12 @@
     <string name="settle_up_transition_name">settle_up_transition_name</string>
     <string name="feedback_transition_name">feedback_transition_name</string>
     <string name="settings_feedback_transition_name">settings_feedback_transition_name</string>
+    <string name="create_edit_group_transition_name">create_edit_group_transition</string>
+    <string name="groups_add_group_transition_name">groups_add_group_transition</string>
+    <string name="expenses_add_member_transition_name">expenses_add_member_transition</string>
+    <string name="expenses_add_expense_transition_name">expenses_add_expense_transition</string>
+    <string name="add_expense_transition_name">add_expense_transition</string>
+    <string name="set_image_transition_name">set_image_transition_name</string>
+    <string name="group_search_image_transition_name">group_search_image_transition_%1$s</string>
+
 </resources>

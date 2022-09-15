@@ -55,9 +55,11 @@ class SettleUpViewModel(
         get() = _selectedPayeesCount
 
     var tempGroupsId: List<Int> = groupIds
+
     init {
         getGroups()
         Log.d(TAG, "group id size : ${groupIds.size} ")
+        fetchData()
     }
 
     fun fetchData() {

@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -147,12 +148,7 @@ class ExpensesFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             else {
-                exitTransition = MaterialElevationScale(false).apply {
-                    duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-                }
-                reenterTransition = MaterialElevationScale(true).apply {
-                    duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-                }
+
                 gotoAddExpenseFragment(args.groupId)
             }
         }
@@ -162,12 +158,6 @@ class ExpensesFragment : Fragment() {
         }
 
         binding.addMemberButton.setOnClickListener{
-            exitTransition = MaterialElevationScale(false).apply {
-                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            }
-            reenterTransition = MaterialElevationScale(true).apply {
-                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            }
             goToCreateEditGroupFragment(args.groupId)
         }
 
@@ -408,8 +398,18 @@ class ExpensesFragment : Fragment() {
     }
 
     private fun gotoAddExpenseFragment(groupId: Int) {
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val expenseDetailTransitionName = getString(R.string.add_expense_transition_name)
+        val extras = FragmentNavigatorExtras(binding.addExpenseButton to expenseDetailTransitionName)
+
         val action = ExpensesFragmentDirections.actionExpensesFragmentToAddExpenseFragment(groupId)
-        view?.findNavController()?.navigate(action)
+        view?.findNavController()?.navigate(action, extras)
     }
 
     private fun gotoGroupsFragment() {
@@ -433,12 +433,22 @@ class ExpensesFragment : Fragment() {
     }
 
     private fun goToCreateEditGroupFragment(groupId: Int = -1) {
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val transitionName = getString(R.string.create_edit_group_transition_name)
+        val extras = FragmentNavigatorExtras(binding.addMemberButton to transitionName)
+
         val action = ExpensesFragmentDirections.actionExpensesFragmentToCreateEditGroupFragment(
             groupId,
             null,
             null,
             null
         )
-        view?.findNavController()?.navigate(action)
+        findNavController().navigate(action, extras)
     }
 }

@@ -62,20 +62,21 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
     init {
         //fetchData()
         loadExpensesAndMembers()
+        //loadMembers()
         _running.value = false
     }
 
-    fun fetchData() {
-        Log.d(TAG, "expenseviewmodel: created")
-        viewModelScope.launch {
-            _group.value = groupRepository.getGroup(groupId)
-            setExpenseMembers(true)
-            val memberIds = groupRepository.getGroupMembers(groupId)
-            Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
-            _groupMembers.value = getMembersFromIds(memberIds)
-
-        }
-    }
+//    fun fetchData() {
+//        Log.d(TAG, "expenseviewmodel: created")
+//        viewModelScope.launch {
+//            _group.value = groupRepository.getGroup(groupId)
+//            setExpenseMembers(true)
+//            val memberIds = groupRepository.getGroupMembers(groupId)
+//            Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
+//            _groupMembers.value = getMembersFromIds(memberIds)
+//
+//        }
+//    }
 
     fun loadMembers() {
         Log.d(TAG, "expenseviewmodel: created")

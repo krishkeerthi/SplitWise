@@ -11,7 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -22,7 +21,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityMainBinding
 import com.example.splitwise.ui.activity.register.RegisterActivity
-import com.example.splitwise.ui.fragment.searchgroup.SearchGroupFragment
 import java.util.*
 
 

@@ -9,8 +9,9 @@ import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.UnsplashRepository
 import com.example.splitwise.ui.fragment.settings.SettingsViewModel
+import com.example.splitwise.util.removeIrrelevantWords
 
-class SearchImageViewModel(): ViewModel() {
+class SearchImageViewModel(private val groupName: String): ViewModel() {
    // private val database = SplitWiseRoomDatabase.getInstance(context)
 
     private val repository: UnsplashRepository= UnsplashRepository()
@@ -24,24 +25,37 @@ class SearchImageViewModel(): ViewModel() {
         repository.getSearchResults(currentQuery).cachedIn(viewModelScope)
     }
 
+    init {
+        // previously called it from onviewcreated
+        showRelatedGroupIcons(removeIrrelevantWords(getGroupName()))
+    }
+
     fun searchPhotos(query: String){
         searchQuery.value = query
     }
 
-    fun showRelatedGroupIcons(groupName: String) {
+    private fun showRelatedGroupIcons(groupName: String) {
         searchPhotos(groupName)
     }
+
+    private fun getGroupName(): String {
+        return if(groupName == "")
+            "random"
+        else
+            groupName
+    }
+
 
     companion object {
         private const val DEFAULT_QUERY = "Chennai"
     }
 }
 
-//class SearchImageViewModelFactory(private val context: Context) :
-//    ViewModelProvider.Factory {
-//
-//    @Suppress("UNCHECKED_CAST")
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        return SearchImageViewModel(context) as T
-//    }
-//}
+class SearchImageViewModelFactory(private val groupName: String) :
+    ViewModelProvider.Factory {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return SearchImageViewModel(groupName) as T
+    }
+}

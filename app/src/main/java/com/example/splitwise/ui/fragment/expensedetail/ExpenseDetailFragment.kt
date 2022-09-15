@@ -113,6 +113,7 @@ class ExpenseDetailFragment : Fragment() {
 
         //requireActivity().title = "Expense Detail"
 
+        // need to fetch here otherwise after deleting bills updated list won't show
         viewModel.fetchBills()
 
         // Rv

@@ -12,12 +12,13 @@ import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.data.repository.TransactionRepository
 import com.example.splitwise.model.MemberPaymentStats
 import com.example.splitwise.model.MemberPaymentStatsDetail
+import com.example.splitwise.util.getGroupIds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
-class SplitWiseViewModel(context: Context, private val selectedGroups: List<Group>) : ViewModel() {
+class SplitWiseViewModel(context: Context, private val selectedGroups: Array<Group>?) : ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val memberRepository = MemberRepository(database)
@@ -41,25 +42,31 @@ class SplitWiseViewModel(context: Context, private val selectedGroups: List<Grou
     val groupName: LiveData<String?>
         get() = _groupName
 
+    var selectedGroupsText = ""
+
+    var selectedGroupsCardVisibility: MutableLiveData<Int> = MutableLiveData<Int>(View.GONE)
+
     init {
-//        try {
-//            selectedGroups = args.selectedGroups.toMutableList()
-//            if (selectedGroups.isNotEmpty()) {
-//                var groupsText = ""
-//                for (group in selectedGroups) {
-//                    groupsText += "● ${group.groupName} "
-//                }
-//                binding.selectedGroupsText.text = groupsText
-//                binding.selectedGroupsCard.visibility = View.VISIBLE
-//            }
-//
-//            Log.d(TAG, "onViewCreated: fetchData in try")
-//            viewModel.fetchData(getGroupIds(selectedGroups))
-//
-//        } catch (e: Exception) {
-//            Log.d(TAG, "onViewCreated: fetchData in try")
-//            viewModel.fetchData()
-//        }
+
+        if(selectedGroups != null){
+            val groupsList = selectedGroups.toMutableList()
+
+            if (groupsList.isNotEmpty()) {
+                var groupsText = ""
+                for (group in selectedGroups) {
+                    groupsText += "● ${group.groupName} "
+                }
+
+                selectedGroupsText = groupsText
+                selectedGroupsCardVisibility.value = View.VISIBLE
+            }
+
+            fetchData(getGroupIds(groupsList))
+        }
+        else{
+            fetchData()
+        }
+
     }
 
     fun loadGroupName() {
@@ -124,7 +131,7 @@ class SplitWiseViewModel(context: Context, private val selectedGroups: List<Grou
     }
 }
 
-class SplitWiseViewModelFactory(private val context: Context, private val selectedGroups: List<Group>) :
+class SplitWiseViewModelFactory(private val context: Context, private val selectedGroups: Array<Group>?) :
     ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")

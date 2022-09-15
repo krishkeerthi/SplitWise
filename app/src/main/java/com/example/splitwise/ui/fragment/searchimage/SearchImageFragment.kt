@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,12 +20,13 @@ import com.example.splitwise.ui.fragment.adapter.UnsplashPhotoAdapter
 import com.example.splitwise.ui.fragment.adapter.UnsplashPhotoLoadStateAdapter
 import com.example.splitwise.ui.fragment.settings.SettingsViewModelFactory
 import com.example.splitwise.util.removeIrrelevantWords
+import com.google.android.material.transition.MaterialElevationScale
 
 class SearchImageFragment : Fragment() {
     private lateinit var binding: FragmentSearchImageBinding
-    private val viewModel: SearchImageViewModel by viewModels() //{
-//        SettingsViewModelFactory(requireContext())
-//    }
+    private val viewModel: SearchImageViewModel by viewModels() {
+        SearchImageViewModelFactory(args.groupName)
+    }
     private val args: SearchImageFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -37,13 +41,19 @@ class SearchImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.showRelatedGroupIcons(removeIrrelevantWords(getGroupName()))
+        // start enter transition only when data loaded, and just started to draw
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        //
+
+        // Moving it to viewmodel init
+        //viewModel.showRelatedGroupIcons(removeIrrelevantWords(getGroupName()))
 
         binding = FragmentSearchImageBinding.bind(view)
 
-        val adapter = UnsplashPhotoAdapter { photo ->
+        val adapter = UnsplashPhotoAdapter { photo, View ->
             photo?.let {
-                gotoSetImageFragment(it.urls.regular)
+                gotoSetImageFragment(it.urls.regular, View)
             }
         }
 
@@ -87,13 +97,6 @@ class SearchImageFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    private fun getGroupName(): String {
-        return if(args.groupName == "")
-            "random"
-        else
-            args.groupName
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
@@ -119,11 +122,21 @@ class SearchImageFragment : Fragment() {
         })
     }
 
-    private fun gotoSetImageFragment(imageUrl: String) {
+    private fun gotoSetImageFragment(imageUrl: String, imageView: View) {
+
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val transitionName = getString(R.string.set_image_transition_name)
+        val extras = FragmentNavigatorExtras(imageView to transitionName)
         val action =
             SearchImageFragmentDirections.actionSearchImageFragmentToSetImageFragment(imageUrl, args.groupId,
                 args.fromGroupsFragment, args.groupName, args.fromGroupsSearchFragment)
-        view?.findNavController()?.navigate(action)
+        findNavController().navigate(action, extras)
     }
 
 }

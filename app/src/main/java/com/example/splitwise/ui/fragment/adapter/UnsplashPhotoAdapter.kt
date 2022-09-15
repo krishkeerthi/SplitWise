@@ -5,9 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.splitwise.R
 import com.example.splitwise.databinding.UnsplashPhotoBinding
 import com.example.splitwise.model.UnsplashPhoto
 import com.example.splitwise.util.downloadBitmap
@@ -17,7 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class UnsplashPhotoAdapter(
-    private val itemClick: (UnsplashPhoto?) -> Unit
+    private val itemClick: (UnsplashPhoto?, View) -> Unit
 ) : PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -27,7 +29,7 @@ class UnsplashPhotoAdapter(
 
         return PhotoViewHolder(binding).apply {
             binding.unsplashPhoto.setOnClickListener {
-                itemClick(getItem(absoluteAdapterPosition))
+                itemClick(getItem(absoluteAdapterPosition), binding.unsplashPhoto)
             }
         }
     }
@@ -42,7 +44,11 @@ class UnsplashPhotoAdapter(
     inner class PhotoViewHolder(private val binding: UnsplashPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        private val resources = binding.root.resources
         fun bind(photo: UnsplashPhoto) {
+
+            ViewCompat.setTransitionName(binding.unsplashPhoto, String.
+            format(resources.getString(R.string.group_search_image_transition_name), photo.urls))
 
             binding.unsplashPhoto.setImageDrawable(null)
             binding.unsplashPhoto.visibility = View.INVISIBLE

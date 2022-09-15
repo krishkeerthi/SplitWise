@@ -17,6 +17,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.example.splitwise.R
+import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.google.android.material.internal.ContextUtils
 import com.google.android.material.internal.ContextUtils.getActivity
@@ -300,3 +301,11 @@ fun String.translate(context: Context): String{
 }
 
 fun recipients() = arrayOf("keerthik97117@gmail.com")
+
+fun getGroupIds(groups: MutableList<Group>): List<Int> {
+    val groupIds = mutableListOf<Int>()
+    for (group in groups) {
+        groupIds.add(group.groupId)
+    }
+    return groupIds.toList()
+}
