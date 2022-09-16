@@ -1,5 +1,9 @@
 package com.example.splitwise.ui.fragment.adapter
 
+import android.content.ContentValues.TAG
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,8 +33,7 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
             binding.selectedCheckBox.setOnCheckedChangeListener { compoundButton, isChecked ->
                 if (isChecked) {
                     onItemChecked(membersAndStreaks[adapterPosition].member, true)
-                }
-                else {
+                } else {
                     onItemChecked(membersAndStreaks[adapterPosition].member, false)
                 }
             }
@@ -47,7 +50,16 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         return membersAndStreaks.size
     }
 
-    fun updateMembersAndStreaks(membersAndStreaks: List<MemberAndStreak>, checkedMembersId: List<Int>) {
+    override fun onViewRecycled(holder: ChooseMembersViewHolder) {
+        super.onViewRecycled(holder)
+
+        holder.resetView()
+    }
+
+    fun updateMembersAndStreaks(
+        membersAndStreaks: List<MemberAndStreak>,
+        checkedMembersId: List<Int>
+    ) {
         this.membersAndStreaks = membersAndStreaks
         this.checkedMembersId = checkedMembersId
         notifyDataSetChanged()
@@ -60,22 +72,38 @@ class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding) :
     private val resources = binding.root.resources
     fun bind(memberAndStreak: MemberAndStreak, checkedMembersId: List<Int>) {
         binding.memberNameTextView.text = memberAndStreak.member.name
-        binding.memberStreakTextView.text =  "🔥" + memberAndStreak.streak.toString()
+        binding.memberStreakTextView.text = "🔥" + memberAndStreak.streak.toString()
 
         binding.selectedCheckBox.isChecked = memberAndStreak.member.memberId in checkedMembersId
 
-        if(memberAndStreak.member.memberProfile != null){
+        if (memberAndStreak.member.memberProfile != null) {
             ///binding.memberImageView.setImageURI(memberAndStreak.member.memberProfile)
-            binding.memberImageView.setImageBitmap(
-                decodeSampledBitmapFromUri(
-                binding.root.context, memberAndStreak.member.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
-            )
-            )
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.memberImageView.setImageBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        memberAndStreak.member.memberProfile,
+                        40.dpToPx(resources.displayMetrics),
+                        40.dpToPx(resources.displayMetrics)
+                    )
+                )
+            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE
             binding.memberImageHolderImage.visibility = View.INVISIBLE
         }
+        else{
+            binding.memberImageView.visibility = View.INVISIBLE
+            binding.memberImageHolder.visibility = View.VISIBLE
+            binding.memberImageHolderImage.visibility = View.VISIBLE
+        }
 
+        Log.d(TAG, "bind: rv checking: on bind")
+    }
+
+    fun resetView() {
+        Log.d(TAG, "resetView rv checking: onviewrecycled")
     }
 
 }

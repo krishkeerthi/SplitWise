@@ -32,6 +32,11 @@ class MembersProfileAdapter : RecyclerView.Adapter<MembersProfileViewHolder>() {
         return members.size
     }
 
+    override fun onViewRecycled(holder: MembersProfileViewHolder) {
+        super.onViewRecycled(holder)
+
+    }
+
     fun updateMembers(members: List<Member>) {
         this.members = members
         notifyDataSetChanged()
@@ -54,10 +59,14 @@ class MembersProfileViewHolder(val binding: MemberProfileCardBinding) :
                 ))
             }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
-
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE
             binding.memberImageHolderImage.visibility = View.INVISIBLE
+        }
+        else { // may be we can use on view recycled.
+            binding.memberImageHolder.visibility = View.VISIBLE
+            binding.memberImageHolderImage.visibility = View.VISIBLE
+            binding.memberImageView.visibility = View.INVISIBLE
         }
     }
 

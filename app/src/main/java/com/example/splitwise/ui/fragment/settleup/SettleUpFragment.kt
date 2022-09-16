@@ -3,6 +3,8 @@ package com.example.splitwise.ui.fragment.settleup
 import android.content.ContentValues.TAG
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -55,14 +57,15 @@ class SettleUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.settle_up)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.settle_up)
         return inflater.inflate(R.layout.fragment_settle_up, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-            //Log.d(TAG, "onViewCreated: selected ${args.selectedGroups.toList()}")
+        //Log.d(TAG, "onViewCreated: selected ${args.selectedGroups.toList()}")
         binding = FragmentSettleUpBinding.bind(view)
 
         // toolbar title
@@ -138,11 +141,21 @@ class SettleUpFragment : Fragment() {
                 binding.fromMemberNameTextView.text = it.name
                 binding.fromMemberPhoneTextView.text = it.phone.toString()
 
-                if(it.memberProfile != null){
+                if (it.memberProfile != null) {
                     ///binding.fromMemberImageView.setImageURI(it.memberProfile)
-                    binding.fromMemberImageView.setImageBitmap(
-                        decodeSampledBitmapFromUri(
-                        binding.root.context, it.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)))
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+
+                        binding.fromMemberImageView.setImageBitmap(
+                            decodeSampledBitmapFromUri(
+                                binding.root.context,
+                                it.memberProfile,
+                                48.dpToPx(resources.displayMetrics),
+                                48.dpToPx(resources.displayMetrics)
+                            )
+                        )
+                    }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
 
                     binding.fromMemberImageView.visibility = View.VISIBLE
                     binding.fromMemberImageHolder.visibility = View.INVISIBLE
@@ -187,7 +200,7 @@ class SettleUpFragment : Fragment() {
                 binding.amountTextView.visibility = View.VISIBLE
                 binding.settleButton.visibility = View.VISIBLE
 
-                if(count == viewModel.payeesAndAmounts.value!!.size)
+                if (count == viewModel.payeesAndAmounts.value!!.size)
                     binding.selectAllPayees.visibility = View.GONE
                 else
                     binding.selectAllPayees.visibility = View.VISIBLE

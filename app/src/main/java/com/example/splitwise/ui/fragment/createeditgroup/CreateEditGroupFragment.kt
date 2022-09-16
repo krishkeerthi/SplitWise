@@ -7,6 +7,8 @@ import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RectShape
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -227,6 +229,7 @@ class CreateEditGroupFragment : Fragment() {
             if(binding.groupImageHolderImage.isVisible)
             gotoGroupIconFragment(binding.groupImageHolderImage)
         }
+
 //        binding.groupImageHolderImage.setOnClickListener {
 //            gotoGroupIconFragment(binding.groupImageHolderImage)
 //        }
@@ -243,9 +246,13 @@ class CreateEditGroupFragment : Fragment() {
                 if (group.groupIcon != null) {
                     Log.d(TAG, "onViewCreated: image set")
                     ///binding.groupImageView.setImageURI(group.groupIcon)
+
+                    Handler(Looper.getMainLooper()).postDelayed({
                     binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
                         binding.root.context, group.groupIcon, 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)
                     ))
+                    }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
                     binding.groupImageHolder.visibility = View.INVISIBLE
                     binding.groupImageHolderImage.visibility = View.INVISIBLE
                     binding.groupImageView.visibility = View.VISIBLE
@@ -265,9 +272,12 @@ class CreateEditGroupFragment : Fragment() {
 
         if (args.groupIcon != null) {
             ///binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
+            Handler(Looper.getMainLooper()).postDelayed({
             binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
                 binding.root.context, Uri.parse(args.groupIcon), 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)
             ))
+        }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE

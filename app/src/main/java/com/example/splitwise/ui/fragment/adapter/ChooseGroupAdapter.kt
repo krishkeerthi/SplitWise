@@ -1,11 +1,14 @@
 package com.example.splitwise.ui.fragment.adapter
 
 import android.content.ContentValues.TAG
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.ChooseGroupCardBinding
 import com.example.splitwise.util.decodeSampledBitmapFromUri
@@ -76,11 +79,15 @@ class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
         Log.d(TAG, "bind: checking inside bind")
         if (group.groupIcon != null) {
             ///binding.groupImageView.setImageURI(group.groupIcon)
-            binding.groupImageView.setImageBitmap(
-                decodeSampledBitmapFromUri(
-                binding.root.context, group.groupIcon, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
-            )
-            )
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.groupImageView.setImageBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context, group.groupIcon, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
+                    )
+                )
+            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE

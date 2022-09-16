@@ -1,11 +1,14 @@
 package com.example.splitwise.ui.fragment.adapter
 
 import android.content.ContentValues.TAG
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.MemberCheckboxCardBinding
 import com.example.splitwise.databinding.MemberSelectBinding
@@ -28,8 +31,7 @@ class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) 
                 if (!isChecked) {
                     binding.paidUnpaidCheckbox.isChecked = true
                     onItemChecked(members[adapterPosition].memberId, true)
-                }
-                else {
+                } else {
                     binding.paidUnpaidCheckbox.isChecked = false
                     onItemChecked(members[adapterPosition].memberId, false)
                 }
@@ -73,11 +75,19 @@ class MembersCheckboxViewHolder(val binding: MemberSelectBinding) :
     fun bind(member: Member, selectedMembersIds: List<Int>) {
         binding.memberTextView.text = member.name
 
-        if(member.memberProfile != null){
+        if (member.memberProfile != null) {
             ///binding.memberImageView.setImageURI(member.memberProfile)
-            binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                binding.root.context, member.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
-            ))
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.memberImageView.setImageBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        member.memberProfile,
+                        48.dpToPx(resources.displayMetrics),
+                        48.dpToPx(resources.displayMetrics)
+                    )
+                )
+            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE

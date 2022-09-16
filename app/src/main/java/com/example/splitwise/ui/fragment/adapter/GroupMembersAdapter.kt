@@ -1,5 +1,7 @@
 package com.example.splitwise.ui.fragment.adapter
 
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,9 +61,14 @@ class GroupMembersViewHolder(val binding: GroupMemberCardBinding) : RecyclerView
 
         if(member.memberProfile != null){
             ///binding.memberImageView.setImageURI(member.memberProfile)
-            binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                binding.root.context, member.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
-            ))
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                    binding.root.context, member.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
+                ))
+            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
+
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE
             binding.memberImageHolderImage.visibility = View.INVISIBLE

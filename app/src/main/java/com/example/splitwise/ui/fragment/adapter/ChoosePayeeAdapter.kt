@@ -15,6 +15,7 @@ import com.example.splitwise.databinding.ChoosePayeeCardBinding
 import com.example.splitwise.model.MemberAndAmount
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.getCategoryDrawableResource
 import com.example.splitwise.util.roundOff
 
 class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
@@ -108,8 +109,11 @@ class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
         if(payee.memberProfile != null){
             ///binding.payeeImageView.setImageURI(payee.memberProfile)
 
-            binding.payeeImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                binding.root.context, payee.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)))
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.payeeImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                    binding.root.context, payee.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)))
+            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
 
             binding.payeeImageView.visibility = View.VISIBLE
             binding.payeeImageHolder.visibility = View.INVISIBLE

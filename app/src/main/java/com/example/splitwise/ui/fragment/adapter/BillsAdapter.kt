@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.adapter
 
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewConfiguration
@@ -49,13 +51,22 @@ class BillsViewHolder(val binding: BillProfileCardBinding) : RecyclerView.ViewHo
     private val resources = binding.root.resources
 
     fun bind(uri: Uri) {
-        ViewCompat.setTransitionName(binding.root, String.format(resources.getString(R.string.bill_image_transition_name), uri.toString()))
+        ViewCompat.setTransitionName(
+            binding.root,
+            String.format(resources.getString(R.string.bill_image_transition_name), uri.toString())
+        )
         ///binding.billImageView.setImageURI(uri)
-        binding.billImageView.setImageBitmap(
-            decodeSampledBitmapFromUri(
-            binding.root.context, uri, 60.dpToPx(resources.displayMetrics), 100.dpToPx(resources.displayMetrics)
-        )
-        )
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.billImageView.setImageBitmap(
+                decodeSampledBitmapFromUri(
+                    binding.root.context,
+                    uri,
+                    60.dpToPx(resources.displayMetrics),
+                    100.dpToPx(resources.displayMetrics)
+                )
+            )
+        }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
     }
 
 }
