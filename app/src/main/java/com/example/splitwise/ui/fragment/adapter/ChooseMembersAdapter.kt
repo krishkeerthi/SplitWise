@@ -8,6 +8,8 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.ChooseMemberCardBinding
 import com.example.splitwise.model.MemberAndStreak
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 
 class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
     RecyclerView.Adapter<ChooseMembersViewHolder>() {
@@ -55,6 +57,7 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
 class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
+    private val resources = binding.root.resources
     fun bind(memberAndStreak: MemberAndStreak, checkedMembersId: List<Int>) {
         binding.memberNameTextView.text = memberAndStreak.member.name
         binding.memberStreakTextView.text =  "🔥" + memberAndStreak.streak.toString()
@@ -62,8 +65,12 @@ class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding) :
         binding.selectedCheckBox.isChecked = memberAndStreak.member.memberId in checkedMembersId
 
         if(memberAndStreak.member.memberProfile != null){
-            binding.memberImageView.setImageURI(memberAndStreak.member.memberProfile)
-
+            ///binding.memberImageView.setImageURI(memberAndStreak.member.memberProfile)
+            binding.memberImageView.setImageBitmap(
+                decodeSampledBitmapFromUri(
+                binding.root.context, memberAndStreak.member.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
+            )
+            )
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE
             binding.memberImageHolderImage.visibility = View.INVISIBLE

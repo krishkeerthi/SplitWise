@@ -9,6 +9,8 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.ExpenseMemberCardBinding
 import com.example.splitwise.databinding.GroupMemberCardBinding
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.ripple
 import com.example.splitwise.util.roundOff
 
@@ -56,8 +58,10 @@ class GroupMembersViewHolder(val binding: GroupMemberCardBinding) : RecyclerView
         binding.memberPhoneTextView.text = member.phone.toString()
 
         if(member.memberProfile != null){
-            binding.memberImageView.setImageURI(member.memberProfile)
-
+            ///binding.memberImageView.setImageURI(member.memberProfile)
+            binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                binding.root.context, member.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
+            ))
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE
             binding.memberImageHolderImage.visibility = View.INVISIBLE

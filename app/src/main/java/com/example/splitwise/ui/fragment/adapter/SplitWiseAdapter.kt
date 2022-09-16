@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.adapter
 
 import android.content.ContentValues.TAG
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.databinding.MemberOweLendCardBinding
 import com.example.splitwise.model.MemberPaymentStatsDetail
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.ripple
 import com.example.splitwise.util.roundOff
 
@@ -66,7 +70,14 @@ class SplitWiseViewHolder(val binding: MemberOweLendCardBinding) :
 
         if(memberPaymentStatsDetail.memberProfile != null){
             Log.d(TAG, "bind: name ${memberPaymentStatsDetail.memberName} profile ${memberPaymentStatsDetail.memberProfile}")
-            binding.memberImageView.setImageURI(memberPaymentStatsDetail.memberProfile)
+            ///binding.memberImageView.setImageURI(memberPaymentStatsDetail.memberProfile)
+
+            // delaying image loading so that rendering speed wont affect
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                    binding.root.context, memberPaymentStatsDetail.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)))
+
+            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE

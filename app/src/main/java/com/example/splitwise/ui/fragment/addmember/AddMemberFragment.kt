@@ -32,6 +32,8 @@ import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentAddMemberBinding
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.formatNumber
 import com.example.splitwise.util.nameCheck
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -374,7 +376,10 @@ class AddMemberFragment() : Fragment() {
         }
 
     private fun updateProfile(uri: Uri) {
-        binding.memberImageView.setImageURI(uri)
+        ///binding.memberImageView.setImageURI(uri)
+        binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
+            binding.root.context, uri, 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)
+        ))
 
         binding.memberImageView.visibility = View.VISIBLE
         binding.memberImageHolder.visibility = View.GONE

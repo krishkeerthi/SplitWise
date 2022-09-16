@@ -86,8 +86,8 @@ class GroupIconFragment : Fragment() {
 
         if (groupIcon != null) {
             Log.d(TAG, "onViewCreated: group icon ${Uri.parse(groupIcon)}")
+            ///binding.groupIconImageView.setImageURI(Uri.parse(groupIcon))
             binding.groupIconImageView.setImageURI(Uri.parse(groupIcon))
-
             binding.groupIconImageView.visibility = View.VISIBLE
             binding.emptyGroupIcon.visibility = View.GONE
         } else {

@@ -23,6 +23,8 @@ import com.example.splitwise.ui.fragment.adapter.ChoosePayeeAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
 import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragmentDirections
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.roundOff
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
@@ -110,6 +112,7 @@ class SettleUpFragment : Fragment() {
 //            binding.emptyPayees.visibility = View.VISIBLE
 //        }
 
+
         // payees
         binding.payeesRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -136,7 +139,10 @@ class SettleUpFragment : Fragment() {
                 binding.fromMemberPhoneTextView.text = it.phone.toString()
 
                 if(it.memberProfile != null){
-                    binding.fromMemberImageView.setImageURI(it.memberProfile)
+                    ///binding.fromMemberImageView.setImageURI(it.memberProfile)
+                    binding.fromMemberImageView.setImageBitmap(
+                        decodeSampledBitmapFromUri(
+                        binding.root.context, it.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)))
 
                     binding.fromMemberImageView.visibility = View.VISIBLE
                     binding.fromMemberImageHolder.visibility = View.INVISIBLE

@@ -32,6 +32,8 @@ import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
 import com.example.splitwise.ui.fragment.groups.GroupsFragment
 import com.example.splitwise.ui.fragment.viewmodel.CreateEditGroupActivityViewModel
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.nameCheck
 import com.example.splitwise.util.themeColor
 import com.google.android.material.imageview.ShapeableImageView
@@ -240,7 +242,10 @@ class CreateEditGroupFragment : Fragment() {
 
                 if (group.groupIcon != null) {
                     Log.d(TAG, "onViewCreated: image set")
-                    binding.groupImageView.setImageURI(group.groupIcon)
+                    ///binding.groupImageView.setImageURI(group.groupIcon)
+                    binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                        binding.root.context, group.groupIcon, 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)
+                    ))
                     binding.groupImageHolder.visibility = View.INVISIBLE
                     binding.groupImageHolderImage.visibility = View.INVISIBLE
                     binding.groupImageView.visibility = View.VISIBLE
@@ -259,7 +264,10 @@ class CreateEditGroupFragment : Fragment() {
         Log.d(TAG, "onViewCreated: group Icon create edit${args.groupIcon}")
 
         if (args.groupIcon != null) {
-            binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
+            ///binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
+            binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                binding.root.context, Uri.parse(args.groupIcon), 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)
+            ))
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE

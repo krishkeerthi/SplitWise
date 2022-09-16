@@ -1,15 +1,20 @@
 package com.example.splitwise.ui.fragment.adapter
 
 import android.content.ContentValues.TAG
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.ChoosePayeeCardBinding
 import com.example.splitwise.model.MemberAndAmount
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.roundOff
 
 class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
@@ -78,12 +83,16 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
 class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
+    private val resources = binding.root.resources
     fun bind(payee: Member, amount: Float, selectedPayees: List<Int>) {
         binding.payeeNameTextView.text = payee.name
         binding.amountTextView.text = "₹" + amount.roundOff()
 
         if(payee.memberProfile != null){
-            binding.payeeImageView.setImageURI(payee.memberProfile)
+            ///binding.payeeImageView.setImageURI(payee.memberProfile)
+            binding.payeeImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                binding.root.context, payee.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
+            ))
 
             binding.payeeImageView.visibility = View.VISIBLE
             binding.payeeImageHolder.visibility = View.INVISIBLE
@@ -97,7 +106,10 @@ class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
     fun bindAndCheck(payee: Member) {
         binding.payeeNameTextView.text = payee.name
         if(payee.memberProfile != null){
-            binding.payeeImageView.setImageURI(payee.memberProfile)
+            ///binding.payeeImageView.setImageURI(payee.memberProfile)
+
+            binding.payeeImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                binding.root.context, payee.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)))
 
             binding.payeeImageView.visibility = View.VISIBLE
             binding.payeeImageHolder.visibility = View.INVISIBLE

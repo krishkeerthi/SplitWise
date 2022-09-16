@@ -11,9 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.GroupCard1Binding
-import com.example.splitwise.util.formatDate
-import com.example.splitwise.util.ripple
-import com.example.splitwise.util.roundOff
+import com.example.splitwise.util.*
 
 
 class GroupsAdapter(
@@ -104,7 +102,10 @@ class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder
 
         if (group.groupIcon != null) {
             Log.d(TAG, "bind: group icon${group.groupIcon}")
-            binding.groupImageView.setImageURI(group.groupIcon)
+            ///binding.groupImageView.setImageURI(group.groupIcon)
+            binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                binding.root.context, group.groupIcon, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
+            ))
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE

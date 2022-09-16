@@ -1,5 +1,7 @@
 package com.example.splitwise.ui.fragment.adapter
 
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,12 +54,17 @@ class ExpensesViewHolder(val binding: ExpenseCard1Binding) : RecyclerView.ViewHo
 
     fun bind(expenseMember: ExpenseMember) {
 
+        // load image after sometime
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.expenseImageView.setImageResource(getCategoryDrawableResource(expenseMember.category))
+        }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
+        // transition name
         ViewCompat.setTransitionName(
             binding.root,
             String.format(resources.getString(R.string.expense_card_transition_name), expenseMember.expenseId)
         )
 
-        binding.expenseImageView.setImageResource(getCategoryDrawableResource(expenseMember.category))
         binding.expenseNameTextView.text = expenseMember.expenseName
         binding.totalExpenseTextView.text = "₹" + expenseMember.totalAmount.roundOff()
         binding.expensePayerTextView.text = expenseMember.payerInfo.name

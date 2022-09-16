@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.ExpenseMemberCardBinding
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.roundOff
 
 class ExpenseMembersAdapter : RecyclerView.Adapter<ExpenseMembersViewHolder>() {
@@ -45,12 +47,17 @@ class ExpenseMembersAdapter : RecyclerView.Adapter<ExpenseMembersViewHolder>() {
 
 class ExpenseMembersViewHolder(val binding: ExpenseMemberCardBinding) : RecyclerView.ViewHolder(binding.root) {
 
+    private val resources = binding.root.resources
+
     fun bind(member: Member, share: Float) {
         binding.memberNameTextView.text = member.name
         binding.memberShareTextView.text = "₹" + share.roundOff()
 
         if(member.memberProfile != null){
-            binding.memberImageView.setImageURI(member.memberProfile)
+            ///binding.memberImageView.setImageURI(member.memberProfile)
+            binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                binding.root.context, member.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
+            ))
 
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE

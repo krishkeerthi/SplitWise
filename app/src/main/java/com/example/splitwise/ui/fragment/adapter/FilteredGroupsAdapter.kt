@@ -16,9 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.GroupCard1Binding
-import com.example.splitwise.util.formatDate
-import com.example.splitwise.util.ripple
-import com.example.splitwise.util.roundOff
+import com.example.splitwise.util.*
 import java.util.*
 
 class FilteredGroupsAdapter(
@@ -78,6 +76,7 @@ class FilteredGroupsAdapter(
 
 class FilteredGroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder(binding.root) {
 
+    private val resources = binding.root.resources
     fun bind(group: Group, query: String) {
 
         val groupName = if(query != "") getSpannable(group.groupName, query)
@@ -88,7 +87,10 @@ class FilteredGroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.Vi
         binding.groupCreationDateTextView.text = formatDate(group.creationDate)
 
         if(group.groupIcon != null) {
-            binding.groupImageView.setImageURI(group.groupIcon)
+            ///binding.groupImageView.setImageURI(group.groupIcon)
+            binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                binding.root.context, group.groupIcon, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
+            ))
             binding.groupImageHolder.visibility= View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE

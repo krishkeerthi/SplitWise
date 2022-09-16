@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.ChooseGroupCardBinding
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 
 class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
     RecyclerView.Adapter<ChooseGroupViewHolder>() {
@@ -66,12 +68,19 @@ class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
 class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
+    private val resources = binding.root.resources
+
     fun bind(group: Group, selectedGroupIds: List<Int>) {
         binding.groupNameTextView.text = group.groupName
 
         Log.d(TAG, "bind: checking inside bind")
         if (group.groupIcon != null) {
-            binding.groupImageView.setImageURI(group.groupIcon)
+            ///binding.groupImageView.setImageURI(group.groupIcon)
+            binding.groupImageView.setImageBitmap(
+                decodeSampledBitmapFromUri(
+                binding.root.context, group.groupIcon, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
+            )
+            )
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE

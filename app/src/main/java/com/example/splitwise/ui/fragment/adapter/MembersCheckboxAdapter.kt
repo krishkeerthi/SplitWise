@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.MemberCheckboxCardBinding
 import com.example.splitwise.databinding.MemberSelectBinding
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 
 class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) :
     RecyclerView.Adapter<MembersCheckboxViewHolder>() {
@@ -66,11 +68,16 @@ class MembersCheckboxViewHolder(val binding: MemberSelectBinding) :
 //            }
 //        }
 //    }
+
+    private val resources = binding.root.resources
     fun bind(member: Member, selectedMembersIds: List<Int>) {
         binding.memberTextView.text = member.name
 
         if(member.memberProfile != null){
-            binding.memberImageView.setImageURI(member.memberProfile)
+            ///binding.memberImageView.setImageURI(member.memberProfile)
+            binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                binding.root.context, member.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
+            ))
 
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE

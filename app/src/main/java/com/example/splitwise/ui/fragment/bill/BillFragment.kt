@@ -44,6 +44,7 @@ class BillFragment : Fragment() {
         arguments?.takeIf { it.containsKey("ARG_URI") }?.apply {
             val uri = Uri.parse(getString("ARG_URI"))
             Log.d(TAG, "onViewCreated: bill icon ${uri}")
+            ///binding.billImageView.setImageURI(uri)
             binding.billImageView.setImageURI(uri)
         }
 
