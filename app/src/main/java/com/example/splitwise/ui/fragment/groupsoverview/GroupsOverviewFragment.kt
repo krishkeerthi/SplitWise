@@ -15,6 +15,7 @@ import com.example.splitwise.ui.fragment.adapter.GroupsOverviewAdapter
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.utils.ColorTemplate
+import com.google.android.material.transition.MaterialElevationScale
 
 class GroupsOverviewFragment : Fragment() {
 
@@ -22,6 +23,18 @@ class GroupsOverviewFragment : Fragment() {
 
     private val viewModel: GroupsOverviewViewModel by viewModels {
         GroupsOverviewViewModelFactory(requireContext())
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
     }
 
     override fun onCreateView(

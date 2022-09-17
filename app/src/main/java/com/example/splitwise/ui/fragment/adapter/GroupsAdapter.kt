@@ -2,6 +2,8 @@ package com.example.splitwise.ui.fragment.adapter
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -76,7 +78,7 @@ class GroupsAdapter(
 
 class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder(binding.root) {
 
-    val resources = binding.root.resources
+    private val resources = binding.root.resources
 
     fun bind(group: Group) {
         ViewCompat.setTransitionName(
@@ -102,15 +104,21 @@ class GroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder
 
         if (group.groupIcon != null) {
             Log.d(TAG, "bind: group icon${group.groupIcon}")
+
+            binding.groupImageView.setImageBitmap(null)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
+                    binding.root.context, group.groupIcon, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
+                ))
+            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
             ///binding.groupImageView.setImageURI(group.groupIcon)
-            binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                binding.root.context, group.groupIcon, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
-            ))
+
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE
         } else {
-            binding.groupImageView.setImageResource(R.drawable.ic_baseline_people_24)
+            //binding.groupImageView.setImageResource(R.drawable.ic_baseline_people_24)
             binding.groupImageHolder.visibility = View.VISIBLE
             binding.groupImageHolderImage.visibility = View.VISIBLE
             binding.groupImageView.visibility = View.INVISIBLE

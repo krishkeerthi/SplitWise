@@ -12,45 +12,95 @@
 <!--    android:foreground="?attr/selectableItemBackground"-->
 <!--    android:background="@drawable/ripple_effect"-->
 <!--    android:background="?android:attr/selectableItemBackground"-->
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/group_image_view"
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/group_icon_card"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        android:background="@color/view_color"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_baseline_people_24"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/Circular" />
+        app:cardCornerRadius="100dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/group_image_holder"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/Circular"
-        android:background="@color/view_color" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/group_image_holder_image"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_baseline_people_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/group_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="@color/view_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/group_image_holder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/view_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/group_image_holder_image"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_baseline_people_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/group_image_view"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:layout_marginBottom="12dp"-->
+<!--        android:background="@color/view_color"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:src="@drawable/ic_baseline_people_24"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:shapeAppearanceOverlay="@style/Circular" />-->
+
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/group_image_holder"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:layout_marginBottom="12dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:shapeAppearanceOverlay="@style/Circular"-->
+<!--        android:background="@color/view_color" />-->
+
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/group_image_holder_image"-->
+<!--        android:layout_width="32dp"-->
+<!--        android:layout_height="32dp"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginBottom="20dp"-->
+<!--        android:src="@drawable/ic_baseline_people_24"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
 <!--    <androidx.appcompat.widget.AppCompatImageView-->
 <!--        android:layout_width="48dp"-->
@@ -70,7 +120,7 @@
         android:layout_height="72dp"
         android:layout_marginStart="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/group_image_view"
+        app:layout_constraintStart_toEndOf="@id/group_icon_card"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textview.MaterialTextView

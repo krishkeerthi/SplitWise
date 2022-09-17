@@ -21,6 +21,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSetImageBinding
 import com.example.splitwise.util.downloadBitmap
+import com.example.splitwise.util.hasImage
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.CoroutineScope
@@ -42,13 +43,15 @@ class SetImageFragment : Fragment() {
     private var msg = ""
     private var lastMsg = ""
 
+    private var downloadLater = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment_container
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = Color.TRANSPARENT
+            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
             setAllContainerColors(resources.getColor(R.color.background))
         }
     }
@@ -79,7 +82,14 @@ class SetImageFragment : Fragment() {
                 Log.d(TAG,
                     "Current thread in the main dispatcher: ${Thread.currentThread().name}"
                 )
+                Log.d(TAG, "downloadImage: has image not set")
                 binding.unsplashPhotoImageView.setImageBitmap(bitmap)
+
+                // if done option menu is clicked while image was loading
+                if(downloadLater) {
+                    Log.d(TAG, "downloadImage: has image")
+                    downloadImage()
+                }
             }
         }
 
@@ -106,114 +116,118 @@ class SetImageFragment : Fragment() {
 
     @SuppressLint("Range")
     private fun downloadImage() {
-        val url = args.imageUrl
+        if(hasImage(binding.unsplashPhotoImageView)) {
 
-        val directory = File(Environment.DIRECTORY_PICTURES)
-        //val directory = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
-        Log.d(TAG, "downloadImage: directory ${directory}")
-        val fileName = "IMG${Date().time}.png"
+            Log.d(TAG, "downloadImage: has image, done clicked")
+            val url = args.imageUrl
 
-       // Environment.getExternalStoragePublicDirectory()
+            val directory = File(Environment.DIRECTORY_PICTURES)
+            //val directory = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+            Log.d(TAG, "downloadImage: directory ${directory}")
+            val fileName = "IMG${Date().time}.png"
+
+            // Environment.getExternalStoragePublicDirectory()
 //        val testUri = File(Environment.getExternalStoragePublicDirectory(
 //            Environment.DIRECTORY_PICTURES
 //        ), fileName).toUri()
 
-        //val x = File(Environment.getExternalStorageDirectory(), fileName).toUri()
-        val testUri = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, fileName).toUri()
+            //val x = File(Environment.getExternalStorageDirectory(), fileName).toUri()
+            val testUri = File(
+                requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!,
+                fileName
+            ).toUri()
 
-        Log.d(TAG, "downloadImage: test uri ${testUri}")
+            Log.d(TAG, "downloadImage: test uri ${testUri}")
 
-        val iconUri = Uri.parse(directory.toString() + fileName)
-       // Log.d(TAG, "downloadImage: uri is ${iconUri}")
+            val iconUri = Uri.parse(directory.toString() + fileName)
+            // Log.d(TAG, "downloadImage: uri is ${iconUri}")
 
-        Log.d(ContentValues.TAG, "downloadImage: directory ${directory}")
-        val directory1 = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_PICTURES
-        )//.toString() + File.separator //+ IMAGES_FOLDER_NAME
+            Log.d(ContentValues.TAG, "downloadImage: directory ${directory}")
+            val directory1 = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES
+            )//.toString() + File.separator //+ IMAGES_FOLDER_NAME
 
-        //val directory1 = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        //Log.d(ContentValues.TAG, "downloadImage: directory1 ${directory1}")
-        // val file = File(imagesDir, "IMG${Date().time}.png")
+            //val directory1 = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            //Log.d(ContentValues.TAG, "downloadImage: directory1 ${directory1}")
+            // val file = File(imagesDir, "IMG${Date().time}.png")
 
-        if (!directory.exists())
-            directory.mkdirs()
+            if (!directory.exists())
+                directory.mkdirs()
 
-        val downloadManager =
-            requireActivity().getSystemService(AppCompatActivity.DOWNLOAD_SERVICE) as DownloadManager
-        val downloadUri = Uri.parse(url)
+            val downloadManager =
+                requireActivity().getSystemService(AppCompatActivity.DOWNLOAD_SERVICE) as DownloadManager
+            val downloadUri = Uri.parse(url)
 
-        val request = DownloadManager.Request(downloadUri).apply {
-            setAllowedNetworkTypes(
-                DownloadManager.Request.NETWORK_WIFI or
-                        DownloadManager.Request.NETWORK_MOBILE
-            )
-                .setAllowedOverRoaming(false)
-                .setTitle(url?.substring(url.lastIndexOf("/") + 1))
-                .setDescription("")
-                .setDestinationInExternalFilesDir(
-                    requireActivity(),
-                    directory.toString(),
-                    fileName
+            val request = DownloadManager.Request(downloadUri).apply {
+                setAllowedNetworkTypes(
+                    DownloadManager.Request.NETWORK_WIFI or
+                            DownloadManager.Request.NETWORK_MOBILE
                 )
-            /// test is just replicate the above
+                    .setAllowedOverRoaming(false)
+                    .setTitle(url?.substring(url.lastIndexOf("/") + 1))
+                    .setDescription("")
+                    .setDestinationInExternalFilesDir(
+                        requireActivity(),
+                        directory.toString(),
+                        fileName
+                    )
+                /// test is just replicate the above
 //                .setDestinationInExternalPublicDir(
 //                    directory.toString(),
 //                    fileName
 //                    // url?.substring(url.lastIndexOf("/")+ 1)
 //                )
-        }
+            }
 
-        val downloadId = downloadManager.enqueue(request)
-        val query = DownloadManager.Query().setFilterById(downloadId)
+            val downloadId = downloadManager.enqueue(request)
+            val query = DownloadManager.Query().setFilterById(downloadId)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            var downloading = true
-            while (downloading) {
-                val cursor: Cursor = downloadManager.query(query)
-                cursor.moveToFirst()
-                if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
-                    downloading = false
-                    // viewModel.updateGroupIcon(iconUri)
-                }
-                val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-                msg = statusMessage(url!!, directory, status) // not null asserting url
-                if (msg != lastMsg) {
-                    withContext(Dispatchers.Main){
-                        Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
+            CoroutineScope(Dispatchers.IO).launch {
+                var downloading = true
+                while (downloading) {
+                    val cursor: Cursor = downloadManager.query(query)
+                    cursor.moveToFirst()
+                    if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                        downloading = false
+                        // viewModel.updateGroupIcon(iconUri)
                     }
-                    lastMsg = msg ?: ""
+                    val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                    msg = statusMessage(url!!, directory, status) // not null asserting url
+                    if (msg != lastMsg) {
+                        withContext(Dispatchers.Main) {
+                            Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
+                        }
+                        lastMsg = msg ?: ""
+                    }
+                    cursor.close()
                 }
-                cursor.close()
-            }
-            if(args.groupId != -1){
-                if(args.fromGroupsSearchFragment){
-                    viewModel.updateGroupIcon(testUri){
-                        gotoGroupsSearchFragment()
+                if (args.groupId != -1) {
+                    if (args.fromGroupsSearchFragment) {
+                        viewModel.updateGroupIcon(testUri) {
+                            gotoGroupsSearchFragment()
+                        }
+                    } else {
+                        if (args.fromGroupsFragment)
+                            viewModel.updateGroupIcon(testUri) {
+                                gotoGroupsFragment()
+                            }
+                        else
+                            viewModel.updateGroupIcon(testUri) {
+                                //gotoGroupsFragment()
+                                gotoCreateEditGroupFragment()
+                            }
+                    }
+                } else {
+                    Log.d(TAG, "downloadImage: error causing ${testUri}")
+                    CoroutineScope(Dispatchers.Main).launch {
+                        gotoCreateEditGroupFragment(testUri)
                     }
                 }
-                else{
-                    if(args.fromGroupsFragment)
-                        viewModel.updateGroupIcon(testUri){
-                            gotoGroupsFragment()
-                        }
-                    else
-                        viewModel.updateGroupIcon(testUri){
-                            //gotoGroupsFragment()
-                            gotoCreateEditGroupFragment()
-                        }
-                }
-            }
-            else {
-                Log.d(TAG, "downloadImage: error causing ${testUri}")
-                CoroutineScope(Dispatchers.Main).launch {
-                    gotoCreateEditGroupFragment(testUri)
-                }
-            }
 
 
-            //goto group icon
-            //gotoGroupIconFragment()
-        }
+                //goto group icon
+                //gotoGroupIconFragment()
+            }
 
 //        Thread {
 //            var downloading = true
@@ -237,6 +251,11 @@ class SetImageFragment : Fragment() {
 //            viewModel.updateGroupIcon(testUri)
 //        }.start()
 
+        }
+        else{
+            downloadLater = true
+            Log.d(TAG, "downloadImage: has image not loaded, but done clicked")
+        }
     }
 
     private fun gotoGroupsFragment() {

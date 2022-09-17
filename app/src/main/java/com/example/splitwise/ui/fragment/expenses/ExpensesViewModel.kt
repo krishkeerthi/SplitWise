@@ -25,6 +25,8 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
     private val memberRepository = MemberRepository(database)
     private val expenseRepository = ExpenseRepository(database)
 
+    var clicked: Boolean = false
+
     private val _group = MutableLiveData<Group?>()
 
     val group: LiveData<Group?>

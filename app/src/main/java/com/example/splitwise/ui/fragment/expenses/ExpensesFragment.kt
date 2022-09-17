@@ -46,7 +46,7 @@ class ExpensesFragment : Fragment() {
     private val rotateClose: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_close_anim) }
     private val fromBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.from_bottom_anim) }
     private val toBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.to_bottom_anim) }
-    private var clicked: Boolean = false
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +56,7 @@ class ExpensesFragment : Fragment() {
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment_container
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = Color.TRANSPARENT
+            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
             setAllContainerColors(resources.getColor(R.color.background))
         }
 
@@ -73,7 +73,8 @@ class ExpensesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        clicked = false
+
+        //viewModel.clicked = false
 
         // start enter transition only when data loaded, and just started to draw
         postponeEnterTransition()
@@ -86,6 +87,8 @@ class ExpensesFragment : Fragment() {
        // requireActivity().title = "Group Detail"
 
         binding = FragmentExpensesBinding.bind(view)
+
+        setVisibility()
 
         // Rv
         val expensesAdapter = ExpensesAdapter { expenseId: Int, expenseView: View ->
@@ -290,14 +293,14 @@ class ExpensesFragment : Fragment() {
     }
 
     private fun onAddButtonClicked() {
-        clicked = !clicked
+        viewModel.clicked = !viewModel.clicked
         setVisibility()
         //setAnimation()
 
     }
 
     private fun setAnimation() {
-        if(clicked){
+        if(viewModel.clicked){
             binding.addMemberButton.startAnimation(fromBottom)
             binding.addExpenseButton.startAnimation(fromBottom)
             binding.addFabButton.startAnimation(rotateOpen)
@@ -322,7 +325,7 @@ class ExpensesFragment : Fragment() {
     }
 
     private fun setVisibility() {
-        if(clicked){
+        if(viewModel.clicked){
             binding.addMemberButton.visibility = View.VISIBLE
             binding.addExpenseButton.visibility = View.VISIBLE
 

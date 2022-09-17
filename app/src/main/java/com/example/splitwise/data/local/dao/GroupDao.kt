@@ -12,37 +12,37 @@ import java.util.*
 interface GroupDao {
 
     // group is a keyword, other examples are order.. so, table names with these names should represented as `table_name`
-    @Query("SELECT * FROM `group` WHERE group_name LIKE :name || '%'")   // or append % at the end of name parameter. i.e name = "munar%"
+    @Query("SELECT * FROM `group` WHERE group_name LIKE :name || '%' ORDER BY group_id DESC")   // or append % at the end of name parameter. i.e name = "munar%"
     suspend fun getGroupsStartsWith(name: String): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE creation_date < :date")
+    @Query("SELECT * FROM `group` WHERE creation_date < :date ORDER BY group_id DESC")
     suspend fun getGroupsCreatedBefore(date: Date): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE creation_date >= :date")
+    @Query("SELECT * FROM `group` WHERE creation_date >= :date ORDER BY group_id DESC")
     suspend fun getGroupsCreatedAfter(date: Date): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE total_expense < :amount")
+    @Query("SELECT * FROM `group` WHERE total_expense < :amount ORDER BY group_id DESC")
     suspend fun getGroupsWithAmountBelow(amount: Float): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE total_expense >= :amount")
+    @Query("SELECT * FROM `group` WHERE total_expense >= :amount ORDER BY group_id DESC")
     suspend fun getGroupsWithAmountAbove(amount: Float): List<Group>
 
-    @Query("SELECT * FROM `group` WHERE creation_date < :date AND total_expense < :amount")
+    @Query("SELECT * FROM `group` WHERE creation_date < :date AND total_expense < :amount ORDER BY group_id DESC")
     suspend fun getGroupsCreatedBeforeAndAmountBelow(date: Date, amount: Float): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE creation_date < :date AND total_expense >= :amount")
+    @Query("SELECT * FROM `group` WHERE creation_date < :date AND total_expense >= :amount ORDER BY group_id DESC")
     suspend fun getGroupsCreatedBeforeAndAmountAbove(date: Date, amount: Float): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE creation_date >= :date AND total_expense < :amount")
+    @Query("SELECT * FROM `group` WHERE creation_date >= :date AND total_expense < :amount ORDER BY group_id DESC")
     suspend fun getGroupsCreatedAfterAndAmountBelow(date: Date, amount: Float): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE creation_date >= :date AND total_expense >= :amount")
+    @Query("SELECT * FROM `group` WHERE creation_date >= :date AND total_expense >= :amount ORDER BY group_id DESC")
     suspend fun getGroupsCreatedAfterAndAmountAbove(date: Date, amount: Float): List<Group>?
 
-    @Query("SELECT * FROM `group`")
+    @Query("SELECT * FROM `group` ORDER BY group_id DESC")
     suspend fun getGroups(): List<Group>?
 
-    @Query("SELECT * FROM `group` WHERE group_id IN (:groupIds)")
+    @Query("SELECT * FROM `group` WHERE group_id IN (:groupIds) ORDER BY group_id DESC")
     suspend fun getGroups(groupIds: List<Int>): List<Group>?
 
     @Query("SELECT * FROM `group` WHERE group_id = :groupId")

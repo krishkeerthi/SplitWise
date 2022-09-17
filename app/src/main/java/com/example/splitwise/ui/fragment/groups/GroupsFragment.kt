@@ -41,6 +41,19 @@ class GroupsFragment : Fragment() {
 
     //private lateinit var viewModel: GroupsViewModel
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // this animation not working fine in my device(1+9)
+//        reenterTransition = MaterialElevationScale(true).apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//        }
+//        exitTransition = MaterialElevationScale(false).apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//        }
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -98,8 +111,8 @@ class GroupsFragment : Fragment() {
 
         binding.groupsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext()).apply {
-                reverseLayout = true // it reverses but scrolled down to the last item
-                stackFromEnd = true // corrects above problem
+//                reverseLayout = true // it reverses but scrolled down to the last item
+//                stackFromEnd = true // corrects above problem
                 //scrollToPosition(1)
             }
 

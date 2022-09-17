@@ -23,31 +23,75 @@
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="match_parent">-->
 
-            <com.google.android.material.imageview.ShapeableImageView
+    <androidx.cardview.widget.CardView
+        android:id="@+id/expense_card"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardCornerRadius="10dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/expense_image_holder"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/RoundedSquare"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@color/view_color"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/expense_image_view"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+                tools:srcCompat="@tools:sample/backgrounds/scenic"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+<!--            <com.google.android.material.imageview.ShapeableImageView-->
+<!--                android:id="@+id/expense_image_holder"-->
+<!--                android:layout_width="48dp"-->
+<!--                android:layout_height="48dp"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:layout_marginTop="12dp"-->
+<!--                android:layout_marginBottom="12dp"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:shapeAppearanceOverlay="@style/RoundedSquare"-->
+<!--                android:background="@color/view_color"-->
+<!--                />-->
+
+<!--            <androidx.appcompat.widget.AppCompatImageView-->
+<!--                android:id="@+id/expense_image_view"-->
+<!--                android:layout_width="32dp"-->
+<!--                android:layout_height="32dp"-->
+<!--                android:layout_marginStart="24dp"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                tools:srcCompat="@tools:sample/backgrounds/scenic" />-->
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/expense_name_text_view"
@@ -62,7 +106,7 @@
                 android:lines="1"
                 app:layout_constraintBottom_toTopOf="@+id/expense_payer_text_view"
                 app:layout_constraintEnd_toStartOf="@+id/total_expense_text_view"
-                app:layout_constraintStart_toEndOf="@+id/expense_image_holder"
+                app:layout_constraintStart_toEndOf="@+id/expense_card"
                 tools:text="Shoe purchase Shoe purchase Shoe purchase" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -74,9 +118,9 @@
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:lines="1"
-                app:layout_constraintBottom_toBottomOf="@+id/expense_image_holder"
+                app:layout_constraintBottom_toBottomOf="@+id/expense_card"
                 app:layout_constraintEnd_toStartOf="@+id/total_expense_text_view"
-                app:layout_constraintStart_toEndOf="@+id/expense_image_holder"
+                app:layout_constraintStart_toEndOf="@+id/expense_card"
                 tools:text="Keerthi" />
 
             <com.google.android.material.textview.MaterialTextView

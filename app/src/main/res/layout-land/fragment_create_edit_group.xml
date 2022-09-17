@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:transitionName="@string/create_edit_group_transition_name">
 
     <ScrollView
         android:id="@+id/scroll_view"
@@ -15,40 +16,92 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/group_image_view"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/group_profile_card"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginTop="8dp"
                 android:scaleType="centerCrop"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/Circular"
-                android:transitionName="@string/create_edit_group_icon_transition_name"/>
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/group_image_holder"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginTop="8dp"
                 android:background="@color/view_color"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/Circular"
-                android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>
+                app:cardCornerRadius="100dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/group_image_holder_image"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="28dp"
-                android:src="@drawable/ic_baseline_people_24"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/group_image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:background="@color/view_color"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:transitionName="@string/create_edit_group_icon_transition_name"/>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/group_image_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/view_color"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/group_image_holder_image"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginTop="20dp"
+                        android:src="@drawable/ic_baseline_people_24"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+<!--            <com.google.android.material.imageview.ShapeableImageView-->
+<!--                android:id="@+id/group_image_view"-->
+<!--                android:layout_width="120dp"-->
+<!--                android:layout_height="120dp"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:scaleType="centerCrop"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:shapeAppearanceOverlay="@style/Circular"-->
+<!--                android:transitionName="@string/create_edit_group_icon_transition_name"/>-->
+
+<!--            <com.google.android.material.imageview.ShapeableImageView-->
+<!--                android:id="@+id/group_image_holder"-->
+<!--                android:layout_width="120dp"-->
+<!--                android:layout_height="120dp"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:background="@color/view_color"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:shapeAppearanceOverlay="@style/Circular"-->
+<!--                android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>-->
+
+<!--            <androidx.appcompat.widget.AppCompatImageView-->
+<!--                android:id="@+id/group_image_holder_image"-->
+<!--                android:layout_width="80dp"-->
+<!--                android:layout_height="80dp"-->
+<!--                android:layout_marginTop="28dp"-->
+<!--                android:src="@drawable/ic_baseline_people_24"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_group_name_text_field"
@@ -62,7 +115,7 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/group_image_view">
+        app:layout_constraintTop_toBottomOf="@id/group_profile_card">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/group_name_text"

@@ -9,17 +9,21 @@ import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSearchGroupBinding
 import com.example.splitwise.ui.fragment.adapter.FilteredGroupsAdapter
 import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.hideKeyboard
+import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
 
 class SearchGroupFragment : Fragment() {
@@ -78,18 +82,24 @@ class SearchGroupFragment : Fragment() {
 //            Context.MODE_PRIVATE
 //        )
 
+        // start enter transition only when data loaded, and just started to draw
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        //
+
 
         binding = FragmentSearchGroupBinding.bind(view)
 
         // Rv
-        val groupsAdapter = FilteredGroupsAdapter({ groupId: Int ->
-            goToExpenseFragment(groupId)
+        val groupsAdapter = FilteredGroupsAdapter({ groupId: Int, searchGroupView: View ->
+            goToExpenseFragment(groupId, searchGroupView)
         },
-            { groupId: Int, groupIcon: String?, groupName: String ->
+            { groupId: Int, groupIcon: String?, groupName: String, searchGroupImageView: View ->
                 gotoGroupIconFragment(
                     groupId,
                     groupIcon,
-                    groupName
+                    groupName,
+                    searchGroupImageView
                 )
             }
         )
@@ -106,15 +116,18 @@ class SearchGroupFragment : Fragment() {
                 groupsAdapter.updateGroups(groups, viewModel.textEntered)
                 binding.searchGroupsRecyclerView.visibility = View.VISIBLE
                 binding.noResultImage.visibility = View.GONE
+                binding.noGroupsTextView.visibility = View.GONE
             } else if (groups != null && groups.isEmpty()) { // to handle when query not entered
                 Log.d(TAG, "onViewCreated:$$$ groups != null && groups.isEmpty()")
                 groupsAdapter.updateGroups(listOf(), "")
                 binding.searchGroupsRecyclerView.visibility = View.GONE
                 binding.noResultImage.visibility = View.VISIBLE
+                binding.noGroupsTextView.visibility = View.VISIBLE
             } else {
                 Log.d(TAG, "onViewCreated:$$$ else")
                 binding.searchGroupsRecyclerView.visibility = View.GONE
                 binding.noResultImage.visibility = View.GONE
+                binding.noGroupsTextView.visibility = View.GONE
             }
 
         }
@@ -222,14 +235,38 @@ class SearchGroupFragment : Fragment() {
         })
     }
 
-    private fun goToExpenseFragment(groupId: Int) {
+    private fun goToExpenseFragment(groupId: Int, searchGroupView: View) {
         view?.hideKeyboard()
+
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+
+        val expensesTransitionName = getString(R.string.expenses_transition_name)
+        val extras = FragmentNavigatorExtras(searchGroupView to expensesTransitionName)
+
+
         val action =
             SearchGroupFragmentDirections.actionSearchGroupFragmentToExpensesFragment(groupId)
-        view?.findNavController()?.navigate(action)
+        findNavController().navigate(action, extras)
     }
 
-    private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String) {
+    private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String, searchGroupImageView: View) {
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        val transitionName = getString(R.string.group_icon_transition_name)
+        val extras = FragmentNavigatorExtras(searchGroupImageView to transitionName)
+
+
         val action = SearchGroupFragmentDirections.actionSearchGroupFragmentToGroupIconFragment(
             groupId,
             groupIcon,
@@ -237,7 +274,7 @@ class SearchGroupFragment : Fragment() {
             true,
             true
         )
-        view?.findNavController()?.navigate(action)
+        findNavController().navigate(action, extras)
     }
 
     private fun changeGroupQuery(query: String) {

@@ -78,6 +78,7 @@ class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding) :
 
         if (memberAndStreak.member.memberProfile != null) {
             ///binding.memberImageView.setImageURI(memberAndStreak.member.memberProfile)
+            binding.memberImageView.setImageBitmap(null)
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.memberImageView.setImageBitmap(
                     decodeSampledBitmapFromUri(

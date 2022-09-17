@@ -91,6 +91,8 @@ class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
 
         if(payee.memberProfile != null){
             ///binding.payeeImageView.setImageURI(payee.memberProfile)
+
+            binding.payeeImageView.setImageBitmap(null)
             binding.payeeImageView.setImageBitmap(decodeSampledBitmapFromUri(
                 binding.root.context, payee.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
             ))
@@ -109,6 +111,7 @@ class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
         if(payee.memberProfile != null){
             ///binding.payeeImageView.setImageURI(payee.memberProfile)
 
+            binding.payeeImageView.setImageBitmap(null)
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.payeeImageView.setImageBitmap(decodeSampledBitmapFromUri(
                     binding.root.context, payee.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)))

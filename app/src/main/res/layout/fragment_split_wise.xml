@@ -69,9 +69,9 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/no_pending_image_view"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:src="@drawable/empty_expense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/done_all"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/selected_groups_card"
         app:layout_constraintEnd_toEndOf="parent"

@@ -7,10 +7,13 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -18,9 +21,15 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.transition.Slide
+import androidx.transition.TransitionManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityMainBinding
 import com.example.splitwise.ui.activity.register.RegisterActivity
+import com.example.splitwise.ui.fragment.groups.GroupsFragment
+import com.example.splitwise.ui.fragment.groupsoverview.GroupsOverviewFragment
+import com.example.splitwise.ui.fragment.settings.SettingsFragment
+import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragment
 import java.util.*
 
 
@@ -100,6 +109,30 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         val colorDrawable = ColorDrawable(Color.parseColor("#0F9D58"))
         actionBar?.setBackgroundDrawable(colorDrawable)
+
+        // testing, not working
+//        supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+//            override fun onFragmentViewCreated(fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?) {
+//                TransitionManager.beginDelayedTransition(binding.root, Slide(Gravity.BOTTOM).excludeTarget(R.id.nav_host_fragment_container, true))
+//                when (f) {
+//                    is GroupsFragment -> {
+//                        binding.bottomNavigation.visibility = View.VISIBLE
+//                    }
+//                    is SplitWiseFragment -> {
+//                        binding.bottomNavigation.visibility = View.VISIBLE
+//                    }
+//                    is GroupsOverviewFragment -> {
+//                        binding.bottomNavigation.visibility = View.VISIBLE
+//                    }
+//                    is SettingsFragment -> {
+//                        binding.bottomNavigation.visibility = View.VISIBLE
+//                    }
+//                    else -> {
+//                        binding.bottomNavigation.visibility = View.VISIBLE
+//                    }
+//                }
+//            }
+//        }, true)
     }
 
     private fun setMode(theme: String?) {
@@ -138,7 +171,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
 
-    override fun onDestinationChanged(
+        override fun onDestinationChanged(
         controller: NavController,
         destination: NavDestination,
         arguments: Bundle?
@@ -155,8 +188,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 View.GONE
     }
 
-
-  //  override fun onBackPressed() {
+//  override fun onBackPressed() {
 
         //val fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container)
 

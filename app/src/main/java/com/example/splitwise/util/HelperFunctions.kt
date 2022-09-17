@@ -8,6 +8,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.content.res.TypedArray
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.fonts.Font
 import android.net.Uri
 import android.text.Html
@@ -17,6 +18,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
@@ -133,6 +135,16 @@ fun downloadBitmap(imageUrl: String): Bitmap? {
         Log.e(ContentValues.TAG, "Exception $e")
         null
     }
+}
+
+fun hasImage(view: ImageView): Boolean{
+    val drawable = view.drawable
+    var hasImage = (drawable != null)
+
+    if(hasImage && (drawable is BitmapDrawable)){
+        hasImage = (drawable as BitmapDrawable).bitmap != null
+    }
+    return hasImage
 }
 
 val unwantedWords = listOf<String>(

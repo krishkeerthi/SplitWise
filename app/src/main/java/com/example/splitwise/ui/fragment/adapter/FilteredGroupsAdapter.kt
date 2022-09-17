@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
@@ -20,8 +21,8 @@ import com.example.splitwise.util.*
 import java.util.*
 
 class FilteredGroupsAdapter(
-    val onGroupClicked: (Int) -> Unit,
-    val onImageClicked: (Int, String?, String) -> Unit
+    val onGroupClicked: (Int, View) -> Unit,
+    val onImageClicked: (Int, String?, String, View) -> Unit
 ) : RecyclerView.Adapter<FilteredGroupsViewHolder>() {
     private var groups = listOf<Group>()
     private var query = ""
@@ -39,7 +40,9 @@ class FilteredGroupsAdapter(
                 onImageClicked(
                     groups[absoluteAdapterPosition].groupId,
                     groups[absoluteAdapterPosition].groupIcon?.toString(),
-                    groups[absoluteAdapterPosition].groupName
+                    groups[absoluteAdapterPosition].groupName,
+                    if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
+                    else binding.groupImageHolderImage
                 )
             }
             binding.groupImageHolder.setOnClickListener {
@@ -47,12 +50,14 @@ class FilteredGroupsAdapter(
                 onImageClicked(
                     groups[absoluteAdapterPosition].groupId,
                     groups[absoluteAdapterPosition].groupIcon?.toString(),
-                    groups[absoluteAdapterPosition].groupName
+                    groups[absoluteAdapterPosition].groupName,
+                    if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
+                    else binding.groupImageHolderImage
                 )
             }
             binding.textLayout.setOnClickListener {
                 it.ripple(it.context)
-                onGroupClicked(groups[absoluteAdapterPosition].groupId)
+                onGroupClicked(groups[absoluteAdapterPosition].groupId, itemView)
             }
         }
     }
@@ -74,44 +79,77 @@ class FilteredGroupsAdapter(
     }
 }
 
-class FilteredGroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.ViewHolder(binding.root) {
+class FilteredGroupsViewHolder(val binding: GroupCard1Binding) :
+    RecyclerView.ViewHolder(binding.root) {
 
     private val resources = binding.root.resources
     fun bind(group: Group, query: String) {
 
-        val groupName = if(query != "") getSpannable(group.groupName, query)
-            else group.groupName
+        ViewCompat.setTransitionName(
+            binding.root,
+            String.format(
+                resources.getString(R.string.search_group_card_transition_name),
+                group.groupId
+            )
+        )
+        ViewCompat.setTransitionName(
+            binding.groupImageView,
+            String.format(
+                resources.getString(R.string.search_group_image_transition_name),
+                group.groupId
+            )
+        )
+        ViewCompat.setTransitionName(
+            binding.groupImageHolderImage,
+            String.format(
+                resources.getString(R.string.search_group_empty_image_transition_name),
+                group.groupId
+            )
+        )
+
+        val groupName = if (query != "") getSpannable(group.groupName, query)
+        else group.groupName
 
         binding.groupNameTextView.text = groupName
         binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
         binding.groupCreationDateTextView.text = formatDate(group.creationDate)
 
-        if(group.groupIcon != null) {
+        if (group.groupIcon != null) {
             ///binding.groupImageView.setImageURI(group.groupIcon)
-            binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                binding.root.context, group.groupIcon, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
-            ))
-            binding.groupImageHolder.visibility= View.INVISIBLE
+            binding.groupImageView.setImageBitmap(
+                decodeSampledBitmapFromUri(
+                    binding.root.context,
+                    group.groupIcon,
+                    48.dpToPx(resources.displayMetrics),
+                    48.dpToPx(resources.displayMetrics)
+                )
+            )
+            binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
             binding.groupImageView.visibility = View.VISIBLE
-        }
-        else {
+        } else {
             binding.groupImageView.setImageResource(R.drawable.ic_baseline_people_24)
-            binding.groupImageHolder.visibility= View.VISIBLE
+            binding.groupImageHolder.visibility = View.VISIBLE
             binding.groupImageHolderImage.visibility = View.VISIBLE
             binding.groupImageView.visibility = View.INVISIBLE
         }
     }
 
     private fun getSpannable(data: String, query: String): Spannable {
-        val startPos = data.lowercase(Locale.getDefault()).indexOf(query.lowercase(Locale.getDefault()))
+        val startPos =
+            data.lowercase(Locale.getDefault()).indexOf(query.lowercase(Locale.getDefault()))
         val endPos = startPos + query.length
 
         return if (startPos != -1) {
             val spannable = SpannableString(data)
             val colorStateList = ColorStateList(
-                Array(query.length){ IntArray(query.length) },
-                IntArray(query.length){ContextCompat.getColor(binding.groupNameTextView.context, R.color.blue)}
+                Array(query.length) { IntArray(query.length) },
+                IntArray(query.length) {
+                    ContextCompat.getColor(
+                        binding.groupNameTextView.context,
+                        R.color.blue
+                    )
+                }
             )
 
             val textAppearanceSpan = TextAppearanceSpan(
@@ -129,8 +167,7 @@ class FilteredGroupsViewHolder(val binding: GroupCard1Binding) : RecyclerView.Vi
             )
 
             spannable
-        }
-        else
+        } else
             data.toSpannable()
     }
 

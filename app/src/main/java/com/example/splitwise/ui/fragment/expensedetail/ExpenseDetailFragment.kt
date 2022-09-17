@@ -69,7 +69,7 @@ class ExpenseDetailFragment : Fragment() {
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment_container
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = Color.TRANSPARENT
+            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
             setAllContainerColors(resources.getColor(R.color.background))
         }
     }

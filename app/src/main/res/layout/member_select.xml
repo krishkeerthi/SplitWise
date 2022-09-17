@@ -6,40 +6,86 @@
     android:layout_height="wrap_content"
     >
 
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/member_image_view"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/member_card"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:background="@color/view_color"
-        android:scaleType="centerCrop"
+        app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/Circular" />
+        app:cardCornerRadius="100dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/member_image_holder"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/view_color"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/Circular" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/member_image_holder_image"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="12dp"
-        android:src="@drawable/ic_baseline_person_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/member_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="@color/view_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/member_image_holder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/view_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/member_image_holder_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:src="@drawable/ic_baseline_person_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/member_image_view"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:background="@color/view_color"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:shapeAppearanceOverlay="@style/Circular" />-->
+
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/member_image_holder"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:background="@color/view_color"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:shapeAppearanceOverlay="@style/Circular" />-->
+
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/member_image_holder_image"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:src="@drawable/ic_baseline_person_24"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        tools:srcCompat="@tools:sample/backgrounds/scenic" />-->
 
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/paid_unpaid_checkbox"
@@ -47,7 +93,7 @@
         android:layout_height="24dp"
         android:layout_marginTop="8dp"
         android:checked="true"
-        app:layout_constraintStart_toEndOf="@+id/member_image_holder"
+        app:layout_constraintStart_toEndOf="@+id/member_card"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -61,6 +107,6 @@
         tools:text="KeerthiKeerthi Keerthi"
         app:layout_constraintEnd_toEndOf="@+id/paid_unpaid_checkbox"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/member_image_holder" />
+        app:layout_constraintTop_toBottomOf="@+id/member_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

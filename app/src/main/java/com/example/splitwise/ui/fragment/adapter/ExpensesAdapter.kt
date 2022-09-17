@@ -54,10 +54,11 @@ class ExpensesViewHolder(val binding: ExpenseCard1Binding) : RecyclerView.ViewHo
 
     fun bind(expenseMember: ExpenseMember) {
 
+        binding.expenseImageView.setImageBitmap(null)
         // load image after sometime
         Handler(Looper.getMainLooper()).postDelayed({
             binding.expenseImageView.setImageResource(getCategoryDrawableResource(expenseMember.category))
-        }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+        }, resources.getInteger(R.integer.reply_motion_duration_medium).toLong())
 
         // transition name
         ViewCompat.setTransitionName(

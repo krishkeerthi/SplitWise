@@ -72,6 +72,8 @@ class SplitWiseViewHolder(val binding: MemberOweLendCardBinding) :
             Log.d(TAG, "bind: name ${memberPaymentStatsDetail.memberName} profile ${memberPaymentStatsDetail.memberProfile}")
             ///binding.memberImageView.setImageURI(memberPaymentStatsDetail.memberProfile)
 
+            binding.memberImageView.setImageBitmap(null)
+
             // delaying image loading so that rendering speed wont affect
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(

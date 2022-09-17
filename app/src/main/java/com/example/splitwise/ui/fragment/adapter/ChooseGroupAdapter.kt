@@ -80,6 +80,8 @@ class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
         if (group.groupIcon != null) {
             ///binding.groupImageView.setImageURI(group.groupIcon)
 
+            binding.groupImageView.setImageBitmap(null)
+
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.groupImageView.setImageBitmap(
                     decodeSampledBitmapFromUri(

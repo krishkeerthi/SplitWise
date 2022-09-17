@@ -35,6 +35,7 @@ class MembersProfileAdapter : RecyclerView.Adapter<MembersProfileViewHolder>() {
     override fun onViewRecycled(holder: MembersProfileViewHolder) {
         super.onViewRecycled(holder)
 
+        holder.resetViews()
     }
 
     fun updateMembers(members: List<Member>) {
@@ -53,6 +54,9 @@ class MembersProfileViewHolder(val binding: MemberProfileCardBinding) :
         if(member.memberProfile != null){
             ///binding.memberImageView.setImageURI(member.memberProfile)
 
+            // this avoids loading old views.
+            binding.memberImageView.setImageBitmap(null)
+
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
                     binding.root.context, member.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
@@ -68,6 +72,12 @@ class MembersProfileViewHolder(val binding: MemberProfileCardBinding) :
             binding.memberImageHolderImage.visibility = View.VISIBLE
             binding.memberImageView.visibility = View.INVISIBLE
         }
+    }
+
+    fun resetViews(){
+        binding.memberImageHolder.visibility = View.VISIBLE
+        binding.memberImageHolderImage.visibility = View.VISIBLE
+        binding.memberImageView.visibility = View.INVISIBLE
     }
 
 }

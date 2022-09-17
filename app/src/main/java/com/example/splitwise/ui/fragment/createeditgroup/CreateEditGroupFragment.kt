@@ -157,12 +157,13 @@ class CreateEditGroupFragment : Fragment() {
         // transition code ends
 
         // corner color blue fix
-        binding.groupImageHolder.background = ShapeDrawable(RectShape()).also {
-            it.paint.color = resources.getColor(R.color.view_color)
-        }
+//        binding.groupImageHolder.background = ShapeDrawable(RectShape()).also {
+//            it.paint.color = resources.getColor(R.color.view_color)
+//        }
         // ends
 
         //viewModel.fetchData()
+        // many problem arises if it is not called from here
         viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
 
         // not works
@@ -226,8 +227,9 @@ class CreateEditGroupFragment : Fragment() {
 
         //      group icon click (when not set)
         binding.groupImageHolder.setOnClickListener {
-            if(binding.groupImageHolderImage.isVisible)
-            gotoGroupIconFragment(binding.groupImageHolderImage)
+            if (binding.groupImageHolderImage.isVisible)
+                gotoGroupIconFragment(binding.groupImageHolderImage)
+            Log.d(TAG, "onViewCreated: img click holder")
         }
 
 //        binding.groupImageHolderImage.setOnClickListener {
@@ -236,6 +238,7 @@ class CreateEditGroupFragment : Fragment() {
         // group icon click (when set)
         binding.groupImageView.setOnClickListener {
             gotoGroupIconFragment(binding.groupImageView)
+            Log.d(TAG, "onViewCreated: img click image")
         }
 
         viewModel.group.observe(viewLifecycleOwner) { group ->
@@ -248,9 +251,14 @@ class CreateEditGroupFragment : Fragment() {
                     ///binding.groupImageView.setImageURI(group.groupIcon)
 
                     Handler(Looper.getMainLooper()).postDelayed({
-                    binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                        binding.root.context, group.groupIcon, 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)
-                    ))
+                        binding.groupImageView.setImageBitmap(
+                            decodeSampledBitmapFromUri(
+                                binding.root.context,
+                                group.groupIcon,
+                                160.dpToPx(resources.displayMetrics),
+                                160.dpToPx(resources.displayMetrics)
+                            )
+                        )
                     }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
                     binding.groupImageHolder.visibility = View.INVISIBLE
@@ -273,10 +281,15 @@ class CreateEditGroupFragment : Fragment() {
         if (args.groupIcon != null) {
             ///binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
             Handler(Looper.getMainLooper()).postDelayed({
-            binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                binding.root.context, Uri.parse(args.groupIcon), 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)
-            ))
-        }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+                binding.groupImageView.setImageBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        Uri.parse(args.groupIcon),
+                        160.dpToPx(resources.displayMetrics),
+                        160.dpToPx(resources.displayMetrics)
+                    )
+                )
+            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE

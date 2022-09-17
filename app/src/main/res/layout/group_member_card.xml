@@ -9,44 +9,97 @@
     android:focusable="true"
     >
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/member_image_view"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/member_card"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        android:scaleType="centerCrop"
-        android:background="@color/view_color"
+        app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:shapeAppearanceOverlay="@style/Circular" />
+        app:cardCornerRadius="100dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/member_image_holder"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:background="@color/view_color"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:shapeAppearanceOverlay="@style/Circular" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/member_image_holder_image"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_baseline_person_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/member_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="@color/view_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/member_image_holder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/view_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/member_image_holder_image"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_baseline_person_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/member_image_view"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:layout_marginBottom="12dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:background="@color/view_color"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:shapeAppearanceOverlay="@style/Circular" />-->
+
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/member_image_holder"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:layout_marginBottom="12dp"-->
+<!--        android:background="@color/view_color"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:shapeAppearanceOverlay="@style/Circular" />-->
+
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/member_image_holder_image"-->
+<!--        android:layout_width="32dp"-->
+<!--        android:layout_height="32dp"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginBottom="20dp"-->
+<!--        android:src="@drawable/ic_baseline_person_24"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/member_name_text_view"
@@ -61,7 +114,7 @@
         android:lines="1"
         app:layout_constraintBottom_toTopOf="@+id/member_phone_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/member_image_holder"
+        app:layout_constraintStart_toEndOf="@+id/member_card"
         tools:text="Keerthi K" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -72,8 +125,8 @@
         android:layout_marginBottom="4dp"
         android:visibility="gone"
         android:src="@drawable/ic_baseline_local_phone_24"
-        app:layout_constraintBottom_toBottomOf="@+id/member_image_holder"
-        app:layout_constraintStart_toEndOf="@+id/member_image_holder" />
+        app:layout_constraintBottom_toBottomOf="@+id/member_card"
+        app:layout_constraintStart_toEndOf="@+id/member_card" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/member_phone_text_view"
@@ -81,7 +134,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/member_image_holder"
+        app:layout_constraintBottom_toBottomOf="@+id/member_card"
         app:layout_constraintStart_toEndOf="@+id/phone_image_view"
         android:autoLink="phone"
         tools:text="9790307426" />

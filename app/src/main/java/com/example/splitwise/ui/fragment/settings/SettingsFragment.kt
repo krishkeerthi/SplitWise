@@ -35,6 +35,19 @@ class SettingsFragment : Fragment() {
         SettingsViewModelFactory(requireContext())
     }
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

@@ -78,6 +78,8 @@ class MembersCheckboxViewHolder(val binding: MemberSelectBinding) :
         if (member.memberProfile != null) {
             ///binding.memberImageView.setImageURI(member.memberProfile)
 
+            binding.memberImageView.setImageBitmap(null)
+
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.memberImageView.setImageBitmap(
                     decodeSampledBitmapFromUri(
