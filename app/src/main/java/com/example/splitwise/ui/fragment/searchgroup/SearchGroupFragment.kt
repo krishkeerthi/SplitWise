@@ -50,6 +50,7 @@ class SearchGroupFragment : Fragment() {
             override fun handleOnBackPressed() {
                 viewModel.textEntered = ""
 
+                Log.d(TAG, "handleOnBackPressed: back pressed called")
                 // to hide keyboard
                 binding.root.hideKeyboard()
 
@@ -183,9 +184,6 @@ class SearchGroupFragment : Fragment() {
         val searchItem = menu.findItem(R.id.search_menu)
         val searchView = searchItem?.actionView as SearchView
 
-
-
-        Log.d(TAG, "onCreateOptionsMenu: expanded ${searchItem.isActionViewExpanded}")
         searchItem.expandActionView()
 //        searchItem.setIcon(null)
 //        searchView.invalidateOutline()
@@ -200,6 +198,8 @@ class SearchGroupFragment : Fragment() {
 
         searchView.requestFocus()
 
+        searchView.fitsSystemWindows = true
+        searchView.isEnabled = true
 
         searchView.setQuery(viewModel.textEntered, true)
 
@@ -221,7 +221,6 @@ class SearchGroupFragment : Fragment() {
 
             override fun onQueryTextChange(query: String?): Boolean {
                 if (query != null) {
-
                     closeButton.visibility = if (query == "") View.INVISIBLE else View.VISIBLE
 
                     viewModel.textEntered = query

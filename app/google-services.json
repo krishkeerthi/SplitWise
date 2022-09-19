@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "540158200822",
+    "project_id": "splitwise-krish",
+    "storage_bucket": "splitwise-krish.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540158200822:android:18fe986fb6a7b449aa15d7",
+        "android_client_info": {
+          "package_name": "com.example.splitwise"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540158200822-24cjnr03hitdu5rmljipt5p88ljq8rkb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBM1WcZF1ahxHFRk_vSNMC0hFAZpDQ27RY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540158200822-24cjnr03hitdu5rmljipt5p88ljq8rkb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

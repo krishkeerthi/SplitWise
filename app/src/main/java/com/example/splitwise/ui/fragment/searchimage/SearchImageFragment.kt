@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -19,6 +20,7 @@ import com.example.splitwise.databinding.FragmentSearchImageBinding
 import com.example.splitwise.ui.fragment.adapter.UnsplashPhotoAdapter
 import com.example.splitwise.ui.fragment.adapter.UnsplashPhotoLoadStateAdapter
 import com.example.splitwise.ui.fragment.settings.SettingsViewModelFactory
+import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.removeIrrelevantWords
 import com.google.android.material.transition.MaterialElevationScale
 
@@ -104,6 +106,8 @@ class SearchImageFragment : Fragment() {
 
         val searchItem = menu.findItem(R.id.search_menu)
         val searchView = searchItem?.actionView as SearchView
+
+        searchView.updatePadding(left = (-16).dpToPx(resources.displayMetrics))
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

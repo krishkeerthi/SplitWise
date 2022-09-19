@@ -23,7 +23,7 @@ class SettingsViewModel(context: Context) :
     private val memberRepository = MemberRepository(database)
     private val groupRepository = GroupRepository(database)
 
-    fun insertSampleData(){
+    fun insertSampleData(updateDateInserted: () -> Unit, restartActivity: () -> Unit){
         viewModelScope.launch {
             // Group Creation
             // Group 1
@@ -176,6 +176,10 @@ class SettingsViewModel(context: Context) :
             groupRepository.addGroupExpense(groupId2, expenseId22)
 
             groupRepository.updateTotalExpense(groupId2, 6666f)
+
+            // callback
+            updateDateInserted()
+            restartActivity()
 
         }
     }

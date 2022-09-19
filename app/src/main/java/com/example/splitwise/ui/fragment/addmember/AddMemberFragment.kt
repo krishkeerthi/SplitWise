@@ -297,24 +297,32 @@ class AddMemberFragment() : Fragment() {
     }
 
     private fun openCamera() {
-
-        when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) -> {
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                cameraLauncher.launch(intent)
-                Log.d(TAG, "onViewCreated: reached")
-            }
-            else -> {
-                if(ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-                    settingsDialog()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // on sdk 33 onwards there is no write external storage permission, thus camera was not loading
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            cameraLauncher.launch(intent)
+        } else {
+            when (PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) -> {
+                    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    cameraLauncher.launch(intent)
+                    Log.d(TAG, "onViewCreated: reached")
                 }
-                else{
-                    requestDialog()
-                }
+                else -> {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            requireActivity(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    ) {
+                        settingsDialog()
+                    } else {
+                        requestDialog()
+                    }
 
+                }
             }
         }
     }

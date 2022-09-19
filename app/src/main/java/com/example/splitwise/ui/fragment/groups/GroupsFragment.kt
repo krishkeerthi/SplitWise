@@ -15,6 +15,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.metrics.performance.JankStats
+import androidx.metrics.performance.PerformanceMetricsState
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -40,6 +42,7 @@ class GroupsFragment : Fragment() {
     }
 
     //private lateinit var viewModel: GroupsViewModel
+    private lateinit var jankStats: JankStats
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +70,16 @@ class GroupsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_groups, container, false)
     }
 
+    private val jankFrameListener = JankStats.OnFrameListener { frameData ->
+        Log.d(TAG, "JankStats: ----------------\n " +
+                "is Jank: ${frameData.isJank} \n" +
+                "frameDurationUiNanos: ${frameData.frameDurationUiNanos} \n" +
+                "frameStartNanos: ${frameData.frameStartNanos}\n" +
+                "states: ${frameData.states}\n" +
+                "Overall: ${frameData.toString()}" +
+                "-------------------------\n"
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,6 +96,14 @@ class GroupsFragment : Fragment() {
 
 //        Toast.makeText(requireContext(),
 //            String.format(resources.getString(R.string.test), "1234"), Toast.LENGTH_SHORT).show()
+
+        // Jank stat start
+
+        val metricStateHolder = PerformanceMetricsState.getHolderForHierarchy(binding.root)
+        jankStats = JankStats.createAndTrack(requireActivity().window, jankFrameListener)
+        metricStateHolder.state?.putState("Fragment", this.toString())
+        // janks stat ends
+
 
         // Rv
         val groupsAdapter = GroupsAdapter({ groupId: Int, groupView: View ->
@@ -220,6 +241,16 @@ class GroupsFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        jankStats.isTrackingEnabled = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        jankStats.isTrackingEnabled = false
+    }
+
     private fun updateDateFilter() {
         if (viewModel.filterModel.dateFilterModel != null) {
             val dateFilterModel = viewModel.filterModel.dateFilterModel
@@ -325,7 +356,7 @@ class GroupsFragment : Fragment() {
         val expensesTransitionName = getString(R.string.expenses_transition_name)
         val extras = FragmentNavigatorExtras(groupView to expensesTransitionName)
         val action = GroupsFragmentDirections.actionGroupsFragmentToExpensesFragment(groupId)
-        view?.findNavController()?.navigate(action, extras)
+        findNavController().navigate(action, extras)
     }
 
     // Bottom Sheet Dialogs

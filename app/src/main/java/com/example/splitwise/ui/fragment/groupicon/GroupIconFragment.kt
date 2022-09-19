@@ -158,25 +158,30 @@ class GroupIconFragment : Fragment() {
     }
 
     private fun openCamera() {
-
-        when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) -> {
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                cameraLauncher.launch(intent)
-                Log.d(TAG, "onViewCreated: reached")
-            }
-            else -> {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        requireActivity(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                ) {
-                    settingsDialog()
-                } else {
-                    requestDialog()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // on sdk 33 onwards there is no write external storage permission, thus camera was not loading
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            cameraLauncher.launch(intent)
+        } else {
+            when (PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) -> {
+                    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    cameraLauncher.launch(intent)
+                    Log.d(TAG, "onViewCreated: reached")
+                }
+                else -> {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            requireActivity(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    ) {
+                        settingsDialog()
+                    } else {
+                        requestDialog()
+                    }
                 }
             }
         }
@@ -283,12 +288,11 @@ class GroupIconFragment : Fragment() {
                     val uri = storeUsingMediaStore(bitmap)
                     if (uri != null) {
                         if (args.groupId != -1) {
-                            if(args.fromGroupsSearchFragment){
+                            if (args.fromGroupsSearchFragment) {
                                 viewModel.updateGroupIcon(uri) {
                                     gotoSearchGroupsFragment()
                                 }
-                            }
-                            else{
+                            } else {
                                 if (args.fromGroupsFragment)
                                     viewModel.updateGroupIcon(uri) {
                                         gotoGroupsFragment()
@@ -390,12 +394,11 @@ class GroupIconFragment : Fragment() {
                     )
 
                     if (args.groupId != -1) {
-                        if(args.fromGroupsSearchFragment){
+                        if (args.fromGroupsSearchFragment) {
                             viewModel.updateGroupIcon(uri) {
                                 gotoSearchGroupsFragment()
                             }
-                        }
-                        else{
+                        } else {
                             if (args.fromGroupsFragment) {
                                 viewModel.updateGroupIcon(uri) {
                                     gotoGroupsFragment()

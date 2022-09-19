@@ -22,13 +22,15 @@ class FeedbackFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //sharedElementEnterTransition = MaterialContainerTransform()
 
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.background))
         }
-        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-        }
+
     }
 
     override fun onCreateView(

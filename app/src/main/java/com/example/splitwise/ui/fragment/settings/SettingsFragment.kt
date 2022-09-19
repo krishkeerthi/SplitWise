@@ -54,14 +54,21 @@ class SettingsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.settings)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.settings)
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // start enter transition only when data loaded, and just started to draw
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        //
+
         binding = FragmentSettingsBinding.bind(view)
+
 
         sharedPreferences = requireActivity().getSharedPreferences(
             "com.example.splitwise.sharedprefkey",
@@ -142,8 +149,8 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        binding.feedback.setOnClickListener{
-            gotoFeedbackFragment()
+        binding.feedback.setOnClickListener {
+            gotoFeedbackFragment(it)
         }
 
 
@@ -153,18 +160,18 @@ class SettingsFragment : Fragment() {
 
     }
 
-    private fun gotoFeedbackFragment() {
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+    private fun gotoFeedbackFragment(view: View) {
+        exitTransition = MaterialElevationScale(false).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
-        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+        reenterTransition = MaterialElevationScale(true).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
 
-//        val transitionName = getString(R.string.feedback_transition_name)
-//        val extras = FragmentNavigatorExtras(binding.feedback to transitionName)
+        val transitionName = getString(R.string.feedback_transition_name)
+        val extras = FragmentNavigatorExtras(view to transitionName)
         val action = SettingsFragmentDirections.actionSettingsFragmentToFeedbackFragment()
-        findNavController().navigate(action)
+        findNavController().navigate(action, extras)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -175,9 +182,18 @@ class SettingsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.import_menu -> {
-                viewModel.insertSampleData()
-                updateDataInserted()
-                Snackbar.make(binding.root, getString(R.string.data_imported), Snackbar.LENGTH_SHORT).show()
+                viewModel.insertSampleData({
+                    updateDataInserted()
+                },
+                    {
+                        restartActivity()
+                    })
+                //updateDataInserted()
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.data_imported),
+                    Snackbar.LENGTH_SHORT
+                ).show()
                 true
             }
             else -> {
@@ -235,7 +251,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setMode(theme: String?) {
-        when(theme) {
+        when (theme) {
             "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -243,7 +259,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setLanguage(language: String) {
-        val languageCode = when(language){
+        val languageCode = when (language) {
             "English" -> "en"
             "Tamil" -> "ta"
             else -> "en"

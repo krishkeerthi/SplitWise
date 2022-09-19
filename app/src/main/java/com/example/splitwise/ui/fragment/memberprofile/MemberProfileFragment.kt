@@ -228,6 +228,9 @@ class MemberProfileFragment : Fragment() {
 
         if (!viewModel.editEnabled) {
             // it ensures edited value won't change after orientation change when edit enabled
+            binding.dummyMemberNameText.setText(member.name)
+            binding.dummyMemberPhoneText.setText(member.phone.toString())
+
             binding.memberNameText.setText(member.name)
             binding.memberPhoneText.setText(member.phone.toString())
 
@@ -257,23 +260,48 @@ class MemberProfileFragment : Fragment() {
     }
 
     private fun enableEdit() {
-        binding.memberNameText.isEnabled = true
+////        binding.memberNameText.isEnabled = true
 //        binding.memberNameText.isClickable = true
 //        binding.memberNameText.isFocusable = true
-
-        binding.memberPhoneText.isEnabled = true
+//        binding.memberNameText.invalidate()
+//
+////        binding.memberPhoneText.isEnabled = true
 //        binding.memberPhoneText.isClickable = true
 //        binding.memberPhoneText.isFocusable = true
+//        binding.memberPhoneText.invalidate()
+
+        binding.dummyMemberNameText.visibility = View.INVISIBLE
+        binding.dummyOutlinedMemberNameTextField.visibility = View.INVISIBLE
+        binding.dummyMemberPhoneText.visibility = View.INVISIBLE
+        binding.dummyOutlinedMemberPhoneTextField.visibility = View.INVISIBLE
+
+        binding.memberNameText.visibility = View.VISIBLE
+        binding.outlinedMemberNameTextField.visibility = View.VISIBLE
+        binding.memberPhoneText.visibility = View.VISIBLE
+        binding.outlinedMemberPhoneTextField.visibility = View.VISIBLE
     }
 
     private fun disableEdit() {
-        binding.memberNameText.isEnabled = false
+//        binding.memberNameText.isEnabled = false
+//
 //        binding.memberNameText.isClickable = false
 //        binding.memberNameText.isFocusable = false
-
-        binding.memberPhoneText.isEnabled = false
+//        binding.memberNameText.invalidate()
+//
+////        binding.memberPhoneText.isEnabled = false
 //        binding.memberPhoneText.isClickable = false
 //        binding.memberPhoneText.isFocusable = false
+//        binding.memberPhoneText.invalidate()
+
+        binding.dummyMemberNameText.visibility = View.VISIBLE
+        binding.dummyOutlinedMemberNameTextField.visibility = View.VISIBLE
+        binding.dummyMemberPhoneText.visibility = View.VISIBLE
+        binding.dummyOutlinedMemberPhoneTextField.visibility = View.VISIBLE
+
+        binding.memberNameText.visibility = View.INVISIBLE
+        binding.outlinedMemberNameTextField.visibility = View.INVISIBLE
+        binding.memberPhoneText.visibility = View.INVISIBLE
+        binding.outlinedMemberPhoneTextField.visibility = View.INVISIBLE
     }
 
     // Needs to remove, because it is repeating
@@ -331,25 +359,30 @@ class MemberProfileFragment : Fragment() {
     }
 
     private fun openCamera() {
-
-        when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) -> {
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                cameraLauncher.launch(intent)
-                Log.d(ContentValues.TAG, "onViewCreated: reached")
-            }
-            else -> {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        requireActivity(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                ) {
-                    settingsDialog()
-                } else {
-                    requestDialog()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // on sdk 33 onwards there is no write external storage permission, thus camera was not loading
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            cameraLauncher.launch(intent)
+        } else {
+            when (PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) -> {
+                    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    cameraLauncher.launch(intent)
+                    Log.d(ContentValues.TAG, "onViewCreated: reached")
+                }
+                else -> {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            requireActivity(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    ) {
+                        settingsDialog()
+                    } else {
+                        requestDialog()
+                    }
                 }
             }
         }
