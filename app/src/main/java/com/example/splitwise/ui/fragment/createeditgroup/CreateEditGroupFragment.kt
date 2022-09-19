@@ -503,7 +503,7 @@ class CreateEditGroupFragment : Fragment() {
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToAddMemberFragment(
                 args.groupId,
-                args.groupName,
+                binding.groupNameText.text.toString(), //args.groupName,
                 args.groupIcon
             )
 

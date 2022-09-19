@@ -52,14 +52,18 @@ class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) 
 
     fun addMemberToSelected(member: Member) {
         //selectedMembersList.add(member)
-        checkedMembers.add(member)
-        _selectedMembersCount.value = _selectedMembersCount.value?.plus(1)
+        if(member !in checkedMembers) {
+            checkedMembers.add(member)
+            _selectedMembersCount.value = _selectedMembersCount.value?.plus(1)
+        }
     }
 
     fun removeMemberFromSelected(member: Member) {
         //selectedMembersList.remove(member)
-        checkedMembers.remove(member)
-        _selectedMembersCount.value = _selectedMembersCount.value?.minus(1)
+        if(member in checkedMembers) {
+            checkedMembers.remove(member)
+            _selectedMembersCount.value = _selectedMembersCount.value?.minus(1)
+        }
     }
 
     fun getSelectedMembers() = selectedMembersList.toTypedArray()

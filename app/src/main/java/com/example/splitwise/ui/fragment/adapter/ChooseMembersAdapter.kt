@@ -18,7 +18,10 @@ import com.example.splitwise.util.dpToPx
 class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
     RecyclerView.Adapter<ChooseMembersViewHolder>() {
     private var membersAndStreaks = listOf<MemberAndStreak>()
-    private var checkedMembersId = listOf<Int>()
+    private var checkedMembersId = mutableSetOf<Int>()
+
+    // this is added to maintain checked items in the rv while scrolling
+    //private var checkedIds = mutableSetOf<Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseMembersViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -33,9 +36,13 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
             binding.selectedCheckBox.setOnCheckedChangeListener { compoundButton, isChecked ->
                 if (isChecked) {
                     onItemChecked(membersAndStreaks[adapterPosition].member, true)
+                    checkedMembersId.add(membersAndStreaks[adapterPosition].member.memberId)
                 } else {
                     onItemChecked(membersAndStreaks[adapterPosition].member, false)
+                    checkedMembersId.remove(membersAndStreaks[adapterPosition].member.memberId)
                 }
+
+                Log.d(TAG, "onCreateViewHolder: checkedmembers ${checkedMembersId}")
             }
         }
     }
@@ -43,7 +50,7 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
     override fun onBindViewHolder(holder: ChooseMembersViewHolder, position: Int) {
         val member = membersAndStreaks[position]
 
-        holder.bind(member, checkedMembersId)
+        holder.bind(member, checkedMembersId.toList()) //, checkedIds.toList()
     }
 
     override fun getItemCount(): Int {
@@ -61,7 +68,8 @@ class ChooseMembersAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         checkedMembersId: List<Int>
     ) {
         this.membersAndStreaks = membersAndStreaks
-        this.checkedMembersId = checkedMembersId
+        this.checkedMembersId = checkedMembersId.toMutableSet()
+        Log.d(TAG, "updateMembersAndStreaks checked: ${checkedMembersId.size}")
         notifyDataSetChanged()
     }
 }
@@ -70,11 +78,15 @@ class ChooseMembersViewHolder(val binding: ChooseMemberCardBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     private val resources = binding.root.resources
-    fun bind(memberAndStreak: MemberAndStreak, checkedMembersId: List<Int>) {
+    fun bind(memberAndStreak: MemberAndStreak, checkedMembersId: List<Int>) { //, checkedIds: List<Int>
         binding.memberNameTextView.text = memberAndStreak.member.name
         binding.memberStreakTextView.text = "🔥" + memberAndStreak.streak.toString()
 
+
         binding.selectedCheckBox.isChecked = memberAndStreak.member.memberId in checkedMembersId
+
+        // to retain checks
+        //binding.selectedCheckBox.isChecked = memberAndStreak.member.memberId in checkedIds
 
         if (memberAndStreak.member.memberProfile != null) {
             ///binding.memberImageView.setImageURI(memberAndStreak.member.memberProfile)

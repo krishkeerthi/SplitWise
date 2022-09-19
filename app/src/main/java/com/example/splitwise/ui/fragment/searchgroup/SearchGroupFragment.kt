@@ -1,11 +1,15 @@
 package com.example.splitwise.ui.fragment.searchgroup
 
+import android.app.SearchManager
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.AutoCompleteTextView
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -13,7 +17,6 @@ import androidx.core.view.doOnPreDraw
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -25,6 +28,8 @@ import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.hideKeyboard
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
+import java.lang.reflect.Field
+
 
 class SearchGroupFragment : Fragment() {
 
@@ -198,8 +203,26 @@ class SearchGroupFragment : Fragment() {
 
         searchView.requestFocus()
 
-        searchView.fitsSystemWindows = true
-        searchView.isEnabled = true
+        // setting searchview cursor color (not working)
+
+//        val manager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
+//        searchView.setSearchableInfo(manager.getSearchableInfo(requireActivity().componentName))
+//
+//        val searchTextView = searchView.findViewById(androidx.appcompat.R.id.search_src_text) as AutoCompleteTextView
+//        try {
+//            val mCursorDrawableRes: Field =
+//                TextView::class.java.getDeclaredField("mCursorDrawableRes")
+//            mCursorDrawableRes.isAccessible = true
+//            mCursorDrawableRes.set(
+//                searchTextView,
+//                R.drawable.cursor
+//            ) //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+//        } catch (e: Exception) {
+//        }
+        // ends here
+
+        //searchView.fitsSystemWindows = true
+        //searchView.isEnabled = true
 
         searchView.setQuery(viewModel.textEntered, true)
 

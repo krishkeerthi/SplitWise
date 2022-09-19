@@ -39,13 +39,20 @@ class ChooseGroupsViewModel(context: Context)
     }
 
     fun addGroupToSelected(group: Group) {
-        selectedGroups.add(group)
-        _selectedGroupsCount.value = _selectedGroupsCount.value?.plus(1) ?: 1
+        if(group !in selectedGroups) {
+            Log.d(TAG, "addGroupToSelected: group count add called")
+            selectedGroups.add(group)
+            _selectedGroupsCount.value = _selectedGroupsCount.value?.plus(1) ?: 1
+        }
     }
 
     fun removeGroupFromSelected(group: Group) {
-        selectedGroups.remove(group)
-        _selectedGroupsCount.value = _selectedGroupsCount.value?.minus(1)
+
+        if(group in selectedGroups) {
+            Log.d(TAG, "addGroupToSelected: group count remove called")
+            selectedGroups.remove(group)
+            _selectedGroupsCount.value = _selectedGroupsCount.value?.minus(1)
+        }
     }
 
     fun selectedGroupIds(): List<Int>{

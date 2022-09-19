@@ -18,7 +18,7 @@ class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
     RecyclerView.Adapter<ChooseGroupViewHolder>() {
     private var groups = listOf<Group>()
     private var selectedAllGroups: Boolean = false
-    private var selectedGroupIds = listOf<Int>()
+    private var selectedGroupIds = mutableSetOf<Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseGroupViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -35,9 +35,11 @@ class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
                 if (isChecked) {
                     //binding.selectedCheckBox.isChecked = true
                     onItemChecked(groups[adapterPosition], true)
+                    selectedGroupIds.add(groups[absoluteAdapterPosition].groupId)
                 } else {
                     //binding.selectedCheckBox.isChecked = false
                     onItemChecked(groups[adapterPosition], false)
+                    selectedGroupIds.remove(groups[absoluteAdapterPosition].groupId)
                 }
             }
         }
@@ -47,7 +49,7 @@ class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
         val group = groups[position]
 
         if (!selectedAllGroups)
-            holder.bind(group, selectedGroupIds)
+            holder.bind(group, selectedGroupIds.toList())
         else
             holder.bindAndCheck(group)
     }
@@ -58,7 +60,7 @@ class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
 
     fun updateGroups(groups: List<Group>, selectedGroupIds: List<Int>) {
         this.groups = groups
-        this.selectedGroupIds = selectedGroupIds
+        this.selectedGroupIds = selectedGroupIds.toMutableSet()
         notifyDataSetChanged()
     }
 
@@ -75,6 +77,8 @@ class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
 
     fun bind(group: Group, selectedGroupIds: List<Int>) {
         binding.groupNameTextView.text = group.groupName
+
+        binding.selectedCheckBox.isChecked = group.groupId in selectedGroupIds
 
         Log.d(TAG, "bind: checking inside bind")
         if (group.groupIcon != null) {
@@ -99,15 +103,17 @@ class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
             binding.groupImageView.visibility = View.INVISIBLE
         }
 
-        if (group.groupId in selectedGroupIds) {
-            Log.d(TAG, "bind: checking inside is checked")
-            binding.selectedCheckBox.isChecked = true
-        }
-        else{
-            binding.selectedCheckBox.isChecked = false
-            // setting default checked state to unchecked, otherwise while recycling view, previously selected checked states are shown
 
-        }
+//
+//        if (group.groupId in selectedGroupIds) {
+//            Log.d(TAG, "bind: checking inside is checked")
+//            binding.selectedCheckBox.isChecked = true
+//        }
+//        else{
+//            binding.selectedCheckBox.isChecked = false
+//            // setting default checked state to unchecked, otherwise while recycling view, previously selected checked states are shown
+//
+//        }
     }
 
     fun bindAndCheck(group: Group) {
