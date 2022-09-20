@@ -28,7 +28,7 @@ class SplitWiseAdapter(
 
         return SplitWiseViewHolder(binding).apply {
             itemView.setOnClickListener {
-                //itemView.ripple(itemView.context)
+                itemView.ripple(itemView.context)
                 onTransactionClicked(
                     membersPaymentStatsDetail[adapterPosition].memberId,
                     membersPaymentStatsDetail[adapterPosition].amountOwed,

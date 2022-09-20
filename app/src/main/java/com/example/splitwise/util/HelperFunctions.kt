@@ -2,6 +2,7 @@ package com.example.splitwise.util
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -280,8 +281,13 @@ fun View.ripple(context: Context){
     val attrs = intArrayOf(android.R.attr.selectableItemBackground)
     val typedArray: TypedArray? = getActivity(context)?.obtainStyledAttributes(attrs)
     val backgroundResource = typedArray?.getResourceId(0, 0)
-    if(backgroundResource != null)
-        this.setBackgroundResource(backgroundResource)
+    if(backgroundResource != null) {
+        Log.d(TAG, "ripple: bg res not null res is ${backgroundResource}")
+        this.setBackgroundResource(R.color.view_color)
+    }
+    else{
+        Log.d(TAG, "ripple: bg res null")
+    }
 }
 
 fun View.hideKeyboard() {

@@ -79,6 +79,8 @@ class SplitWiseFragment : Fragment() {
 
         requireActivity().title = "SplitWise"
 
+        // because viewmodel instance not recreating
+        viewModel.fetchData()
 
         // displaying selected groups if present
         viewModel.selectedGroupsCardVisibility.observe(viewLifecycleOwner){

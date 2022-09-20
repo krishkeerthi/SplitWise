@@ -26,7 +26,7 @@ class ExpensesAdapter(
         return ExpensesViewHolder(binding).apply {
             itemView.setOnClickListener {
                 //binding.expenseCard.ripple(binding.root.context)
-                //itemView.ripple(itemView.context)
+                itemView.ripple(it.context)
                 onExpenseClicked(expenseMembers[adapterPosition].expenseId, itemView)
             }
         }

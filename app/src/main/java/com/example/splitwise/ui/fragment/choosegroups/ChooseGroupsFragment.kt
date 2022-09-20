@@ -78,7 +78,7 @@ class ChooseGroupsFragment : Fragment() {
         }
 
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
-            if (groups != null) {
+            if (groups != null && groups.isNotEmpty()) {
                 Log.d(TAG, "onViewCreated: checking ")
                 if (args.selectedGroupIds.toList().isNotEmpty() && viewModel.selectedGroupIds()
                         .isNotEmpty()
@@ -95,7 +95,14 @@ class ChooseGroupsFragment : Fragment() {
                 else
                     groupsAdapter.updateGroups(groups, viewModel.selectedGroupIds().toList())
 
-
+                binding.emptyGroupImageView.visibility = View.INVISIBLE
+                binding.noGroupsTextView.visibility = View.INVISIBLE
+                binding.chooseGroupsRecyclerView.visibility = View.VISIBLE
+            }
+            else{
+                binding.emptyGroupImageView.visibility = View.VISIBLE
+                binding.noGroupsTextView.visibility = View.VISIBLE
+                binding.chooseGroupsRecyclerView.visibility = View.INVISIBLE
             }
         }
 

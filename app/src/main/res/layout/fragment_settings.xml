@@ -270,7 +270,10 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/feedback_horizontal_view"
-                android:transitionName="@string/settings_feedback_transition_name">
+                android:transitionName="@string/settings_feedback_transition_name"
+                android:clickable="true"
+                android:background ="?attr/selectableItemBackground"
+                android:focusable="true">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/feedback_image_view"

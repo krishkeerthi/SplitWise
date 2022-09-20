@@ -20,7 +20,7 @@
         <item name="android:actionBarStyle">@style/ActionBarTheme</item>
 <!--        <item name="android:windowLightStatusBar">true</item>-->
 
-        <item name="android:colorControlHighlight">@color/invert_color</item>
+        <item name="android:colorControlHighlight">@color/view_color</item>
 
         <!-- Customize your theme here. -->
 

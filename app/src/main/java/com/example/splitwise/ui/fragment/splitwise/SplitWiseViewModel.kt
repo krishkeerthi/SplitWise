@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
-class SplitWiseViewModel(context: Context, private val selectedGroups: Array<Group>?) : ViewModel() {
+class SplitWiseViewModel(context: Context, selectedGroups: Array<Group>?) : ViewModel() {
 
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val memberRepository = MemberRepository(database)

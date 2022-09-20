@@ -8,9 +8,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.provider.Settings
@@ -82,6 +80,19 @@ class AddMemberFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentAddMemberBinding.bind(view)
+
+//        binding.outlinedMemberNameTextField.hint = getString(R.string.name)
+//        binding.outlinedMemberPhoneTextField.hint = getString(R.string.phone_number)
+
+        //binding.memberNameText.setText("test")
+//        Handler(Looper.getMainLooper()).postDelayed({
+////            binding.memberNameText.setText("")
+////            binding.memberNameText.invalidate()
+//            //binding.outlinedMemberNameTextField.hint = getString(R.string.name)
+//        }, 100)
+
+        //binding.memberNameText.invalidate()
+        //binding.memberNameText.postInvalidate()
 
 
         // update group icon set before orientation change

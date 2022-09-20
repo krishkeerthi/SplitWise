@@ -31,7 +31,8 @@
 
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:color="@color/teal_200"> <!-- ripple effect color -->
+    android:color="@color/teal_200"
+    ><!-- ripple effect color -->
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
             <solid android:color="@color/background" /> <!-- background color -->

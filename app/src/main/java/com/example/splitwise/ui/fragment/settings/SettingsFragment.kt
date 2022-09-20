@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSettingsBinding
 import com.example.splitwise.ui.activity.main.MainActivity
+import com.example.splitwise.util.ripple
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
@@ -150,6 +151,7 @@ class SettingsFragment : Fragment() {
         }
 
         binding.feedback.setOnClickListener {
+            it.ripple(it.context)
             gotoFeedbackFragment(it)
         }
 
