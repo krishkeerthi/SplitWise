@@ -48,4 +48,6 @@ interface GroupDataSource {
     suspend fun deleteGroup(groupId: Int)
 
     suspend fun updateGroupIcon(groupId: Int, uri: Uri)
+
+    suspend fun updateGroupName(groupId: Int, groupName: String)
 }

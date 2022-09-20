@@ -322,7 +322,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="152dp"
-        android:text="@string/add_member"
+        android:text="@string/edit_group"
         android:visibility="gone"
         tools:visibility="visible"
         android:transitionName="@string/expenses_add_member_transition_name"/>

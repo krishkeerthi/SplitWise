@@ -22,10 +22,15 @@ class CreateEditGroupViewModel(
     private var selectedMembers: Array<Member>?
 ) : ViewModel() {
 
+
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val groupRepository = GroupRepository(database)
     private val memberRepository = MemberRepository(database)
 
+
+    var tempGroupName = ""
+
+    var updateMenuVisibility: Boolean = false
 
     var memberCountChange = false
     var change = false
@@ -174,6 +179,7 @@ init {
         memberCountChange = false
         change = false
 
+        tempGroupName = ""
         //val memberIds = mutableListOf<Int>()
 
         _groupName.value = null
@@ -350,6 +356,16 @@ init {
     private fun updateFlag(){
         change = true
         memberCountChange = true
+    }
+
+    fun updateGroupName(groupName: String, gotoGroupFragment: () -> Unit) {
+        if(groupId != -1){
+            viewModelScope.launch {
+                groupRepository.updateGroupName(groupId, groupName)
+                gotoGroupFragment()
+            }
+        }
+
     }
 
 }

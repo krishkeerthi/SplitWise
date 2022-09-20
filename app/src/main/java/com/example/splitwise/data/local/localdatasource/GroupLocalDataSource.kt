@@ -127,4 +127,8 @@ GroupDataSource{
         groupDao.updateGroupIcon(groupId, uri)
     }
 
+    override suspend fun updateGroupName(groupId: Int, groupName: String) {
+        groupDao.updateGroupName(groupId, groupName)
+    }
+
 }

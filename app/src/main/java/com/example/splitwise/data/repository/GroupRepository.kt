@@ -120,4 +120,10 @@ class GroupRepository(
             dataSource.updateGroupIcon(groupId, uri)
         }
     }
+
+    suspend fun updateGroupName(groupId: Int, groupName: String) {
+        withContext(Dispatchers.IO){
+            dataSource.updateGroupName(groupId, groupName)
+        }
+    }
 }

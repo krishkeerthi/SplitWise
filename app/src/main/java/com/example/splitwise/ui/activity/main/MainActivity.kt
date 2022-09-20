@@ -6,6 +6,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
@@ -30,6 +32,8 @@ import com.example.splitwise.ui.fragment.groups.GroupsFragment
 import com.example.splitwise.ui.fragment.groupsoverview.GroupsOverviewFragment
 import com.example.splitwise.ui.fragment.settings.SettingsFragment
 import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragment
+import com.example.splitwise.util.decodeSampledBitmapFromUri
+import com.example.splitwise.util.dpToPx
 import java.util.*
 
 
@@ -184,8 +188,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 )
             )
                 View.VISIBLE
-            else
+            else {
                 View.GONE
+            }// View.INVISIBLE not good
     }
 
 //  override fun onBackPressed() {

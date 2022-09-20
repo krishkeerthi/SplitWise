@@ -170,5 +170,5 @@
     <string name="search_group_icon_transition_name">search_group_icon_transition</string>
     <string name="search_group_image_transition_name">search_group_image_transition_%1$s</string>
     <string name="search_group_empty_image_transition_name">search_group_empty_image_transition_%1$s</string>
-
+    <string name="update">மாற்று</string>
 </resources>

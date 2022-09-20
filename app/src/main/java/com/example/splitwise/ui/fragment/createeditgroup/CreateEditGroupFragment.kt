@@ -243,9 +243,17 @@ class CreateEditGroupFragment : Fragment() {
 
         viewModel.group.observe(viewLifecycleOwner) { group ->
             if (group != null) {
-                Log.d(TAG, "onViewCreated: name set")
-                binding.groupNameText.setText(group.groupName)
+                Log.d(TAG, "onViewCreated: name set ce${args.groupName}")
+                // experiment
 
+                if(args.groupName != null && (viewModel.tempGroupName != ""))
+                    binding.groupNameText.setText(args.groupName)
+                else if(viewModel.tempGroupName != "")
+                    binding.groupNameText.setText(viewModel.tempGroupName)
+                else
+                    binding.groupNameText.setText(group.groupName)
+
+                // ends
                 if (group.groupIcon != null) {
                     Log.d(TAG, "onViewCreated: image set")
                     ///binding.groupImageView.setImageURI(group.groupIcon)
@@ -333,12 +341,12 @@ class CreateEditGroupFragment : Fragment() {
         }
 
 
-        // if group id is not null
+        // if group id is not null  // *************
         // make sure group name is not editable
-        if (args.groupId != -1) {
-            binding.groupNameText.isClickable = false
-            binding.groupNameText.isFocusable = false
-        }
+//        if (args.groupId != -1) {
+//            binding.groupNameText.isClickable = false
+//            binding.groupNameText.isFocusable = false
+//        }
 
 
 //        binding.createGroupButton.setOnClickListener {
@@ -354,16 +362,33 @@ class CreateEditGroupFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 if (nameCheck(binding.groupNameText.text?.trim().toString())) {
+                    // storing group name temporarily
+                    viewModel.tempGroupName = binding.groupNameText.text?.trim().toString()
+                    // ends
+
                     binding.outlinedGroupNameTextField.error = null
                     binding.outlinedGroupNameTextField.isErrorEnabled = false
 
                     if (args.groupId == -1)
                         viewModel.change = true
+                    else{
+                        viewModel.group.value?.let {
+                            viewModel.updateMenuVisibility =
+                                binding.groupNameText.text.toString() != it.groupName
+
+                            requireActivity().invalidateOptionsMenu()
+                        }
+
+                    }
                 } else {
-                    binding.outlinedGroupNameTextField.error = getString(R.string.enter_valid_name)
+                    binding.outlinedGroupNameTextField.error = getString(R.string.enter_valid_name) // unwanted code
 
                     if (!viewModel.memberCountChange)
                         viewModel.change = false
+
+                    // hide update option menu
+                    viewModel.updateMenuVisibility = false
+                    requireActivity().invalidateOptionsMenu()
                 }
 
 //                binding.createGroupButton.visibility =
@@ -387,7 +412,6 @@ class CreateEditGroupFragment : Fragment() {
     }
 
     private fun getStartView(): View? {
-
         return if (args.groupId == -1)
             activity?.findViewById(R.id.add_group_fab)
         else
@@ -470,6 +494,8 @@ class CreateEditGroupFragment : Fragment() {
 
         menu.findItem(R.id.create_group).isVisible = args.groupId == -1
 
+        menu.findItem(R.id.update_group).isVisible = (args.groupId != -1 && viewModel.updateMenuVisibility)
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -485,9 +511,20 @@ class CreateEditGroupFragment : Fragment() {
                 createGroup()
                 true
             }
+            R.id.update_group -> {
+                updateGroup()
+                true
+            }
             else -> {
                 false
             }
+        }
+    }
+
+    private fun updateGroup() {
+        // update group name
+        viewModel.updateGroupName(binding.groupNameText.text?.trim().toString()){
+            gotoGroupsFragment()
         }
     }
 
@@ -532,6 +569,7 @@ class CreateEditGroupFragment : Fragment() {
     private fun gotoGroupsFragment() {
         // reset after creating group
         viewModel.reset()
+
         Log.d(TAG, "gotoGroupsFragment: called group created")
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupsFragment()
