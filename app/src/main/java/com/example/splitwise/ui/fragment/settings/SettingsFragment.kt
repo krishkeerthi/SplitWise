@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSettingsBinding
 import com.example.splitwise.ui.activity.main.MainActivity
+import com.example.splitwise.util.isDarkThemeOn
 import com.example.splitwise.util.ripple
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
@@ -104,6 +105,9 @@ class SettingsFragment : Fragment() {
             "Dark" -> {
                 binding.themeDarkButton.isChecked = true
             }
+            "System" -> {
+                binding.themeSystemButton.isChecked = true
+            }
         }
 
 
@@ -143,6 +147,9 @@ class SettingsFragment : Fragment() {
                 }
                 R.id.theme_dark_button -> {
                     changeMode("Dark")
+                }
+                R.id.theme_system_button -> {
+                    changeMode("System")
                 }
                 else -> {
                     changeMode("Light")
@@ -256,6 +263,13 @@ class SettingsFragment : Fragment() {
         when (theme) {
             "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            "System" -> {
+                if (requireActivity().applicationContext.isDarkThemeOn()) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            }
             else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }

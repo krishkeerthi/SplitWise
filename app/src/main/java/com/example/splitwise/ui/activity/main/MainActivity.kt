@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -34,6 +35,7 @@ import com.example.splitwise.ui.fragment.settings.SettingsFragment
 import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragment
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.isDarkThemeOn
 import java.util.*
 
 
@@ -59,14 +61,18 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         setMode(theme)
 
+//        if(this.isDarkThemeOn()){
+//            setMode("Dark")
+//            //Toast.makeText(this, "dark theme on", Toast.LENGTH_SHORT).show()
+//        }
+//        else
+//            setMode("Light")
+
+
         // set language
         val language = sharedPreference.getString("LANGUAGE", "English") as String
         //Toast.makeText(this, "$language", Toast.LENGTH_SHORT).show()
         changeLanguage(language)
-
-//        if(this.isDarkThemeOn()){
-//            Toast.makeText(this, "dark theme on", Toast.LENGTH_SHORT).show()
-//        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
@@ -143,6 +149,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         when(theme) {
             "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            "System" -> {
+                if (this.isDarkThemeOn()) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
             else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }

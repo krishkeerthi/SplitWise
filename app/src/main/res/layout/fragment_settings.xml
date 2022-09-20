@@ -218,8 +218,18 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginBottom="12dp"
                 android:src="@drawable/ic_baseline_dark_mode_24"
+                app:layout_constraintBottom_toTopOf="@id/system_image_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/light_image_view" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/system_image_view"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="12dp"
+                android:src="@drawable/auto_mode_48px"
                 app:layout_constraintBottom_toBottomOf="@+id/theme_group"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -249,6 +259,15 @@
                     android:layoutDirection="rtl"
                     android:text="@string/dark"
                     android:textAlignment="textStart" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/theme_system_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl"
+                    android:text="@string/system"
+                    android:textAlignment="textStart" />
+
             </RadioGroup>
 
             <View

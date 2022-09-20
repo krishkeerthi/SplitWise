@@ -246,9 +246,9 @@ class CreateEditGroupFragment : Fragment() {
                 Log.d(TAG, "onViewCreated: name set ce${args.groupName}")
                 // experiment
 
-                if(args.groupName != null && (viewModel.tempGroupName != ""))
-                    binding.groupNameText.setText(args.groupName)
-                else if(viewModel.tempGroupName != "")
+//                if(args.groupName != null && (viewModel.tempGroupName != ""))
+//                    binding.groupNameText.setText(args.groupName)
+                if(viewModel.tempGroupName != "")
                     binding.groupNameText.setText(viewModel.tempGroupName)
                 else
                     binding.groupNameText.setText(group.groupName)
@@ -314,11 +314,16 @@ class CreateEditGroupFragment : Fragment() {
         ////                viewto activity viewmodel only when not added previously
 //      Model.updateMembers(activityViewModel.selectedMembers)
 
-        // retains group name while returning from choose members screen
-        if (args.groupName != null) {
+        // retains group name while returning from choose members screen (on create group)
+        if(viewModel.tempGroupName != "")
+            binding.groupNameText.setText(viewModel.tempGroupName)
+        else if (args.groupName != null) {
             binding.groupNameText.setText(args.groupName)
 //            if (args.groupName.toString().trim() != "")
 //                binding.createGroupButton.visibility = View.VISIBLE
+        }
+        else{
+            // do nothing
         }
 //
 //        // retains group image while returning from choose members screen

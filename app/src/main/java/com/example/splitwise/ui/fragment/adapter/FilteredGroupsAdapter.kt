@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.GroupCard1Binding
+import com.example.splitwise.databinding.GroupCard2Binding
 import com.example.splitwise.util.*
 import java.util.*
 
@@ -29,36 +30,53 @@ class FilteredGroupsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilteredGroupsViewHolder {
         val view = LayoutInflater.from(parent.context)
-        val binding = GroupCard1Binding.inflate(view, parent, false)
+        val binding = GroupCard2Binding.inflate(view, parent, false)
 
         return FilteredGroupsViewHolder(binding).apply {
 //            itemView.setOnClickListener {
 //                onGroupClicked(groups[adapterPosition].groupId)
 //            }
-            binding.groupImageView.setOnClickListener {
-                it.ripple(it.context)
+
+            binding.groupIconCard.setOnClickListener{
+                itemView.ripple(itemView.context)
                 onImageClicked(
                     groups[absoluteAdapterPosition].groupId,
                     groups[absoluteAdapterPosition].groupIcon?.toString(),
                     groups[absoluteAdapterPosition].groupName,
+
                     if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
-                    else binding.groupImageHolderImage
-                )
+                    else binding.groupImageHolderImage)
             }
-            binding.groupImageHolder.setOnClickListener {
-                it.ripple(it.context)
-                onImageClicked(
-                    groups[absoluteAdapterPosition].groupId,
-                    groups[absoluteAdapterPosition].groupIcon?.toString(),
-                    groups[absoluteAdapterPosition].groupName,
-                    if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
-                    else binding.groupImageHolderImage
-                )
-            }
-            binding.textLayout.setOnClickListener {
+
+            itemView.setOnClickListener {
                 it.ripple(it.context)
                 onGroupClicked(groups[absoluteAdapterPosition].groupId, itemView)
             }
+
+//            binding.groupImageView.setOnClickListener {
+//                it.ripple(it.context)
+//                onImageClicked(
+//                    groups[absoluteAdapterPosition].groupId,
+//                    groups[absoluteAdapterPosition].groupIcon?.toString(),
+//                    groups[absoluteAdapterPosition].groupName,
+//                    if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
+//                    else binding.groupImageHolderImage
+//                )
+//            }
+//            binding.groupImageHolder.setOnClickListener {
+//                it.ripple(it.context)
+//                onImageClicked(
+//                    groups[absoluteAdapterPosition].groupId,
+//                    groups[absoluteAdapterPosition].groupIcon?.toString(),
+//                    groups[absoluteAdapterPosition].groupName,
+//                    if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
+//                    else binding.groupImageHolderImage
+//                )
+//            }
+//            binding.textLayout.setOnClickListener {
+//                it.ripple(it.context)
+//                onGroupClicked(groups[absoluteAdapterPosition].groupId, itemView)
+//            }
         }
     }
 
@@ -79,7 +97,7 @@ class FilteredGroupsAdapter(
     }
 }
 
-class FilteredGroupsViewHolder(val binding: GroupCard1Binding) :
+class FilteredGroupsViewHolder(val binding: GroupCard2Binding) :
     RecyclerView.ViewHolder(binding.root) {
 
     private val resources = binding.root.resources
