@@ -15,7 +15,7 @@
 <!--        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>-->
 <!--        <item name="android:windowLightStatusBar">true</item>-->
 
-        <item name="android:colorControlHighlight">@color/invert_color</item>
+        <item name="android:colorControlHighlight">@color/view_color</item>
 
         <!-- Customize your theme here. -->
 
@@ -41,7 +41,7 @@
 
         <!-- Customize your theme here. -->
 
-        <item name="android:colorControlHighlight">@color/invert_color</item>
+        <item name="android:colorControlHighlight">@color/view_color</item>
 
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Boxed.SmallComponent</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Boxed.MediumComponent</item>

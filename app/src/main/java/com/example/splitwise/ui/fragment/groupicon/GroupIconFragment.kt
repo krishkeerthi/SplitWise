@@ -116,12 +116,15 @@ class GroupIconFragment : Fragment() {
             if (isNetworkAvailable()) {
                 gotoSearchImageFragment()
                 groupIconBottomSheet.dismiss()
-            } else
-                Snackbar.make(
-                    binding.root,
-                    getString(R.string.internet_unavailable),
-                    Snackbar.LENGTH_SHORT
-                ).show()
+            } else {
+//                Snackbar.make(
+//                    binding.root,
+//                    getString(R.string.internet_unavailable),
+//                    Snackbar.LENGTH_SHORT
+//                ).show()
+
+                Toast.makeText(requireContext(), getString(R.string.internet_unavailable), Toast.LENGTH_SHORT).show()
+            }
 
         }
 

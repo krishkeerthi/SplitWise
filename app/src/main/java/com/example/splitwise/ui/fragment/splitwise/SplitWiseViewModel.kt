@@ -49,8 +49,10 @@ class SplitWiseViewModel(context: Context, selectedGroups: Array<Group>?) : View
     init {
 
         if(selectedGroups != null){
+            Log.d(TAG, ": ")
             val groupsList = selectedGroups.toMutableList()
 
+            // preparing selected group names
             if (groupsList.isNotEmpty()) {
                 var groupsText = ""
                 for (group in selectedGroups) {

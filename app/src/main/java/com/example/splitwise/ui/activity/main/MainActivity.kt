@@ -3,6 +3,7 @@ package com.example.splitwise.ui.activity.main
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -28,6 +29,7 @@ import androidx.transition.Slide
 import androidx.transition.TransitionManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityMainBinding
+import com.example.splitwise.receiver.ConfigurationChangeReceiver
 import com.example.splitwise.ui.activity.register.RegisterActivity
 import com.example.splitwise.ui.fragment.groups.GroupsFragment
 import com.example.splitwise.ui.fragment.groupsoverview.GroupsOverviewFragment
@@ -143,6 +145,15 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 //                }
 //            }
 //        }, true)
+
+
+        // Broadcast receiver for configuration changes
+
+        val receiver = ConfigurationChangeReceiver()
+
+        IntentFilter(Intent.ACTION_CONFIGURATION_CHANGED).also {
+            registerReceiver(receiver, it)
+        }
     }
 
     private fun setMode(theme: String?) {
@@ -150,10 +161,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             "System" -> {
-                if (this.isDarkThemeOn()) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                } else
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+//                if (this.isDarkThemeOn()) {
+//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//                } else
+//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
             else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
@@ -193,16 +205,32 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         arguments: Bundle?
     ) {
 
-        binding.bottomNavigation.visibility =
-            if (destination.id in setOf(
-                    R.id.groupsFragment, R.id.splitWiseFragment, R.id.groupsOverviewFragment,
-                    R.id.settingsFragment
-                )
-            )
-                View.VISIBLE
-            else {
-                View.GONE
-            }// View.INVISIBLE not good
+            if(binding.bottomNavigation.visibility == View.VISIBLE)
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.bottomNavigation.visibility =
+                    if (destination.id in setOf(
+                            R.id.groupsFragment, R.id.splitWiseFragment, R.id.groupsOverviewFragment,
+                            R.id.settingsFragment
+                        )
+                    )
+                        View.VISIBLE
+                    else {
+                        View.GONE
+                    }
+            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+            else
+                binding.bottomNavigation.visibility =
+                    if (destination.id in setOf(
+                            R.id.groupsFragment, R.id.splitWiseFragment, R.id.groupsOverviewFragment,
+                            R.id.settingsFragment
+                        )
+                    )
+                        View.VISIBLE
+                    else {
+                        View.GONE
+                    }
+
+            // View.INVISIBLE not good
     }
 
 //  override fun onBackPressed() {

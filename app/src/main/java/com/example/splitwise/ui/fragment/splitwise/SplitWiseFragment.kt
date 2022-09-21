@@ -79,8 +79,15 @@ class SplitWiseFragment : Fragment() {
 
         requireActivity().title = "SplitWise"
 
-        // because viewmodel instance not recreating
-        viewModel.fetchData()
+        // because viewmodel instance not recreating,
+        //viewModel.fetchData()
+
+        // test code to fix, all groups data loading when selecting particular
+        viewModel.fetchData(getGroupIds(args.selectedGroups?.toMutableList() ?: mutableListOf()))
+        //getGroupIds(args.selectedGroups?.toMutableList() ?: mutableListOf())
+
+        // test code ends
+
 
         // displaying selected groups if present
         viewModel.selectedGroupsCardVisibility.observe(viewLifecycleOwner){

@@ -20,6 +20,7 @@ import androidx.metrics.performance.PerformanceMetricsState
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
@@ -66,18 +67,20 @@ class GroupsFragment : Fragment() {
 //        val view = inflater.inflate(R.layout.fragment_groups, container, false)
 //        binding = FragmentGroupsBinding.bind(view)
 
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.groups)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.groups)
         return inflater.inflate(R.layout.fragment_groups, container, false)
     }
 
     private val jankFrameListener = JankStats.OnFrameListener { frameData ->
-        Log.d(TAG, "JankStats: ----------------\n " +
-                "is Jank: ${frameData.isJank} \n" +
-                "frameDurationUiNanos: ${frameData.frameDurationUiNanos} \n" +
-                "frameStartNanos: ${frameData.frameStartNanos}\n" +
-                "states: ${frameData.states}\n" +
-                "Overall: ${frameData.toString()}" +
-                "-------------------------\n"
+        Log.d(
+            TAG, "JankStats: ----------------\n " +
+                    "is Jank: ${frameData.isJank} \n" +
+                    "frameDurationUiNanos: ${frameData.frameDurationUiNanos} \n" +
+                    "frameStartNanos: ${frameData.frameStartNanos}\n" +
+                    "states: ${frameData.states}\n" +
+                    "Overall: ${frameData.toString()}" +
+                    "-------------------------\n"
         )
     }
 
@@ -139,6 +142,30 @@ class GroupsFragment : Fragment() {
 
             adapter = groupsAdapter
         }
+
+        // Testing swipe in groups recyclerview
+        val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                val swipeDirection = if (ItemTouchHelper.LEFT == direction) "Left"
+//                else if (ItemTouchHelper.RIGHT == direction) "Right"
+//                else "Unknown"
+//
+//                Toast.makeText(
+//                    requireContext(),
+//                    "swiped $swipeDirection, rv position ${viewHolder.absoluteAdapterPosition}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+
+                viewModel.groups.value?.let {
+                    goToExpenseFragment(it[viewHolder.absoluteAdapterPosition].groupId, viewHolder.itemView)
+                }
+            }
+
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(binding.groupsRecyclerView)
+        // test ends
 
         // Livedata<item name="android:actionBarStyle">@style/ActionBarTheme</item>a
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
@@ -216,7 +243,7 @@ class GroupsFragment : Fragment() {
             viewModel.removeDateFilter()
             it.visibility = View.GONE
 
-            if(viewModel.filterModel.amountFilterModel == null)
+            if (viewModel.filterModel.amountFilterModel == null)
                 binding.horizontalView.visibility = View.GONE
         }
         binding.dateFilterChip.isClickable = false
@@ -226,7 +253,7 @@ class GroupsFragment : Fragment() {
             viewModel.removeAmountFilter()
             it.visibility = View.GONE
 
-            if(viewModel.filterModel.dateFilterModel == null)
+            if (viewModel.filterModel.dateFilterModel == null)
                 binding.horizontalView.visibility = View.GONE
         }
         binding.amountFilterChip.isClickable = false
@@ -254,8 +281,10 @@ class GroupsFragment : Fragment() {
     private fun updateDateFilter() {
         if (viewModel.filterModel.dateFilterModel != null) {
             val dateFilterModel = viewModel.filterModel.dateFilterModel
-            binding.dateFilterChip.text = String.format(getString(R.string.date_filter),
-                dateFilterModel!!.dateFilter.name.lowercase().titleCase().translate(requireContext()),
+            binding.dateFilterChip.text = String.format(
+                getString(R.string.date_filter),
+                dateFilterModel!!.dateFilter.name.lowercase().titleCase()
+                    .translate(requireContext()),
                 formatDate(dateFilterModel!!.date, dateOnly = true)
             )
 //                "${dateFilterModel!!.dateFilter.name.lowercase().titleCase().translate(requireContext())} ${
@@ -269,8 +298,10 @@ class GroupsFragment : Fragment() {
     private fun updateAmountFilter() {
         if (viewModel.filterModel.amountFilterModel != null) {
             val amountFilterModel = viewModel.filterModel.amountFilterModel
-            binding.amountFilterChip.text = String.format(getString(R.string.amount_filter),
-                amountFilterModel!!.amountFilter.name.lowercase().titleCase().translate(requireContext()),
+            binding.amountFilterChip.text = String.format(
+                getString(R.string.amount_filter),
+                amountFilterModel!!.amountFilter.name.lowercase().titleCase()
+                    .translate(requireContext()),
                 amountFilterModel!!.amount.roundOff()
             )
 //                "${
@@ -282,7 +313,12 @@ class GroupsFragment : Fragment() {
         }
     }
 
-    private fun gotoGroupIconFragment(groupId: Int, groupIcon: String?, groupName: String, groupImageView: View) {
+    private fun gotoGroupIconFragment(
+        groupId: Int,
+        groupIcon: String?,
+        groupName: String,
+        groupImageView: View
+    ) {
         exitTransition = MaterialElevationScale(false).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
@@ -677,7 +713,9 @@ class GroupsFragment : Fragment() {
 //        chipGroup.addView(chip)
 
         binding.dateFilterChip.text =
-            String.format(getString(R.string.date_filter), dateFilter.name.lowercase().titleCase().translate(requireContext()),
+            String.format(
+                getString(R.string.date_filter),
+                dateFilter.name.lowercase().titleCase().translate(requireContext()),
                 formatDate(date, dateOnly = true)
             )
         //    "${dateFilter.name.lowercase().titleCase().translate(requireContext())} ${formatDate(date, dateOnly = true)}"
@@ -686,15 +724,21 @@ class GroupsFragment : Fragment() {
         binding.horizontalView.visibility = View.VISIBLE
     }
 
-    private fun createAmountFilterChip(amountFilter: AmountFilter, amount: Float, dialogContext: Context) {
+    private fun createAmountFilterChip(
+        amountFilter: AmountFilter,
+        amount: Float,
+        dialogContext: Context
+    ) {
         binding.amountFilterChip.text =
-            String.format(dialogContext.getString(R.string.amount_filter), amountFilter.name.lowercase().titleCase().translate(dialogContext),
+            String.format(
+                dialogContext.getString(R.string.amount_filter),
+                amountFilter.name.lowercase().titleCase().translate(dialogContext),
                 amount.roundOff()
             )
 
         //viewModel.applyAmountFilter(amount)
         // Error: Fragment not attached to a context, when calling getString() without requireActivity()
-  //          "${amountFilter.name.lowercase().titleCase().translate(requireContext())} ₹${amount.roundOff()}"
+        //          "${amountFilter.name.lowercase().titleCase().translate(requireContext())} ₹${amount.roundOff()}"
         binding.amountFilterChip.visibility = View.VISIBLE
 
         binding.horizontalView.visibility = View.VISIBLE
