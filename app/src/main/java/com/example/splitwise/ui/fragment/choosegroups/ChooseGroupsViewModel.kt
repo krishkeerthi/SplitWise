@@ -26,9 +26,11 @@ class ChooseGroupsViewModel(context: Context)
     val selectedGroupsCount: LiveData<Int>
         get() = _selectedGroupsCount
 
+    var isGroupsEmpty = true
+
     init {
         fetchData()
-        database
+        //database
     }
 
     fun fetchData(){

@@ -43,9 +43,9 @@ class GroupsViewModel(context: Context) : ViewModel() {
 //        }
 //    }
 
-    init {
-        fetchData()
-    }
+//    init {
+//        //fetchData()
+//    }
 
     fun fetchData() {
         Log.d(TAG, "groupsviewmodel: called")

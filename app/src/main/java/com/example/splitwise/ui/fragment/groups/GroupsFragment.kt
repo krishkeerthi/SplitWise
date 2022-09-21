@@ -93,6 +93,7 @@ class GroupsFragment : Fragment() {
         //
 
 
+        viewModel.fetchData() // (latest) all changes did are not effecting in this fragment while poping out
         //viewModel.fetchData() // fetching data in viewmodel init{} does not get called while returning from back stack
         //viewModel = ViewModelProvider(this, GroupsViewModelFactory(requireContext()))[GroupsViewModel::class.java]
         binding = FragmentGroupsBinding.bind(view)

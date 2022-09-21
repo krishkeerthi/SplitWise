@@ -71,7 +71,7 @@ class SettleUpFragment : Fragment() {
         // toolbar title
         requireActivity().title = "Settle Up"
 
-        //viewModel.fetchData()
+        //viewModel.fetchData() // has to be called otherwise latest data is not fetched sometimes, yes it is inefficient
 
         // Load data based on selected members
         selectedMembers = args.selectedMembers.toList()

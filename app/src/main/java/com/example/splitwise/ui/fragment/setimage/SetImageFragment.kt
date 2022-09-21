@@ -221,9 +221,14 @@ class SetImageFragment : Fragment() {
                 }
                 if (args.groupId != -1) {
                     if (args.fromGroupsSearchFragment) {
+                        // Actually it has to go to group search fragment, but this update is not updating in groups fragment, for that I
+                        // need to refresh layout everytime
                         viewModel.updateGroupIcon(testUri) {
                             gotoGroupsSearchFragment()
                         }
+//                        viewModel.updateGroupIcon(testUri){
+//                            gotoGroupsFragment()
+//                        }
                     } else {
                         if (args.fromGroupsFragment)
                             viewModel.updateGroupIcon(testUri) {

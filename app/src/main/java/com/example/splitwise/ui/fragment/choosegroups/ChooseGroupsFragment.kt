@@ -14,6 +14,7 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentChooseGroupsBinding
 import com.example.splitwise.ui.fragment.adapter.ChooseGroupAdapter
 import com.example.splitwise.util.mergeList
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 
 
@@ -71,14 +72,17 @@ class ChooseGroupsFragment : Fragment() {
 
         binding.chooseGroupsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext()).apply {
-                reverseLayout = true // it reverses but scrolled down to the last item
-                stackFromEnd = true // corrects above problem
+//                reverseLayout = true // it reverses but scrolled down to the last item
+//                stackFromEnd = true // corrects above problem
             }
             adapter = groupsAdapter
         }
 
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             if (groups != null && groups.isNotEmpty()) {
+
+                viewModel.isGroupsEmpty = false
+
                 Log.d(TAG, "onViewCreated: checking ")
                 if (args.selectedGroupIds.toList().isNotEmpty() && viewModel.selectedGroupIds()
                         .isNotEmpty()
@@ -98,12 +102,14 @@ class ChooseGroupsFragment : Fragment() {
                 binding.emptyGroupImageView.visibility = View.INVISIBLE
                 binding.noGroupsTextView.visibility = View.INVISIBLE
                 binding.chooseGroupsRecyclerView.visibility = View.VISIBLE
-            }
-            else{
+            } else {
+                viewModel.isGroupsEmpty = true
                 binding.emptyGroupImageView.visibility = View.VISIBLE
                 binding.noGroupsTextView.visibility = View.VISIBLE
                 binding.chooseGroupsRecyclerView.visibility = View.INVISIBLE
             }
+
+            requireActivity().invalidateMenu() // initially it may invisible
         }
 
         // Live observer to update menu
@@ -113,8 +119,7 @@ class ChooseGroupsFragment : Fragment() {
             if (selectedCount > 0) {
                 if (contextualActionMode == null) {
                     contextualActionMode = requireActivity().startActionMode(actionModeCallback)
-                }
-                else{
+                } else {
                     contextualActionMode?.title = "$selectedCount ${getString(R.string.selected)}"
                 }
             } else {
@@ -142,6 +147,10 @@ class ChooseGroupsFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.choose_menu, menu)
+
+        val selectAllMenu = menu.findItem(R.id.select_all_menu)
+
+        selectAllMenu.isVisible = !viewModel.isGroupsEmpty
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -158,7 +167,10 @@ class ChooseGroupsFragment : Fragment() {
     }
 
     private fun selectAllGroups() {
+//        if (!viewModel.isGroupsEmpty)
         groupsAdapter.selectAllGroups()
+//        else
+//            Snackbar.make(binding.root, getString(R.string.no_groups), Snackbar.LENGTH_SHORT).show()
         //viewModel.allGroupsSelected() //
     }
 
