@@ -14,6 +14,8 @@ class SetImageViewModel(context: Context, val imageUrl: String?, val groupId: In
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val groupRepository = GroupRepository(database)
 
+    var downloading = false
+
     init {
 
     }

@@ -12,11 +12,14 @@ import android.os.Environment
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentSetImageBinding
@@ -45,6 +48,7 @@ class SetImageFragment : Fragment() {
 
     private var downloadLater = false
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,6 +58,19 @@ class SetImageFragment : Fragment() {
             scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
             setAllContainerColors(resources.getColor(R.color.background))
         }
+
+        val callback = object : OnBackPressedCallback(true /* enabled by default */) {
+
+            override fun handleOnBackPressed() {
+                if (viewModel.downloading) {
+                    Toast.makeText(requireContext(), getString(R.string.downloading_group_icon), Toast.LENGTH_SHORT).show()
+                } else {
+                    NavHostFragment.findNavController(this@SetImageFragment)
+                        .popBackStack()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onCreateView(
@@ -116,6 +133,7 @@ class SetImageFragment : Fragment() {
 
     @SuppressLint("Range")
     private fun downloadImage() {
+        viewModel.downloading = true
         if(hasImage(binding.unsplashPhotoImageView)) {
 
             Log.d(TAG, "downloadImage: has image, done clicked")
