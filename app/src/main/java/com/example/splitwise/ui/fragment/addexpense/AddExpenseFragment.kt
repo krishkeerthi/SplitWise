@@ -183,7 +183,7 @@ class AddExpenseFragment : Fragment() {
 
     private fun openCategoryBottomSheet() {
         val categoryBottomSheetDialog = BottomSheetDialog(requireContext())
-        categoryBottomSheetDialog.setContentView(R.layout.rv_bottom_sheet)
+        categoryBottomSheetDialog.setContentView(R.layout.new_rv_bottom_sheet)
 
         categoryBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         val categoryTitle =
@@ -221,7 +221,7 @@ class AddExpenseFragment : Fragment() {
 
     private fun openPayerBottomSheet(payers: List<Member>) {
         val payerBottomSheetDialog = BottomSheetDialog(requireContext())
-        payerBottomSheetDialog.setContentView(R.layout.rv_bottom_sheet)
+        payerBottomSheetDialog.setContentView(R.layout.new_rv_bottom_sheet)
 
         payerBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
