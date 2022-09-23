@@ -218,8 +218,10 @@ fun mergeList(previouslySelected: List<Int>, currentlySelected: List<Int>): List
     for(i in previouslySelected)
         newList.add(i)
 
-    for(i in currentlySelected)
+    for(i in currentlySelected) {
+        //if(i in newList)
         newList.add(i)
+    }
 
     return newList
 }

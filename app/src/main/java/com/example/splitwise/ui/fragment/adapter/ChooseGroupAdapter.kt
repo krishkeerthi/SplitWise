@@ -66,6 +66,13 @@ class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
 
     fun selectAllGroups() {
         selectedAllGroups = true
+
+        // this is added, because on landscape only visible views are checked so count is incorrect
+        for(group in groups) {
+            onItemChecked(group, true)
+            selectedGroupIds.add(group.groupId)
+        }
+
         notifyDataSetChanged()
     }
 }

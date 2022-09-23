@@ -172,4 +172,5 @@
     <string name="update">Update</string>
     <string name="system">System default</string>
     <string name="downloading_group_icon">Group icon is been downloading, we need your patience</string>
+    <string name="unselect_all">Unselect all</string>
 </resources>

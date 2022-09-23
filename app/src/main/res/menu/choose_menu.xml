@@ -3,8 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/unselect_all_menu"
+        android:title="@string/unselect_all"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/select_all_menu"
         android:title="@string/select_all"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/choose_groups_fragment_done"
+        android:title="@string/done"
         app:showAsAction="ifRoom"/>
 
 </menu>

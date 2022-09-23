@@ -108,6 +108,8 @@ class ChooseMembersFragment : Fragment() {
 //                contextualActionMode?.finish()
 //                contextualActionMode = null
 //            }
+
+
             val selectedCount = viewModel.checkedMembers.size
             if(selectedCount > 0){
                 (requireActivity() as AppCompatActivity).supportActionBar?.title =

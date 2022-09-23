@@ -173,4 +173,5 @@
     <string name="update">மாற்று</string>
     <string name="system">கைபேசி அமைப்பு</string>
     <string name="downloading_group_icon">குழு ஐகான் பதிவிறக்கம் செய்யப்படுகிறது, எங்களுக்கு உங்கள் பொறுமை தேவை</string>
+    <string name="unselect_all">முழுமையாக நீக்கு</string>
 </resources>

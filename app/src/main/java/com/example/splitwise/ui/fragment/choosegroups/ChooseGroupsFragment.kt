@@ -11,6 +11,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
+import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.FragmentChooseGroupsBinding
 import com.example.splitwise.ui.fragment.adapter.ChooseGroupAdapter
 import com.example.splitwise.util.mergeList
@@ -30,6 +31,7 @@ class ChooseGroupsFragment : Fragment() {
     private var contextualActionMode: ActionMode? = null
     private lateinit var groupsAdapter: ChooseGroupAdapter
 
+    private var menuVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,18 +88,34 @@ class ChooseGroupsFragment : Fragment() {
                 Log.d(TAG, "onViewCreated: checking ")
                 if (args.selectedGroupIds.toList().isNotEmpty() && viewModel.selectedGroupIds()
                         .isNotEmpty()
-                )
+                ) {
+                    Log.d(TAG, "onViewCreated: choose groups both not empty -> args: ${args.selectedGroupIds.toList()} vm selected: ${viewModel.selectedGroupIds()}")
+                    // add selected groups in  viewmodel, because in rv only checked items are added, in landscape only few items are visible so few items are added
+
+                    val overallSelected = mergeList(
+                        args.selectedGroupIds.toList(),
+                        viewModel.selectedGroupIds().toList()
+                    )
+
+//                    updateSelectedGroups(groups, overallSelected)
+                    updateSelectedGroups(groups, viewModel.selectedGroupIds())
+
                     groupsAdapter.updateGroups(
                         groups,
-                        mergeList(
-                            args.selectedGroupIds.toList(),
-                            viewModel.selectedGroupIds().toList()
-                        )
+                        viewModel.selectedGroupIds() //overallSelected
                     )
-                else if (args.selectedGroupIds.toList().isNotEmpty())
+                }
+                else if (args.selectedGroupIds.toList().isNotEmpty()) {
+                    updateSelectedGroups(groups, args.selectedGroupIds.toList())
+                    Log.d(TAG, "onViewCreated: choose groups args not empty -> args: ${args.selectedGroupIds.toList()} vm selected: ${viewModel.selectedGroupIds()}")
+
+
                     groupsAdapter.updateGroups(groups, args.selectedGroupIds.toList())
-                else
+                }
+                else {
+                    Log.d(TAG, "onViewCreated: choose groups both empty -> args: ${args.selectedGroupIds} vm selected: ${viewModel.selectedGroupIds()}")
                     groupsAdapter.updateGroups(groups, viewModel.selectedGroupIds().toList())
+                }
 
                 binding.emptyGroupImageView.visibility = View.INVISIBLE
                 binding.noGroupsTextView.visibility = View.INVISIBLE
@@ -116,16 +134,32 @@ class ChooseGroupsFragment : Fragment() {
         viewModel.selectedGroupsCount.observe(viewLifecycleOwner) { selectedGroupCount ->
             val selectedCount = viewModel.selectedGroups.size
 
-            if (selectedCount > 0) {
-                if (contextualActionMode == null) {
-                    contextualActionMode = requireActivity().startActionMode(actionModeCallback)
-                } else {
-                    contextualActionMode?.title = "$selectedCount ${getString(R.string.selected)}"
-                }
-            } else {
-                contextualActionMode?.finish()
-                contextualActionMode = null
+            viewModel.groups.value?.let {
+                viewModel.allSelected = it.size == selectedCount
+                requireActivity().invalidateOptionsMenu()
             }
+
+            if(selectedCount > 0){
+                (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                    "${viewModel.selectedGroups.size} ${getString(R.string.selected)}"
+            }
+            else
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.select_group)
+
+            menuVisible = selectedCount > 0
+            requireActivity().invalidateOptionsMenu()
+
+            // action mode code is commented
+//            if (selectedCount > 0) {
+//                if (contextualActionMode == null) {
+//                    contextualActionMode = requireActivity().startActionMode(actionModeCallback)
+//                } else {
+//                    contextualActionMode?.title = "$selectedCount ${getString(R.string.selected)}"
+//                }
+//            } else {
+//                contextualActionMode?.finish()
+//                contextualActionMode = null
+//            }
 
 //            if (selectedGroupCount != null && selectedGroupCount > 0) {
 //                if (contextualActionMode == null) {
@@ -144,19 +178,47 @@ class ChooseGroupsFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
+    private fun updateSelectedGroups(groups: List<Group>, selectedGroupsIds: List<Int>) {
+        for(group in groups){
+            if(group.groupId in selectedGroupsIds){
+                viewModel.addGroupToSelected(group)
+            }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.choose_menu, menu)
 
         val selectAllMenu = menu.findItem(R.id.select_all_menu)
 
-        selectAllMenu.isVisible = !viewModel.isGroupsEmpty
+        val doneMenu = menu.findItem(R.id.choose_groups_fragment_done)
+
+        val unselectMenu = menu.findItem(R.id.unselect_all_menu)
+
+        doneMenu.isVisible = menuVisible
+
+        unselectMenu.isVisible = viewModel.allSelected
+
+        selectAllMenu.isVisible = !viewModel.allSelected && !viewModel.isGroupsEmpty
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.select_all_menu -> {
+                viewModel.allSelected = true
+                requireActivity().invalidateOptionsMenu()
                 selectAllGroups()
+                true
+            }
+            R.id.choose_groups_fragment_done -> {
+                gotoSplitWiseFragment()
+                true
+            }
+            R.id.unselect_all_menu -> {
+                viewModel.allSelected = false
+                requireActivity().invalidateOptionsMenu()
+                gotoChooseGroupsFragment()
                 true
             }
             else -> {
@@ -168,6 +230,7 @@ class ChooseGroupsFragment : Fragment() {
 
     private fun selectAllGroups() {
 //        if (!viewModel.isGroupsEmpty)
+
         groupsAdapter.selectAllGroups()
 //        else
 //            Snackbar.make(binding.root, getString(R.string.no_groups), Snackbar.LENGTH_SHORT).show()

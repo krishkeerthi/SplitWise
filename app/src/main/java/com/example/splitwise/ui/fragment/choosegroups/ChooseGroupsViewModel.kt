@@ -28,6 +28,8 @@ class ChooseGroupsViewModel(context: Context)
 
     var isGroupsEmpty = true
 
+    var allSelected = false
+
     init {
         fetchData()
         //database
