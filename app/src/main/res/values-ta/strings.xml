@@ -174,4 +174,8 @@
     <string name="system">கைபேசி அமைப்பு</string>
     <string name="downloading_group_icon">குழு ஐகான் பதிவிறக்கம் செய்யப்படுகிறது, எங்களுக்கு உங்கள் பொறுமை தேவை</string>
     <string name="unselect_all">முழுமையாக நீக்கு</string>
+    <string name="upload">பதிவேற்று</string>
+    <string name="amount_greater_than_0">தொகை 0 ஐ விட அதிகமாக இருக்க வேண்டும்</string>
+    <string name="confirm_adding_expense">செலவைச் சேர்ப்பதை உறுதிப்படுத்தவும்</string>
+    <string name="confirm">உறுதி</string>
 </resources>

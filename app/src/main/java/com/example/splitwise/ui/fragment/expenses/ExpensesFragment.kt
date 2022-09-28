@@ -98,8 +98,9 @@ class ExpensesFragment : Fragment() {
 
         binding.expensesRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext()).apply {
-                reverseLayout = true // it reverses but scrolled down to the last item
-                stackFromEnd = true // corrects above problem
+                // list reversing is happening in  view model
+//                reverseLayout = true // it reverses but scrolled down to the last item
+//                stackFromEnd = true // corrects above problem
             }
             adapter = expensesAdapter
         }
@@ -151,8 +152,8 @@ class ExpensesFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             else {
-
                 gotoAddExpenseFragment(args.groupId)
+                onAddButtonClicked()
             }
         }
 
@@ -162,6 +163,7 @@ class ExpensesFragment : Fragment() {
 
         binding.addMemberButton.setOnClickListener{
             goToCreateEditGroupFragment(args.groupId)
+            onAddButtonClicked()
         }
 
 
@@ -401,18 +403,19 @@ class ExpensesFragment : Fragment() {
     }
 
     private fun gotoAddExpenseFragment(groupId: Int) {
-        exitTransition = MaterialElevationScale(false).apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-        }
+//        exitTransition = MaterialElevationScale(false).apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_small).toLong()
+//        }
+
         reenterTransition = MaterialElevationScale(true).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
 
-        val expenseDetailTransitionName = getString(R.string.add_expense_transition_name)
-        val extras = FragmentNavigatorExtras(binding.addExpenseButton to expenseDetailTransitionName)
+//        val expenseDetailTransitionName = getString(R.string.add_expense_transition_name)
+//        val extras = FragmentNavigatorExtras(binding.addExpenseButton to expenseDetailTransitionName)
 
         val action = ExpensesFragmentDirections.actionExpensesFragmentToAddExpenseFragment(groupId)
-        view?.findNavController()?.navigate(action, extras)
+        view?.findNavController()?.navigate(action)//, extras)
     }
 
     private fun gotoGroupsFragment() {
@@ -436,15 +439,15 @@ class ExpensesFragment : Fragment() {
     }
 
     private fun goToCreateEditGroupFragment(groupId: Int = -1) {
-        exitTransition = MaterialElevationScale(false).apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-        }
+//        exitTransition = MaterialElevationScale(false).apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_small).toLong()
+//        }
         reenterTransition = MaterialElevationScale(true).apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            duration = resources.getInteger(R.integer.reply_motion_duration_medium).toLong()
         }
 
-        val transitionName = getString(R.string.create_edit_group_transition_name)
-        val extras = FragmentNavigatorExtras(binding.addMemberButton to transitionName)
+        //val transitionName = getString(R.string.create_edit_group_transition_name)
+        //val extras = FragmentNavigatorExtras(binding.addMemberButton to transitionName)
 
         val action = ExpensesFragmentDirections.actionExpensesFragmentToCreateEditGroupFragment(
             groupId,
@@ -452,6 +455,6 @@ class ExpensesFragment : Fragment() {
             null,
             null
         )
-        findNavController().navigate(action, extras)
+        findNavController().navigate(action)//, extras)
     }
 }

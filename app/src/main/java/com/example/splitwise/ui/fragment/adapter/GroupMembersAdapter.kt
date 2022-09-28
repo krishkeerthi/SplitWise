@@ -27,7 +27,7 @@ class GroupMembersAdapter(
 
         return GroupMembersViewHolder(binding).apply {
             itemView.setOnClickListener {
-                it.ripple(it.context)
+                //it.ripple(it.context)
                 memberClicked(members[absoluteAdapterPosition].memberId, itemView)
             }
         }

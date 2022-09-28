@@ -46,6 +46,8 @@ class SplitWiseViewModel(context: Context, selectedGroups: Array<Group>?) : View
 
     var selectedGroupsCardVisibility: MutableLiveData<Int> = MutableLiveData<Int>(View.GONE)
 
+    var removedGroupIds = mutableSetOf<Int>()
+
     init {
 
         if(selectedGroups != null){

@@ -38,6 +38,7 @@ import com.example.splitwise.databinding.FragmentExpenseDetailBinding
 import com.example.splitwise.ui.fragment.adapter.BillsAdapter
 import com.example.splitwise.ui.fragment.adapter.ExpenseMembersAdapter
 import com.example.splitwise.util.Category
+import com.example.splitwise.util.getCategoryDrawableResource
 import com.example.splitwise.util.roundOff
 import com.example.splitwise.util.titleCase
 import com.google.android.material.snackbar.Snackbar
@@ -162,8 +163,9 @@ class ExpenseDetailFragment : Fragment() {
                 binding.groupExpenseTitleTextView.text = it.expenseName
                 membersAdapter.updateTotal(it.totalAmount)
                 binding.expenseTotalTextView.text = "₹" + it.totalAmount.roundOff()
-                binding.expenseCategoryExpense.text =
-                    Category.values()[it.category].name.lowercase().titleCase()
+                binding.expenseImageView.setImageResource(getCategoryDrawableResource(Category.values()[it.category].ordinal))
+//                binding.expenseCategoryExpense.text =
+//                    Category.values()[it.category].name.lowercase().titleCase()
             }
         }
 
@@ -417,15 +419,15 @@ class ExpenseDetailFragment : Fragment() {
 
     private fun gotoBillsHolderFragment(position: Int, billImageView: View) {
 
-        exitTransition = MaterialElevationScale(false).apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-        }
+//        exitTransition = MaterialElevationScale(false).apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_small).toLong()
+//        }
         reenterTransition = MaterialElevationScale(true).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
 
-        val transitionName = getString(R.string.bill_holder_transition_name)
-        val extras = FragmentNavigatorExtras(billImageView to transitionName)
+//        val transitionName = getString(R.string.bill_holder_transition_name)
+//        val extras = FragmentNavigatorExtras(billImageView to transitionName)
 
         Log.d(TAG, "gotoBillsHolderFragment: position is $position")
         val action =
@@ -433,6 +435,6 @@ class ExpenseDetailFragment : Fragment() {
                 viewModel.getBills().toTypedArray(), position, args.expenseId
             )
 
-        findNavController().navigate(action, extras)
+        findNavController().navigate(action)//, extras)
     }
 }

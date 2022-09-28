@@ -10,7 +10,9 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -30,6 +32,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
 
 class AddExpenseFragment : Fragment() {
 
@@ -43,12 +46,16 @@ class AddExpenseFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            drawingViewId = R.id.nav_host_fragment_container
+//        sharedElementEnterTransition = MaterialContainerTransform().apply {
+//            drawingViewId = R.id.nav_host_fragment_container
+//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
+//            setAllContainerColors(resources.getColor(R.color.background))
+//        }
+        enterTransition = MaterialElevationScale(true).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
-            setAllContainerColors(resources.getColor(R.color.background))
         }
+
 
     }
 
@@ -65,6 +72,11 @@ class AddExpenseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentAddExpenseBinding.bind(view)
+
+        // start enter transition only when data loaded, and just started to draw
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        //
 
         // transition code starts
 //        enterTransition = MaterialContainerTransform().apply {
@@ -145,16 +157,28 @@ class AddExpenseFragment : Fragment() {
             && viewModel.category != null && viewModel.payer != null
         ) {
             if(viewModel.memberIds.isNotEmpty()){
-                viewModel.createExpense(
-                    binding.expenseNameText.text.toString(),
-                    viewModel.category!!.ordinal,
-                    viewModel.payer!!.memberId,
-                    binding.expenseAmountText.text.toString().toFloat(),
-                    viewModel.memberIds.toList()
-                ) {
-                    gotoExpenseFragment()
+
+                val builder = AlertDialog.Builder(requireContext())
+
+                builder.setMessage(getString(R.string.confirm_adding_expense))
+
+                builder.setPositiveButton(getString(R.string.confirm)){ dialog, which ->
+                    viewModel.createExpense(
+                        binding.expenseNameText.text.toString(),
+                        viewModel.category!!.ordinal,
+                        viewModel.payer!!.memberId,
+                        binding.expenseAmountText.text.toString().toFloat(),
+                        viewModel.memberIds.toList()
+                    ) {
+                        gotoExpenseFragment()
+                    }
+                    Snackbar.make(binding.root, getString(R.string.expense_added), Snackbar.LENGTH_SHORT).show()
                 }
-                Snackbar.make(binding.root, getString(R.string.expense_added), Snackbar.LENGTH_SHORT).show()
+
+                builder.setNegativeButton(getString(R.string.cancel), null)
+
+                builder.show()
+
            }
             else{
                 Snackbar.make(binding.root, getString(R.string.atleast_1_payee), Snackbar.LENGTH_SHORT).show()

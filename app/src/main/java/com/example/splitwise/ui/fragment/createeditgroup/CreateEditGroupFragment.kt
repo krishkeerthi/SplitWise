@@ -34,10 +34,7 @@ import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
 import com.example.splitwise.ui.fragment.groups.GroupsFragment
 import com.example.splitwise.ui.fragment.viewmodel.CreateEditGroupActivityViewModel
-import com.example.splitwise.util.decodeSampledBitmapFromUri
-import com.example.splitwise.util.dpToPx
-import com.example.splitwise.util.nameCheck
-import com.example.splitwise.util.themeColor
+import com.example.splitwise.util.*
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
@@ -68,7 +65,11 @@ class CreateEditGroupFragment : Fragment() {
             drawingViewId = R.id.nav_host_fragment_container
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
             scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
-            setAllContainerColors(resources.getColor(R.color.background))
+            setAllContainerColors(resources.getColor(R.color.background)) // checking // previously background
+        }
+
+        enterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
 
         val callback = object : OnBackPressedCallback(true /* enabled by default */) {
@@ -191,6 +192,7 @@ class CreateEditGroupFragment : Fragment() {
         binding.groupMembersRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = membersAdapter
+            //isNestedScrollingEnabled = false
         }
 
         // Livedata Members
@@ -408,7 +410,8 @@ class CreateEditGroupFragment : Fragment() {
 
         }
 
-        binding.groupNameText.addTextChangedListener(nameWatcher)
+        if(args.groupId != -1) // add text watcher only when group exists already
+            binding.groupNameText.addTextChangedListener(nameWatcher)
 
         // Menu
 
@@ -425,7 +428,7 @@ class CreateEditGroupFragment : Fragment() {
 
     private fun memberClicked(memberId: Int, memberView: View) {
         if (args.groupId != -1) {
-
+            memberView.ripple(memberView.context)
             gotoMemberProfileFragment(memberId, memberView)
         }
     }
@@ -582,12 +585,12 @@ class CreateEditGroupFragment : Fragment() {
     }
 
     private fun gotoGroupIconFragment(imageView: View) {
-        exitTransition = MaterialElevationScale(false).apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-        }
-        reenterTransition = MaterialElevationScale(true).apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-        }
+//        exitTransition = MaterialElevationScale(false).apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//        }
+//        reenterTransition = MaterialElevationScale(true).apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//        }
 
         val groupName = binding.groupNameText.text?.trim().toString()
         val groupIcon = if (args.groupId != -1) {
@@ -603,8 +606,8 @@ class CreateEditGroupFragment : Fragment() {
         } else
             args.groupIcon  // when group icon already set before creating group
 
-        val groupIconTransitionName = getString(R.string.group_icon_transition_name)
-        val extras = FragmentNavigatorExtras(imageView to groupIconTransitionName)
+//        val groupIconTransitionName = getString(R.string.group_icon_transition_name)
+//        val extras = FragmentNavigatorExtras(imageView to groupIconTransitionName)
 
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupIconFragment(
@@ -614,7 +617,7 @@ class CreateEditGroupFragment : Fragment() {
                 false,
                 false
             )
-        findNavController().navigate(action, extras)
+        findNavController().navigate(action)//, extras)
     }
 
 }

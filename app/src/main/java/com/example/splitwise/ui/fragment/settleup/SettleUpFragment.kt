@@ -194,20 +194,27 @@ class SettleUpFragment : Fragment() {
                 Log.d(TAG, "onViewCreated: count ${viewModel.selectedPayeesIds()}")
                 viewModel.getAmount(viewModel.selectedPayeesIds())
 
-                binding.clearPayees.visibility = View.VISIBLE
+                //binding.clearPayees.visibility = View.VISIBLE
+                binding.clearPayees.isEnabled = true
 
                 binding.totalTextView.visibility = View.VISIBLE
                 binding.amountTextView.visibility = View.VISIBLE
                 binding.settleButton.visibility = View.VISIBLE
 
-                if (count == viewModel.payeesAndAmounts.value!!.size)
-                    binding.selectAllPayees.visibility = View.GONE
-                else
-                    binding.selectAllPayees.visibility = View.VISIBLE
+                if (count == viewModel.payeesAndAmounts.value!!.size) {
+                    //binding.selectAllPayees.visibility = View.GONE
+                    binding.selectAllPayees.isEnabled = false
+                }
+                else {
+                    //binding.selectAllPayees.visibility = View.VISIBLE
+                    binding.selectAllPayees.isEnabled = true
+                }
 
             } else {
-                binding.selectAllPayees.visibility = View.VISIBLE
-                binding.clearPayees.visibility = View.GONE
+                ///binding.selectAllPayees.visibility = View.VISIBLE
+                binding.selectAllPayees.isEnabled = true
+                //binding.clearPayees.visibility = View.GONE
+                binding.clearPayees.isEnabled = false
                 binding.totalTextView.visibility = View.GONE
                 binding.amountTextView.visibility = View.GONE
                 binding.settleButton.visibility = View.INVISIBLE

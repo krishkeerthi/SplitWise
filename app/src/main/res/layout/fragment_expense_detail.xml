@@ -2,134 +2,265 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:transitionName="@string/expense_detail_transition_name"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:transitionName="@string/expense_detail_transition_name">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/group_expense_title_text_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:textColor="@color/text_bold"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Thalappakatti Biryani" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/expense_payer_text_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:textStyle="bold"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/group_expense_title_text_view"
-        tools:text="Keerthi K" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/expense_total_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/text_bold"
-        android:textSize="34sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/expense_payer_text_view"
-        tools:text="₹12500" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/expense_category_expense"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expense_total_text_view"
-        tools:text="Food" />
-
-    <View
-        android:id="@+id/horizontal_view"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="#dee3e1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expense_category_expense" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/expense_detail_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:cardBackgroundColor="@color/gray"
+                app:cardCornerRadius="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/group_expense_title_text_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textColor="@color/text_bold"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/expense_image_card"
+                        app:layout_constraintEnd_toStartOf="@+id/expense_image_card"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/expense_image_card"
+                        tools:text="Thalapakatti biryani Thalapakatti biryani" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/expense_payer_text_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textColor="@color/text_bold"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/expense_total_text_view"
+                        app:layout_constraintEnd_toStartOf="@+id/expense_total_text_view"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/expense_total_text_view"
+                        tools:text="Keerthi K" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/expense_total_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:textColor="@color/text_bold"
+                        android:textSize="34sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/card_divider"
+                        tools:text="₹12500" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/expense_image_card"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="50dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/expense_image_view_holder"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/view_color"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/expense_image_view"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/essentials"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/card_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="#dee3e1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/expense_image_card" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!--    <com.google.android.material.textview.MaterialTextView-->
+            <!--        android:id="@+id/group_expense_title_text_view"-->
+            <!--        android:layout_width="0dp"-->
+            <!--        android:layout_height="wrap_content"-->
+            <!--        android:layout_marginStart="16dp"-->
+            <!--        android:layout_marginTop="8dp"-->
+            <!--        android:layout_marginEnd="16dp"-->
+            <!--        android:textColor="@color/text_bold"-->
+            <!--        android:textSize="24sp"-->
+            <!--        android:textStyle="bold"-->
+            <!--        android:ellipsize="end"-->
+            <!--        android:maxLines="2"-->
+            <!--        android:gravity="center"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintStart_toStartOf="parent"-->
+            <!--        app:layout_constraintTop_toTopOf="parent"-->
+            <!--        tools:text="Thalappakatti Biryani" />-->
+
+            <!--    <com.google.android.material.textview.MaterialTextView-->
+            <!--        android:id="@+id/expense_payer_text_view"-->
+            <!--        android:layout_width="0dp"-->
+            <!--        android:layout_height="wrap_content"-->
+            <!--        android:layout_marginStart="16dp"-->
+            <!--        android:layout_marginTop="16dp"-->
+            <!--        android:layout_marginEnd="16dp"-->
+            <!--        android:textStyle="bold"-->
+            <!--        android:ellipsize="end"-->
+            <!--        android:maxLines="2"-->
+            <!--        android:gravity="center"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintStart_toStartOf="parent"-->
+            <!--        app:layout_constraintTop_toBottomOf="@id/group_expense_title_text_view"-->
+            <!--        tools:text="Keerthi K" />-->
+
+            <!--    <com.google.android.material.textview.MaterialTextView-->
+            <!--        android:id="@+id/expense_total_text_view"-->
+            <!--        android:layout_width="wrap_content"-->
+            <!--        android:layout_height="wrap_content"-->
+            <!--        android:layout_marginTop="8dp"-->
+            <!--        android:textColor="@color/text_bold"-->
+            <!--        android:textSize="34sp"-->
+            <!--        android:textStyle="bold"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintStart_toStartOf="parent"-->
+            <!--        app:layout_constraintTop_toBottomOf="@+id/expense_payer_text_view"-->
+            <!--        tools:text="₹12500" />-->
+
+            <!--    <com.google.android.material.textview.MaterialTextView-->
+            <!--        android:id="@+id/expense_category_expense"-->
+            <!--        android:layout_width="wrap_content"-->
+            <!--        android:layout_height="wrap_content"-->
+            <!--        android:textStyle="bold"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintStart_toStartOf="parent"-->
+            <!--        app:layout_constraintTop_toBottomOf="@id/expense_total_text_view"-->
+            <!--        tools:text="Food" />-->
+
+            <!--    <View-->
+            <!--        android:id="@+id/horizontal_view"-->
+            <!--        android:layout_width="match_parent"-->
+            <!--        android:layout_height="1dp"-->
+            <!--        android:layout_marginTop="16dp"-->
+            <!--        android:background="#dee3e1"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintStart_toStartOf="parent"-->
+            <!--        app:layout_constraintTop_toBottomOf="@id/expense_detail_card" />-->
 
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/members_share_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/members_share"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/horizontal_view" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/members_share_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/members_share"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/expense_detail_card" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/members_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/add_bill_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/members_share_text_view"
-        tools:listitem="@layout/expense_member_card" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/members_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/add_bill_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/members_share_text_view"
+                tools:listitem="@layout/expense_member_card" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/bills_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/bills"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/add_bill_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/add_bill_button"
-        tools:visibility="visible" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/bills_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/bills"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/add_bill_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/add_bill_button"
+                tools:visibility="visible" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/add_bill_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/add_bill"
-        app:layout_constraintBottom_toTopOf="@id/bills_recycler_view"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_bill_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/add_bill"
+                app:layout_constraintBottom_toTopOf="@id/bills_recycler_view"
+                app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/bills_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="8dp"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:itemCount="10"
-        tools:listitem="@layout/bill_profile_card" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/bills_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:itemCount="10"
+                tools:listitem="@layout/bill_profile_card" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

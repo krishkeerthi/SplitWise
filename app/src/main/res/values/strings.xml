@@ -173,4 +173,8 @@
     <string name="system">System default</string>
     <string name="downloading_group_icon">Group icon is been downloading, we need your patience</string>
     <string name="unselect_all">Unselect all</string>
+    <string name="upload">Upload</string>
+    <string name="amount_greater_than_0">Amount should be greater than 0</string>
+    <string name="confirm_adding_expense">Confirm adding expense</string>
+    <string name="confirm">Confirm</string>
 </resources>

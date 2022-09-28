@@ -12,40 +12,103 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
+import com.example.splitwise.databinding.EmptyCardBinding
 import com.example.splitwise.databinding.GroupCard1Binding
 import com.example.splitwise.databinding.GroupCard2Binding
+import com.example.splitwise.model.ExpenseMember
 import com.example.splitwise.util.*
 
 
 class GroupsAdapter(
     val onGroupClicked: (Int, View) -> Unit,
     val onImageClicked: (Int, String?, String, View) -> Unit
-) : RecyclerView.Adapter<GroupsViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var groups = listOf<Group>()
 
+    private val GROUPVIEW = 1
+    private val EMPTYVIEW = 2
+
     @SuppressLint("RestrictedApi")
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupsViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context)
-        val binding = GroupCard2Binding.inflate(view, parent, false)
+        val viewHolder: RecyclerView.ViewHolder
 
-        return GroupsViewHolder(binding).apply {
+        viewHolder = when(viewType){
+            GROUPVIEW -> {
+                val binding = GroupCard2Binding.inflate(view, parent, false)
+                GroupsViewHolder(binding).apply {
 
-            binding.groupIconCard.setOnClickListener{
-                itemView.ripple(itemView.context)
-                onImageClicked(
-                    groups[absoluteAdapterPosition].groupId,
-                    groups[absoluteAdapterPosition].groupIcon?.toString(),
-                    groups[absoluteAdapterPosition].groupName,
+                    binding.groupIconCard.setOnClickListener {
+                        itemView.ripple(itemView.context)
+                        onImageClicked(
+                            groups[absoluteAdapterPosition].groupId,
+                            groups[absoluteAdapterPosition].groupIcon?.toString(),
+                            groups[absoluteAdapterPosition].groupName,
 
-                    if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
-                    else binding.groupImageHolderImage)
+                            if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
+                            else binding.groupImageHolderImage
+                        )
+                    }
+
+                    itemView.setOnClickListener {
+                        it.ripple(it.context)
+                        onGroupClicked(groups[absoluteAdapterPosition].groupId, itemView)
+                    }
+
+                }
             }
-
-            itemView.setOnClickListener {
-                it.ripple(it.context)
-                onGroupClicked(groups[absoluteAdapterPosition].groupId, itemView)
+            EMPTYVIEW ->{
+                val binding = EmptyCardBinding.inflate(view, parent, false)
+                GroupEmptyViewHolder(binding)
             }
+            else -> {
+                val binding = GroupCard2Binding.inflate(view, parent, false)
+                GroupsViewHolder(binding).apply {
 
+                    binding.groupIconCard.setOnClickListener {
+                        itemView.ripple(itemView.context)
+                        onImageClicked(
+                            groups[absoluteAdapterPosition].groupId,
+                            groups[absoluteAdapterPosition].groupIcon?.toString(),
+                            groups[absoluteAdapterPosition].groupName,
+
+                            if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
+                            else binding.groupImageHolderImage
+                        )
+                    }
+
+                    itemView.setOnClickListener {
+                        it.ripple(it.context)
+                        onGroupClicked(groups[absoluteAdapterPosition].groupId, itemView)
+                    }
+
+                }
+            }
+        }
+
+        return viewHolder
+//        val binding = GroupCard2Binding.inflate(view, parent, false)
+//
+//        return GroupsViewHolder(binding).apply {
+//
+//            binding.groupIconCard.setOnClickListener {
+//                itemView.ripple(itemView.context)
+//                onImageClicked(
+//                    groups[absoluteAdapterPosition].groupId,
+//                    groups[absoluteAdapterPosition].groupIcon?.toString(),
+//                    groups[absoluteAdapterPosition].groupName,
+//
+//                    if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
+//                    else binding.groupImageHolderImage
+//                )
+//            }
+//
+//            itemView.setOnClickListener {
+//                it.ripple(it.context)
+//                onGroupClicked(groups[absoluteAdapterPosition].groupId, itemView)
+//            }
+//
+//        }
             // setting transition name
 //            binding.groupImageView.setOnClickListener {
 //                it.ripple(it.context)
@@ -73,24 +136,51 @@ class GroupsAdapter(
 //                it.ripple(it.context)
 //                onGroupClicked(groups[absoluteAdapterPosition].groupId, itemView)
 //            }
+
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(holder.itemViewType){
+            GROUPVIEW ->{
+                val holder = holder as GroupsViewHolder
+                val group = groups[position]
+
+                holder.bind(group)
+            }
+            EMPTYVIEW ->{
+                val holder = holder as GroupEmptyViewHolder
+                holder.bind()
+            }
         }
     }
-
-    override fun onBindViewHolder(holder: GroupsViewHolder, position: Int) {
-        val group = groups[position]
-
-        holder.bind(group)
-    }
+//    override fun onBindViewHolder(holder: GroupsViewHolder, position: Int) {
+//        val group = groups[position]
+//
+//        holder.bind(group)
+//    }
 
     override fun getItemCount(): Int {
         return groups.size
     }
 
     fun updateGroups(groups: List<Group>) {
-        this.groups = groups
+        val emptyGroupAddedGroups = addEmptyGroup(groups)
+        this.groups = emptyGroupAddedGroups
         notifyDataSetChanged()
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if(groups[position].groupId != -2)
+            GROUPVIEW
+        else
+            EMPTYVIEW
+    }
+
+    private fun addEmptyGroup(groups: List<Group>): List<Group>{
+        val mutableGroups = groups.toMutableList()
+        mutableGroups.add(dummyGroup)
+        return mutableGroups.toList()
+    }
 }
 
 class GroupsViewHolder(val binding: GroupCard2Binding) : RecyclerView.ViewHolder(binding.root) {
@@ -150,4 +240,12 @@ class GroupsViewHolder(val binding: GroupCard2Binding) : RecyclerView.ViewHolder
         }
     }
 
+}
+
+class GroupEmptyViewHolder(val binding: EmptyCardBinding):
+    RecyclerView.ViewHolder(binding.root){
+
+    fun bind(){
+
+    }
 }

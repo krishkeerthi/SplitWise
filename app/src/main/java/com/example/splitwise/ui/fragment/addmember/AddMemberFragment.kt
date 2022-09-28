@@ -211,12 +211,13 @@ class AddMemberFragment() : Fragment() {
 
         val doneMenu = menu.findItem(R.id.add_member_save)
 
-        doneMenu.isVisible = menuVisible
+        //doneMenu.isEnabled = menuVisible
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add_member_save -> {
+                if(menuVisible) // menuVisible says whether entered fields are correct
                 viewModel.checkMember(
                     args.groupId,
                     Member(
@@ -234,6 +235,8 @@ class AddMemberFragment() : Fragment() {
                         errorAdding()
                     }
                 )
+                else
+                    Snackbar.make(binding.root, "Ensure all fields are entered", Snackbar.LENGTH_SHORT).show()
                 true
             }
             else -> {

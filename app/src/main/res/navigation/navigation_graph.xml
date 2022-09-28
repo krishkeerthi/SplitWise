@@ -190,32 +190,33 @@
     </fragment>
     <fragment
         android:id="@+id/expensesFragment"
-        android:name="com.example.splitwise.ui.fragment.expenses.ExpensesFragment"
-       >
+        android:name="com.example.splitwise.ui.fragment.expenses.ExpensesFragment">
         <action
             android:id="@+id/action_expensesFragment_to_addExpenseFragment"
-            app:destination="@id/addExpenseFragment"
-            />
+            app:destination="@id/addExpenseFragment" />
         <action
             android:id="@+id/action_expensesFragment_to_expenseDetailFragment"
-            app:destination="@id/expenseDetailFragment"
-            />
+            app:destination="@id/expenseDetailFragment" />
         <argument
             android:name="groupId"
-            app:argType="integer"
-           />
+            android:defaultValue="1"
+            app:argType="integer" />
         <action
             android:id="@+id/action_expensesFragment_to_groupsFragment"
             app:destination="@id/groupsFragment"
-            app:popUpTo="@id/groupsFragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/groupsFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_expensesFragment_to_createEditGroupFragment"
             app:destination="@id/createEditGroupFragment" />
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="splitwise.com/expenses/{groupId}" />
+
     </fragment>
     <fragment
         android:id="@+id/addExpenseFragment"
@@ -547,5 +548,5 @@
     <fragment
         android:id="@+id/feedbackFragment"
         android:name="com.example.splitwise.ui.fragment.feedback.FeedbackFragment"
-        tools:layout="@layout/fragment_feedback" />
+        tools:layout="@layout/fragment_feedback"/>
 </navigation>

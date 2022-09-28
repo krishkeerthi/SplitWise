@@ -23,6 +23,7 @@ import android.widget.ImageView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
+import com.example.splitwise.model.ExpenseMember
 import com.google.android.material.internal.ContextUtils
 import com.google.android.material.internal.ContextUtils.getActivity
 import org.w3c.dom.Text
@@ -297,6 +298,11 @@ fun View.hideKeyboard() {
     imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
+fun View.showKeyboard(){
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+}
+
 @SuppressLint("RestrictedApi")
 fun String.translate(context: Context): String{
     val resource = getActivity(context)?.resources
@@ -385,4 +391,33 @@ fun BitmapFactory.decodeUri(context: Context, uri: Uri): Bitmap?{
     catch (e: Exception){
         null
     }
+}
+
+val dummyMember = Member(
+    "",
+    1,
+    null
+)
+
+val dummyMemberExpense = ExpenseMember(
+    -1,
+    -1,
+    "test",
+    1,
+    1f,
+    1f,
+    1,
+    dummyMember,
+    Date()
+)
+
+val dummyGroup = Group(
+    "",
+    "",
+    Date(),
+    Date(),
+    1F,
+    null,
+).apply {
+    groupId = -2 // for empty group view
 }

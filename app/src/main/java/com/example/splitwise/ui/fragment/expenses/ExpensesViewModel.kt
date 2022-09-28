@@ -165,7 +165,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
                         expenseMembers.add(toExpenseMember(expense, member))
                 }
 
-                _expenseMembers.value = expenseMembers
+                _expenseMembers.value = expenseMembers.reversed() // reversed the list here, instead of reversing the layout
             }
         }
     }
@@ -234,9 +234,14 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
                         report += "\nSplit Amount: ₹ ${expense.splitAmount.roundOff().getBold()}\n"
                     }
                 }
+
+                // deeplink
+                report += "\nsplitwise.com/expenses/${it.groupId}"
             }
 
             report += "\n♥Thank you for using *SplitWise*"
+
+
 
             shareIntent(report)
          }

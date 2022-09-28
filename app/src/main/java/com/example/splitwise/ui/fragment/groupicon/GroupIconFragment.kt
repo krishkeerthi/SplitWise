@@ -89,12 +89,15 @@ class GroupIconFragment : Fragment() {
             ///binding.groupIconImageView.setImageURI(Uri.parse(groupIcon))
             binding.groupIconImageView.setImageURI(Uri.parse(groupIcon))
             binding.groupIconImageView.visibility = View.VISIBLE
-            binding.emptyGroupIcon.visibility = View.GONE
+            binding.uploadGroupIconButton.visibility = View.GONE
         } else {
             binding.groupIconImageView.visibility = View.GONE
-            binding.emptyGroupIcon.visibility = View.VISIBLE
+            binding.uploadGroupIconButton.visibility = View.VISIBLE
         }
 
+        binding.uploadGroupIconButton.setOnClickListener{
+            openBottomSheet()
+        }
         // menu
         setHasOptionsMenu(true)
     }
@@ -146,6 +149,11 @@ class GroupIconFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.group_icon_menu, menu)
+
+        val editMenu = menu.findItem(R.id.edit_menu)
+
+        editMenu.isVisible = args.groupIcon != null
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

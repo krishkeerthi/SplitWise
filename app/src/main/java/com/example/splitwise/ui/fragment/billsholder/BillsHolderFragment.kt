@@ -19,6 +19,7 @@ import com.example.splitwise.databinding.FragmentBillsHolderBinding
 import com.example.splitwise.ui.fragment.bill.BillFragment
 import com.example.splitwise.util.dpToPx
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
 
 class BillsHolderFragment : Fragment() {
 
@@ -32,11 +33,15 @@ class BillsHolderFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            drawingViewId = R.id.nav_host_fragment_container
+//        sharedElementEnterTransition = MaterialContainerTransform().apply {
+//            drawingViewId = R.id.nav_host_fragment_container
+//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
+//            setAllContainerColors(resources.getColor(R.color.background))
+//        }
+
+        enterTransition = MaterialElevationScale(true).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
-            setAllContainerColors(resources.getColor(R.color.background))
         }
 
     }

@@ -26,7 +26,9 @@ import com.example.splitwise.databinding.FragmentSplitWiseBinding
 import com.example.splitwise.ui.fragment.adapter.GroupArrayAdapter
 import com.example.splitwise.ui.fragment.adapter.SplitWiseAdapter
 import com.example.splitwise.util.getGroupIds
+import com.example.splitwise.util.ripple
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
@@ -79,11 +81,24 @@ class SplitWiseFragment : Fragment() {
 
         requireActivity().title = "SplitWise"
 
+        // assign selected groups
+        args.selectedGroups?.let {
+            Log.d(TAG, "onViewCreated: removeAlready orientation change args value ${it.size}")
+            selectedGroups = it.toMutableList()
+
+            // removed already removed groups if found
+            removeAlreadyRemovedGroups()
+        }
+
         // because viewmodel instance not recreating,
         //viewModel.fetchData()
 
         // test code to fix, all groups data loading when selecting particular
-        viewModel.fetchData(getGroupIds(args.selectedGroups?.toMutableList() ?: mutableListOf()))
+        //viewModel.fetchData(getGroupIds(args.selectedGroups?.toMutableList() ?: mutableListOf()))
+        if(args.selectedGroups == null)
+            viewModel.fetchData()
+//        else
+//            viewModel.fetchData(getGroupIds(selectedGroups))
         //getGroupIds(args.selectedGroups?.toMutableList() ?: mutableListOf())
 
         // test code ends
@@ -94,14 +109,13 @@ class SplitWiseFragment : Fragment() {
             if(it == View.VISIBLE) {
                 binding.selectedGroupsCard.visibility = View.VISIBLE
                 binding.selectedGroupsText.text = viewModel.selectedGroupsText
+
+                // add chips
+                addChips(selectedGroups)
             }
         }
 
 
-        // assign selected groups
-        args.selectedGroups?.let {
-            selectedGroups = it.toMutableList()
-        }
 //        try {
 //            selectedGroups = args.selectedGroups.toMutableList()
 //            if (selectedGroups.isNotEmpty()) {
@@ -130,6 +144,7 @@ class SplitWiseFragment : Fragment() {
                     Snackbar.LENGTH_SHORT
                 ).show()
             else {
+                paymentStatView.ripple(paymentStatView.context)
                 gotoSettleUpFragment(payerId, paymentStatView)
             }
 
@@ -255,5 +270,68 @@ class SplitWiseFragment : Fragment() {
         val action =
             SplitWiseFragmentDirections.actionSplitWiseFragmentSelf(listOf<Group>().toTypedArray()) // Passing empty list of members when going to settle up fragment
         view?.findNavController()?.navigate(action)
+    }
+
+    private fun addChips(selectedGroups: MutableList<Group>) {
+        val chipGroup = binding.chipGroup
+        for(group in selectedGroups){
+            chipGroup.addView(createChip(group.groupId, group.groupName))
+        }
+    }
+
+    private fun createChip(groupId: Int, chipText: String): Chip{
+        val chipGroup = binding.chipGroup
+        val chip = Chip(requireContext()).apply {
+            text = chipText
+            isCloseIconVisible = true
+            isClickable = false
+            chipBackgroundColor = resources.getColorStateList(R.color.background)
+        }
+
+        chip.setOnCloseIconClickListener {
+            viewModel.removedGroupIds.add(groupId) // adding group id to removed so that during screen orientation, those groups will be eliminated
+            removeGroupFromSelected(groupId)
+            chipGroup.removeView(chip)
+        }
+        return chip
+    }
+
+    private fun removeGroupFromSelected(groupId: Int){
+        for(group in selectedGroups)
+            if(group.groupId == groupId) {
+                selectedGroups.remove(group)
+
+                if(selectedGroups.isEmpty())
+                    gotoSelf()
+                else
+                    viewModel.fetchData(getGroupIds(selectedGroups))
+
+                break
+            }
+    }
+
+    private fun removeAlreadyRemovedGroups(){
+        Log.d(TAG, "removeAlreadyRemovedGroups: ${viewModel.removedGroupIds.size}")
+        Log.d(TAG, "removeAlreadyRemovedGroups: before removal selected groups is ${selectedGroups.size}")
+        var removableGroups = mutableListOf<Group>()
+        if(viewModel.removedGroupIds.isNotEmpty()){
+            for(group in selectedGroups){
+                if(group.groupId in viewModel.removedGroupIds){
+                    removableGroups.add(group)
+//                    selectedGroups.remove(group)
+//                    viewModel.removedGroupIds.remove(group.groupId)
+                }
+            }
+
+            if(removableGroups.isNotEmpty()){
+                for(group in removableGroups){
+                    selectedGroups.remove(group)
+                    //viewModel.removedGroupIds.remove(group.groupId)
+                }
+            }
+            Log.d(TAG, "removeAlreadyRemovedGroups: after removal selected groups is ${selectedGroups.size}")
+            Log.d(TAG, "removeAlreadyRemovedGroups: removed groups count is ${viewModel.removedGroupIds.size}")
+            viewModel.fetchData(getGroupIds(selectedGroups))
+        }
     }
 }
