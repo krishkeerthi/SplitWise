@@ -67,6 +67,15 @@ class MemberRepository(
         }
     }
 
+    suspend fun decrementStreak(memberId: Int) {
+        withContext(Dispatchers.IO){
+            dataSource.getMemberStreak(memberId)?.let { memberStreak ->
+                if(memberStreak.streak > 0)
+                    dataSource.updateMemberStreak(memberStreak.memberId, memberStreak.streak - 1)
+            }
+        }
+    }
+
     suspend fun checkMemberExistence(name: String, phoneNumber: Long): Boolean {
         return withContext(Dispatchers.IO){
             val result = dataSource.getMember(name.titleCase(), phoneNumber)
@@ -88,5 +97,6 @@ class MemberRepository(
             dataSource.updateProfile(memberId, uri)
         }
     }
+
 
 }

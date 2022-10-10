@@ -13,10 +13,7 @@ import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.ChoosePayeeCardBinding
 import com.example.splitwise.model.MemberAndAmount
-import com.example.splitwise.util.decodeSampledBitmapFromUri
-import com.example.splitwise.util.dpToPx
-import com.example.splitwise.util.getCategoryDrawableResource
-import com.example.splitwise.util.roundOff
+import com.example.splitwise.util.*
 
 class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
     RecyclerView.Adapter<ChoosePayeeViewHolder>() {
@@ -25,7 +22,7 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
     private var selectedPayeesId = listOf<Int>()
     private var selectedAllPayees: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChoosePayeeViewHolder{
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChoosePayeeViewHolder {
         val view = LayoutInflater.from(parent.context)
         val binding = ChoosePayeeCardBinding.inflate(view, parent, false)
 
@@ -40,8 +37,7 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
                 if (isChecked) {
                     //binding.selectedCheckBox.isChecked = true
                     onItemChecked(payeesAndAmounts[adapterPosition].member, true)
-                }
-                else {
+                } else {
                     //binding.selectedCheckBox.isChecked = false
                     onItemChecked(payeesAndAmounts[adapterPosition].member, false)
                 }
@@ -53,7 +49,7 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         val payee = payeesAndAmounts[position].member
         val amount = payeesAndAmounts[position].amount
 
-        if(!selectedAllPayees)
+        if (!selectedAllPayees)
             holder.bind(payee, amount, selectedPayeesId)
         else
             holder.bindAndCheck(payee)
@@ -75,7 +71,7 @@ class ChoosePayeeAdapter(val onItemChecked: (Member, Boolean) -> Unit) :
         notifyDataSetChanged()
     }
 
-    fun updatePayees(selectedPayeesId: List<Int>){
+    fun updatePayees(selectedPayeesId: List<Int>) {
         this.selectedPayeesId = selectedPayeesId
         notifyDataSetChanged()
     }
@@ -89,13 +85,20 @@ class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
         binding.payeeNameTextView.text = payee.name
         binding.amountTextView.text = "₹" + amount.roundOff()
 
-        if(payee.memberProfile != null){
+        if (payee.memberProfile != null) {
             ///binding.payeeImageView.setImageURI(payee.memberProfile)
 
             binding.payeeImageView.setImageBitmap(null)
-            binding.payeeImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                binding.root.context, payee.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
-            ))
+            binding.payeeImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        payee.memberProfile,
+                        40.dpToPx(resources.displayMetrics),
+                        40.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
 
             binding.payeeImageView.visibility = View.VISIBLE
             binding.payeeImageHolder.visibility = View.INVISIBLE
@@ -108,14 +111,22 @@ class ChoosePayeeViewHolder(val binding: ChoosePayeeCardBinding) :
 
     fun bindAndCheck(payee: Member) {
         binding.payeeNameTextView.text = payee.name
-        if(payee.memberProfile != null){
+        if (payee.memberProfile != null) {
             ///binding.payeeImageView.setImageURI(payee.memberProfile)
 
             binding.payeeImageView.setImageBitmap(null)
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.payeeImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                    binding.root.context, payee.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)))
-            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+            //   Handler(Looper.getMainLooper()).postDelayed({
+            binding.payeeImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        payee.memberProfile,
+                        40.dpToPx(resources.displayMetrics),
+                        40.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
+            //   }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
 
             binding.payeeImageView.visibility = View.VISIBLE

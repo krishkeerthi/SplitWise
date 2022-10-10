@@ -60,8 +60,11 @@ class AddExpenseViewModel(context: Context, private val groupId: Int): ViewModel
                 expenseRepository.addExpensePayee(expenseId, id)
                 // increment payee streak
                 memberRepository.incrementStreak(id)
-                if(id != payer)
-                transactionRepository.addTransaction(groupId, payer, id, splitAmount)
+
+                if(id != payer) {
+                    //transactionRepository.addTransaction(groupId, payer, id, splitAmount)
+                    transactionRepository.updateTransaction(groupId, payer, id, splitAmount)
+                }
             }
 
             groupRepository.addGroupExpense(groupId, expenseId)

@@ -34,16 +34,16 @@ class AddMemberViewModel(
                     gotoCreateEditGroupFragment(member)
                 }
                 else{
-                    val memberId = memberRepository.addMember(member.name, member.phone, member.memberProfile)
-                    val addedMember = memberRepository.getMember(memberId)
-
-                    if(addedMember != null){
-                        memberRepository.addMemberStreak(memberId)
-                        gotoCreateEditGroupFragment(addedMember)
-                    }
-                    else{
-                        error()
-                    }
+//                    val memberId = memberRepository.addMember(member.name, member.phone, member.memberProfile)
+//                    val addedMember = memberRepository.getMember(memberId)
+//
+//                    if(addedMember != null){
+//                        memberRepository.addMemberStreak(memberId) // why should I increment streak just for adding in group
+                        gotoCreateEditGroupFragment(member)
+//                    }
+//                    else{
+//                        error()
+//                    }
 
                 }
             }

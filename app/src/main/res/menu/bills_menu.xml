@@ -5,6 +5,6 @@
     <item
         android:id="@+id/delete_bill"
         android:title="@string/delete"
-        android:icon="@drawable/ic_baseline_delete_24"
+        android:icon="@drawable/round_delete_24"
         app:showAsAction="ifRoom"/>
 </menu>

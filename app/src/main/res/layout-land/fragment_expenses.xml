@@ -14,6 +14,57 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/group_icon_card"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.example.splitwise.ui.customclass.CircularImageView
+                        android:id="@+id/group_image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/new_view_color"
+                        android:scaleType="centerCrop"
+                        app:radius="56dp"
+                        android:visibility="invisible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.example.splitwise.ui.customclass.CircularImageView
+                        android:id="@+id/group_image_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:radius="56dp"
+                        android:background="@color/background"
+                        app:fill_color="@color/new_view_color"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/group_image_holder_image"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/ic_baseline_people_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/group_name_text_view"
                 android:layout_width="0dp"
@@ -27,61 +78,153 @@
                 android:textColor="@color/text_bold"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/group_expense_text_view"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/group_icon_card"
                 tools:text="Goa trip" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/group_total_expense"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/total_expense"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/group_expense_text_view"
-                app:layout_constraintStart_toStartOf="@+id/group_expense_text_view"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/group_expense_text_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                android:gravity="center"
-                android:textColor="@color/text_bold"
-                android:textSize="34sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/group_total_expense"
-                tools:text="₹12500" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/members_list_text_view"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/expense_total_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:text="@string/members"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@color/fab_blue"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/group_expense_text_view" />
+                app:layout_constraintTop_toBottomOf="@id/group_name_text_view">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/group_total_expense"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/total_expense"
+                        android:textStyle="bold"
+                        app:layout_goneMarginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/group_expense_text_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:gravity="center"
+                        android:textColor="@color/text_bold"
+                        android:textSize="34sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/group_total_expense"
+                        tools:text="₹12500" />
+
+                    <!--            <com.google.android.material.textview.MaterialTextView-->
+                    <!--                android:id="@+id/members_list_text_view"-->
+                    <!--                android:layout_width="match_parent"-->
+                    <!--                android:layout_height="wrap_content"-->
+                    <!--                android:layout_marginStart="16dp"-->
+                    <!--                android:layout_marginTop="8dp"-->
+                    <!--                android:layout_marginEnd="16dp"-->
+                    <!--                android:text="@string/members"-->
+                    <!--                app:layout_constraintEnd_toEndOf="parent"-->
+                    <!--                app:layout_constraintStart_toStartOf="parent"-->
+                    <!--                app:layout_constraintTop_toBottomOf="@id/group_expense_text_view" />-->
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/members_recycler_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/members_list_text_view"
-                tools:listitem="@layout/member_profile_card"
-                tools:visibility="gone" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/members_recycler_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="16dp"
+                        android:orientation="horizontal"
+                        android:foregroundGravity="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/group_expense_text_view"
+                        tools:listitem="@layout/member_profile_card"
+                        tools:visibility="gone" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/contributions_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="View contributions"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:textSize="16sp"
+                        android:textStyle="italic|bold"
+                        android:textColor="@color/text_bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/members_recycler_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+<!--            <com.google.android.material.textview.MaterialTextView-->
+<!--                android:id="@+id/group_total_expense"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:text="@string/total_expense"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintEnd_toEndOf="@+id/group_expense_text_view"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/group_expense_text_view"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/group_icon_card" />-->
+
+<!--            <com.google.android.material.textview.MaterialTextView-->
+<!--                android:id="@+id/group_expense_text_view"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="4dp"-->
+<!--                android:layout_marginEnd="16dp"-->
+<!--                android:gravity="center"-->
+<!--                android:textColor="@color/text_bold"-->
+<!--                android:textSize="34sp"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/group_total_expense"-->
+<!--                tools:text="₹12500" />-->
+
+<!--            <com.google.android.material.textview.MaterialTextView-->
+<!--                android:id="@+id/members_list_text_view"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:layout_marginEnd="16dp"-->
+<!--                android:text="@string/members"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/group_expense_text_view" />-->
+
+
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:id="@+id/members_recycler_view"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:layout_marginEnd="16dp"-->
+<!--                android:orientation="horizontal"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/members_list_text_view"-->
+<!--                tools:listitem="@layout/member_profile_card"-->
+<!--                tools:visibility="gone" />-->
 
             <View
                 android:id="@+id/horizontal_view"
@@ -91,7 +234,7 @@
                 android:background="#dee3e1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/members_recycler_view" />
+                app:layout_constraintTop_toBottomOf="@id/expense_total_card" />
 
 
             <com.google.android.material.textview.MaterialTextView
@@ -119,7 +262,6 @@
                 android:id="@+id/horizontal_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:scrollbars="none"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -131,6 +273,8 @@
                     android:id="@+id/category_chip_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
                     app:singleLine="true">
 
                     <com.google.android.material.chip.Chip
@@ -260,6 +404,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
                 android:text="@string/no_expenses"
+                android:textSize="18sp"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -310,6 +455,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:contentDescription="Add member and expense"
-        android:src="@android:drawable/ic_input_add" />
+        android:src="@drawable/round_post_add_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,6 +1,8 @@
 package com.example.splitwise.ui.fragment.chooseMembers
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Member
@@ -10,6 +12,10 @@ import kotlinx.coroutines.launch
 
 class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) :
     ViewModel() {
+
+    var textEntered: String = ""
+    var previouslyEnteredText: String = ""
+
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val memberRepository = MemberRepository(database)
 
@@ -17,6 +23,8 @@ class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) 
 
     val membersAndStreaks: LiveData<MutableList<MemberAndStreak>?>
         get() = _membersAndStreaks
+
+    private var calculatedMembersAndStreak = mutableListOf<MemberAndStreak>()
 
     private val selectedMembersList = selectedMembers?.toMutableList() ?: mutableListOf()
 
@@ -30,7 +38,7 @@ class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) 
         _selectedMembersCount.value = 0
     }
 
-    fun fetchData() {
+    fun fetchData(refresh: () -> Unit) {
         viewModelScope.launch {
             val members = memberRepository.getMembers()?.toMutableList() ?: mutableListOf()
             val remainingMembers = mutableListOf<Member>()
@@ -44,10 +52,52 @@ class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) 
                 }
 
                 sortByStreak(remainingMembers)
+            }
 
-                // _members.value = sortedMembers as MutableList<Member>
+            // fetch data during orientation change
+           // Log.d(TAG, "fetchData: text entered is ${textEntered}")
+            if(textEntered == ""){
+                _membersAndStreaks.value = calculatedMembersAndStreak
+            }
+            else{
+                _membersAndStreaks.value = getSearchResult()
+                //refresh()
+            }
+
+            Log.d(TAG, "fetchData: fetch data finished")
+        }
+    }
+
+    fun fetchSearchedData(){
+        if(textEntered == ""){
+            _membersAndStreaks.value = calculatedMembersAndStreak
+        }
+        else{
+            _membersAndStreaks.value = getSearchResult()
+        }
+    }
+
+    private fun getSearchResult(): MutableList<MemberAndStreak>?{
+        val updatedList = mutableSetOf<MemberAndStreak>()
+
+        Log.d(TAG, "getSearchResult: calculated members and streaks ${calculatedMembersAndStreak} " +
+                "query is ${textEntered}")
+        for(i in calculatedMembersAndStreak){
+            if(i.member.name.lowercase().startsWith(textEntered)) {
+                updatedList.add(i)
+                Log.d(TAG, "getSearchResult: starts with ${i.member.name}")
             }
         }
+
+        for(i in calculatedMembersAndStreak){
+            if(i.member.name.lowercase().contains(textEntered)) {
+                updatedList.add(i)
+                Log.d(TAG, "getSearchResult: contains ${i.member.name}")
+            }
+        }
+
+        Log.d(TAG, "fetchData: fetch searched data finished")
+        return updatedList.toMutableList()
     }
 
     fun addMemberToSelected(member: Member) {
@@ -88,7 +138,7 @@ class ChooseMembersViewModel(context: Context, selectedMembers: Array<Member>?) 
                     )
                 }
             }
-
+            calculatedMembersAndStreak = membersAndStreaks
             _membersAndStreaks.value = membersAndStreaks
         }.join()
     }

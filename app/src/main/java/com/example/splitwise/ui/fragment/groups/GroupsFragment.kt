@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
@@ -23,14 +24,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
+import com.example.splitwise.model.ExpenseMember
 import com.example.splitwise.ui.fragment.adapter.*
 import com.example.splitwise.ui.fragment.addamount.AddAmountDialog
 import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
 import java.util.*
@@ -48,6 +52,7 @@ class GroupsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Log.d(TAG, "onCreate: fragment oncreate called")
         // this animation not working fine in my device(1+9)
 //        reenterTransition = MaterialElevationScale(true).apply {
 //            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
@@ -56,6 +61,31 @@ class GroupsFragment : Fragment() {
 //            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
 //        }
 
+        // placing group loading here so that it wont be called while returning from backstack
+
+        //viewModel.fetchData()
+//        binding = FragmentGroupsBinding.bind(view)
+//
+//        // Rv
+//        val groupsAdapter = GroupsAdapter({ groupId: Int, groupView: View ->
+//            goToExpenseFragment(groupId, groupView)
+//        },
+//            { groupId: Int, groupIcon: String?, groupName: String, groupView: View ->
+//                gotoGroupIconFragment(
+//                    groupId,
+//                    groupIcon,
+//                    groupName,
+//                    groupView
+//                )
+//            }
+//        )
+//
+//        binding.groupsRecyclerView.apply {
+//            layoutManager = LinearLayoutManager(requireContext()).apply {
+//            }
+//
+//            adapter = groupsAdapter
+//        }
     }
 
     override fun onCreateView(
@@ -67,6 +97,7 @@ class GroupsFragment : Fragment() {
 //        val view = inflater.inflate(R.layout.fragment_groups, container, false)
 //        binding = FragmentGroupsBinding.bind(view)
 
+        Log.d(TAG, "onCreate: fragment oncreateview called")
         (requireActivity() as AppCompatActivity).supportActionBar?.title =
             getString(R.string.groups)
         return inflater.inflate(R.layout.fragment_groups, container, false)
@@ -134,6 +165,15 @@ class GroupsFragment : Fragment() {
 //            },
 
 
+        // just to check whether view retaining or not
+//        if(viewModel.bool) {
+//            val dummyTV = view?.findViewById<TextView>(R.id.dummy_textview)
+//            dummyTV?.text = "Hello from keerthi "
+//            viewModel.bool = false
+//        }
+
+
+        Log.d(TAG, "onViewCreated: onCreate: rvcomputing ${binding.groupsRecyclerView.isComputingLayout}")
         binding.groupsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext()).apply {
 //                reverseLayout = true // it reverses but scrolled down to the last item
@@ -146,7 +186,7 @@ class GroupsFragment : Fragment() {
 
         // Testing swipe in groups recyclerview
         val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
 //                val swipeDirection = if (ItemTouchHelper.LEFT == direction) "Left"
 //                else if (ItemTouchHelper.RIGHT == direction) "Right"
 //                else "Unknown"
@@ -157,12 +197,19 @@ class GroupsFragment : Fragment() {
 //                    Toast.LENGTH_SHORT
 //                ).show()
 
+                if(direction == ItemTouchHelper.LEFT)
                 viewModel.groups.value?.let {
-                    goToExpenseFragment(it[viewHolder.absoluteAdapterPosition].groupId, viewHolder.itemView)
+                    confirmationDialog(it[viewHolder.absoluteAdapterPosition].groupId,
+                        it[viewHolder.absoluteAdapterPosition].groupName,
+                        viewHolder.absoluteAdapterPosition)
+                    //goToExpenseFragment(it[viewHolder.absoluteAdapterPosition].groupId, viewHolder.itemView)
                 }
+                else
+                    viewHolder.bindingAdapter?.notifyItemChanged(viewHolder.absoluteAdapterPosition)
             }
 
         }
+
 
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(binding.groupsRecyclerView)
@@ -171,7 +218,8 @@ class GroupsFragment : Fragment() {
         // Livedata<item name="android:actionBarStyle">@style/ActionBarTheme</item>a
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             if (groups != null && groups.isNotEmpty()) {
-                Log.d(TAG, "onViewCreated: groups livedata ${groups.size}")
+                Log.d(TAG, "onViewCreated: groups livedatax existing rv size${binding.groupsRecyclerView.adapter?.itemCount}")
+                Log.d(TAG, "onViewCreated: groups livedatax groups size${groups.size}")
                 groupsAdapter.updateGroups(groups)
                 binding.groupsRecyclerView.visibility = View.VISIBLE
                 binding.emptyGroupImageView.visibility = View.GONE
@@ -193,6 +241,9 @@ class GroupsFragment : Fragment() {
                 binding.emptyGroupImageView.visibility = View.VISIBLE
                 binding.noGroupsTextView.visibility = View.VISIBLE
                 binding.dateTextView.visibility = View.GONE
+
+                updateAmountFilter()
+                updateDateFilter()
             }
         }
 
@@ -269,6 +320,36 @@ class GroupsFragment : Fragment() {
 
     }
 
+    private fun confirmationDialog(groupId: Int, groupName: String, position: Int) {
+        val dialogBuilder = AlertDialog.Builder(requireContext()).apply {
+            setTitle(getString(R.string.delete_group))
+            setCancelable(false)
+            setMessage(String.format(getString(R.string.delete_group_message), groupName))
+
+            setPositiveButton(getString(R.string.delete)){ dialog, which ->
+                //Toast.makeText(requireContext(), "${member.name} deleted", Toast.LENGTH_SHORT).show()
+
+                viewModel.deleteGroup(groupId) {
+                    viewModel.fetchData()
+                    Snackbar.make(
+                        binding.root,
+                        "$groupName ${getString(R.string.deleted)}",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            setNegativeButton(getString(R.string.cancel)){ dialog, which ->
+                binding.groupsRecyclerView.adapter?.notifyItemChanged(position)
+                dialog.cancel()
+            }
+        }
+
+        dialogBuilder.show()
+
+    }
+
+
     override fun onResume() {
         super.onResume()
         jankStats.isTrackingEnabled = true
@@ -334,6 +415,7 @@ class GroupsFragment : Fragment() {
             groupIcon,
             groupName,
             true,
+            false,
             false
         )
         view?.findNavController()?.navigate(action, extras)
@@ -730,6 +812,7 @@ class GroupsFragment : Fragment() {
         amount: Float,
         dialogContext: Context
     ) {
+        Log.d(TAG, "createAmountFilterChip: start")
         binding.amountFilterChip.text =
             String.format(
                 dialogContext.getString(R.string.amount_filter),
@@ -743,6 +826,7 @@ class GroupsFragment : Fragment() {
         binding.amountFilterChip.visibility = View.VISIBLE
 
         binding.horizontalView.visibility = View.VISIBLE
+        Log.d(TAG, "createAmountFilterChip: end")
     }
 
 

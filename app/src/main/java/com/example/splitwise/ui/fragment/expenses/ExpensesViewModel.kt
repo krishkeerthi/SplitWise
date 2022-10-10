@@ -11,6 +11,7 @@ import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
+import com.example.splitwise.data.repository.TransactionRepository
 import com.example.splitwise.model.ExpenseMember
 import com.example.splitwise.util.*
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +25,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
     private val groupRepository = GroupRepository(database)
     private val memberRepository = MemberRepository(database)
     private val expenseRepository = ExpenseRepository(database)
+    private val transactionRepository = TransactionRepository(database)
 
     var clicked: Boolean = false
 
@@ -63,7 +65,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
     init {
         //fetchData()
-        loadExpensesAndMembers()
+        //loadExpensesAndMembers()
         //loadMembers()
         _running.value = false
     }
@@ -83,16 +85,28 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
     fun loadMembers() {
         Log.d(TAG, "expenseviewmodel: created")
         viewModelScope.launch {
-            _group.value = groupRepository.getGroup(groupId)
-            //setExpenseMembers(true)
-            val memberIds = groupRepository.getGroupMembers(groupId)
-            Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
-            _groupMembers.value = getMembersFromIds(memberIds)
 
+            loadGroup()
+            //setExpenseMembers(true)
+            loadGroupMembers()
         }
     }
 
-    private fun loadExpensesAndMembers(){
+    fun loadGroup(){
+        viewModelScope.launch {
+            _group.value = groupRepository.getGroup(groupId)
+        }
+    }
+
+    private fun loadGroupMembers(){
+        viewModelScope.launch {
+            val memberIds = groupRepository.getGroupMembers(groupId)
+            Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
+            _groupMembers.value = getMembersFromIds(memberIds)
+        }
+    }
+
+    fun loadExpensesAndMembers(){ // previously private
         viewModelScope.launch {
             setExpenseMembers(true)
         }
@@ -256,6 +270,91 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 //            _pending.value = true
 //        }
 //    }
+
+    fun deleteExpense(groupId: Int, expenseId: Int, onDelete: () -> Unit){
+        viewModelScope.launch {
+            //1. delete bills
+            expenseRepository.deleteBills(expenseId)
+            //2. delete group expense
+            expenseRepository.removeExpenseIdFromGroup(groupId, expenseId)
+
+            expenseRepository.getExpense(expenseId)?.let { expense ->
+                // 3. decrement member streak
+                memberRepository.decrementStreak(expense.payer)
+
+                expenseRepository.getExpensePayees(expenseId)?.let { payeesIds ->
+                    // decrementing streak
+                    for(payeeId in payeesIds)
+                        memberRepository.decrementStreak(payeeId)
+
+                    //4. reduce amount in transaction
+                    for(payeeId in payeesIds){
+                        transactionRepository.getAmount(groupId, expense.payer, payeeId)?.let { amount ->
+                            transactionRepository.updateAmount(groupId, expense.payer, payeeId, amount - expense.splitAmount)
+                        }
+                    }
+
+                    //5. delete expense payees
+                    for(payeeId in payeesIds)
+                        expenseRepository.removeExpensePayee(expenseId, payeeId)
+
+                }
+
+                //6. reduce expense total in groups
+                groupRepository.getTotalExpense(groupId)?.let { total ->
+                    Log.d(TAG, "deleteExpense: group total ${total} expense total ${expense.totalAmount}")
+                    groupRepository.reduceTotalExpense(groupId, total - expense.totalAmount)
+                }
+                //7. delete expense in expenses
+                expenseRepository.deleteExpense(expenseId)
+
+                onDelete()
+            }
+
+        }
+    }
+
+    fun deleteGroup(groupId: Int, onDelete: () -> Unit) {
+        viewModelScope.launch {
+            expenseRepository.getExpenses(groupId)?.let { expenses ->
+
+                for (expense in expenses) {
+                    //1. remove bills
+                    expenseRepository.deleteBills(expense.expenseId)
+
+                    // 2. decrement member streak
+                    memberRepository.decrementStreak(expense.payer)
+
+                    expenseRepository.getExpensePayees(expense.expenseId)?.let { payeesIds ->
+                        // decrementing streak
+                        for (payeeId in payeesIds)
+                            memberRepository.decrementStreak(payeeId)
+
+                        //3. delete expense payees
+                        for(payeeId in payeesIds)
+                            expenseRepository.removeExpensePayee(expense.expenseId, payeeId)
+                    }
+
+                    //4. delete group expense
+                    expenseRepository.removeExpenseIdFromGroup(groupId, expense.expenseId)
+
+                    //5. delete expense
+                    expenseRepository.deleteExpense(expense.expenseId)
+                }
+
+                //6. transactions
+                transactionRepository.deleteGroupTransactions(groupId)
+
+                // 7. remove group members
+                groupRepository.removeGroupMembers(groupId)
+
+                //8. remove group
+                groupRepository.removeGroup(groupId)
+
+                onDelete()
+            }
+        }
+    }
 
 }
 

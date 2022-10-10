@@ -70,7 +70,7 @@ class RegisterActivity : AppCompatActivity() {
                     phoneLayout.isErrorEnabled = false
 
                 } else {
-                    phoneLayout.error = getString(R.string.enter_10_numbers)
+                    //phoneLayout.error = getString(R.string.enter_10_numbers)
 
                 }
 

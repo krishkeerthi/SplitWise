@@ -1,13 +1,11 @@
 package com.example.splitwise.ui.fragment.settings
 
-import android.content.ContentValues
 import android.content.Context
-import android.util.Log
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
-import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
@@ -23,7 +21,7 @@ class SettingsViewModel(context: Context) :
     private val memberRepository = MemberRepository(database)
     private val groupRepository = GroupRepository(database)
 
-    fun insertSampleData(updateDateInserted: () -> Unit, restartActivity: () -> Unit){
+    fun insertSampleData(updateDateInserted: () -> Unit, restartActivity: () -> Unit) {
         viewModelScope.launch {
             // Group Creation
             // Group 1
@@ -32,20 +30,30 @@ class SettingsViewModel(context: Context) :
                 "description",
                 Date(),
                 0F,
-                null
+                Uri.parse("android.resource://com.example.splitwise/drawable/shirdi"),
             )
 
             // Member Addition to Group
-            val shanthiId = memberRepository.addMember("Shanthi", 3839393939, null)
+            //Uri.parse("android.resource://com.example.splitwise/drawable/kamal"),
+            val shanthiId = memberRepository.addMember(
+                "Shanthi", 3839393939,
+                Uri.parse("android.resource://com.example.splitwise/drawable/shanthi"),
+            )
             memberRepository.addMemberStreak(shanthiId)
             groupRepository.addGroupMember(groupId, shanthiId)
 
 
-            val arjunId = memberRepository.addMember("Arjun", 2930492043, null)
+            val arjunId = memberRepository.addMember(
+                "Arjun", 2930492043,
+                Uri.parse("android.resource://com.example.splitwise/drawable/arjun"),
+            )
             memberRepository.addMemberStreak(arjunId)
             groupRepository.addGroupMember(groupId, arjunId)
 
-            val kamalId = memberRepository.addMember("Kamal", 2493020303, null)
+            val kamalId = memberRepository.addMember(
+                "Kamal", 2493020303,
+                Uri.parse("android.resource://com.example.splitwise/drawable/kamal"),
+            )
             memberRepository.addMemberStreak(kamalId)
             groupRepository.addGroupMember(groupId, kamalId)
 
@@ -108,20 +116,29 @@ class SettingsViewModel(context: Context) :
                 "description",
                 Date(),
                 0F,
-                null
+                Uri.parse("android.resource://com.example.splitwise/drawable/goa_sample"),
             )
 
             // Member Addition to Group
-            val reshmiId = memberRepository.addMember("Reshmi", 3839393939, null)
+            val reshmiId = memberRepository.addMember(
+                "Reshmi", 3839393939,
+                Uri.parse("android.resource://com.example.splitwise/drawable/reshmi"),
+            )
             memberRepository.addMemberStreak(reshmiId)
             groupRepository.addGroupMember(groupId2, reshmiId)
 
 
-            val krithiId = memberRepository.addMember("Krithi", 2930492043, null)
+            val krithiId = memberRepository.addMember(
+                "Krithi", 2930492043,
+                Uri.parse("android.resource://com.example.splitwise/drawable/krithi"),
+            )
             memberRepository.addMemberStreak(krithiId)
             groupRepository.addGroupMember(groupId2, krithiId)
 
-            val nazriyaId = memberRepository.addMember("Nazriya", 2493020303, null)
+            val nazriyaId = memberRepository.addMember(
+                "Nazriya", 2493020303,
+                Uri.parse("android.resource://com.example.splitwise/drawable/nazriya"),
+            )
             memberRepository.addMemberStreak(nazriyaId)
             groupRepository.addGroupMember(groupId2, nazriyaId)
 

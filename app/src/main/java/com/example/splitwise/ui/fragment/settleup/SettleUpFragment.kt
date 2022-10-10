@@ -1,7 +1,6 @@
 package com.example.splitwise.ui.fragment.settleup
 
 import android.content.ContentValues.TAG
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,16 +15,13 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
-import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSettleUpBinding
 import com.example.splitwise.model.MemberAndAmount
 import com.example.splitwise.ui.fragment.adapter.ChoosePayeeAdapter
-import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
-import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
-import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragmentDirections
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.getRoundedCroppedBitmap
 import com.example.splitwise.util.roundOff
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
@@ -69,7 +64,7 @@ class SettleUpFragment : Fragment() {
         binding = FragmentSettleUpBinding.bind(view)
 
         // toolbar title
-        requireActivity().title = "Settle Up"
+        //requireActivity().title = "Settle Up"
 
         //viewModel.fetchData() // has to be called otherwise latest data is not fetched sometimes, yes it is inefficient
 
@@ -144,17 +139,19 @@ class SettleUpFragment : Fragment() {
                 if (it.memberProfile != null) {
                     ///binding.fromMemberImageView.setImageURI(it.memberProfile)
 
-                    Handler(Looper.getMainLooper()).postDelayed({
+                  //  Handler(Looper.getMainLooper()).postDelayed({
 
                         binding.fromMemberImageView.setImageBitmap(
-                            decodeSampledBitmapFromUri(
-                                binding.root.context,
-                                it.memberProfile,
-                                48.dpToPx(resources.displayMetrics),
-                                48.dpToPx(resources.displayMetrics)
+                            getRoundedCroppedBitmap(
+                                decodeSampledBitmapFromUri(
+                                    binding.root.context,
+                                    it.memberProfile,
+                                    48.dpToPx(resources.displayMetrics),
+                                    48.dpToPx(resources.displayMetrics)
+                                )!!
                             )
                         )
-                    }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+              //      }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
 
                     binding.fromMemberImageView.visibility = View.VISIBLE
@@ -204,8 +201,7 @@ class SettleUpFragment : Fragment() {
                 if (count == viewModel.payeesAndAmounts.value!!.size) {
                     //binding.selectAllPayees.visibility = View.GONE
                     binding.selectAllPayees.isEnabled = false
-                }
-                else {
+                } else {
                     //binding.selectAllPayees.visibility = View.VISIBLE
                     binding.selectAllPayees.isEnabled = true
                 }

@@ -11,7 +11,7 @@ import com.example.splitwise.util.*
 
 @Database(
     entities = [ ExpenseBill::class, ExpensePayee::class, Expense::class, GroupExpense::class, GroupMember::class,
-        Group::class, Member::class, Transaction::class, MemberStreak::class] ,
+        Group::class, Member::class, Transaction::class, MemberStreak::class, RemovedExpensePayee::class] ,
     version = 1
 )
 @TypeConverters(
@@ -28,6 +28,7 @@ abstract class SplitWiseRoomDatabase: RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
     abstract fun memberDao(): MemberDao
     abstract fun memberStreakDao(): MemberStreakDao
+    abstract fun removedExpensePayeeDao(): RemovedExpensePayeeDao
 
     companion object{
         @Volatile

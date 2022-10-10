@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/create_edit_group_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:transitionName="@string/create_edit_group_transition_name">
 
 
@@ -12,155 +12,256 @@
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/group_profile_card"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="centerCrop"
-        app:cardElevation="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/view_color"
-        app:cardCornerRadius="100dp">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/group_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/group_profile_card"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/view_color"
                 android:scaleType="centerCrop"
-                android:background="@color/view_color"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
-<!--            android:transitionName="@string/create_edit_group_icon_transition_name"-->
+                app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/group_image_holder"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.example.splitwise.ui.customclass.CircularImageView
+                        android:id="@+id/group_image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:radius="80dp"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <!--            android:transitionName="@string/create_edit_group_icon_transition_name"-->
+
+                    <com.example.splitwise.ui.customclass.CircularImageView
+                        android:id="@+id/group_image_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:radius="80dp"
+                        app:fill_color="@color/new_view_color"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <!--            android:transitionName="@string/create_edit_group_empty_icon_transition_name"-->
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/group_image_holder_image"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/round_group_24"
+                        app:layout_constraintBottom_toBottomOf="@+id/group_image_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <!--            android:transitionName="@string/create_edit_group_empty_icon_transition_name"-->
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/group_profile_edit_card"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/view_color"
+                android:scaleType="centerCrop"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="@id/group_profile_card"
+                app:layout_constraintBottom_toBottomOf="@id/group_profile_card">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.example.splitwise.ui.customclass.CircularImageView
+                        android:id="@+id/group_image_edit_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:radius="28dp"
+                        app:fill_color="@color/fab_blue"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <!--            android:transitionName="@string/create_edit_group_empty_icon_transition_name"-->
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/group_image_edit_holder_image"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/round_photo_camera_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <!--            android:transitionName="@string/create_edit_group_empty_icon_transition_name"-->
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!--    <com.google.android.material.imageview.ShapeableImageView-->
+            <!--        android:id="@+id/group_image_view"-->
+            <!--        android:layout_width="160dp"-->
+            <!--        android:layout_height="160dp"-->
+            <!--        android:layout_marginTop="16dp"-->
+            <!--        android:scaleType="centerCrop"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintStart_toStartOf="parent"-->
+            <!--        app:layout_constraintTop_toTopOf="parent"-->
+            <!--        app:shapeAppearanceOverlay="@style/Circular"-->
+            <!--        android:transitionName="@string/create_edit_group_icon_transition_name"/>-->
+
+            <!--    <com.google.android.material.imageview.ShapeableImageView-->
+            <!--        android:id="@+id/group_image_holder"-->
+            <!--        android:layout_width="160dp"-->
+            <!--        android:layout_height="160dp"-->
+            <!--        android:layout_marginTop="16dp"-->
+            <!--        android:background="@color/view_color"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintStart_toStartOf="parent"-->
+            <!--        app:layout_constraintTop_toTopOf="parent"-->
+            <!--        app:shapeAppearanceOverlay="@style/Circular"-->
+            <!--        android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>-->
+
+            <!--    <androidx.appcompat.widget.AppCompatImageView-->
+            <!--        android:id="@+id/group_image_holder_image"-->
+            <!--        android:layout_width="120dp"-->
+            <!--        android:layout_height="120dp"-->
+            <!--        android:layout_marginTop="36dp"-->
+            <!--        android:src="@drawable/ic_baseline_people_24"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintStart_toStartOf="parent"-->
+            <!--        app:layout_constraintTop_toTopOf="parent"-->
+            <!--        android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_group_name_text_field"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/view_color"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:hint="@string/group_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/group_profile_card">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/group_name_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences|text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/members_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/members"
+                app:layout_constraintBottom_toBottomOf="@+id/choose_member_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/choose_member_button" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/group_members_recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/members_text_view"
+                tools:listitem="@layout/group_member_card" />
+
+<!--            <com.google.android.material.button.MaterialButton-->
+<!--                android:id="@+id/add_member_button"-->
+<!--                style="@style/Widget.MaterialComponents.Button.TextButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/add_members"-->
+<!--                android:layout_marginTop="200dp"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/members_text_view"-->
+<!--               />-->
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/no_members_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/no_members_selected"
+                android:textSize="18sp"
+                android:layout_marginTop="200dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/members_text_view"
                 />
-<!--            android:transitionName="@string/create_edit_group_empty_icon_transition_name"-->
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/group_image_holder_image"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/ic_baseline_photo_camera_24"
-                app:layout_constraintBottom_toBottomOf="@+id/group_image_view"
-                app:layout_constraintEnd_toEndOf="parent"
+            <com.google.android.material.button.MaterialButton
+                android:id="@id/add_member_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_members"
+                app:layout_constraintTop_toBottomOf="@id/no_members_text_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-<!--            android:transitionName="@string/create_edit_group_empty_icon_transition_name"-->
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintEnd_toEndOf="parent"/>
 
-    </androidx.cardview.widget.CardView>
+<!--            <androidx.appcompat.widget.AppCompatImageView-->
+<!--                android:id="@+id/add_member_button"-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="60dp"-->
+<!--                android:layout_marginTop="200dp"-->
+<!--                android:visibility="invisible"-->
+<!--                android:src="@drawable/round_add_box_24"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/members_text_view"-->
+<!--                />-->
 
-<!--    <com.google.android.material.imageview.ShapeableImageView-->
-<!--        android:id="@+id/group_image_view"-->
-<!--        android:layout_width="160dp"-->
-<!--        android:layout_height="160dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:scaleType="centerCrop"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:shapeAppearanceOverlay="@style/Circular"-->
-<!--        android:transitionName="@string/create_edit_group_icon_transition_name"/>-->
+<!--            <com.google.android.material.textview.MaterialTextView-->
+<!--                android:id="@+id/add_member_text_view"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:text="Add member"-->
+<!--                android:visibility="invisible"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/add_member_button"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"/>-->
 
-<!--    <com.google.android.material.imageview.ShapeableImageView-->
-<!--        android:id="@+id/group_image_holder"-->
-<!--        android:layout_width="160dp"-->
-<!--        android:layout_height="160dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:background="@color/view_color"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:shapeAppearanceOverlay="@style/Circular"-->
-<!--        android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>-->
-
-<!--    <androidx.appcompat.widget.AppCompatImageView-->
-<!--        android:id="@+id/group_image_holder_image"-->
-<!--        android:layout_width="120dp"-->
-<!--        android:layout_height="120dp"-->
-<!--        android:layout_marginTop="36dp"-->
-<!--        android:src="@drawable/ic_baseline_people_24"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        android:transitionName="@string/create_edit_group_empty_icon_transition_name"/>-->
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/outlined_group_name_text_field"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:hint="@string/group_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/group_profile_card">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/group_name_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textCapSentences|text"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/members_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/members"
-        app:layout_constraintBottom_toBottomOf="@+id/choose_member_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/choose_member_button" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/group_members_recycler_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/members_text_view"
-        tools:listitem="@layout/group_member_card" />
-
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/choose_member_button"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="@string/choose_members"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/outlined_group_name_text_field" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/choose_member_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="@string/choose_members"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/outlined_group_name_text_field" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

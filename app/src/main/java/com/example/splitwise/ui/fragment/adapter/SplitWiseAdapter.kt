@@ -12,10 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.databinding.MemberOweLendCardBinding
 import com.example.splitwise.model.MemberPaymentStatsDetail
-import com.example.splitwise.util.decodeSampledBitmapFromUri
-import com.example.splitwise.util.dpToPx
-import com.example.splitwise.util.ripple
-import com.example.splitwise.util.roundOff
+import com.example.splitwise.util.*
 
 class SplitWiseAdapter(
     val onTransactionClicked: (Int, Float, String, View) -> Unit
@@ -62,30 +59,47 @@ class SplitWiseViewHolder(val binding: MemberOweLendCardBinding) :
     val resources = binding.root.resources
     fun bind(memberPaymentStatsDetail: MemberPaymentStatsDetail) {
         // transition name
-        ViewCompat.setTransitionName(binding.root, String.format(resources.getString(R.string.member_payment_stat_transition_name), memberPaymentStatsDetail.memberId))
+        ViewCompat.setTransitionName(
+            binding.root,
+            String.format(
+                resources.getString(R.string.member_payment_stat_transition_name),
+                memberPaymentStatsDetail.memberId
+            )
+        )
 
         binding.memberTextView.text = memberPaymentStatsDetail.memberName
         binding.oweTextView.text = "₹" + memberPaymentStatsDetail.amountOwed.roundOff()
         binding.lendTextView.text = "₹" + memberPaymentStatsDetail.amountLend.roundOff()
 
-        if(memberPaymentStatsDetail.memberProfile != null){
-            Log.d(TAG, "bind: name ${memberPaymentStatsDetail.memberName} profile ${memberPaymentStatsDetail.memberProfile}")
+        if (memberPaymentStatsDetail.memberProfile != null) {
+            Log.d(
+                TAG,
+                "bind: name ${memberPaymentStatsDetail.memberName} profile ${memberPaymentStatsDetail.memberProfile}"
+            )
             ///binding.memberImageView.setImageURI(memberPaymentStatsDetail.memberProfile)
 
             binding.memberImageView.setImageBitmap(null)
-
             // delaying image loading so that rendering speed wont affect
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                    binding.root.context, memberPaymentStatsDetail.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)))
+            //Handler(Looper.getMainLooper()).postDelayed({
+            binding.memberImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        memberPaymentStatsDetail.memberProfile,
+                        40.dpToPx(resources.displayMetrics),
+                        40.dpToPx(
+                            resources.displayMetrics
+                        )
+                    )!!
+                )
+            )
 
-            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+            //}, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE
             binding.memberImageHolderImage.visibility = View.INVISIBLE
-        }
-        else{
+        } else {
             binding.memberImageView.visibility = View.INVISIBLE
             binding.memberImageHolder.visibility = View.VISIBLE
             binding.memberImageHolderImage.visibility = View.VISIBLE

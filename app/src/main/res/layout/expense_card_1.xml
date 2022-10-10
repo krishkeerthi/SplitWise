@@ -34,34 +34,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:cardCornerRadius="10dp">
+        app:cardCornerRadius="50dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.example.splitwise.ui.customclass.CircularImageView
                 android:id="@+id/expense_image_holder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/view_color"
+                app:radius="24dp"
+                android:background="@color/background"
+                app:fill_color="@color/new_view_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/expense_image_view"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                app:layout_constraintBottom_toBottomOf="@+id/expense_image_holder"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/backgrounds/scenic"
-                />
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

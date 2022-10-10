@@ -50,4 +50,8 @@ interface GroupDataSource {
     suspend fun updateGroupIcon(groupId: Int, uri: Uri)
 
     suspend fun updateGroupName(groupId: Int, groupName: String)
+
+    suspend fun removeGroup(groupId: Int)
+
+    suspend fun removeGroupMembers(groupId: Int)
 }

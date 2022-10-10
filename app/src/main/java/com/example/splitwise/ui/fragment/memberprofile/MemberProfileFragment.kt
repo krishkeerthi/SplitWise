@@ -32,6 +32,7 @@ import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentMemberProfileBinding
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.getRoundedCroppedBitmap
 import com.example.splitwise.util.nameCheck
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -188,7 +189,8 @@ class MemberProfileFragment : Fragment() {
                 // to enable edit options menu
                 requireActivity().invalidateOptionsMenu()
 
-                Snackbar.make(binding.root, getString(R.string.edit_member), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, getString(R.string.edit_member), Snackbar.LENGTH_SHORT)
+                    .show()
                 enableEdit()
                 true
             }
@@ -246,9 +248,16 @@ class MemberProfileFragment : Fragment() {
         // update profile irrespective of edit enabled
         if (member.memberProfile != null) {
             ///binding.memberImageView.setImageURI(member.memberProfile)
-            binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                binding.root.context, member.memberProfile, 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)
-            ))
+            binding.memberImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        member.memberProfile,
+                        160.dpToPx(resources.displayMetrics),
+                        160.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
             setImageVisibility()
         }
     }
@@ -531,8 +540,16 @@ class MemberProfileFragment : Fragment() {
         viewModel.updateProfile(uri)
 
         ///binding.memberImageView.setImageURI(uri)
-        binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
-            binding.root.context, uri, 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)))
+        binding.memberImageView.setImageBitmap(
+            getRoundedCroppedBitmap(
+            decodeSampledBitmapFromUri(
+                binding.root.context,
+                uri,
+                160.dpToPx(resources.displayMetrics),
+                160.dpToPx(resources.displayMetrics)
+            )!!
+            )
+        )
 
         binding.memberImageView.visibility = View.VISIBLE
         binding.memberImageHolder.visibility = View.GONE

@@ -29,6 +29,7 @@ class CreateEditGroupViewModel(
 
 
     var tempGroupName = ""
+    var newEntry = true // to load data after deleted, when returning from backstack
 
     var updateMenuVisibility: Boolean = false
 
@@ -56,11 +57,27 @@ class CreateEditGroupViewModel(
 
     val exists = MutableLiveData<Boolean>(false)
 
-init {
-    Log.d(TAG, "membercheck: init create edit view model called")
 
-    //updatedFetchData(groupId, selectedMembers?.toList())
-}
+    // things to be included
+    // entered group name solves, group name edited task, call updateGroupName
+    //updated uri, save args.groupIcon here (turn of updating group icon in group icon fragment)
+    // hold dummy members and add them during group update(selected members ) already in db & (created members) yet to add in db
+    // check whether group members changed above will solve, addMembersNotIncludedInGroup should be called during group update
+
+    var updatedUri: Uri? = null
+    var membersNewlyAddedToGroup = mutableSetOf<Member>()
+
+    init {
+        Log.d(TAG, "membercheck: init create edit view model called")
+
+        //updatedFetchData(groupId, selectedMembers?.toList())
+
+        selectedMembers?.let {
+            addSelectedMembersToGroupMembers(it.toList())
+        }
+
+    }
+
     fun fetchData() {
         Log.d(TAG, "onViewCreated: viewmodel $groupId")
 
@@ -76,7 +93,7 @@ init {
                 val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
 
                 _members.value = getMembersFromIds(memberIds)
-            } else if (groupId == -1 && selectedMembers != null ) { // selecting member while creating group
+            } else if (groupId == -1 && selectedMembers != null) { // selecting member while creating group
                 _members.value = selectedMembers!!.toMutableList()  // errors can happen,
                 updateFlag()
                 Log.d(TAG, "onCreateDialog: membercheck group null, selected members not null")
@@ -89,7 +106,7 @@ init {
                 addMembersNotIncludedToGroup(listOf())
             } else {
                 //_members.value = null
-                    // do nothing
+                // do nothing
                 Log.d(TAG, "onCreateDialog: membercheck group null,selected members null")
             }
 //            if(groupId != -1 && memberId != -1){
@@ -138,7 +155,7 @@ init {
 
                 val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
 
-                getMembersFromIds(memberIds)?.let{
+                getMembersFromIds(memberIds)?.let {
                     groupMembers = it.toMutableSet()
                     _members.value = groupMembers.toMutableList()
                 }
@@ -152,14 +169,23 @@ init {
                 updateFlag()
                 Log.d(TAG, "onCreateDialog: membercheck group null, selected members not null")
             } else if (groupId != -1 && selectedMembers != null) { // selecting member while updating group
+                // update flag in created group also
                 val group = groupRepository.getGroup(groupId)
                 _groupName.value = group?.groupName
                 _group.value = group
 
                 addSelectedMembersToGroupMembers(selectedMembers)
+                addSelectedMembersToNewlyAddedGroupMembers(selectedMembers)
 
                 _members.value = groupMembers.toMutableList()
-                addMembersNotIncludedToGroup(selectedMembers)
+                // addMembersNotIncludedToGroup(selectedMembers) call this during group update
+
+                // later ref
+                groupRepository.getGroupMembers(groupId)?.let {
+                    if(groupMembers.size > it.size) // comparing added grp members size to actual grp members size
+                        change = true
+                }
+
             } else {
                 //_members.value = null
                 // do nothing
@@ -169,12 +195,18 @@ init {
     }
 
     private fun addSelectedMembersToGroupMembers(selectedMembers: List<Member>) {
-        for(member in selectedMembers){
+        for (member in selectedMembers) {
             groupMembers.add(member)
         }
     }
 
-    fun reset(){
+    private fun addSelectedMembersToNewlyAddedGroupMembers(selectedMembers: List<Member>) {
+        for (member in selectedMembers) {
+            membersNewlyAddedToGroup.add(member)
+        }
+    }
+
+    fun reset(): Boolean {
         Log.d(TAG, "reset: called")
         memberCountChange = false
         change = false
@@ -191,10 +223,16 @@ init {
         Log.d(TAG, "reset: members ${members.value}")
 
         //groupMembers.clear()
-        groupMembers= mutableSetOf()
+        groupMembers = mutableSetOf()
+        membersNewlyAddedToGroup = mutableSetOf()
+
+        // change updated uri
+        updatedUri = null
 
         exists.value = false
         Log.d(TAG, "reset: ended")
+
+        return true
     }
 
     private suspend fun addMembersNotIncludedToGroup(selectedMembers: List<Member>) {
@@ -205,17 +243,52 @@ init {
 
             val sMembers = selectedMembers
 
-           // if (sMembers != null) {
-                for (member in sMembers) {
-                    if (member.memberId !in memberIds) {
-                        Log.d(TAG, "addMembersNotIncludedToGroup: newMember id ${member.memberId} existing members ${memberIds}")
-                        groupRepository.addGroupMember(groupId, member.memberId)
-                    }
+            // if (sMembers != null) {
+            for (member in sMembers) {
+                if (member.memberId !in memberIds) {
+                    Log.d(
+                        TAG,
+                        "addMembersNotIncludedToGroup: newMember id ${member.memberId} existing members ${memberIds}"
+                    )
+                    groupRepository.addGroupMember(groupId, member.memberId)
                 }
-          //  }
+            }
+            //  }
 
         }
     }
+
+    private suspend fun newAddMembersNotIncludedToGroup(selectedMembers: List<Member>) {
+        viewModelScope.launch {
+            val groupMemberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
+
+            // since this is called when group id != -1, so atleast 2 members will be there.
+            groupMemberIds?.let { memberIds ->
+
+                val sMembers = selectedMembers
+
+                for (member in sMembers) {
+
+                    if (member.memberId in 1000..10000) {
+                        val mId =
+                            memberRepository.addMember(member.name, member.phone, member.memberProfile)
+                        val addedMember = memberRepository.getMember(mId)
+
+                        if (addedMember != null) {
+                            if(addedMember.memberId !in memberIds)
+                                groupRepository.addGroupMember(groupId, member.memberId)
+                        }
+                    }
+                    else{
+                        if (member.memberId !in memberIds) {
+                            groupRepository.addGroupMember(groupId, member.memberId)
+                        }
+                    }
+                }
+            }
+        }.join()
+    }
+
 
     private suspend fun getMembersFromIds(memberIds: List<Int>?): MutableList<Member>? {
         return withContext(Dispatchers.IO) {
@@ -235,7 +308,7 @@ init {
         }
     }
 
-    fun updateMembers(members: List<Member>){
+    fun updateMembers(members: List<Member>) {
         _members.value = members.toMutableList()
     }
 
@@ -243,7 +316,11 @@ init {
         viewModelScope.launch {
 
             if (groupId != -1) {
-                val memberId = memberRepository.addMember(name, phoneNumber, uri)
+                val memberId = memberRepository.addMember(
+                    name,
+                    phoneNumber,
+                    uri
+                ) // needs to be changed, create dummy member not add in db
                 memberRepository.getMember(memberId)?.let {
                     Log.d(TAG, "addMember: $it")
                     val existingMembers = members.value
@@ -272,7 +349,7 @@ init {
                     })
                 }
             }
-            if(groupId == -1)
+            if (groupId == -1)
                 updateFlag()
 
 //            if(groupId == -1){
@@ -305,7 +382,7 @@ init {
                         // add to members table
                         val mId = memberRepository.addMember(i.name, i.phone, i.memberProfile)
                         // add to member streak table
-                        memberRepository.addMemberStreak(mId)
+                        //memberRepository.addMemberStreak(mId) no need for incrementing streak, just bcaz added to group
                         groupRepository.addGroupMember(groupId, mId)
                     } else
                         groupRepository.addGroupMember(groupId, member.memberId)
@@ -341,11 +418,10 @@ init {
         viewModelScope.launch {
             val memberExist = memberRepository.checkMemberExistence(name, phoneNumber)
 
-            if(!memberExist){
+            if (!memberExist) {
                 Log.d(TAG, "checkMember: checkMemberExistence member does not exist")
                 addMember(name, phoneNumber, uri)
-            }
-            else{
+            } else {
                 Log.d(TAG, "checkMember: checkMemberExistence member exists")
                 exists.value = true
             }
@@ -353,19 +429,64 @@ init {
 
     }
 
-    private fun updateFlag(){
+    private fun updateFlag() {
         change = true
         memberCountChange = true
     }
 
     fun updateGroupName(groupName: String, gotoGroupFragment: () -> Unit) {
-        if(groupId != -1){
+        if (groupId != -1) {
             viewModelScope.launch {
                 groupRepository.updateGroupName(groupId, groupName)
                 gotoGroupFragment()
             }
         }
+    }
 
+    fun removeMember(groupId: Int, member: Member, onDelete: () -> Unit) {
+        if (groupId == -1) {
+            groupMembers.remove(member)
+            _members.value = groupMembers.toMutableList()
+
+            onDelete()
+        }
+    }
+
+    fun newUpdateGroupName(
+        gotoGroupFragment: () -> Unit,
+        groupUpdated: () -> Unit,
+        notEdited: () -> Unit
+    ) {
+        if (groupId != -1) {
+            if (membersNewlyAddedToGroup.isNotEmpty()
+                || (tempGroupName != _group.value!!.groupName) // !! bcaz groupId != -1
+                || (updatedUri != null && _group.value!!.groupIcon != updatedUri)
+            ) {
+                // update group
+                viewModelScope.launch {
+                    // updating group name
+                    if (tempGroupName != _group.value!!.groupName) {
+                        groupRepository.updateGroupName(groupId, tempGroupName)
+                    }
+
+                    // updating group members
+                    if (membersNewlyAddedToGroup.isNotEmpty()) {
+                        newAddMembersNotIncludedToGroup(membersNewlyAddedToGroup.toList())
+                    }
+
+                    // updating group icon // checking whether uri is updated first, then also checking that uri is different
+                    // from previous.
+                    if (updatedUri != null && _group.value!!.groupIcon != updatedUri) {
+                        groupRepository.updateGroupIcon(groupId, updatedUri!!)
+                    }
+
+                    groupUpdated()
+                    gotoGroupFragment()
+                }
+            } else {
+                notEdited()
+            }
+        }
     }
 
 }

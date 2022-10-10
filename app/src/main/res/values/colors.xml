@@ -8,13 +8,20 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFF</color>
     <color name="view_color">#dee3e1</color>
+    <color name="new_view_color">#dee3e1</color>
     <color name="invert_color">#52514e</color>
     <color name="text_bold">#FF000000</color>
     <color name="blue">#1976d2</color>
+    <color name="fab_blue">#53D5D7</color>
+    <color name="fab_blue_1">#C3D9F8</color>
     <color name="background">#FFFFFF</color>
     <color name="selected">#e0e0e0</color>
     <color name="gray">#E1E9EA</color>
     <color name="chip_background">#F1F5FA</color>
     <color name="transparent">#B3FFFFFF</color>
+    <color name="red">#F44336</color>
+    <color name="green">#4CAF50</color>
 
 </resources>
+
+<!-- #C3D9F8-->

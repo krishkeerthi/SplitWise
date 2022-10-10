@@ -30,10 +30,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentAddMemberBinding
-import com.example.splitwise.util.decodeSampledBitmapFromUri
-import com.example.splitwise.util.dpToPx
-import com.example.splitwise.util.formatNumber
-import com.example.splitwise.util.nameCheck
+import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
@@ -72,7 +69,8 @@ class AddMemberFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.add_member)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.add_member)
         return inflater.inflate(R.layout.fragment_add_member, container, false)
     }
 
@@ -96,7 +94,7 @@ class AddMemberFragment() : Fragment() {
 
 
         // update group icon set before orientation change
-        if(viewModel.memberProfile != null){
+        if (viewModel.memberProfile != null) {
             updateProfile(viewModel.memberProfile!!)
         }
 
@@ -160,8 +158,9 @@ class AddMemberFragment() : Fragment() {
                 if (nameCheck(nameEditText.text?.trim().toString())) {
                     nameLayout.error = null
                     nameLayout.isErrorEnabled = false
-                } else
-                    nameLayout.error = getString(R.string.enter_valid_name)
+                }
+                //else
+                //nameLayout.error = getString(R.string.enter_valid_name)
 
                 menuVisible =
                     nameCheck(nameEditText.text?.trim().toString()) &&
@@ -217,26 +216,32 @@ class AddMemberFragment() : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add_member_save -> {
-                if(menuVisible) // menuVisible says whether entered fields are correct
-                viewModel.checkMember(
-                    args.groupId,
-                    Member(
-                        binding.memberNameText.text?.trim().toString(),
-                        binding.memberPhoneText.text?.trim().toString().toLong(),
-                        viewModel.memberProfile
-                    ),
-                    { member: Member ->
-                        gotoCreateEditGroupFragment(member)
-                    },
-                    {
-                        memberExists()
-                    },
-                    {
-                        errorAdding()
-                    }
-                )
+                if (menuVisible) // menuVisible says whether entered fields are correct
+                    viewModel.checkMember(
+                        args.groupId,
+                        Member(
+                            binding.memberNameText.text?.trim().toString(),
+                            binding.memberPhoneText.text?.trim().toString().toLong(),
+                            viewModel.memberProfile
+                        ).apply {
+                                memberId = (1000..10000).random()
+                        },
+                        { member: Member ->
+                            gotoCreateEditGroupFragment(member)
+                        },
+                        {
+                            memberExists()
+                        },
+                        {
+                            errorAdding()
+                        }
+                    )
                 else
-                    Snackbar.make(binding.root, "Ensure all fields are entered", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(
+                        binding.root,
+                        "Ensure all fields are entered",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                 true
             }
             else -> {
@@ -345,7 +350,7 @@ class AddMemberFragment() : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
 
         builder.setMessage(getString(R.string.storage_permission))
-        builder.setPositiveButton(getString(R.string.settings)){ dialog, which ->
+        builder.setPositiveButton(getString(R.string.settings)) { dialog, which ->
             gotoSettings()
         }
         builder.setNegativeButton(getString(R.string.cancel), null)
@@ -356,7 +361,7 @@ class AddMemberFragment() : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
 
         builder.setMessage(getString(R.string.storage_permission))
-        builder.setPositiveButton(getString(R.string.proceed)){ dialog, which ->
+        builder.setPositiveButton(getString(R.string.proceed)) { dialog, which ->
             //requestPermissionLauncher.unregister()
             requestPermissionLauncher.launch(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -399,9 +404,16 @@ class AddMemberFragment() : Fragment() {
 
     private fun updateProfile(uri: Uri) {
         ///binding.memberImageView.setImageURI(uri)
-        binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
-            binding.root.context, uri, 160.dpToPx(resources.displayMetrics), 160.dpToPx(resources.displayMetrics)
-        ))
+        binding.memberImageView.setImageBitmap(
+            getRoundedCroppedBitmap(
+                decodeSampledBitmapFromUri(
+                    binding.root.context,
+                    uri,
+                    160.dpToPx(resources.displayMetrics),
+                    160.dpToPx(resources.displayMetrics)
+                )!!
+            )
+        )
 
         binding.memberImageView.visibility = View.VISIBLE
         binding.memberImageHolder.visibility = View.GONE
@@ -503,7 +515,7 @@ class AddMemberFragment() : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
-    private fun memberExists(){
+    private fun memberExists() {
         Snackbar.make(
             binding.root,
             getString(R.string.member_exists_already),

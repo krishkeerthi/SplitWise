@@ -19,9 +19,16 @@ class TransactionRepository(
         database.transactionDao()
     )
 
+    // use this only for first time data imports( maybe use the updateTransaction query also), but never use this to add expese
+    // because it inserts new transaction each time
     suspend fun addTransaction(groupId: Int, payerId: Int, payeeId: Int, amount: Float){
         dataSource.addTransaction(groupId, payerId, payeeId, amount)
     }
+
+    suspend fun updateTransaction(groupId: Int, payerId: Int, payeeId: Int, amount: Float){ //
+        dataSource.updateTransaction(groupId, payerId, payeeId, amount)
+    }
+
     suspend fun settle(senderId: Int, receiverId: Int){
         dataSource.settle(senderId, receiverId)
     }
@@ -30,7 +37,7 @@ class TransactionRepository(
         dataSource.settle(senderId, receiverId, groupId)
     }
 
-    suspend fun settle(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>){
+    suspend fun settle(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>){ //
         Log.d(TAG, "settle: selected repository ${receiverIds}")
         dataSource.settle(senderId, receiverIds, groupIds)
     }
@@ -94,5 +101,29 @@ class TransactionRepository(
 
     suspend fun getOwedInGroup(senderId: Int, groupId: Int): Float?{
         return withContext(Dispatchers.IO){dataSource.getOwedInGroup(senderId, groupId)}
+    }
+
+    suspend fun getAmount(groupId: Int, payerId: Int, payeeId: Int): Float? {
+        return withContext(Dispatchers.IO){
+            dataSource.getAmount(groupId, payerId, payeeId)
+        }
+    }
+
+    suspend fun updateAmount(groupId: Int, payerId: Int, payeeId: Int, amount: Float){ //
+        withContext(Dispatchers.IO){
+            dataSource.updateAmount(groupId, payerId, payeeId, amount)
+        }
+    }
+
+    suspend fun deleteGroupTransactions(groupId: Int) {
+        withContext(Dispatchers.IO){
+            dataSource.deleteGroupTransactions(groupId)
+        }
+    }
+
+    suspend fun settle(groupId: Int, payerId: Int, recipientId: Int, amount: Float) { //
+        withContext(Dispatchers.IO){
+            dataSource.settle(groupId, payerId, recipientId, amount)
+        }
     }
 }

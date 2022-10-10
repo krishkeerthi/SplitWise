@@ -220,31 +220,31 @@ class SplitWiseFragment : Fragment() {
 //        return groupIds.toList()
 //    }
 
-    private fun openGroupsBottomSheet(groups: List<Group>) {
-        val groupBottomSheetDialog = BottomSheetDialog(requireContext())
-        groupBottomSheetDialog.setContentView(R.layout.bottom_sheet)
-
-        val groupTitle = groupBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
-        val groupList = groupBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
-
-        groupTitle?.text = getString(R.string.select_group)
-        //Adapter
-        val groupAdapter = GroupArrayAdapter(requireContext(), R.layout.dropdown, groups)
-        groupList?.apply {
-            Log.d(TAG, "openPayerBottomSheet: list adapter set")
-            adapter = groupAdapter
-            onItemClickListener =
-                AdapterView.OnItemClickListener { parent, view, position, id ->
-                    viewModel.getGroupMembersPaymentStats(groups[position].groupId)
-                    viewModel.groupId = groups[position].groupId
-                    viewModel.loadGroupName()
-                    // binding.chooseGroupText.text = groups[position].groupName
-                    groupBottomSheetDialog.dismiss()
-                }
-        }
-
-        groupBottomSheetDialog.show()
-    }
+//    private fun openGroupsBottomSheet(groups: List<Group>) {
+//        val groupBottomSheetDialog = BottomSheetDialog(requireContext())
+//        groupBottomSheetDialog.setContentView(R.layout.bottom_sheet)
+//
+//        val groupTitle = groupBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)
+//        val groupList = groupBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)
+//
+//        groupTitle?.text = getString(R.string.select_group)
+//        //Adapter
+//        val groupAdapter = GroupArrayAdapter(requireContext(), R.layout.dropdown, groups)
+//        groupList?.apply {
+//            Log.d(TAG, "openPayerBottomSheet: list adapter set")
+//            adapter = groupAdapter
+//            onItemClickListener =
+//                AdapterView.OnItemClickListener { parent, view, position, id ->
+//                    viewModel.getGroupMembersPaymentStats(groups[position].groupId)
+//                    viewModel.groupId = groups[position].groupId
+//                    viewModel.loadGroupName()
+//                    // binding.chooseGroupText.text = groups[position].groupName
+//                    groupBottomSheetDialog.dismiss()
+//                }
+//        }
+//
+//        groupBottomSheetDialog.show()
+//    }
 
     private fun gotoSettleUpFragment(payerId: Int, paymentStatView: View) {
 

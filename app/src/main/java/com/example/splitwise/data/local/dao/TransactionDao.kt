@@ -58,7 +58,7 @@ interface TransactionDao {
     @Query("DELETE FROM `transaction` WHERE payer = :receiverId AND payee = :senderId AND group_id = :groupId")
     suspend fun reduceAmount(senderId: Int, receiverId: Int, groupId: Int)
 
-    @Query("DELETE FROM `transaction` WHERE payer IN (:receiverIds) AND payee = :senderId AND group_id IN (:groupIds)")
+    @Query("DELETE FROM `transaction` WHERE payer IN (:receiverIds) AND payee = :senderId AND group_id IN (:groupIds)") //
     suspend fun reduceAmount(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>)
 
     @Query("DELETE FROM `transaction` WHERE payee = :senderId")
@@ -67,9 +67,18 @@ interface TransactionDao {
     @Query("DELETE FROM `transaction` WHERE payee = :senderId AND group_id = :groupId")
     suspend fun reduceBulkAmountInGroup(senderId: Int, groupId: Int)
 
+    @Query("SELECT amount FROM `transaction` WHERE group_id = :groupId AND payer= :payerId AND payee = :payeeId")
+    suspend fun getAmount(groupId: Int, payerId: Int, payeeId: Int): Float?
+
+    @Query("UPDATE `transaction` SET amount = :amount WHERE group_id = :groupId AND payer= :payerId AND payee = :payeeId")
+    suspend fun updateAmount(groupId: Int, payerId: Int, payeeId: Int, amount: Float)
+
     @Query("SELECT * FROM `transaction`")
     suspend fun getTransactions(): List<Transaction>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(transaction: Transaction)
+
+    @Query("DELETE FROM `transaction` WHERE group_id = :groupId")
+    suspend fun deleteGroup(groupId: Int)
 }

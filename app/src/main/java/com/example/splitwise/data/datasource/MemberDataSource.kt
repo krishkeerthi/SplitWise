@@ -25,4 +25,5 @@ interface MemberDataSource {
     suspend fun updateMember(memberId: Int, name: String, phone: Long)
 
     suspend fun updateProfile(memberId: Int, uri: Uri)
+
 }

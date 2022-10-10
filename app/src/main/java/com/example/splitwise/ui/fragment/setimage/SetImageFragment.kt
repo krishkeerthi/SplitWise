@@ -234,11 +234,16 @@ class SetImageFragment : Fragment() {
                             viewModel.updateGroupIcon(testUri) {
                                 gotoGroupsFragment()
                             }
-                        else
-                            viewModel.updateGroupIcon(testUri) {
-                                //gotoGroupsFragment()
-                                gotoCreateEditGroupFragment()
+                        else{ // means it is from create edit group, don't update group icon here, similarly do this for camera & gallery
+                            CoroutineScope(Dispatchers.Main).launch {
+                                gotoCreateEditGroupFragment(testUri)
                             }
+//                            viewModel.updateGroupIcon(testUri) {
+//                                //gotoGroupsFragment()
+//                                gotoCreateEditGroupFragment()
+//                            }
+                        }
+
                     }
                 } else {
                     Log.d(TAG, "downloadImage: error causing ${testUri}")

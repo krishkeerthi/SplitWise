@@ -3,7 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/search_member_menu"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/search"
+        app:showAsAction="always|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
+    <item
         android:id="@+id/choose_member_fragment_done"
         android:title="@string/done"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 </menu>

@@ -13,4 +13,7 @@ interface GroupExpenseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(groupExpense: GroupExpense)
+
+    @Query("DELETE FROM group_expense WHERE group_id= :groupId AND expense_id =:expenseId")
+    suspend fun removeExpense(groupId: Int, expenseId: Int)
 }

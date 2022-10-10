@@ -5,9 +5,7 @@ import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,32 +13,22 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
+import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
+import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentExpenseDetailBinding
-import com.example.splitwise.ui.fragment.adapter.BillsAdapter
 import com.example.splitwise.ui.fragment.adapter.ExpenseMembersAdapter
-import com.example.splitwise.util.Category
-import com.example.splitwise.util.getCategoryDrawableResource
-import com.example.splitwise.util.roundOff
-import com.example.splitwise.util.titleCase
+import com.example.splitwise.util.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
@@ -119,22 +107,22 @@ class ExpenseDetailFragment : Fragment() {
 
         // Rv
         val membersAdapter = ExpenseMembersAdapter()
-        val billsAdapter = BillsAdapter { position: Int, billImageView: View ->
-            gotoBillsHolderFragment(position, billImageView)
-        }
+//        val billsAdapter = BillsAdapter { position: Int, billImageView: View ->
+//            //gotoBillsHolderFragment(position, billImageView)
+//        }
 
         binding.membersRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = membersAdapter
         }
 
-        binding.billsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(
-                requireContext(), LinearLayoutManager.HORIZONTAL,
-                false
-            )
-            adapter = billsAdapter
-        }
+//        binding.billsRecyclerView.apply {
+//            layoutManager = LinearLayoutManager(
+//                requireContext(), LinearLayoutManager.HORIZONTAL,
+//                false
+//            )
+//            adapter = billsAdapter
+//        }
 
         // Livedata payees
         viewModel.payees.observe(viewLifecycleOwner) { members ->
@@ -143,29 +131,38 @@ class ExpenseDetailFragment : Fragment() {
             }
         }
 
-        // bills
-        viewModel.bills.observe(viewLifecycleOwner) { bills ->
-            if (bills != null && bills.isNotEmpty()) {
-                billsAdapter.updateBills(bills)
-                binding.billsRecyclerView.visibility = View.VISIBLE
-                binding.billsTextView.visibility = View.VISIBLE
+        viewModel.removedPayees.observe(viewLifecycleOwner) { removedMembers ->
+            if (removedMembers != null && removedMembers.isNotEmpty()) {
+                binding.removedMembersTextView.text =
+                    "${getString(R.string.removed_members)} (${removedMembers.size})"
+                binding.removedMembersTextView.visibility = View.VISIBLE
             } else {
-                binding.billsRecyclerView.visibility = View.GONE
-                binding.billsTextView.visibility = View.INVISIBLE
+                binding.removedMembersTextView.visibility = View.GONE
             }
-
         }
+        // bills
+//        viewModel.bills.observe(viewLifecycleOwner) { bills ->
+//            if (bills != null && bills.isNotEmpty()) {
+//                billsAdapter.updateBills(bills)
+//                binding.billsRecyclerView.visibility = View.VISIBLE
+//                binding.billsTextView.visibility = View.VISIBLE
+//            } else {
+//                binding.billsRecyclerView.visibility = View.GONE
+//                binding.billsTextView.visibility = View.INVISIBLE
+//            }
+//        }
 
         // Expense
         viewModel.expense.observe(viewLifecycleOwner) { expense ->
             expense?.let {
                 //requireActivity().title = it.expenseName
                 binding.groupExpenseTitleTextView.text = it.expenseName
-                membersAdapter.updateTotal(it.totalAmount)
+                //membersAdapter.updateTotal(it.totalAmount) previously total amount is passed and divided by member count
+                membersAdapter.updateTotal(it.splitAmount)
                 binding.expenseTotalTextView.text = "₹" + it.totalAmount.roundOff()
                 binding.expenseImageView.setImageResource(getCategoryDrawableResource(Category.values()[it.category].ordinal))
-//                binding.expenseCategoryExpense.text =
-//                    Category.values()[it.category].name.lowercase().titleCase()
+                binding.expenseCategoryTextView.text =
+                    Category.values()[it.category].name.lowercase().titleCase()
             }
         }
 
@@ -173,65 +170,224 @@ class ExpenseDetailFragment : Fragment() {
         viewModel.payer.observe(viewLifecycleOwner) { payer ->
             payer?.let {
                 binding.expensePayerTextView.text = it.name
+
+                if (it.memberProfile != null) {
+                    binding.memberImageView.setImageBitmap(
+                        getRoundedCroppedBitmap(
+                        decodeSampledBitmapFromUri(
+                            binding.root.context,
+                            it.memberProfile,
+                            40.dpToPx(resources.displayMetrics),
+                            40.dpToPx(resources.displayMetrics)
+                        )!!
+                        )
+                    )
+                    binding.memberImageView.visibility = View.VISIBLE
+                    binding.memberImageHolder.visibility = View.INVISIBLE
+                    binding.memberImageHolderImage.visibility = View.INVISIBLE
+                }
             }
         }
 
         // Bills images
-        binding.addBillButton.setOnClickListener {
-//            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)//.also { takePictureIntent ->
-//                // Ensure that there's a camera activity to handle the intent
-//                takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-//                    // Create the File where the photo should go
-//                    val photoFile: File? = try {
-//                        createImageFile()
-//                    } catch (ex: IOException) {
-//                        // Error occurred while creating the File
-//                        null
-//                    }
-//                    // Continue only if the File was successfully created
-//                    photoFile?.also {
-//                        val photoURI: Uri = FileProvider.getUriForFile(
-//                            requireContext(),
-//                            "com.example.splitwise.fileprovider",
-//                            it
-//                        )
-////                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-////                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+//        binding.addBillButton.setOnClickListener {
+////            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)//.also { takePictureIntent ->
+////                // Ensure that there's a camera activity to handle the intent
+////                takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
+////                    // Create the File where the photo should go
+////                    val photoFile: File? = try {
+////                        createImageFile()
+////                    } catch (ex: IOException) {
+////                        // Error occurred while creating the File
+////                        null
+////                    }
+////                    // Continue only if the File was successfully created
+////                    photoFile?.also {
+////                        val photoURI: Uri = FileProvider.getUriForFile(
+////                            requireContext(),
+////                            "com.example.splitwise.fileprovider",
+////                            it
+////                        )
+//////                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+//////                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+////
+////                    }
+////
+////                }
+//            //     }
 //
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                // on sdk 33 onwards there is no write external storage permission, thus camera was not loading
+//                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//                cameraLauncher.launch(intent)
+//            } else {
+//                when (PackageManager.PERMISSION_GRANTED) {
+//                    ContextCompat.checkSelfPermission(
+//                        requireContext(),
+//                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                    ) -> {
+//                        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//                        cameraLauncher.launch(intent)
+//                        Log.d(TAG, "onViewCreated: reached")
 //                    }
 //
+//                    else -> {
+//                        if (ActivityCompat.shouldShowRequestPermissionRationale(
+//                                requireActivity(),
+//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                            )
+//                        ) {
+//                            settingsDialog()
+//                        } else {
+//                            requestDialog()
+//                        }
+//                    }
 //                }
-            //     }
+//            }
+//        }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // on sdk 33 onwards there is no write external storage permission, thus camera was not loading
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                cameraLauncher.launch(intent)
-            } else {
-                when (PackageManager.PERMISSION_GRANTED) {
-                    ContextCompat.checkSelfPermission(
-                        requireContext(),
-                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) -> {
-                        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                        cameraLauncher.launch(intent)
-                        Log.d(TAG, "onViewCreated: reached")
-                    }
+//        val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//
+//                viewModel.payees.value?.let {
+//                    confirmationDialog(
+//                        it[viewHolder.absoluteAdapterPosition],
+//                        viewHolder.absoluteAdapterPosition
+//                    )
+//                }
+//            }
+//
+//        }
+//
+//
+//        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+//        itemTouchHelper.attachToRecyclerView(binding.membersRecyclerView)
 
-                    else -> {
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                                requireActivity(),
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            )
-                        ) {
-                            settingsDialog()
-                        } else {
-                            requestDialog()
-                        }
+        binding.removedMembersTextView.setOnClickListener {
+            gotoRemovedMembersFragment()
+        }
+
+        // Options menu
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        inflater.inflate(R.menu.expense_detail_fragment_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.edit_expense_menu -> {
+                gotoEditExpenseFragment()
+                true
+            }
+            R.id.delete_expense_menu -> {
+                expenseDeleteConfirmationDialog(
+                    viewModel.expense.value?.groupId,
+                    viewModel.expense.value?.expenseName
+                )
+                true
+            }
+            R.id.bills_menu -> {
+                gotoExpenseBillsFragment()
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    private fun gotoEditExpenseFragment() {
+        val action =
+            ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToEditExpenseFragment(
+                args.groupId,
+                viewModel.expense?.value!!, viewModel.payees?.value!!.toTypedArray()
+            )
+
+        findNavController().navigate(action)
+    }
+
+    private fun gotoRemovedMembersFragment() {
+        viewModel.removedPayees.value?.let {
+            Log.d(TAG, "gotoRemovedMembersFragment: ${it.size}")
+            val action =
+                ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToRemovedMembersFragment(
+                    it.toTypedArray()
+                )
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun expenseDeleteConfirmationDialog(groupId: Int?, expenseName: String?) {
+        val dialogBuilder = AlertDialog.Builder(requireContext()).apply {
+            setTitle(getString(R.string.delete_expense))
+            setMessage(String.format(getString(R.string.delete_expense_message), expenseName))
+
+            setPositiveButton(getString(R.string.delete)) { dialog, which ->
+                //Toast.makeText(requireContext(), "${member.name} deleted", Toast.LENGTH_SHORT).show()
+
+                groupId?.let {
+                    viewModel.deleteExpense(groupId, args.expenseId) {
+                        gotoExpensesFragment()
+                        Snackbar.make(
+                            binding.root,
+                            "$expenseName ${getString(R.string.deleted)}",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
+
+            setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                dialog.cancel()
+            }
         }
+
+        dialogBuilder.show()
+
+    }
+
+    private fun gotoExpensesFragment() {
+        val action =
+            ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToExpensesFragment(args.groupId)
+        findNavController().navigate(action)
+    }
+
+    private fun confirmationDialog(member: Member, position: Int) {
+        val dialogBuilder = AlertDialog.Builder(requireContext()).apply {
+            setTitle(getString(R.string.delete))
+            setMessage(getString(R.string.delete_message))
+
+            setPositiveButton(getString(R.string.delete)) { dialog, which ->
+                //Toast.makeText(requireContext(), "${member.name} deleted", Toast.LENGTH_SHORT).show()
+
+                viewModel.deletePayee(args.expenseId, member, {
+                    viewModel.fetchMembers()
+                    Snackbar.make(
+                        binding.root,
+                        "${member.name} ${getString(R.string.deleted)}",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }, {
+                    binding.membersRecyclerView.adapter?.notifyItemChanged(position)
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.payer_should_not_deleted),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                })
+            }
+
+            setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                binding.membersRecyclerView.adapter?.notifyItemChanged(position)
+                dialog.cancel()
+            }
+        }
+
+        dialogBuilder.show()
 
     }
 
@@ -269,7 +425,7 @@ class ExpenseDetailFragment : Fragment() {
                     getString(R.string.permission_granted),
                     Snackbar.LENGTH_SHORT
                 ).show()
-                binding.addBillButton.performClick()
+                // binding.addBillButton.performClick() to open camera after permission granted
             } else {
                 gotoSettings()
                 //Snackbar.make(binding.root, getString(R.string.permission_denied), Snackbar.LENGTH_SHORT).show()
@@ -416,25 +572,39 @@ class ExpenseDetailFragment : Fragment() {
         return uri
     }
 
-
-    private fun gotoBillsHolderFragment(position: Int, billImageView: View) {
-
-//        exitTransition = MaterialElevationScale(false).apply {
-//            duration = resources.getInteger(R.integer.reply_motion_duration_small).toLong()
-//        }
+    private fun gotoExpenseBillsFragment() {
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
         reenterTransition = MaterialElevationScale(true).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
 
-//        val transitionName = getString(R.string.bill_holder_transition_name)
-//        val extras = FragmentNavigatorExtras(billImageView to transitionName)
-
-        Log.d(TAG, "gotoBillsHolderFragment: position is $position")
         val action =
-            ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToBillsHolderFragment(
-                viewModel.getBills().toTypedArray(), position, args.expenseId
-            )
+            ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToExpenseBillsFragment(args.expenseId)
 
-        findNavController().navigate(action)//, extras)
+        findNavController().navigate(action)
     }
+
+
+//    private fun gotoBillsHolderFragment(position: Int, billImageView: View) {
+//
+////        exitTransition = MaterialElevationScale(false).apply {
+////            duration = resources.getInteger(R.integer.reply_motion_duration_small).toLong()
+////        }
+//        reenterTransition = MaterialElevationScale(true).apply {
+//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//        }
+//
+////        val transitionName = getString(R.string.bill_holder_transition_name)
+////        val extras = FragmentNavigatorExtras(billImageView to transitionName)
+//
+//        Log.d(TAG, "gotoBillsHolderFragment: position is $position")
+//        val action =
+//            ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToBillsHolderFragment(
+//                viewModel.getBills().toTypedArray(), position, args.expenseId
+//            )
+//
+//        findNavController().navigate(action)//, extras)
+//    }
 }

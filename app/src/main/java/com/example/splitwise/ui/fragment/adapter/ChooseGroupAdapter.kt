@@ -13,6 +13,7 @@ import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.ChooseGroupCardBinding
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.getRoundedCroppedBitmap
 
 class ChooseGroupAdapter(val onItemChecked: (Group, Boolean) -> Unit) :
     RecyclerView.Adapter<ChooseGroupViewHolder>() {
@@ -92,14 +93,16 @@ class ChooseGroupViewHolder(val binding: ChooseGroupCardBinding) :
             ///binding.groupImageView.setImageURI(group.groupIcon)
 
             binding.groupImageView.setImageBitmap(null)
+          //  Handler(Looper.getMainLooper()).postDelayed({
 
-            Handler(Looper.getMainLooper()).postDelayed({
                 binding.groupImageView.setImageBitmap(
+                    getRoundedCroppedBitmap(
                     decodeSampledBitmapFromUri(
                         binding.root.context, group.groupIcon, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
-                    )
+                    )!!
                 )
-            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+                )
+         //   }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE

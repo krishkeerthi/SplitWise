@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -17,6 +19,9 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentChooseMembersBinding
 import com.example.splitwise.ui.fragment.adapter.ChooseMembersAdapter
+import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.hideKeyboard
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 
 class ChooseMembersFragment : Fragment() {
@@ -24,6 +29,7 @@ class ChooseMembersFragment : Fragment() {
     private val args: ChooseMembersFragmentArgs by navArgs()
     private var contextualActionMode: ActionMode? = null
     private var menuVisible = false
+    private var selectedMemberCount = 0
 
     private val viewModel: ChooseMembersViewModel by viewModels {
         ChooseMembersViewModelFactory(requireContext(), args.selectedMembers)
@@ -53,7 +59,9 @@ class ChooseMembersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.fetchData()
+        viewModel.fetchData(){
+            binding.chooseMembersRecyclerView.adapter?.notifyDataSetChanged()
+        }
 
         Log.d(TAG, "onViewCreated: group Icon choose member${args.groupIcon}")
 
@@ -81,7 +89,7 @@ class ChooseMembersFragment : Fragment() {
         viewModel.membersAndStreaks.observe(viewLifecycleOwner) { membersAndStreaks ->
             if (membersAndStreaks != null) {
                 if(membersAndStreaks.isNotEmpty()) {
-                    chooseMembersAdapter.updateMembersAndStreaks(membersAndStreaks, viewModel.checkedMembersIds())
+                    chooseMembersAdapter.updateMembersAndStreaks(membersAndStreaks, viewModel.checkedMembersIds(), viewModel.textEntered)
 
                     Log.d(TAG, "onViewCreated: mcount${viewModel.checkedMembersIds().size}")
                     binding.chooseMembersRecyclerView.visibility = View.VISIBLE
@@ -119,6 +127,9 @@ class ChooseMembersFragment : Fragment() {
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.choose_members)
 
             menuVisible = selectedCount > 0
+            selectedMemberCount = selectedCount
+
+            viewModel.previouslyEnteredText = viewModel.textEntered
             requireActivity().invalidateOptionsMenu()
 
 //            if(it > 0) {
@@ -144,13 +155,52 @@ class ChooseMembersFragment : Fragment() {
 
         val doneMenu = menu.findItem(R.id.choose_member_fragment_done)
 
-        doneMenu.isVisible = menuVisible
+        //doneMenu.isVisible = menuVisible
+
+        // search
+        val searchItem = menu.findItem(R.id.search_member_menu)
+        val searchView = searchItem?.actionView as SearchView
+
+        searchView.updatePadding(left = (-16).dpToPx(resources.displayMetrics))
+
+        if(viewModel.previouslyEnteredText != "")
+            viewModel.textEntered = viewModel.previouslyEnteredText
+
+        if(viewModel.textEntered != "") {
+           Log.d(TAG, "onCreateOptionsMenu: text entered ${viewModel.textEntered}")
+            searchItem.expandActionView()
+            searchView.requestFocus()
+            searchView.setQuery(viewModel.textEntered, true)
+            viewModel.fetchSearchedData()
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                searchView.hideKeyboard()
+                return true
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query != null) {
+                    Log.d(TAG, "onCreateOptionsMenu: text entered before vm update ${viewModel.textEntered}")
+                    viewModel.textEntered = query
+                    Log.d(TAG, "onCreateOptionsMenu: text entered after vm update ${viewModel.textEntered}")
+                    viewModel.fetchSearchedData()
+                }
+                return true
+            }
+        })
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.choose_member_fragment_done -> {
-                gotoCreateEditGroupFragment(viewModel.getCheckedMembers())
+                if(selectedMemberCount == 0){
+                    Snackbar.make(binding.root, getString(R.string.no_members_selected), Snackbar.LENGTH_SHORT).show()
+                }
+                else
+                    gotoCreateEditGroupFragment(viewModel.getCheckedMembers())
                 true
             }
             else ->{

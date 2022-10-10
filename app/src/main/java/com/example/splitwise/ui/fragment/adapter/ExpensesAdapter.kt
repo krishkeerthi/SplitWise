@@ -116,9 +116,9 @@ class ExpensesViewHolder(val binding: ExpenseCard1Binding) :
 
         binding.expenseImageView.setImageBitmap(null)
         // load image after sometime
-        Handler(Looper.getMainLooper()).postDelayed({
+        //Handler(Looper.getMainLooper()).postDelayed({
             binding.expenseImageView.setImageResource(getCategoryDrawableResource(expenseMember.category))
-        }, resources.getInteger(R.integer.reply_motion_duration_medium).toLong())
+        //}, resources.getInteger(R.integer.reply_motion_duration_medium).toLong())
 
         // transition name
         ViewCompat.setTransitionName(

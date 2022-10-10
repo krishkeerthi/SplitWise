@@ -19,24 +19,25 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/expense_card"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_marginTop="16dp"
                 app:cardElevation="0dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:cardCornerRadius="10dp">
+                app:cardCornerRadius="100dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <com.example.splitwise.ui.customclass.CircularImageView
                         android:id="@+id/expense_image_view_holder"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/view_color"
+                        app:radius="40dp"
+                        app:fill_color="@color/new_view_color"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -135,15 +136,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/category_image_view"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:src="@drawable/round_category_20"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/choose_category_text"
                         android:layout_width="203dp"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="12dp"
+                        android:textSize="16sp"
                         android:gravity="center_vertical"
                         android:text="@string/select_category"
                         app:layout_constraintBottom_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/category_image_view"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.textview.MaterialTextView
@@ -175,15 +187,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/payer_image_view"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:src="@drawable/baseline_person_24"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/choose_payer_text"
                         android:layout_width="203dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="12dp"
                         android:gravity="center_vertical"
+                        android:textSize="16sp"
                         android:text="@string/choose_payer"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/payer_image_view"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.textview.MaterialTextView

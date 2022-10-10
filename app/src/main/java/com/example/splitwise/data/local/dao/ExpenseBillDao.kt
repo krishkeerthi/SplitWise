@@ -23,4 +23,7 @@ interface ExpenseBillDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(expenseBills: ExpenseBill)
 
+    @Query("DELETE FROM expense_bill WHERE expense_id= :expenseId")
+    suspend fun deleteBills(expenseId: Int)
+
 }

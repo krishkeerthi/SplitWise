@@ -10,9 +10,11 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
+import com.example.splitwise.databinding.BillCardBinding
 import com.example.splitwise.databinding.BillProfileCardBinding
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.getRoundedCroppedBitmap
 
 class BillsAdapter(
     val onItemClicked: (Int, View) -> Unit
@@ -21,7 +23,7 @@ class BillsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BillsViewHolder {
         val view = LayoutInflater.from(parent.context)
-        val binding = BillProfileCardBinding.inflate(view, parent, false)
+        val binding = BillCardBinding.inflate(view, parent, false)
 
         return BillsViewHolder(binding).apply {
             itemView.setOnClickListener {
@@ -46,7 +48,7 @@ class BillsAdapter(
     }
 }
 
-class BillsViewHolder(val binding: BillProfileCardBinding) : RecyclerView.ViewHolder(binding.root) {
+class BillsViewHolder(val binding: BillCardBinding) : RecyclerView.ViewHolder(binding.root) {
 
     private val resources = binding.root.resources
 
@@ -57,16 +59,19 @@ class BillsViewHolder(val binding: BillProfileCardBinding) : RecyclerView.ViewHo
         )
         ///binding.billImageView.setImageURI(uri)
 
-        Handler(Looper.getMainLooper()).postDelayed({
+        binding.billImageView.setImageBitmap(null)
+      //  Handler(Looper.getMainLooper()).postDelayed({
             binding.billImageView.setImageBitmap(
+                //getRoundedCroppedBitmap(
                 decodeSampledBitmapFromUri(
                     binding.root.context,
                     uri,
                     60.dpToPx(resources.displayMetrics),
                     100.dpToPx(resources.displayMetrics)
+               // )!!
                 )
             )
-        }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+     //   }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
     }
 
 }

@@ -3,6 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/edit_menu"
+        android:title="@string/edit"
+        android:icon="@drawable/ic_baseline_edit_24"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/delete_menu"
+        android:title="@string/delete"
+        android:icon="@drawable/round_delete_24"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/share_menu"
         android:title="@string/share"
         android:icon="@drawable/ic_baseline_share_24"

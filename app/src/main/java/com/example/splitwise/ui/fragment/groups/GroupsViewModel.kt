@@ -6,7 +6,10 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.splitwise.data.local.SplitWiseRoomDatabase
 import com.example.splitwise.data.local.entity.Group
+import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.GroupRepository
+import com.example.splitwise.data.repository.MemberRepository
+import com.example.splitwise.data.repository.TransactionRepository
 import com.example.splitwise.model.AmountFilterModel
 import com.example.splitwise.model.DateFilterModel
 import com.example.splitwise.model.FilterModel
@@ -17,7 +20,11 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class GroupsViewModel(context: Context) : ViewModel() {
-    private val groupsRepository = GroupRepository(SplitWiseRoomDatabase.getInstance(context))
+    private val database = SplitWiseRoomDatabase.getInstance(context)
+    private val groupsRepository = GroupRepository(database)
+    private val memberRepository = MemberRepository(database)
+    private val expenseRepository = ExpenseRepository(database)
+    private val transactionRepository = TransactionRepository(database)
 
     private val _groups = MutableLiveData<List<Group>?>()
 
@@ -32,6 +39,7 @@ class GroupsViewModel(context: Context) : ViewModel() {
     var selectedDateFilter: DateFilter = DateFilter.BEFORE
     var selectedAmountFilter: AmountFilter = AmountFilter.BELOW
 
+    var bool = true
 //    init {
 //        filterModel.amountFilterModel = AmountFilterModel(AmountFilter.ABOVE, 89f)
 //    }
@@ -99,7 +107,7 @@ class GroupsViewModel(context: Context) : ViewModel() {
                 } else {
                     groupsRepository.getGroupsCreatedBefore(date!!)
                 }
-            } else if (dateFilterModel == null && amountFilterModel != null) {
+            } else if ((dateFilterModel == null) && (amountFilterModel != null)) {
                 _groups.value = if (amountFilterModel.amountFilter == AmountFilter.ABOVE) {
                     groupsRepository.getGroupsWithAmountAbove(amount!!)
                 } else {
@@ -133,6 +141,47 @@ class GroupsViewModel(context: Context) : ViewModel() {
         applyFilter()
     }
 
+    fun deleteGroup(groupId: Int, onDelete: () -> Unit) {
+        viewModelScope.launch {
+            expenseRepository.getExpenses(groupId)?.let { expenses ->
+
+                for (expense in expenses) {
+                    //1. remove bills
+                    expenseRepository.deleteBills(expense.expenseId)
+
+                    // 2. decrement member streak
+                    memberRepository.decrementStreak(expense.payer)
+
+                    expenseRepository.getExpensePayees(expense.expenseId)?.let { payeesIds ->
+                        // decrementing streak
+                        for (payeeId in payeesIds)
+                            memberRepository.decrementStreak(payeeId)
+
+                        //3. delete expense payees
+                        for(payeeId in payeesIds)
+                            expenseRepository.removeExpensePayee(expense.expenseId, payeeId)
+                    }
+
+                    //4. delete group expense
+                    expenseRepository.removeExpenseIdFromGroup(groupId, expense.expenseId)
+
+                    //5. delete expense
+                    expenseRepository.deleteExpense(expense.expenseId)
+                }
+
+                //6. transactions
+                transactionRepository.deleteGroupTransactions(groupId)
+
+                // 7. remove group members
+                groupsRepository.removeGroupMembers(groupId)
+
+                //8. remove group
+                groupsRepository.removeGroup(groupId)
+
+                onDelete()
+            }
+        }
+    }
 }
 
 class GroupsViewModelFactory(private val context: Context) :

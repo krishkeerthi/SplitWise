@@ -33,7 +33,7 @@ class GroupsAdapter(
         val view = LayoutInflater.from(parent.context)
         val viewHolder: RecyclerView.ViewHolder
 
-        viewHolder = when(viewType){
+        viewHolder = when (viewType) {
             GROUPVIEW -> {
                 val binding = GroupCard2Binding.inflate(view, parent, false)
                 GroupsViewHolder(binding).apply {
@@ -57,7 +57,7 @@ class GroupsAdapter(
 
                 }
             }
-            EMPTYVIEW ->{
+            EMPTYVIEW -> {
                 val binding = EmptyCardBinding.inflate(view, parent, false)
                 GroupEmptyViewHolder(binding)
             }
@@ -109,7 +109,7 @@ class GroupsAdapter(
 //            }
 //
 //        }
-            // setting transition name
+        // setting transition name
 //            binding.groupImageView.setOnClickListener {
 //                it.ripple(it.context)
 //                onImageClicked(
@@ -140,14 +140,14 @@ class GroupsAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(holder.itemViewType){
-            GROUPVIEW ->{
+        when (holder.itemViewType) {
+            GROUPVIEW -> {
                 val holder = holder as GroupsViewHolder
                 val group = groups[position]
 
                 holder.bind(group)
             }
-            EMPTYVIEW ->{
+            EMPTYVIEW -> {
                 val holder = holder as GroupEmptyViewHolder
                 holder.bind()
             }
@@ -170,13 +170,13 @@ class GroupsAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(groups[position].groupId != -2)
+        return if (groups[position].groupId != -2)
             GROUPVIEW
         else
             EMPTYVIEW
     }
 
-    private fun addEmptyGroup(groups: List<Group>): List<Group>{
+    private fun addEmptyGroup(groups: List<Group>): List<Group> {
         val mutableGroups = groups.toMutableList()
         mutableGroups.add(dummyGroup)
         return mutableGroups.toList()
@@ -213,12 +213,22 @@ class GroupsViewHolder(val binding: GroupCard2Binding) : RecyclerView.ViewHolder
             Log.d(TAG, "bind: group icon${group.groupIcon}")
 
             binding.groupImageView.setImageBitmap(null)
+            //Handler(Looper.getMainLooper()).postDelayed({
+            binding.groupImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        group.groupIcon,
+                        48.dpToPx(resources.displayMetrics),
+                        48.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
+            //}, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                    binding.root.context, group.groupIcon, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
-                ))
-            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+//            binding.groupImageView.setImageBitmap(decodeSampledBitmapFromUri(
+//                binding.root.context, group.groupIcon, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
+//            ))
             ///binding.groupImageView.setImageURI(group.groupIcon)
 
             binding.groupImageHolder.visibility = View.INVISIBLE
@@ -242,10 +252,10 @@ class GroupsViewHolder(val binding: GroupCard2Binding) : RecyclerView.ViewHolder
 
 }
 
-class GroupEmptyViewHolder(val binding: EmptyCardBinding):
-    RecyclerView.ViewHolder(binding.root){
+class GroupEmptyViewHolder(val binding: EmptyCardBinding) :
+    RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(){
+    fun bind() {
 
     }
 }

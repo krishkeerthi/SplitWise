@@ -98,7 +98,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        when (sharedPreferences.getString("THEME", "Light")) {
+        when (sharedPreferences.getString("THEME", "System")) {
             "Light" -> {
                 binding.themeLightButton.isChecked = true
             }

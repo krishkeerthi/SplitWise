@@ -2,9 +2,6 @@ package com.example.splitwise.ui.fragment.createeditgroup
 
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.RectShape
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -16,7 +13,6 @@ import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -26,16 +22,17 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.transition.Slide
+import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
+import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentCreateEditGroupBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.ui.fragment.adapter.GroupMembersAdapter
-import com.example.splitwise.ui.fragment.groups.GroupsFragment
+import com.example.splitwise.ui.fragment.groups.SwipeToDeleteCallback
 import com.example.splitwise.ui.fragment.viewmodel.CreateEditGroupActivityViewModel
 import com.example.splitwise.util.*
-import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
@@ -56,6 +53,8 @@ class CreateEditGroupFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+        viewModel.newEntry = true
         // viewmodel initialization with provider
 //        val factory = CreateEditGroupViewModelFactory(requireContext(), args.groupId, args.selectedMembers)
 //        viewModel = ViewModelProvider(requireActivity(), factory)[CreateEditGroupViewModel::class.java]
@@ -95,11 +94,10 @@ class CreateEditGroupFragment : Fragment() {
                     builder.setNegativeButton(getString(R.string.cancel), null)
                     builder.show()
                 } else {
-                    viewModel.reset()
+                    if(viewModel.reset())
+                    NavHostFragment.findNavController(this@CreateEditGroupFragment).popBackStack()
                     Log.d(TAG, "handleOnBackPressed: reset back pressed")
                     // reset viewmodel data, because this viewmodel is activity viewmodel now
-                    NavHostFragment.findNavController(this@CreateEditGroupFragment)
-                        .popBackStack()
                 }
             }
         }
@@ -165,7 +163,19 @@ class CreateEditGroupFragment : Fragment() {
 
         //viewModel.fetchData()
         // many problem arises if it is not called from here
-        viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
+        //viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
+
+        if (viewModel.newEntry) {
+            viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
+            viewModel.newEntry = false
+        } else {
+            viewModel.updatedFetchData(
+                args.groupId,
+                if (viewModel.groupMembers.isNotEmpty()) viewModel.groupMembers.toList()
+                else args.selectedMembers?.toList()
+            )
+        }
+
 
         // not works
 //        (requireActivity() as MainActivity).actionBar?.title = if(args.groupId == -1) "Create group"
@@ -179,15 +189,19 @@ class CreateEditGroupFragment : Fragment() {
         Log.d(TAG, "onViewCreated: createdit group id : ${args.groupId}")
         super.onViewCreated(view, savedInstanceState)
 
-        if (args.groupId == -1)
-            requireActivity().title = "Create Group"
-        else
-            requireActivity().title = "Edit Group"
+//        if (args.groupId == -1)
+//            requireActivity().title = "Create Group"
+//        else
+//            requireActivity().title = "Edit Group"
 
         // Rv
-        val membersAdapter = GroupMembersAdapter { memberId, memberView ->
+        val membersAdapter = GroupMembersAdapter(args.groupId, { memberId, memberView ->
             memberClicked(memberId, memberView)
+        }, { member, position, deleteImageView ->
+            deleteImageView.ripple(requireContext())
+            confirmationDialog(member, position, deleteImageView)
         }
+        )
 
         binding.groupMembersRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -204,6 +218,12 @@ class CreateEditGroupFragment : Fragment() {
 
                 // Also update selected members this stores the added members before creating group
                 //       activityViewModel.selectedMembers = members
+
+                binding.addMemberButton.visibility = View.GONE
+                binding.noMembersTextView.visibility = View.GONE
+            } else {
+                binding.addMemberButton.visibility = View.VISIBLE
+                binding.noMembersTextView.visibility = View.VISIBLE
             }
         }
 
@@ -230,7 +250,7 @@ class CreateEditGroupFragment : Fragment() {
         //      group icon click (when not set)
         binding.groupImageHolder.setOnClickListener {
             if (binding.groupImageHolderImage.isVisible)
-                gotoGroupIconFragment(binding.groupImageHolderImage)
+                gotoGroupIconFragment(binding.groupImageHolderImage, true)
             Log.d(TAG, "onViewCreated: img click holder")
         }
 
@@ -239,8 +259,12 @@ class CreateEditGroupFragment : Fragment() {
 //        }
         // group icon click (when set)
         binding.groupImageView.setOnClickListener {
-            gotoGroupIconFragment(binding.groupImageView)
+            gotoGroupIconFragment(binding.groupImageView, false)
             Log.d(TAG, "onViewCreated: img click image")
+        }
+
+        binding.groupProfileEditCard.setOnClickListener {
+            gotoGroupIconFragment(it, true)
         }
 
         viewModel.group.observe(viewLifecycleOwner) { group ->
@@ -250,7 +274,7 @@ class CreateEditGroupFragment : Fragment() {
 
 //                if(args.groupName != null && (viewModel.tempGroupName != ""))
 //                    binding.groupNameText.setText(args.groupName)
-                if(viewModel.tempGroupName != "")
+                if (viewModel.tempGroupName != "")
                     binding.groupNameText.setText(viewModel.tempGroupName)
                 else
                     binding.groupNameText.setText(group.groupName)
@@ -260,16 +284,18 @@ class CreateEditGroupFragment : Fragment() {
                     Log.d(TAG, "onViewCreated: image set")
                     ///binding.groupImageView.setImageURI(group.groupIcon)
 
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        binding.groupImageView.setImageBitmap(
+                    //  Handler(Looper.getMainLooper()).postDelayed({
+                    binding.groupImageView.setImageBitmap(
+                        getRoundedCroppedBitmap(
                             decodeSampledBitmapFromUri(
                                 binding.root.context,
                                 group.groupIcon,
                                 160.dpToPx(resources.displayMetrics),
                                 160.dpToPx(resources.displayMetrics)
-                            )
+                            )!!
                         )
-                    }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+                    )
+                    //   }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
                     binding.groupImageHolder.visibility = View.INVISIBLE
                     binding.groupImageHolderImage.visibility = View.INVISIBLE
@@ -288,18 +314,39 @@ class CreateEditGroupFragment : Fragment() {
 
         Log.d(TAG, "onViewCreated: group Icon create edit${args.groupIcon}")
 
+        // group not created, but group icon set
         if (args.groupIcon != null) {
+
+            viewModel.updatedUri = Uri.parse(args.groupIcon) //  here group icon should be not null. // later ref
+
+            Log.d(TAG, "onViewCreated: xxx  groupIcon not null ${viewModel.updatedUri}")
+
+            // update group change when uri changed
+            viewModel.group.value?.let {
+                if(it.groupIcon != viewModel.updatedUri) {
+                    viewModel.change = true
+                    Log.d(TAG, "onViewCreated: xxx changed detected ${viewModel.change}")
+                }
+            }
+
+            // create group change when uri changed
+            if(args.groupId == -1 && args.groupIcon != null)
+                viewModel.change = true
+
+
             ///binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.groupImageView.setImageBitmap(
+             Handler(Looper.getMainLooper()).postDelayed({
+            binding.groupImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
                     decodeSampledBitmapFromUri(
                         binding.root.context,
                         Uri.parse(args.groupIcon),
                         160.dpToPx(resources.displayMetrics),
                         160.dpToPx(resources.displayMetrics)
-                    )
+                    )!!
                 )
-            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+            )
+               }, resources.getInteger(R.integer.reply_motion_duration_very_small).toLong())
 
             binding.groupImageHolder.visibility = View.INVISIBLE
             binding.groupImageHolderImage.visibility = View.INVISIBLE
@@ -317,14 +364,13 @@ class CreateEditGroupFragment : Fragment() {
 //      Model.updateMembers(activityViewModel.selectedMembers)
 
         // retains group name while returning from choose members screen (on create group)
-        if(viewModel.tempGroupName != "")
+        if (viewModel.tempGroupName != "")
             binding.groupNameText.setText(viewModel.tempGroupName)
         else if (args.groupName != null) {
             binding.groupNameText.setText(args.groupName)
 //            if (args.groupName.toString().trim() != "")
 //                binding.createGroupButton.visibility = View.VISIBLE
-        }
-        else{
+        } else {
             // do nothing
         }
 //
@@ -378,46 +424,106 @@ class CreateEditGroupFragment : Fragment() {
 
                     if (args.groupId == -1)
                         viewModel.change = true
-                    else{
-                        viewModel.group.value?.let {
-                            viewModel.updateMenuVisibility =
-                                binding.groupNameText.text.toString() != it.groupName
 
-                            requireActivity().invalidateOptionsMenu()
-                        }
-
-                    }
+//                    else {
+//                        viewModel.group.value?.let { // needs to be changed
+//                            viewModel.updateMenuVisibility =
+//                                binding.groupNameText.text.toString() != it.groupName
+//
+//                            requireActivity().invalidateOptionsMenu()
+//                        }
+//
+//                    }
                 } else {
+                    if(args.groupId != -1)
                     binding.outlinedGroupNameTextField.error = getString(R.string.enter_valid_name) // unwanted code
 
-                    if (!viewModel.memberCountChange)
-                        viewModel.change = false
-
-                    // hide update option menu
-                    viewModel.updateMenuVisibility = false
-                    requireActivity().invalidateOptionsMenu()
+//                    if (!viewModel.memberCountChange)
+//                        viewModel.change = false
+//
+//                    // hide update option menu
+//                    viewModel.updateMenuVisibility = false
+//                    requireActivity().invalidateOptionsMenu()
                 }
 
-//                binding.createGroupButton.visibility =
-//                    if (nameCheck(
-//                            binding.groupNameText.text?.trim().toString()
-//                        ) && args.groupId == -1
-//                    )
-//                        View.VISIBLE
-//                    else
-//                        View.GONE
+                // update group
+                viewModel.group.value?.let {
+                    viewModel.change = viewModel.change ||
+                            (it.groupName != binding.groupNameText.text.toString())
+
+                    // if it is already true, then true by default else check for member change and change accordingly
+                    Log.d(TAG, "afterTextChanged: onViewCreated: xxx ${viewModel.change}")
+                }
+
             }
 
         }
 
-        if(args.groupId != -1) // add text watcher only when group exists already
-            binding.groupNameText.addTextChangedListener(nameWatcher)
+        //if (args.groupId != -1) //
+        binding.groupNameText.addTextChangedListener(nameWatcher)
+
+
+        // Add Members button click
+        binding.addMemberButton.setOnClickListener {
+            gotoChooseMembersFragment()
+        }
+
+
+        val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                viewModel.members.value?.let {
+                    confirmationDialog(
+                        it[viewHolder.absoluteAdapterPosition],
+                        viewHolder.absoluteAdapterPosition,
+                        viewHolder.itemView.findViewById(R.id.delete_member_image_view)
+                    )
+                }
+            }
+
+        }
+
+        if (args.groupId == -1) { // only delete member during group creation
+            val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+            itemTouchHelper.attachToRecyclerView(binding.groupMembersRecyclerView)
+        }
 
         // Menu
 
         setHasOptionsMenu(true)
 
     }
+
+    private fun confirmationDialog(member: Member, position: Int, view: View) {
+        val dialogBuilder = AlertDialog.Builder(requireContext()).apply {
+            setTitle(getString(R.string.delete))
+            setMessage(getString(R.string.delete_message))
+            setCancelable(false)
+
+            setPositiveButton(getString(R.string.delete)) { dialog, which ->
+                //Toast.makeText(requireContext(), "${member.name} deleted", Toast.LENGTH_SHORT).show()
+
+                viewModel.removeMember(args.groupId, member) {
+                    binding.groupMembersRecyclerView.adapter?.notifyItemChanged(position)
+                    Snackbar.make(
+                        binding.root,
+                        "${member.name} ${getString(R.string.deleted)}",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                view.setBackgroundColor(resources.getColor(R.color.background))
+                binding.groupMembersRecyclerView.adapter?.notifyItemChanged(position)
+                dialog.cancel()
+            }
+        }
+
+        dialogBuilder.show()
+
+    }
+
 
     private fun getStartView(): View? {
         return if (args.groupId == -1)
@@ -469,6 +575,7 @@ class CreateEditGroupFragment : Fragment() {
                     memberId,
                     args.groupIcon
                 ) {
+                    viewModel.reset() // later ref if issue
                     gotoGroupsFragment()
                 }
 
@@ -502,7 +609,8 @@ class CreateEditGroupFragment : Fragment() {
 
         menu.findItem(R.id.create_group).isVisible = args.groupId == -1
 
-        menu.findItem(R.id.update_group).isVisible = (args.groupId != -1 && viewModel.updateMenuVisibility)
+        menu.findItem(R.id.update_group).isVisible =
+            (args.groupId != -1)// && viewModel.updateMenuVisibility) // needs to be changed
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -530,10 +638,59 @@ class CreateEditGroupFragment : Fragment() {
     }
 
     private fun updateGroup() {
-        // update group name
-        viewModel.updateGroupName(binding.groupNameText.text?.trim().toString()){
-            gotoGroupsFragment()
+        // update group name(old)
+//        viewModel.updateGroupName(binding.groupNameText.text?.trim().toString()) {
+//            gotoGroupsFragment()
+//        }
+
+        if (binding.groupNameText.text == null || binding.groupNameText.text!!.trim()
+                .toString() == ""
+        ) {
+            Snackbar.make(
+                binding.root,
+                getString(R.string.field_empty),
+                Snackbar.LENGTH_SHORT
+            ).show()
+        } else {
+            if (!nameCheck(binding.groupNameText.text!!.trim().toString())) {
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.invalid_input),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            } else {
+                // new Update group
+                val builder = AlertDialog.Builder(requireContext())
+
+                builder.setMessage(getString(R.string.confirm_editing_group))
+
+                builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+
+                    viewModel.newUpdateGroupName({
+                        viewModel.reset()
+                        gotoGroupsFragment()
+                    }, {
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.group_updated),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }, {
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.fields_not_edited),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    })
+
+                }
+
+                builder.setNegativeButton(getString(R.string.cancel), null)
+
+                builder.show()
+            }
         }
+
     }
 
     private fun gotoAddMemberFragment() {
@@ -584,7 +741,7 @@ class CreateEditGroupFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
-    private fun gotoGroupIconFragment(imageView: View) {
+    private fun gotoGroupIconFragment(imageView: View, edit: Boolean) {
 //        exitTransition = MaterialElevationScale(false).apply {
 //            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
 //        }
@@ -593,18 +750,20 @@ class CreateEditGroupFragment : Fragment() {
 //        }
 
         val groupName = binding.groupNameText.text?.trim().toString()
-        val groupIcon = if (args.groupId != -1) {
-            if (viewModel.group.value != null) {
-                if (viewModel.group.value!!.groupIcon != null)
-                    viewModel.group.value!!.groupIcon.toString()
-                else
-                    null
-            } else {
-                null
-            }
+//        val groupIcon = if (args.groupId != -1) {
+//            if (viewModel.group.value != null) {
+//                if (viewModel.group.value!!.groupIcon != null)
+//                    viewModel.group.value!!.groupIcon.toString()
+//                else
+//                    null
+//            } else {
+//                null
+//            }
+//
+//        } else
+//            args.groupIcon  // when group icon already set before creating group
 
-        } else
-            args.groupIcon  // when group icon already set before creating group
+        val groupIcon = viewModel.updatedUri  // later ref
 
 //        val groupIconTransitionName = getString(R.string.group_icon_transition_name)
 //        val extras = FragmentNavigatorExtras(imageView to groupIconTransitionName)
@@ -612,10 +771,11 @@ class CreateEditGroupFragment : Fragment() {
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupIconFragment(
                 args.groupId,
-                groupIcon,
+                groupIcon.toString(), // .toString() added, later ref
                 groupName,
                 false,
-                false
+                false,
+                edit
             )
         findNavController().navigate(action)//, extras)
     }

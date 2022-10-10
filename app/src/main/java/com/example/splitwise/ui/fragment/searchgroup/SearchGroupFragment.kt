@@ -294,7 +294,8 @@ class SearchGroupFragment : Fragment() {
             groupIcon,
             groupName,
             true,
-            true
+            true,
+            false
         )
         findNavController().navigate(action, extras)
     }

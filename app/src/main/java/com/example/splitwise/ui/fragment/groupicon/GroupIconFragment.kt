@@ -62,8 +62,8 @@ class GroupIconFragment : Fragment() {
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment_container
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = resources.getColor(R.color.view_color)//Color.TRANSPARENT
-            setAllContainerColors(resources.getColor(R.color.view_color))
+            scrimColor = resources.getColor(R.color.background)//Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.background))
         }
     }
 
@@ -89,15 +89,23 @@ class GroupIconFragment : Fragment() {
             ///binding.groupIconImageView.setImageURI(Uri.parse(groupIcon))
             binding.groupIconImageView.setImageURI(Uri.parse(groupIcon))
             binding.groupIconImageView.visibility = View.VISIBLE
-            binding.uploadGroupIconButton.visibility = View.GONE
+            binding.emptyGroupIcon.visibility = View.GONE
+           // binding.uploadGroupIconButton.visibility = View.GONE
         } else {
             binding.groupIconImageView.visibility = View.GONE
-            binding.uploadGroupIconButton.visibility = View.VISIBLE
+            binding.emptyGroupIcon.visibility = View.VISIBLE
+           // binding.uploadGroupIconButton.visibility = View.VISIBLE
         }
 
-        binding.uploadGroupIconButton.setOnClickListener{
+//        binding.uploadGroupIconButton.setOnClickListener{
+//            openBottomSheet()
+//        }
+
+        // edit mode
+        if(args.edit){
             openBottomSheet()
         }
+
         // menu
         setHasOptionsMenu(true)
     }
@@ -150,9 +158,9 @@ class GroupIconFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.group_icon_menu, menu)
 
-        val editMenu = menu.findItem(R.id.edit_menu)
-
-        editMenu.isVisible = args.groupIcon != null
+//        val editMenu = menu.findItem(R.id.edit_menu)
+//
+//        editMenu.isVisible = args.groupIcon != null
 
     }
 
@@ -308,13 +316,14 @@ class GroupIconFragment : Fragment() {
                                     viewModel.updateGroupIcon(uri) {
                                         gotoGroupsFragment()
                                     }
-                                else {
-                                    viewModel.updateGroupIcon(uri)
-                                    NavHostFragment.findNavController(this).popBackStack()
+                                else { // from create edit group,(during edit group)
+                                    gotoCreateEditGroupFragment(uri)
+//                                    viewModel.updateGroupIcon(uri)
+//                                    NavHostFragment.findNavController(this).popBackStack()
                                     //requireActivity().onBackPressed()  for back press I used this, this is wrong
                                 }
                             }
-                        } else
+                        } else // without groupid, during creation only we can be here
                             gotoCreateEditGroupFragment(uri)
                     } else
                         Snackbar.make(
@@ -415,8 +424,9 @@ class GroupIconFragment : Fragment() {
                                     gotoGroupsFragment()
                                 }
                             } else {
-                                viewModel.updateGroupIcon(uri)
-                                NavHostFragment.findNavController(this).popBackStack()
+                                gotoCreateEditGroupFragment(uri)
+//                                viewModel.updateGroupIcon(uri)
+//                                NavHostFragment.findNavController(this).popBackStack()
                                 //requireActivity().onBackPressed() for back press I used this, this is wrong
                             }
                         }

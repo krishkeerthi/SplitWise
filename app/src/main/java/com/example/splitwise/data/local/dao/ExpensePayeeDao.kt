@@ -14,4 +14,7 @@ interface ExpensePayeeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(expensePayees: ExpensePayee)
+
+    @Query("DELETE FROM expense_payee WHERE expense_id = :expenseId AND payee_id= :payeeId")
+    suspend fun removePayee(expenseId: Int, payeeId: Int)
 }

@@ -37,7 +37,7 @@ class FilteredGroupsAdapter(
 //                onGroupClicked(groups[adapterPosition].groupId)
 //            }
 
-            binding.groupIconCard.setOnClickListener{
+            binding.groupIconCard.setOnClickListener {
                 itemView.ripple(itemView.context)
                 onImageClicked(
                     groups[absoluteAdapterPosition].groupId,
@@ -45,7 +45,8 @@ class FilteredGroupsAdapter(
                     groups[absoluteAdapterPosition].groupName,
 
                     if (groups[absoluteAdapterPosition].groupIcon != null) binding.groupImageView
-                    else binding.groupImageHolderImage)
+                    else binding.groupImageHolderImage
+                )
             }
 
             itemView.setOnClickListener {
@@ -135,11 +136,13 @@ class FilteredGroupsViewHolder(val binding: GroupCard2Binding) :
         if (group.groupIcon != null) {
             ///binding.groupImageView.setImageURI(group.groupIcon)
             binding.groupImageView.setImageBitmap(
-                decodeSampledBitmapFromUri(
-                    binding.root.context,
-                    group.groupIcon,
-                    48.dpToPx(resources.displayMetrics),
-                    48.dpToPx(resources.displayMetrics)
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        group.groupIcon,
+                        48.dpToPx(resources.displayMetrics),
+                        48.dpToPx(resources.displayMetrics)
+                    )!!
                 )
             )
             binding.groupImageHolder.visibility = View.INVISIBLE

@@ -11,6 +11,7 @@ import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.MemberProfileCardBinding
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.getRoundedCroppedBitmap
 
 class MembersProfileAdapter : RecyclerView.Adapter<MembersProfileViewHolder>() {
     private var members = listOf<Member>()
@@ -51,30 +52,36 @@ class MembersProfileViewHolder(val binding: MemberProfileCardBinding) :
     fun bind(member: Member) {
         binding.memberNameTextView.text = member.name
 
-        if(member.memberProfile != null){
+        if (member.memberProfile != null) {
             ///binding.memberImageView.setImageURI(member.memberProfile)
 
             // this avoids loading old views.
             binding.memberImageView.setImageBitmap(null)
 
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                    binding.root.context, member.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
-                ))
-            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+            //Handler(Looper.getMainLooper()).postDelayed({
+            binding.memberImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        member.memberProfile,
+                        48.dpToPx(resources.displayMetrics),
+                        48.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
+            //  }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE
             binding.memberImageHolderImage.visibility = View.INVISIBLE
-        }
-        else { // may be we can use on view recycled.
+        } else { // may be we can use on view recycled.
             binding.memberImageHolder.visibility = View.VISIBLE
             binding.memberImageHolderImage.visibility = View.VISIBLE
             binding.memberImageView.visibility = View.INVISIBLE
         }
     }
 
-    fun resetViews(){
+    fun resetViews() {
         binding.memberImageHolder.visibility = View.VISIBLE
         binding.memberImageHolderImage.visibility = View.VISIBLE
         binding.memberImageView.visibility = View.INVISIBLE

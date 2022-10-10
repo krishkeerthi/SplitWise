@@ -6,11 +6,13 @@ interface TransactionDataSource {
 
     suspend fun addTransaction(groupId: Int, payerId: Int, payeeId: Int, amount: Float)
 
+    suspend fun updateTransaction(groupId: Int, payerId: Int, payeeId: Int, amount: Float)
+
     suspend fun settle(senderId: Int, receiverId: Int)
 
     suspend fun settle(senderId: Int, receiverId: Int, groupId: Int)
 
-    suspend fun settle(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>)
+    suspend fun settle(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>) //
 
     suspend fun settleAllInGroup(senderId: Int, groupId: Int)
 
@@ -37,4 +39,12 @@ interface TransactionDataSource {
     suspend fun getPayers(payeeId: Int, groupId: Int): List<Int>?
 
     suspend fun getPayers(payeeId: Int, groupIds: List<Int>): List<Int>?
+
+    suspend fun getAmount(groupId: Int, payerId: Int, payeeId: Int): Float?
+
+    suspend fun updateAmount(groupId: Int, payerId: Int, payeeId: Int, amount: Float)
+
+    suspend fun deleteGroupTransactions(groupId: Int)
+
+    suspend fun settle(groupId: Int, payerId: Int, recipientId: Int, amount: Float) //
 }

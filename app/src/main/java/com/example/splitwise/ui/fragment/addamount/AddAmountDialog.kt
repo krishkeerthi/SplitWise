@@ -1,30 +1,26 @@
 package com.example.splitwise.ui.fragment.addamount
 
-import android.app.ActionBar.LayoutParams
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
-import android.os.SystemClock
-import android.renderscript.ScriptGroup.Input
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.MotionEvent
-import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
 import com.example.splitwise.R
 import com.example.splitwise.ui.fragment.groups.GroupsViewModel
 import com.example.splitwise.util.AmountFilter
-import com.example.splitwise.util.showKeyboard
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-class AddAmountDialog(private val viewModel: GroupsViewModel, val createChip: (AmountFilter, Float, Context) -> Unit): DialogFragment(){
+class AddAmountDialog(
+    private val viewModel: GroupsViewModel,
+    val createChip: (AmountFilter, Float, Context) -> Unit
+) : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -55,8 +51,9 @@ class AddAmountDialog(private val viewModel: GroupsViewModel, val createChip: (A
 //        amountEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0f, 0f, 0))
 
         Log.d(TAG, "onCreateDialog: soft input focused: ${amountEditText.showSoftInputOnFocus}")
-       // amountEditText.performClick()
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        // amountEditText.performClick()
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(amountLayout, InputMethodManager.SHOW_IMPLICIT)
         //imm.toggleSoftInputFromWindow(requireActivity().currentFocus?.windowToken, InputMethodManager.SHOW_FORCED, 0)
         //amountEditText.showKeyboard()
@@ -70,7 +67,7 @@ class AddAmountDialog(private val viewModel: GroupsViewModel, val createChip: (A
             //createAmountFilterChip(viewModel.selectedAmountFilter, amount)
         }
 
-        builder.setNegativeButton(getString(R.string.cancel)){ dialogInterface, _ ->
+        builder.setNegativeButton(getString(R.string.cancel)) { dialogInterface, _ ->
             dialogInterface.cancel()
         }
 
@@ -92,20 +89,21 @@ class AddAmountDialog(private val viewModel: GroupsViewModel, val createChip: (A
             override fun afterTextChanged(s: Editable?) {
                 val amountText = amountEditText.text.toString()
 
-                val amount = if(amountText.isNotEmpty()) amountText.toInt() else 0
+                val amount = if (amountText.isNotEmpty()) amountText.toInt() else 0
 
 
 
                 if (amountText.isEmpty())
                     amountLayout.error = getString(R.string.enter_amount)
-                else if(amount == 0)
+                else if (amount == 0)
                     amountLayout.error = getString(R.string.amount_greater_than_0)
                 else {
                     amountLayout.error = null
                     amountLayout.isErrorEnabled = false
                 }
 
-                dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled = amountText.isNotEmpty() && amount > 0
+                dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled =
+                    amountText.isNotEmpty() && amount > 0
             }
         }
         amountEditText.addTextChangedListener(amountWatcher)

@@ -1,7 +1,5 @@
 package com.example.splitwise.ui.fragment.adapter
 
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,34 +7,55 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
-import com.example.splitwise.databinding.ExpenseMemberCardBinding
 import com.example.splitwise.databinding.GroupMemberCardBinding
+import com.example.splitwise.databinding.NewGroupMemberCardBinding
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.getRoundedCroppedBitmap
 import com.example.splitwise.util.ripple
-import com.example.splitwise.util.roundOff
 
 class GroupMembersAdapter(
-    val memberClicked: (Int, View) -> Unit
-): RecyclerView.Adapter<GroupMembersViewHolder>() {
+    val groupId: Int,
+    val memberClicked: (Int, View) -> Unit,
+    val onDeleteClicked: (Member, Int, View) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var members = listOf<Member>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupMembersViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context)
-        val binding = GroupMemberCardBinding.inflate(view, parent, false)
 
-        return GroupMembersViewHolder(binding).apply {
-            itemView.setOnClickListener {
-                //it.ripple(it.context)
-                memberClicked(members[absoluteAdapterPosition].memberId, itemView)
+        val viewHolder: RecyclerView.ViewHolder = if (groupId == -1) {
+            val binding = NewGroupMemberCardBinding.inflate(view, parent, false)
+            NewGroupMembersViewHolder(binding).apply {
+                binding.deleteMemberImageView.setOnClickListener {
+                    //it.ripple(it.context)
+                    onDeleteClicked(members[absoluteAdapterPosition], absoluteAdapterPosition, binding.deleteMemberImageView)
+                }
+            }
+        } else {
+            val binding = GroupMemberCardBinding.inflate(view, parent, false)
+
+            GroupMembersViewHolder(binding).apply {
+                itemView.setOnClickListener {
+                    //it.ripple(it.context)
+                    memberClicked(members[absoluteAdapterPosition].memberId, itemView)
+                }
             }
         }
+
+        return viewHolder
     }
 
-    override fun onBindViewHolder(holder: GroupMembersViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val member = members[position]
 
-        holder.bind(member)
+        if (groupId != -1) {
+            val viewHolder = holder as GroupMembersViewHolder
+            viewHolder.bind(member)
+        } else {
+            val viewHolder = holder as NewGroupMembersViewHolder
+            viewHolder.bind(member)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -50,24 +69,74 @@ class GroupMembersAdapter(
 
 }
 
-class GroupMembersViewHolder(val binding: GroupMemberCardBinding) : RecyclerView.ViewHolder(binding.root) {
+class GroupMembersViewHolder(val binding: GroupMemberCardBinding) :
+    RecyclerView.ViewHolder(binding.root) {
 
     val resources = binding.root.resources
     fun bind(member: Member) {
 
-        ViewCompat.setTransitionName(binding.root, String.format(resources.getString(R.string.create_edit_group_members_transition_name), member.memberId))
+        ViewCompat.setTransitionName(
+            binding.root,
+            String.format(
+                resources.getString(R.string.create_edit_group_members_transition_name),
+                member.memberId
+            )
+        )
         binding.memberNameTextView.text = member.name
         binding.memberPhoneTextView.text = member.phone.toString()
 
-        if(member.memberProfile != null){
+        if (member.memberProfile != null) {
             ///binding.memberImageView.setImageURI(member.memberProfile)
 
             binding.memberImageView.setImageBitmap(null)
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.memberImageView.setImageBitmap(decodeSampledBitmapFromUri(
-                    binding.root.context, member.memberProfile, 48.dpToPx(resources.displayMetrics), 48.dpToPx(resources.displayMetrics)
-                ))
-            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+            //    Handler(Looper.getMainLooper()).postDelayed({
+            binding.memberImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        member.memberProfile,
+                        48.dpToPx(resources.displayMetrics),
+                        48.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
+            //    }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
+
+            binding.memberImageView.visibility = View.VISIBLE
+            binding.memberImageHolder.visibility = View.INVISIBLE
+            binding.memberImageHolderImage.visibility = View.INVISIBLE
+        }
+    }
+
+}
+
+class NewGroupMembersViewHolder(val binding: NewGroupMemberCardBinding) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    val resources = binding.root.resources
+    fun bind(member: Member) {
+
+        //ViewCompat.setTransitionName(binding.root, String.format(resources.getString(R.string.create_edit_group_members_transition_name), member.memberId))
+        binding.memberNameTextView.text = member.name
+        binding.memberPhoneTextView.text = member.phone.toString()
+
+        if (member.memberProfile != null) {
+            ///binding.memberImageView.setImageURI(member.memberProfile)
+
+            binding.memberImageView.setImageBitmap(null)
+            //    Handler(Looper.getMainLooper()).postDelayed({
+            binding.memberImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        member.memberProfile,
+                        48.dpToPx(resources.displayMetrics),
+                        48.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
+            //    }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
 
             binding.memberImageView.visibility = View.VISIBLE

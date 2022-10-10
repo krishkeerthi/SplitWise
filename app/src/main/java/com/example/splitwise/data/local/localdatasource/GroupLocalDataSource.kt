@@ -131,4 +131,12 @@ GroupDataSource{
         groupDao.updateGroupName(groupId, groupName)
     }
 
+    override suspend fun removeGroup(groupId: Int) {
+        groupDao.deleteGroup(groupId)
+    }
+
+    override suspend fun removeGroupMembers(groupId: Int) {
+        groupMemberDao.removeGroupMembers(groupId)
+    }
+
 }

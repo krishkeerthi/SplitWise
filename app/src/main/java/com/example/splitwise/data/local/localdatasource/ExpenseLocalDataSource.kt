@@ -2,15 +2,12 @@ package com.example.splitwise.data.local.localdatasource
 
 import android.net.Uri
 import com.example.splitwise.data.datasource.ExpenseDataSource
-import com.example.splitwise.data.local.dao.ExpenseBillDao
-import com.example.splitwise.data.local.dao.ExpenseDao
-import com.example.splitwise.data.local.dao.ExpensePayeeDao
-import com.example.splitwise.data.local.entity.Expense
-import com.example.splitwise.data.local.entity.ExpenseBill
-import com.example.splitwise.data.local.entity.ExpensePayee
+import com.example.splitwise.data.local.dao.*
+import com.example.splitwise.data.local.entity.*
 import com.example.splitwise.model.BillUri
 import java.net.URI
 import java.util.*
+import kotlin.math.exp
 
 
 //repository class, which will serve as a single source of truth for the app's data,
@@ -18,7 +15,9 @@ import java.util.*
 class ExpenseLocalDataSource(
     private val expenseDao: ExpenseDao,
     private val expensePayeeDao: ExpensePayeeDao,
-    private val expenseBillDao: ExpenseBillDao
+    private val expenseBillDao: ExpenseBillDao,
+    private val removedExpensePayeeDao: RemovedExpensePayeeDao,
+    private val groupExpenseDao: GroupExpenseDao
 ): ExpenseDataSource {
     override suspend fun createExpense(
         groupId: Int,
@@ -88,4 +87,30 @@ class ExpenseLocalDataSource(
     ): List<Expense>? {
         return expenseDao.getExpensesByCategories(groupId, categories)
     }
+
+    override suspend fun removeExpensePayee(expenseId: Int, payeeId: Int) {
+        expensePayeeDao.removePayee(expenseId, payeeId)
+    }
+
+    override suspend fun addRemovedExpensePayee(expenseId: Int, payeeId: Int) {
+        removedExpensePayeeDao.insert(RemovedExpensePayee(expenseId, payeeId))
+    }
+
+    override suspend fun removeBills(expenseId: Int) {
+        expenseBillDao.deleteBills(expenseId)
+    }
+
+    override suspend fun removeExpenseIdFromGroup(groupId: Int, expenseId: Int) {
+        groupExpenseDao.removeExpense(groupId, expenseId)
+    }
+
+    override suspend fun deleteExpense(expenseId: Int) {
+        expenseDao.deleteExpense(expenseId)
+    }
+
+    override suspend fun getRemovedExpensePayees(expenseId: Int): List<Int>? {
+        return removedExpensePayeeDao.getPayees(expenseId)
+    }
+
+
 }

@@ -69,6 +69,14 @@ class GroupRepository(
         }.join()
     }
 
+    suspend fun reduceTotalExpense(groupId: Int, amount: Float){
+        withContext(Dispatchers.IO){
+            getTotalExpense(groupId)?.let {
+                dataSource.updateTotalExpense(groupId,  amount)
+            }
+        }
+    }
+
     suspend fun getGroupsCreatedBefore(date: Date): List<Group>? = withContext(Dispatchers.IO){
         dataSource.getGroupsCreatedBefore(date)
     }
@@ -124,6 +132,18 @@ class GroupRepository(
     suspend fun updateGroupName(groupId: Int, groupName: String) {
         withContext(Dispatchers.IO){
             dataSource.updateGroupName(groupId, groupName)
+        }
+    }
+
+    suspend fun removeGroup(groupId: Int) {
+        withContext(Dispatchers.IO){
+            dataSource.removeGroup(groupId)
+        }
+    }
+
+    suspend fun removeGroupMembers(groupId: Int) {
+        withContext(Dispatchers.IO){
+            dataSource.removeGroupMembers(groupId)
         }
     }
 }

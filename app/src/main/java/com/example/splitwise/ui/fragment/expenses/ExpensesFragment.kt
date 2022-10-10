@@ -2,15 +2,16 @@ package com.example.splitwise.ui.fragment.expenses
 
 import android.content.ContentValues.TAG
 import android.content.Intent
-import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
@@ -19,15 +20,18 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentExpensesBinding
+import com.example.splitwise.model.ExpenseMember
 import com.example.splitwise.ui.fragment.adapter.ExpensesAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersProfileAdapter
-import com.example.splitwise.util.Category
-import com.example.splitwise.util.roundOff
+import com.example.splitwise.ui.fragment.groups.SwipeToDeleteCallback
+import com.example.splitwise.util.*
 import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
 
@@ -42,11 +46,30 @@ class ExpensesFragment : Fragment() {
 
     // animations
 
-    private val rotateOpen: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_open_anim) }
-    private val rotateClose: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_close_anim) }
-    private val fromBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.from_bottom_anim) }
-    private val toBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.to_bottom_anim) }
-
+    private val rotateOpen: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.rotate_open_anim
+        )
+    }
+    private val rotateClose: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.rotate_close_anim
+        )
+    }
+    private val fromBottom: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.from_bottom_anim
+        )
+    }
+    private val toBottom: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.to_bottom_anim
+        )
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,10 +79,20 @@ class ExpensesFragment : Fragment() {
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment_container
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor =  resources.getColor(R.color.view_color)//Color.TRANSPARENT //R.color.view_color
+            scrimColor =
+                resources.getColor(R.color.view_color)//Color.TRANSPARENT //R.color.view_color
             setAllContainerColors(resources.getColor(R.color.background))
         }
 
+//        val callback = object : OnBackPressedCallback(true /* enabled by default */) {
+//
+//            override fun handleOnBackPressed() {
+//                binding.groupImageView.refreshDrawableState()
+//                NavHostFragment.findNavController(this@ExpensesFragment)
+//                    .popBackStack()
+//            }
+//        }
+//        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onCreateView(
@@ -67,7 +100,8 @@ class ExpensesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.expenses)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.group_expenses)
         return inflater.inflate(R.layout.fragment_expenses, container, false)
     }
 
@@ -83,12 +117,15 @@ class ExpensesFragment : Fragment() {
 
         //viewModel.fetchData()
         viewModel.loadMembers()
+        viewModel.loadExpensesAndMembers() // whenever expense is edited in the next screens while returning back,
+        // it is not updated
 
-       // requireActivity().title = "Group Detail"
+        // requireActivity().title = "Group Detail"
 
         binding = FragmentExpensesBinding.bind(view)
 
-        setVisibility()
+        //binding.groupIconCard.radius = 100.dpToPx(resources.displayMetrics).toFloat()
+        //setVisibility()
 
         // Rv
         val expensesAdapter = ExpensesAdapter { expenseId: Int, expenseView: View ->
@@ -118,6 +155,27 @@ class ExpensesFragment : Fragment() {
                 //requireActivity().title = group.groupName
                 //binding.groupCreationDateTextView.text = formatDate(group.creationDate)
                 binding.groupExpenseTextView.text = "₹" + group.totalExpense.roundOff()
+
+                if (group.groupIcon != null) {
+
+                    binding.groupImageView.setImageBitmap(
+                        getRoundedCroppedBitmap(
+                            decodeSampledBitmapFromUri(
+                                binding.root.context,
+                                group.groupIcon,
+                                40.dpToPx(resources.displayMetrics),
+                                40.dpToPx(resources.displayMetrics)
+                            )!!
+                        )
+
+                    )
+
+                    binding.groupImageView.visibility = View.VISIBLE
+                    binding.groupImageHolder.visibility = View.INVISIBLE
+                    binding.groupImageHolderImage.visibility = View.INVISIBLE
+
+                    binding.groupImageView.invalidate()
+                }
             }
         }
 
@@ -128,8 +186,7 @@ class ExpensesFragment : Fragment() {
                 binding.expensesRecyclerView.visibility = View.VISIBLE
                 binding.noExpenseImageView.visibility = View.GONE
                 binding.noExpenseTextView.visibility = View.GONE
-            }
-            else{
+            } else {
                 binding.expensesRecyclerView.visibility = View.GONE
                 binding.noExpenseImageView.visibility = View.VISIBLE
                 binding.noExpenseTextView.visibility = View.VISIBLE
@@ -143,27 +200,42 @@ class ExpensesFragment : Fragment() {
 
         }
 
-        // Button click
-        binding.addExpenseButton.setOnClickListener {
-            if (args.groupId == 12345 || args.groupId == 54321)
-                Toast.makeText(
-                    requireContext(),
-                    "This is dummy group. Create actual group to add expense",
-                    Toast.LENGTH_SHORT
-                ).show()
-            else {
-                gotoAddExpenseFragment(args.groupId)
-                onAddButtonClicked()
-            }
+        val contributions = getString(R.string.view_contributions)
+        val spannableString = SpannableString(contributions).apply {
+            setSpan(UnderlineSpan(), 0, this.length - 2, 0)
         }
+
+        binding.contributionsTextView.text = spannableString
+
+        binding.contributionsTextView.setOnClickListener {
+            gotoGroupSplitwiseFragment()
+        }
+
+        // Button click
+//        binding.addExpenseButton.setOnClickListener {
+//            if (args.groupId == 12345 || args.groupId == 54321)
+//                Toast.makeText(
+//                    requireContext(),
+//                    "This is dummy group. Create actual group to add expense",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            else {
+//                gotoAddExpenseFragment(args.groupId)
+//                onAddButtonClicked()
+//            }
+//        }
+//
+//        binding.addFabButton.setOnClickListener {
+//            onAddButtonClicked()
+//        }
+//
+//        binding.addMemberButton.setOnClickListener{
+//            goToCreateEditGroupFragment(args.groupId)
+//            onAddButtonClicked()
+//        }
 
         binding.addFabButton.setOnClickListener {
-            onAddButtonClicked()
-        }
-
-        binding.addMemberButton.setOnClickListener{
-            goToCreateEditGroupFragment(args.groupId)
-            onAddButtonClicked()
+            gotoAddExpenseFragment(args.groupId)
         }
 
 
@@ -185,8 +257,8 @@ class ExpensesFragment : Fragment() {
         // Chip selection
         binding.categoryChipGroup.forEach { child ->
             (child as Chip).setOnCheckedChangeListener { buttonView, isChecked ->
-               // Log.d(TAG, "onViewCreated: checked outside")
-                val category = when(buttonView.text){
+                // Log.d(TAG, "onViewCreated: checked outside")
+                val category = when (buttonView.text) {
                     getString(R.string.food) -> Category.FOOD
                     getString(R.string.travel) -> Category.TRAVEL
                     getString(R.string.tickets) -> Category.TICKETS
@@ -198,14 +270,13 @@ class ExpensesFragment : Fragment() {
                     else -> Category.OTHERS
                 }
 
-                if(isChecked){
+                if (isChecked) {
                     buttonView.setTextColor(requireActivity().resources.getColor(R.color.background))
                     viewModel.incrementCheckedFiltersCount()
                     viewModel.checkedFilters.add(category)
                     Log.d(TAG, "onViewCreated: checked ${viewModel.checkedFilters.toString()}")
                     viewModel.filterByCategory()
-                }
-                else {
+                } else {
                     buttonView.setTextColor(requireActivity().resources.getColor(R.color.invert_color))
                     viewModel.decrementCheckedFiltersCount()
                     viewModel.checkedFilters.remove(category)
@@ -222,7 +293,7 @@ class ExpensesFragment : Fragment() {
 
                 viewModel.checkedFilters.clear()
 
-                if(chip.isChecked){
+                if (chip.isChecked) {
                     chip.isChecked = false
                 }
             }
@@ -231,21 +302,19 @@ class ExpensesFragment : Fragment() {
         }
 
         // show filter and clear when expenses is not null
-        viewModel.expenseCount.observe(viewLifecycleOwner){ count ->
-            if(count > 0){
+        viewModel.expenseCount.observe(viewLifecycleOwner) { count ->
+            if (count > 0) {
                 binding.horizontalScrollView.visibility = View.VISIBLE
-            }
-            else{
+            } else {
                 binding.horizontalScrollView.visibility = View.GONE
             }
         }
 
         // show clear filter when at least one filter is checked
-        viewModel.checkedFiltersCount.observe(viewLifecycleOwner){ count ->
-            if(count > 0){
+        viewModel.checkedFiltersCount.observe(viewLifecycleOwner) { count ->
+            if (count > 0) {
                 binding.clearExpensesFilter.visibility = View.VISIBLE
-            }
-            else{
+            } else {
                 binding.clearExpensesFilter.visibility = View.INVISIBLE
             }
         }
@@ -272,9 +341,9 @@ class ExpensesFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
 
                 // Hide fab button
-                if(dy >0 && binding.addFabButton.visibility == View.VISIBLE)
+                if (dy > 0 && binding.addFabButton.visibility == View.VISIBLE)
                     binding.addFabButton.hide()
-                else if(dy < 0 && binding.addFabButton.visibility != View.VISIBLE)
+                else if (dy < 0 && binding.addFabButton.visibility != View.VISIBLE)
                     binding.addFabButton.show()
 
             }
@@ -292,22 +361,148 @@ class ExpensesFragment : Fragment() {
         binding.shadowView.setOnClickListener {
             onAddButtonClicked()
         }
+
+        val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                viewModel.expenseMembers.value?.let {
+                    expenseDeleteConfirmationDialog(
+                        it[viewHolder.absoluteAdapterPosition],
+                        viewHolder.absoluteAdapterPosition
+                    )
+                }
+            }
+
+        }
+
+
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(binding.expensesRecyclerView)
     }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause: called ex")
+        //binding.groupImageHolder.setBackgroundColor(resources.getColor(R.color.white))
+        //binding.groupIconCard.radius = 100.dpToPx(resources.displayMetrics).toFloat()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop: called ex ${binding.groupIconCard.radius}")
+        //binding.groupIconCard.radius = 100.dpToPx(resources.displayMetrics).toFloat()
+        Log.d(TAG, "onStop: called ex ${binding.groupIconCard.radius}")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d(TAG, "onDestroyView: called ex")
+//        binding.groupImageHolder.setBackgroundColor(resources.getColor(R.color.blue))
+//        binding.groupImageView.setBackgroundColor(resources.getColor(R.color.blue))
+
+        //binding.groupIconCard.radius = 100.dpToPx(resources.displayMetrics).toFloat()
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy: called ex")
+        //binding.groupIconCard.radius = 100.dpToPx(resources.displayMetrics).toFloat()
+    }
+
+    private fun groupDeleteConfirmationDialog(groupId: Int, groupName: String?) {
+        val dialogBuilder = AlertDialog.Builder(requireContext()).apply {
+            setTitle(getString(R.string.delete_group))
+            setMessage(String.format(getString(R.string.delete_group_message), groupName))
+
+            setPositiveButton(getString(R.string.delete)) { dialog, which ->
+                //Toast.makeText(requireContext(), "${member.name} deleted", Toast.LENGTH_SHORT).show()
+
+                viewModel.deleteGroup(groupId) {
+                    gotoGroupsFragment()
+                    Snackbar.make(
+                        binding.root,
+                        "$groupName ${getString(R.string.deleted)}",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                dialog.cancel()
+            }
+        }
+
+        dialogBuilder.show()
+
+    }
+
+    private fun gotoGroupSplitwiseFragment() {
+        // transition
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+        }
+
+//        val transitionName = getString(R.string.create_edit_group_view_contribution_transition_name)
+//        val extras = FragmentNavigatorExtras(binding.contributionsTextView to transitionName)
+
+        val action =
+            ExpensesFragmentDirections.actionExpensesFragmentToGroupSplitwiseFragment(args.groupId)
+        findNavController().navigate(action)//, extras)
+    }
+
+    private fun expenseDeleteConfirmationDialog(expenseMember: ExpenseMember, position: Int) {
+        val dialogBuilder = AlertDialog.Builder(requireContext()).apply {
+            setTitle(getString(R.string.delete_expense))
+            setMessage(
+                String.format(
+                    getString(R.string.delete_expense_message),
+                    expenseMember.expenseName
+                )
+            )
+
+            setPositiveButton(getString(R.string.delete)) { dialog, which ->
+                //Toast.makeText(requireContext(), "${member.name} deleted", Toast.LENGTH_SHORT).show()
+
+                viewModel.deleteExpense(args.groupId, expenseMember.expenseId) {
+                    viewModel.loadGroup()
+                    viewModel.loadExpensesAndMembers()
+                    Snackbar.make(
+                        binding.root,
+                        "${expenseMember.expenseName} ${getString(R.string.deleted)}",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                binding.expensesRecyclerView.adapter?.notifyItemChanged(position)
+                dialog.cancel()
+            }
+        }
+
+        dialogBuilder.show()
+
+    }
+
 
     private fun onAddButtonClicked() {
         viewModel.clicked = !viewModel.clicked
-        setVisibility()
+        //setVisibility()
         //setAnimation()
 
     }
 
     private fun setAnimation() {
-        if(viewModel.clicked){
+        if (viewModel.clicked) {
             binding.addMemberButton.startAnimation(fromBottom)
             binding.addExpenseButton.startAnimation(fromBottom)
             binding.addFabButton.startAnimation(rotateOpen)
-        }
-        else{
+        } else {
             binding.addMemberButton.startAnimation(toBottom)
             binding.addExpenseButton.startAnimation(toBottom)
             binding.addFabButton.startAnimation(rotateClose)
@@ -327,15 +522,14 @@ class ExpensesFragment : Fragment() {
     }
 
     private fun setVisibility() {
-        if(viewModel.clicked){
+        if (viewModel.clicked) {
             binding.addMemberButton.visibility = View.VISIBLE
             binding.addExpenseButton.visibility = View.VISIBLE
 
             binding.shadowView.visibility = View.VISIBLE
 
             binding.addFabButton.setImageResource(R.drawable.ic_baseline_close_24)
-        }
-        else{
+        } else {
 
 //            val p = binding.addMemberButton.layoutParams as CoordinatorLayout.LayoutParams
 //            p.anchorId = View.NO_ID
@@ -355,7 +549,7 @@ class ExpensesFragment : Fragment() {
 //            binding.addExpenseButton.layoutParams = p1
             binding.addExpenseButton.visibility = View.GONE
 
-          //  binding.addExpenseButton.visibility = View.GONE
+            //  binding.addExpenseButton.visibility = View.GONE
             //binding.addExpenseButton.hide()
 //            binding.addExpenseButton.isActivated = false
 //            binding.addExpenseButton.isEnabled = false
@@ -368,7 +562,7 @@ class ExpensesFragment : Fragment() {
 //            binding.expensesRecyclerView.isFocusable = true
 //            binding.expensesRecyclerView.requestFocus()
 
-            binding.addFabButton.setImageResource(R.drawable.ic_baseline_add_24)
+            //abButton.setImageResource(R.drawable.ic_baseline_add_24)
         }
     }
 
@@ -386,6 +580,14 @@ class ExpensesFragment : Fragment() {
                 }
                 true
             }
+            R.id.delete_menu -> {
+                groupDeleteConfirmationDialog(args.groupId, viewModel.group?.value?.groupName)
+                true
+            }
+            R.id.edit_menu -> {
+                goToCreateEditGroupFragment(args.groupId)
+                true
+            }
             else -> {
                 false
             }
@@ -393,7 +595,7 @@ class ExpensesFragment : Fragment() {
     }
 
 
-    private fun shareIntent(report: String){
+    private fun shareIntent(report: String) {
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
             type = "text/plain"
@@ -434,7 +636,10 @@ class ExpensesFragment : Fragment() {
         val expenseDetailTransitionName = getString(R.string.expense_detail_transition_name)
         val extras = FragmentNavigatorExtras(expenseView to expenseDetailTransitionName)
         val action =
-            ExpensesFragmentDirections.actionExpensesFragmentToExpenseDetailFragment(expenseId)
+            ExpensesFragmentDirections.actionExpensesFragmentToExpenseDetailFragment(
+                expenseId,
+                args.groupId
+            )
         view?.findNavController()?.navigate(action, extras)
     }
 
@@ -453,7 +658,7 @@ class ExpensesFragment : Fragment() {
             groupId,
             null,
             null,
-            null
+            viewModel.group.value?.groupIcon.toString()  // previously here null set, idk why null set instead of group.groupIcon
         )
         findNavController().navigate(action)//, extras)
     }

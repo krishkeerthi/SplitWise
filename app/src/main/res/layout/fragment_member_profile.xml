@@ -33,37 +33,80 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <com.example.splitwise.ui.customclass.CircularImageView
                         android:id="@+id/member_image_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:background="@color/view_color"
+                        app:radius="80dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <com.example.splitwise.ui.customclass.CircularImageView
                         android:id="@+id/member_image_holder"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/view_color"
+                        app:radius="80dp"
+                        app:fill_color="@color/new_view_color"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/member_image_holder_image"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:layout_marginTop="20dp"
-                        android:src="@drawable/ic_baseline_person_24"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/baseline_person_24"
+                        app:layout_constraintBottom_toBottomOf="@+id/member_image_view"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/member_profile_edit_card"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/view_color"
+                android:scaleType="centerCrop"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="@id/member_profile_card"
+                app:layout_constraintBottom_toBottomOf="@id/member_profile_card">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.example.splitwise.ui.customclass.CircularImageView
+                        android:id="@+id/member_image_edit_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:radius="28dp"
+                        app:fill_color="@color/fab_blue"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <!--            android:transitionName="@string/create_edit_group_empty_icon_transition_name"-->
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/member_image_edit_holder_image"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/round_photo_camera_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <!--            android:transitionName="@string/create_edit_group_empty_icon_transition_name"-->
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
 
 <!--            <com.google.android.material.imageview.ShapeableImageView-->
 <!--                android:id="@+id/member_image_view"-->

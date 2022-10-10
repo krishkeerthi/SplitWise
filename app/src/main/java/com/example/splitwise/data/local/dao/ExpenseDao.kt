@@ -45,4 +45,7 @@ interface ExpenseDao {
 
     @Query("SELECT * FROM expense WHERE group_id = :groupId AND category IN (:categories) ")
     suspend fun getExpensesByCategories(groupId: Int, categories: List<Int>): List<Expense>?
+
+    @Query("DELETE FROM expense WHERE expense_id = :expenseId")
+    suspend fun deleteExpense(expenseId: Int)
 }

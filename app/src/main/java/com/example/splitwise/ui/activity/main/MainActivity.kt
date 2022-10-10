@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         setTheme(shape)
 
         // set mode
-        val theme = sharedPreference.getString("THEME", "Light")
+        val theme = sharedPreference.getString("THEME", "System")
 
         setMode(theme)
 
@@ -217,7 +217,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     else {
                         View.GONE
                     }
-            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+            }, resources.getInteger(R.integer.reply_motion_duration_small).toLong())
             else
                 binding.bottomNavigation.visibility =
                     if (destination.id in setOf(

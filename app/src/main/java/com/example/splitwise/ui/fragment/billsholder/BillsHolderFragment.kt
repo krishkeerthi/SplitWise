@@ -1,11 +1,7 @@
 package com.example.splitwise.ui.fragment.billsholder
 
-import android.content.ContentValues.TAG
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -18,7 +14,6 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentBillsHolderBinding
 import com.example.splitwise.ui.fragment.bill.BillFragment
 import com.example.splitwise.util.dpToPx
-import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
 
 class BillsHolderFragment : Fragment() {
@@ -51,7 +46,7 @@ class BillsHolderFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.bills)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.bill)
         return inflater.inflate(R.layout.fragment_bills_holder, container, false)
     }
 
@@ -62,8 +57,8 @@ class BillsHolderFragment : Fragment() {
         //Log.d(TAG, "onViewCreated: viewpager position is ${args.position}")
         val viewPager = binding.pager
 
-        viewModel.bills.observe(viewLifecycleOwner){ bills ->
-            if(bills != null && bills.isNotEmpty()){
+        viewModel.bills.observe(viewLifecycleOwner) { bills ->
+            if (bills != null && bills.isNotEmpty()) {
                 val bills = viewModel.getBills()
                 viewPager.adapter = BillsAdapter(this, bills)
 
@@ -71,12 +66,12 @@ class BillsHolderFragment : Fragment() {
                     //Log.d(TAG, "onViewCreated: set position to ${args.position}")
                     viewPager.setCurrentItem(viewModel.position, false)
                 }
-                binding.emptyBillsTextView.visibility = View.GONE
-                binding.pager.visibility = View.VISIBLE
-            }
-            else{
-                binding.emptyBillsTextView.visibility = View.VISIBLE
-                binding.pager.visibility = View.GONE
+//                binding.emptyBillsTextView.visibility = View.GONE
+//                binding.pager.visibility = View.VISIBLE
+            } else {
+                NavHostFragment.findNavController(this).popBackStack()
+//                binding.emptyBillsTextView.visibility = View.VISIBLE
+//                binding.pager.visibility = View.GONE
             }
 
         }
@@ -103,20 +98,20 @@ class BillsHolderFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
-            R.id.delete_bill ->{
+        return when (item.itemId) {
+            R.id.delete_bill -> {
                 //Toast.makeText(requireContext(), "${binding.pager.currentItem}", Toast.LENGTH_SHORT).show()
                 deleteDialog()
 
                 true
             }
-            else ->{
+            else -> {
                 false
             }
         }
     }
 
-    private fun deleteDialog(){
+    private fun deleteDialog() {
         val builder = AlertDialog.Builder(requireContext())
 
         builder.setTitle(R.string.delete);
@@ -128,7 +123,8 @@ class BillsHolderFragment : Fragment() {
         builder.show()
     }
 
-    inner class BillsAdapter(fragment: Fragment, private val bills: List<String>) : FragmentStateAdapter(fragment) {
+    inner class BillsAdapter(fragment: Fragment, private val bills: List<String>) :
+        FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int {
             return bills.size //args.bills.size
         }

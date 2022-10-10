@@ -1,15 +1,9 @@
 package com.example.splitwise.ui.fragment.addexpense
 
-import android.content.ContentValues.TAG
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.AdapterView
-import android.widget.ListView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
@@ -20,18 +14,18 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Slide
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentAddExpenseBinding
-import com.example.splitwise.ui.fragment.adapter.*
+import com.example.splitwise.ui.fragment.adapter.CategoryAdapter
+import com.example.splitwise.ui.fragment.adapter.MembersCheckboxAdapter
+import com.example.splitwise.ui.fragment.adapter.PayerAdapter
 import com.example.splitwise.util.Category
 import com.example.splitwise.util.titleCase
 import com.example.splitwise.util.translate
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
 
 class AddExpenseFragment : Fragment() {
@@ -94,7 +88,7 @@ class AddExpenseFragment : Fragment() {
 //            addTarget(binding.root)
 //        }
         // transition code ends
-        requireActivity().title = "Add Expense"
+
         // Rv
         val membersCheckboxAdapter = MembersCheckboxAdapter { memberId: Int, isChecked: Boolean ->
             if (isChecked)
@@ -103,7 +97,7 @@ class AddExpenseFragment : Fragment() {
                 viewModel.memberIds.remove(memberId)
         }
 
-        val spanCount = if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 5
+        val spanCount = if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 4 else 8
         binding.membersRecyclerView.apply {
             layoutManager = GridLayoutManager(requireContext(), spanCount)
             adapter = membersCheckboxAdapter

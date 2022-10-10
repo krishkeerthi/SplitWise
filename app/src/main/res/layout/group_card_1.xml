@@ -29,21 +29,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.example.splitwise.ui.customclass.CircularImageView
                 android:id="@+id/group_image_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:background="@color/view_color"
+                app:radius="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.example.splitwise.ui.customclass.CircularImageView
                 android:id="@+id/group_image_holder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/view_color"
+                app:radius="24dp"
+                app:fill_color="@color/new_view_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

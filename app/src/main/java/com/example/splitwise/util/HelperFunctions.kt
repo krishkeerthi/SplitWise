@@ -7,11 +7,11 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.content.res.TypedArray
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.fonts.Font
 import android.net.Uri
+import android.provider.MediaStore
 import android.text.Html
 import android.text.format.DateUtils
 import android.util.DisplayMetrics
@@ -30,6 +30,7 @@ import org.w3c.dom.Text
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.min
 
 fun nameCheck(value: String): Boolean {
     return value.matches("[a-zA-Z0-9-&\"'.\n /,]+$".toRegex())
@@ -337,6 +338,14 @@ fun getGroupIds(groups: MutableList<Group>): List<Int> {
     return groupIds.toList()
 }
 
+fun getMemberIds(members: List<Member>): MutableList<Int> {
+    val memberIds = mutableListOf<Int>()
+    for (member in members) {
+        memberIds.add(member.memberId)
+    }
+    return memberIds
+}
+
 fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
     // Raw height and width of image
     val (height: Int, width: Int) = options.run { outHeight to outWidth }
@@ -366,7 +375,7 @@ fun decodeSampledBitmapFromUri(
     reqHeight: Int
 ): Bitmap? {
     // First decode with inJustDecodeBounds=true to check dimensions
-    return uri?.let {
+    val bitmap = uri?.let {
         BitmapFactory.Options().run {
             inJustDecodeBounds = true
             BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri), null, this)
@@ -380,6 +389,21 @@ fun decodeSampledBitmapFromUri(
             BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri), null, this)
         }
     }
+    bitmap?.let {
+        Log.d(
+            TAG,
+            "decodeSampledBitmapFromUri: bytecount ${it.byteCount} density ${it.density} height ${it.height} width ${it.width}")
+    }
+
+//    val bm = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+//
+//    bm?.let {
+//        Log.d(
+//            TAG,
+//            "decodeSampledBitmapFromUri: bytecount ${it.byteCount} density ${it.density} height ${it.height} width ${it.width}")
+//    }
+
+    return bitmap
 }
 
 
@@ -420,4 +444,29 @@ val dummyGroup = Group(
     null,
 ).apply {
     groupId = -2 // for empty group view
+}
+
+fun getRoundedCroppedBitmap(bitmap: Bitmap): Bitmap? {
+    val widthLight = bitmap.width
+    val heightLight = bitmap.height
+    val minVal = widthLight.coerceAtMost(heightLight)
+    val output = Bitmap.createBitmap(
+        //bitmap.width, bitmap.height,
+        minVal, minVal,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(output)
+    val paintColor = Paint()
+    paintColor.flags = Paint.ANTI_ALIAS_FLAG
+
+    //val maxVal = widthLight.coerceAtMost(heightLight)
+    val rectF = RectF(Rect(0, 0, minVal, minVal))
+
+    canvas.drawRoundRect(rectF, (minVal / 2).toFloat(), (minVal/2).toFloat(), paintColor)
+    //canvas.drawRoundRect(rectF, 60f, 60f, paintColor)
+    Log.d(TAG, "getRoundedCroppedBitmap: ${(widthLight / 2).toFloat()} ${(heightLight/2).toFloat()} ${minVal/2}")
+    val paintImage = Paint()
+    paintImage.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP)
+    canvas.drawBitmap(bitmap, 0f, 0f, paintImage)
+    return output
 }

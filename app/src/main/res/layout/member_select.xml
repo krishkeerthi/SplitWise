@@ -21,31 +21,32 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.example.splitwise.ui.customclass.CircularImageView
                 android:id="@+id/member_image_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:background="@color/view_color"
+                app:radius="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.example.splitwise.ui.customclass.CircularImageView
                 android:id="@+id/member_image_holder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/view_color"
+                app:radius="24dp"
+                app:fill_color="@color/new_view_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/member_image_holder_image"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="4dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_baseline_person_24"
+                app:layout_constraintBottom_toBottomOf="@+id/member_image_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -93,6 +94,7 @@
         android:layout_height="24dp"
         android:layout_marginTop="8dp"
         android:checked="true"
+        android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@+id/member_card"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -103,10 +105,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:maxLines="2"
+        android:gravity="center"
         android:ellipsize="end"
         android:textColor="@color/text_bold"
         tools:text="KeerthiKeerthi Keerthi"
-        app:layout_constraintEnd_toEndOf="@+id/paid_unpaid_checkbox"
+        app:layout_constraintEnd_toEndOf="@id/member_card"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/member_card" />
 

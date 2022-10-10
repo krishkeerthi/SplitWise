@@ -14,6 +14,7 @@ import com.example.splitwise.databinding.MemberCheckboxCardBinding
 import com.example.splitwise.databinding.MemberSelectBinding
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
+import com.example.splitwise.util.getRoundedCroppedBitmap
 
 class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) :
     RecyclerView.Adapter<MembersCheckboxViewHolder>() {
@@ -79,17 +80,18 @@ class MembersCheckboxViewHolder(val binding: MemberSelectBinding) :
             ///binding.memberImageView.setImageURI(member.memberProfile)
 
             binding.memberImageView.setImageBitmap(null)
-
-            Handler(Looper.getMainLooper()).postDelayed({
+            //Handler(Looper.getMainLooper()).postDelayed({
                 binding.memberImageView.setImageBitmap(
+                    getRoundedCroppedBitmap(
                     decodeSampledBitmapFromUri(
                         binding.root.context,
                         member.memberProfile,
                         48.dpToPx(resources.displayMetrics),
                         48.dpToPx(resources.displayMetrics)
+                    )!!
                     )
                 )
-            }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+            //}, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE
