@@ -1,7 +1,9 @@
 package com.example.splitwise.ui.fragment.editexpense
 
+import android.content.ContentValues
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -87,6 +89,13 @@ class EditExpenseFragment : Fragment() {
         viewModel.category = getCategory(args.expense.category)
         binding.chooseCategoryText.text =
             viewModel.category!!.name.lowercase().titleCase().translate(requireContext())
+
+        binding.categoryImageHolder.visibility = View.VISIBLE
+        binding.categoryImageView.visibility = View.VISIBLE
+        binding.categoryImageView.setImageResource(getCategoryDrawableResource(viewModel.category!!.ordinal))
+        binding.categoryHolderImageView.visibility = View.INVISIBLE
+
+
         // guaranteed that it was set earlier
 
         // this is to set expense payees argument only once
@@ -97,14 +106,22 @@ class EditExpenseFragment : Fragment() {
 
         // Rv
         val membersCheckboxAdapter = MembersCheckboxAdapter { memberId: Int, isChecked: Boolean ->
-            if (isChecked)
+            if (isChecked) {
+                Log.d(ContentValues.TAG, "onViewCreated: expense members checked")
                 viewModel.memberIds.add(memberId)
-            else
+                Log.d(ContentValues.TAG, "onViewCreated: expense members size ${viewModel.memberIds.size}")
+
+            }
+            else {
+                Log.d(ContentValues.TAG, "onViewCreated: expense members unchecked")
                 viewModel.memberIds.remove(memberId)
+                Log.d(ContentValues.TAG, "onViewCreated: expense members size ${viewModel.memberIds.size}")
+
+            }
         }
 
         val spanCount =
-            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 4 else 8
+            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 8
         binding.membersRecyclerView.apply {
             layoutManager = GridLayoutManager(requireContext(), spanCount)
             adapter = membersCheckboxAdapter
@@ -119,6 +136,17 @@ class EditExpenseFragment : Fragment() {
                     val member: Member = viewModel.getPayer(args.expense.payer, members)!!
                     viewModel.payer = member
                     binding.choosePayerText.text = member.name
+                    // profile set
+                    binding.payerImageView.visibility = View.VISIBLE
+                    binding.payerImageView.setImageBitmap(
+                        getRoundedCroppedBitmap(
+                            decodeSampledBitmapFromUri(
+                                binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                            )!!
+                        )
+                    )
+                    binding.payerImageHolderView.visibility = View.INVISIBLE
+
                 }
 
                 // Updating member check box adapter
@@ -136,10 +164,25 @@ class EditExpenseFragment : Fragment() {
         if (viewModel.category != null) {
             binding.chooseCategoryText.text =
                 viewModel.category!!.name.lowercase().titleCase().translate(requireContext())
+            // category set
+            binding.categoryImageHolder.visibility = View.VISIBLE
+            binding.categoryImageView.visibility = View.VISIBLE
+            binding.categoryImageView.setImageResource(getCategoryDrawableResource(viewModel.category!!.ordinal))
+            binding.categoryHolderImageView.visibility = View.INVISIBLE
         }
 
         if (viewModel.payer != null) {
             binding.choosePayerText.text = viewModel.payer!!.name
+            // profile set
+            binding.payerImageView.visibility = View.VISIBLE
+            binding.payerImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
+            binding.payerImageHolderView.visibility = View.INVISIBLE
         }
 
 
@@ -246,6 +289,11 @@ class EditExpenseFragment : Fragment() {
             viewModel.category = category
             binding.chooseCategoryText.text =
                 category.name.lowercase().titleCase().translate(requireContext())
+
+            binding.categoryImageHolder.visibility = View.VISIBLE
+            binding.categoryImageView.visibility = View.VISIBLE
+            binding.categoryImageView.setImageResource(getCategoryDrawableResource(category.ordinal))
+            binding.categoryHolderImageView.visibility = View.INVISIBLE
             categoryBottomSheetDialog.dismiss()
         }
 
@@ -271,6 +319,17 @@ class EditExpenseFragment : Fragment() {
         val payerAdapter = PayerAdapter(payers) { payer ->
             viewModel.payer = payer
             binding.choosePayerText.text = payer.name
+            // profile set
+            binding.payerImageView.visibility = View.VISIBLE
+            binding.payerImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
+            binding.payerImageHolderView.visibility = View.INVISIBLE
+
             payerBottomSheetDialog.dismiss()
         }
 

@@ -134,11 +134,15 @@ class ExpensesFragment : Fragment() {
         val membersAdapter = MembersProfileAdapter()
 
         binding.expensesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext()).apply {
-                // list reversing is happening in  view model
-//                reverseLayout = true // it reverses but scrolled down to the last item
-//                stackFromEnd = true // corrects above problem
+            val layoutMangerInstance = object : LinearLayoutManager(requireContext()) {
+                override fun canScrollVertically() = false
             }
+            layoutManager = layoutMangerInstance
+//            layoutManager = LinearLayoutManager(requireContext()).apply {
+//                // list reversing is happening in  view model
+////                reverseLayout = true // it reverses but scrolled down to the last item
+////                stackFromEnd = true // corrects above problem
+//            }
             adapter = expensesAdapter
         }
 
@@ -458,6 +462,7 @@ class ExpensesFragment : Fragment() {
     private fun expenseDeleteConfirmationDialog(expenseMember: ExpenseMember, position: Int) {
         val dialogBuilder = AlertDialog.Builder(requireContext()).apply {
             setTitle(getString(R.string.delete_expense))
+            setCancelable(false)
             setMessage(
                 String.format(
                     getString(R.string.delete_expense_message),
@@ -654,11 +659,14 @@ class ExpensesFragment : Fragment() {
         //val transitionName = getString(R.string.create_edit_group_transition_name)
         //val extras = FragmentNavigatorExtras(binding.addMemberButton to transitionName)
 
+        Log.d(TAG, "goToCreateEditGroupFragment: error causing ${viewModel.group.value?.groupIcon.toString()}")
+
         val action = ExpensesFragmentDirections.actionExpensesFragmentToCreateEditGroupFragment(
             groupId,
             null,
             null,
-            viewModel.group.value?.groupIcon.toString()  // previously here null set, idk why null set instead of group.groupIcon
+            if(viewModel.group.value?.groupIcon != null) viewModel.group.value?.groupIcon.toString()
+            else null// previously here null set, idk why null set instead of group.groupIcon
         )
         findNavController().navigate(action)//, extras)
     }

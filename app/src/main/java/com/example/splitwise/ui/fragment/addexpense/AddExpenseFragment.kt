@@ -1,7 +1,9 @@
 package com.example.splitwise.ui.fragment.addexpense
 
+import android.content.ContentValues.TAG
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -20,9 +22,7 @@ import com.example.splitwise.databinding.FragmentAddExpenseBinding
 import com.example.splitwise.ui.fragment.adapter.CategoryAdapter
 import com.example.splitwise.ui.fragment.adapter.MembersCheckboxAdapter
 import com.example.splitwise.ui.fragment.adapter.PayerAdapter
-import com.example.splitwise.util.Category
-import com.example.splitwise.util.titleCase
-import com.example.splitwise.util.translate
+import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
@@ -91,13 +91,17 @@ class AddExpenseFragment : Fragment() {
 
         // Rv
         val membersCheckboxAdapter = MembersCheckboxAdapter { memberId: Int, isChecked: Boolean ->
-            if (isChecked)
+            if (isChecked) {
                 viewModel.memberIds.add(memberId)
-            else
+                Log.d(TAG, "onViewCreated: expense members size ${viewModel.memberIds.size}")
+            }
+            else {
                 viewModel.memberIds.remove(memberId)
+                Log.d(TAG, "onViewCreated: expense members size ${viewModel.memberIds.size}")
+            }
         }
 
-        val spanCount = if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 4 else 8
+        val spanCount = if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 8
         binding.membersRecyclerView.apply {
             layoutManager = GridLayoutManager(requireContext(), spanCount)
             adapter = membersCheckboxAdapter
@@ -122,10 +126,28 @@ class AddExpenseFragment : Fragment() {
 
         if(viewModel.category != null){
             binding.chooseCategoryText.text = viewModel.category!!.name.lowercase().titleCase().translate(requireContext())
+
+            // category set
+            binding.categoryImageHolder.visibility = View.VISIBLE
+            binding.categoryImageView.visibility = View.VISIBLE
+            binding.categoryImageView.setImageResource(getCategoryDrawableResource(viewModel.category!!.ordinal))
+            binding.categoryHolderImageView.visibility = View.INVISIBLE
+
         }
 
         if(viewModel.payer != null){
             binding.choosePayerText.text = viewModel.payer!!.name
+            // profile set
+            binding.payerImageView.visibility = View.VISIBLE
+            binding.payerImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
+            binding.payerImageHolderView.visibility = View.INVISIBLE
+
         }
 
 
@@ -216,6 +238,12 @@ class AddExpenseFragment : Fragment() {
         val categoryAdapter = CategoryAdapter(categories){ category ->
             viewModel.category = category
             binding.chooseCategoryText.text = category.name.lowercase().titleCase().translate(requireContext())
+
+            binding.categoryImageHolder.visibility = View.VISIBLE
+            binding.categoryImageView.visibility = View.VISIBLE
+            binding.categoryImageView.setImageResource(getCategoryDrawableResource(category.ordinal))
+            binding.categoryHolderImageView.visibility = View.INVISIBLE
+
             categoryBottomSheetDialog.dismiss()
         }
 
@@ -252,6 +280,16 @@ class AddExpenseFragment : Fragment() {
         val payerAdapter = PayerAdapter(payers){ payer ->
             viewModel.payer = payer
             binding.choosePayerText.text = payer.name
+            // profile set
+            binding.payerImageView.visibility = View.VISIBLE
+            binding.payerImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context, payer.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                    )!!
+                )
+            )
+            binding.payerImageHolderView.visibility = View.INVISIBLE
             payerBottomSheetDialog.dismiss()
         }
 

@@ -11,11 +11,10 @@
         android:id="@+id/payer_selection_image_view"
         android:layout_width="160dp"
         android:layout_height="160dp"
-        android:layout_marginBottom="48dp"
-        app:fill_color="@color/background"
-        app:layout_constraintBottom_toTopOf="@+id/owes_text_view"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toStartOf="@+id/arrow_imageView"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:radius="100dp" />
 
     <com.example.splitwise.ui.customclass.CircularImageView
@@ -73,11 +72,10 @@
         android:id="@+id/recipient_selection_image_view"
         android:layout_width="160dp"
         android:layout_height="160dp"
-        android:layout_marginBottom="48dp"
-        app:fill_color="@color/background"
-        app:layout_constraintBottom_toTopOf="@+id/owes_text_view"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/arrow_imageView"
+        app:layout_constraintTop_toTopOf="parent"
         app:radius="100dp" />
 
     <com.example.splitwise.ui.customclass.CircularImageView
@@ -146,27 +144,26 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
-        tools:text="Krish owes $234 to Bhoobalan"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
-        android:textSize="16sp"
         android:textColor="@color/text_bold"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/outlined_amount_text_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        tools:text="Krish owes $234 to Bhoobalan" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_amount_text_field"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:hint="@string/partial_amount"
-        android:layout_marginBottom="32dp"
         android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:startIconDrawable="@drawable/ic_baseline_currency_rupee_24">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -174,8 +171,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            tools:text="123"
-            android:maxLength="8" />
+            android:maxLength="8"
+            tools:text="123" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

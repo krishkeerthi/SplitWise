@@ -276,7 +276,7 @@ class CreateEditGroupViewModel(
 
                         if (addedMember != null) {
                             if(addedMember.memberId !in memberIds)
-                                groupRepository.addGroupMember(groupId, member.memberId)
+                                groupRepository.addGroupMember(groupId, addedMember.memberId)
                         }
                     }
                     else{

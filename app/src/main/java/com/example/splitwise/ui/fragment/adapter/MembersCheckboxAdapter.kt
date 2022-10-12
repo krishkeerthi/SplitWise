@@ -15,9 +15,13 @@ import com.example.splitwise.databinding.MemberSelectBinding
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.getRoundedCroppedBitmap
+import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.checkbox.MaterialCheckBox.OnCheckedStateChangedListener
 
 class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) :
     RecyclerView.Adapter<MembersCheckboxViewHolder>() {
+
+    private var canStart: Boolean = true
     private var members = listOf<Member>()
     private var selectedMembers = listOf<Int>()
 
@@ -28,12 +32,24 @@ class MembersCheckboxAdapter(private val onItemChecked: (Int, Boolean) -> Unit) 
 
         return MembersCheckboxViewHolder(binding).apply {
             itemView.setOnClickListener {
-                val isChecked = binding.paidUnpaidCheckbox.isChecked
-                if (!isChecked) {
-                    binding.paidUnpaidCheckbox.isChecked = true
+                if(canStart){
+                    canStart = false
+                    val isChecked = binding.paidUnpaidCheckbox.isChecked
+                    if (!isChecked) {
+                        binding.paidUnpaidCheckbox.isChecked = true
+                        onItemChecked(members[adapterPosition].memberId, true)
+                    } else {
+                        binding.paidUnpaidCheckbox.isChecked = false
+                        onItemChecked(members[adapterPosition].memberId, false)
+                    }
+                    canStart = true
+                }
+            }
+            binding.paidUnpaidCheckbox.addOnCheckedStateChangedListener { checkBox, state ->
+                if(state == MaterialCheckBox.STATE_CHECKED){
                     onItemChecked(members[adapterPosition].memberId, true)
-                } else {
-                    binding.paidUnpaidCheckbox.isChecked = false
+                }
+                else{
                     onItemChecked(members[adapterPosition].memberId, false)
                 }
             }

@@ -5,9 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
-import com.example.splitwise.util.Category
-import com.example.splitwise.util.getCategoryDrawableResource
-import com.example.splitwise.util.titleCase
+import com.example.splitwise.util.*
 
 class PayerAdapter(
     private val payers: List<Member>,
@@ -44,11 +42,18 @@ class PayerAdapter(
 
 class PayerViewHolder(val binding: com.example.splitwise.databinding.IconBottomSheetItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
-
+    private val resources = binding.itemImageHolder.resources
 
     fun bind(payer: Member) {
         binding.itemTextView.text = payer.name
-        binding.itemImageView.setImageResource(R.drawable.ic_baseline_person_24)
+        binding.itemImageHolder.setImageBitmap(
+            getRoundedCroppedBitmap(
+                decodeSampledBitmapFromUri(
+                    binding.root.context, payer.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
+                )!!
+            )
+        )
+        //binding.itemImageView.setImageResource(R.drawable.ic_baseline_person_24)
 
     }
 

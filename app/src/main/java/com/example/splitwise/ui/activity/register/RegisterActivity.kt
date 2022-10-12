@@ -87,7 +87,7 @@ class RegisterActivity : AppCompatActivity() {
         // Button click
         binding.registerButton.setOnClickListener {
             viewModel.registerMember(
-                binding.memberNameText.text.toString(),
+                binding.memberNameText.text?.trim().toString(),
                 binding.memberPhoneText.text.toString().toLong()
             )
         }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import java.util.*
 
 class ExpenseRepository(
-    private val database: SplitWiseRoomDatabase
+    database: SplitWiseRoomDatabase
 ) {
 
     private var dataSource: ExpenseDataSource = ExpenseLocalDataSource(

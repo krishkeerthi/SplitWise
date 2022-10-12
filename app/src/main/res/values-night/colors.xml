@@ -12,7 +12,8 @@
     <color name="invert_color">#dee3e1</color>
     <color name="text_bold">#FFFFFFFF</color>
     <color name="blue">#4fc3f7</color>
-    <color name="fab_blue">#017C80</color>
+    <color name="fab_blue">#0B99E4</color>
+    <color name="teal">#017C80</color>
     <color name="fab_blue_1">#0D89C6</color>
     <color name="background">#000000</color>
     <color name="selected">#9e9e9e</color>
@@ -20,7 +21,9 @@
     <color name="chip_background">#DDDEDF</color>
     <color name="transparent">#99000000</color>
     <color name="red">#F44336</color>
+    <color name="light_red">#EF5350</color>
     <color name="green">#4CAF50</color>
 </resources>
-
+<!-- 0B99E4-->
+<!-- 4360C9-->
 <!-- #18AFF4-->

@@ -7,7 +7,9 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +31,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
 
     var swipeThreshold = 0.5f
     var escapeVelocity = 1
+
 
 
     override fun getMovementFlags(
@@ -64,6 +67,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
         isCurrentlyActive: Boolean
     ) {
 
+
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             val itemView = viewHolder.itemView
 
@@ -81,7 +85,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
                 // set no action
                 if(setNoAction(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)) {
                 //    viewHolder.bindingAdapter?.notifyItemChanged(viewHolder.absoluteAdapterPosition)
-                 //   this.onSwiped(viewHolder, ItemTouchHelper.RIGHT)
+                    //this.onSwiped(viewHolder, ItemTouchHelper.LEFT)
                 //    this.swi
         //            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, 0, false)
 //                    clearView(recyclerView, viewHolder)
@@ -96,7 +100,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
                 swipeThreshold = 0.4f
                 escapeVelocity = 1
 
-                paint.color = recyclerView.context.resources.getColor(R.color.red)
+                paint.color = recyclerView.context.resources.getColor(R.color.light_red)
                 c.drawRect(RectF(itemView.right + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
                 , paint)
 
@@ -108,7 +112,6 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
         }
 
     }
-
 
 
     private fun setTrashIcon(c: Canvas,
@@ -173,7 +176,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
             val textY = (itemView.bottom - itemView.top) / 2
             val text = recyclerView.resources.getString(R.string.delete)
             c.drawText(text, (itemView.right - textWidth * 3), (itemView.top + (textY * 1.15f)), textPaint)
-            //0, 6, previously text index was set, but it wont work translated strings
+            //0, 6, previously text index was set, but it wont work translated s    trings
 
         }
     }
@@ -187,6 +190,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
                             isCurrentlyActive: Boolean): Boolean{
         
         if(dX > 100){
+
             Log.d(TAG, "setNoAction: dx value is ${dX}")
 
 //            viewHolder.bindingAdapter?.notifyItemChanged(viewHolder.absoluteAdapterPosition)
@@ -207,4 +211,14 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
 
         return super.getSwipeEscapeVelocity(defaultValue) * escapeVelocity
     }
+
+
+
+//    override fun canDropOver(
+//        recyclerView: RecyclerView,
+//        current: RecyclerView.ViewHolder,
+//        target: RecyclerView.ViewHolder
+//    ): Boolean {
+//        return super.canDropOver(recyclerView, current, target)
+//    }
 }
