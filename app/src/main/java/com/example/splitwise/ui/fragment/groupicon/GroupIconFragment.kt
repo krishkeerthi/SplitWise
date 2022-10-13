@@ -122,7 +122,39 @@ class GroupIconFragment : Fragment() {
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.camera_image_holder)
         val galleryImage =
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.gallery_image_holder)
+        val deleteImage = groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.delete_image_holder)
 
+        // delete icon
+       deleteImage?.setOnClickListener {
+           if(args.groupIcon != null){
+               // later ref
+               if (args.groupId != -1) {
+                   if (args.fromGroupsSearchFragment) {
+                       viewModel.removeGroupIcon {
+                           gotoSearchGroupsFragment()
+                       }
+                   } else {
+                       if (args.fromGroupsFragment)
+                           viewModel.removeGroupIcon {
+                               gotoGroupsFragment()
+                           }
+                       else { // from create edit group,(during edit group)
+                           gotoCreateEditGroupFragment(null)
+//                                    viewModel.updateGroupIcon(uri)
+//                                    NavHostFragment.findNavController(this).popBackStack()
+                           //requireActivity().onBackPressed()  for back press I used this, this is wrong
+                       }
+                   }
+               } else // without groupid, during creation only we can be here
+                   gotoCreateEditGroupFragment(null)
+           }
+           else{
+               Toast.makeText(requireContext(), getString(R.string.no_group_icon), Toast.LENGTH_SHORT).show()
+           }
+       }
+
+
+        // web icon
         webImage?.setOnClickListener {
             if (isNetworkAvailable()) {
                 gotoSearchImageFragment()
@@ -451,9 +483,9 @@ class GroupIconFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
-    private fun gotoCreateEditGroupFragment(uri: Uri) {
+    private fun gotoCreateEditGroupFragment(uri: Uri?) {
         val action = GroupIconFragmentDirections.actionGroupIconFragmentToCreateEditGroupFragment(
-            args.groupId, null, args.groupName, uri.toString()
+            args.groupId, null, args.groupName, uri?.toString()
         )
         view?.findNavController()?.navigate(action)
     }

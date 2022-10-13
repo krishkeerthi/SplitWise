@@ -5,6 +5,7 @@
     android:id="@+id/create_edit_group_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:transitionName="@string/create_edit_group_transition_name">
 
 

@@ -146,4 +146,10 @@ class GroupRepository(
             dataSource.removeGroupMembers(groupId)
         }
     }
+
+    suspend fun removeGroupIcon(groupId: Int) {
+        withContext(Dispatchers.IO){
+            dataSource.removeGroupIcon(groupId)
+        }
+    }
 }

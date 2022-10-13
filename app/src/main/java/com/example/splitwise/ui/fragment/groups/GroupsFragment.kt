@@ -12,7 +12,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MotionEventCompat
+import androidx.core.view.MotionEventCompat.getActionMasked
 import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityEventCompat.getAction
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -183,7 +186,37 @@ class GroupsFragment : Fragment() {
 
             adapter = groupsAdapter
         }
-
+//
+//        binding.groupsRecyclerView.setOnTouchListener(object: View.OnTouchListener{
+//            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+//                val action = MotionEventCompat.getActionMasked(event)
+//
+//                return when (action) {
+//                    MotionEvent.ACTION_DOWN -> {
+//                        Log.d(TAG, "Action was DOWN")
+//                        true
+//                    }
+//                    MotionEvent.ACTION_MOVE -> {
+//                        Log.d(TAG, "Action was MOVE")
+//                        true
+//                    }
+//                    MotionEvent.ACTION_UP -> {
+//                        Log.d(TAG, "Action was UP")
+//                        true
+//                    }
+//                    MotionEvent.ACTION_CANCEL -> {
+//                        Log.d(TAG, "Action was CANCEL")
+//                        true
+//                    }
+//                    MotionEvent.ACTION_OUTSIDE -> {
+//                        Log.d(TAG, "Movement occurred outside bounds of current screen element")
+//                        true
+//                    }
+//                    else -> false
+//                }
+//            }
+//
+//        })
         // Testing swipe in groups recyclerview
         val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
             override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
@@ -204,7 +237,7 @@ class GroupsFragment : Fragment() {
                         viewHolder.absoluteAdapterPosition)
                     //goToExpenseFragment(it[viewHolder.absoluteAdapterPosition].groupId, viewHolder.itemView)
                 }
-                else
+                else // reloads the swiped item
                     viewHolder.bindingAdapter?.notifyItemChanged(viewHolder.absoluteAdapterPosition)
             }
 
@@ -319,6 +352,8 @@ class GroupsFragment : Fragment() {
 //        binding.root.setBackgroundResource(bgRes)
 
     }
+
+
 
     private fun confirmationDialog(groupId: Int, groupName: String, position: Int) {
         val dialogBuilder = AlertDialog.Builder(requireContext()).apply {

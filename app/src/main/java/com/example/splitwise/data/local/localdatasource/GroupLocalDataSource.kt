@@ -139,4 +139,8 @@ GroupDataSource{
         groupMemberDao.removeGroupMembers(groupId)
     }
 
+    override suspend fun removeGroupIcon(groupId: Int) {
+        groupDao.removeGroupIcon(groupId)
+    }
+
 }

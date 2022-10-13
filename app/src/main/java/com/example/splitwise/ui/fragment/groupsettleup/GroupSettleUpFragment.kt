@@ -29,6 +29,7 @@ import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.getRoundedCroppedBitmap
 import com.example.splitwise.util.roundOff
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialSharedAxis
 
 class GroupSettleUpFragment : Fragment() {
@@ -38,6 +39,19 @@ class GroupSettleUpFragment : Fragment() {
 
     private val viewModel: GroupSettleUpViewModel by viewModels {
         GroupSettleUpViewModelFactory(requireContext(), args.payerId, args.groupId)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor =
+                resources.getColor(R.color.background)//Color.TRANSPARENT //R.color.view_color
+            setAllContainerColors(resources.getColor(R.color.background))
+        }
+
     }
 
     override fun onCreateView(

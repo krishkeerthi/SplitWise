@@ -10,6 +10,7 @@ import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.data.repository.TransactionRepository
+import com.example.splitwise.util.roundOff
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -71,7 +72,7 @@ class GroupDirectSettleUpViewModel(
                 Log.d(TAG, "fetchOwedAmountText:  both are selected owed amount not null $payerId $recipientId")
                 _owedText.value = String.format(context.resources.getString(R.string.owes_text),
                     payer?.name,
-                    owedAmount,
+                    owedAmount.roundOff(),
                     recipient?.name
                     )
                     //"${payer?.name} owes ₹$owedAmount to ${recipient?.name}"

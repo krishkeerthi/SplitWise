@@ -20,6 +20,13 @@ class GroupIconViewModel(context: Context, val groupId: Int) : ViewModel() {
         }
     }
 
+    fun removeGroupIcon(navigation: () -> Unit) {
+        viewModelScope.launch {
+            groupRepository.removeGroupIcon(groupId)
+            navigation()
+        }
+    }
+
     fun updateGroupIcon(uri: Uri){
         viewModelScope.launch {
             groupRepository.updateGroupIcon(groupId, uri)

@@ -75,4 +75,7 @@ interface GroupDao {
     @Query("UPDATE `group` SET group_name = :groupName WHERE group_id = :groupId")
     suspend fun updateGroupName(groupId: Int, groupName: String)
 
+    @Query("UPDATE `group` SET group_icon = :groupIcon WHERE group_id = :groupId")
+    suspend fun removeGroupIcon(groupId: Int, groupIcon: Uri? = null)
+
 }
