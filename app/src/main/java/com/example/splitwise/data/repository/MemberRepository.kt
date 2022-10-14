@@ -92,7 +92,7 @@ class MemberRepository(
 
     }
 
-    suspend fun updateMemberProfile(memberId: Int, uri: Uri) {
+    suspend fun updateMemberProfile(memberId: Int, uri: Uri?) {
         withContext(Dispatchers.IO){
             dataSource.updateProfile(memberId, uri)
         }

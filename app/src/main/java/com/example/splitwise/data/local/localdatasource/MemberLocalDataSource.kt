@@ -53,7 +53,7 @@ class MemberLocalDataSource(
         Log.d(ContentValues.TAG, "onViewCreated: vm update member${x?.name}  ${x?.phone}")
     }
 
-    override suspend fun updateProfile(memberId: Int, uri: Uri) {
+    override suspend fun updateProfile(memberId: Int, uri: Uri?) {
         memberDao.updateMemberProfile(memberId, uri)
     }
 

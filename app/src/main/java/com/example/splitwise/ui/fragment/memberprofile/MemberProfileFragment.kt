@@ -18,6 +18,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
@@ -57,12 +59,39 @@ class MemberProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment_container
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
             scrimColor = resources.getColor(R.color.background)//Color.TRANSPARENT
             setAllContainerColors(resources.getColor(R.color.background))
         }
+
+        val callback = object : OnBackPressedCallback(true /* enabled by default */) {
+
+            override fun handleOnBackPressed() {
+                if (checkForChanges()) {
+                    val builder = AlertDialog.Builder(requireContext())
+
+                    builder.setTitle(getString(R.string.discard))
+                    builder.setMessage(getString(R.string.discard_changes))
+                    builder.setPositiveButton(
+                        getString(R.string.discard)
+                    ) { dialog, which ->
+
+                        NavHostFragment.findNavController(this@MemberProfileFragment)
+                            .popBackStack()
+                    }
+                    builder.setNegativeButton(getString(R.string.cancel), null)
+                    builder.show()
+                } else {
+                    NavHostFragment.findNavController(this@MemberProfileFragment)
+                        .popBackStack()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+
     }
 
     override fun onCreateView(
@@ -116,6 +145,7 @@ class MemberProfileFragment : Fragment() {
         val phoneEditText = binding.memberPhoneText
 
         val nameLayout = binding.outlinedMemberNameTextField
+        val phoneLayout = binding.outlinedMemberPhoneTextField
 
         val nameWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -150,12 +180,12 @@ class MemberProfileFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-//                if (phoneEditText.text?.trim().toString().length != 10)
-//                    phoneLayout.error = "Enter valid phone number"
-//                else {
-//                    phoneLayout.error = null
-//                    phoneLayout.isErrorEnabled = false
-//                }
+                if (phoneEditText.text?.trim().toString().length != 10)
+                    phoneLayout.error = "Enter valid phone number"
+                else {
+                    phoneLayout.error = null
+                    phoneLayout.isErrorEnabled = false
+                }
                 changeMade = true
                 saveMenuVisible =
                     nameCheck(nameEditText.text?.trim().toString()) &&
@@ -178,7 +208,7 @@ class MemberProfileFragment : Fragment() {
         val saveMenu = menu.findItem(R.id.update_member)
 
         editMenu.isVisible = !viewModel.editEnabled
-        saveMenu.isVisible = viewModel.editEnabled && saveMenuVisible && changeMade
+        saveMenu.isVisible = viewModel.editEnabled //&& saveMenuVisible && changeMade
 
     }
 
@@ -195,18 +225,7 @@ class MemberProfileFragment : Fragment() {
                 true
             }
             R.id.update_member -> {
-                Log.d(
-                    TAG,
-                    "onViewCreated: update ${
-                        binding.memberNameText.text?.trim().toString()
-                    }  ${binding.memberPhoneText.text?.trim().toString().toLong()}"
-                )
-                viewModel.updateMember(
-                    binding.memberNameText.text?.trim().toString(),
-                    binding.memberPhoneText.text?.trim().toString().toLong()
-                ) {
-                    gotoCreateEditGroupFragment()
-                }
+                updateProfile()
                 true
             }
             else -> {
@@ -214,6 +233,75 @@ class MemberProfileFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun updateProfile() {
+        if (binding.memberNameText.text != null && binding.memberNameText.text!!.trim()
+                .toString() != "" && binding.memberPhoneText.text != null && binding.memberPhoneText.text!!.trim()
+                .toString() != "" && binding.memberPhoneText.text!!.trim().toString().length == 10
+        ) {
+            if (!nameCheck(binding.memberNameText.text!!.trim().toString())) {
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.invalid_input),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            } else {
+                val name = binding.memberNameText.text?.trim().toString()
+                val phone = binding.memberPhoneText.text?.trim().toString()
+
+                if ((viewModel.member.value!!.name != name) ||
+                    (viewModel.member.value!!.phone.toString() != phone)
+                    || (viewModel.member.value!!.memberProfile != viewModel.updatedUri)
+                ) {
+                    // new Update group
+                    val builder = AlertDialog.Builder(requireContext())
+
+                    builder.setMessage(getString(R.string.confirm_editing_member))
+
+                    builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+
+                        viewModel.newUpdateMember(
+                            name,
+                            phone,
+                            {
+                                gotoCreateEditGroupFragment()
+                            }, {
+                                Snackbar.make(
+                                    binding.root,
+                                    getString(R.string.member_updated),
+                                    Snackbar.LENGTH_SHORT
+                                ).show()
+                            })
+
+                    }
+
+                    builder.setNegativeButton(getString(R.string.cancel), null)
+
+                    builder.show()
+                } else {
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.fields_not_edited),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } else {
+            Snackbar.make(
+                binding.root,
+                getString(R.string.field_empty),
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
+//
+//        viewModel.newUpdateMember()
+//        viewModel.updateMember(
+//            binding.memberNameText.text?.trim().toString(),
+//            binding.memberPhoneText.text?.trim().toString().toLong()
+//        ) {
+//            gotoCreateEditGroupFragment()
+//        }
     }
 
     private fun gotoCreateEditGroupFragment() {
@@ -236,17 +324,20 @@ class MemberProfileFragment : Fragment() {
             binding.memberNameText.setText(member.name)
             binding.memberPhoneText.setText(member.phone.toString())
 
-            Log.d(
-                TAG,
-                "onViewCreated: ${
-                    binding.memberNameText.text?.trim().toString()
-                },${binding.memberPhoneText.text?.trim().toString().toLong()}"
-            )
+//            Log.d(
+//                TAG,
+//                "onViewCreated: ${
+//                    binding.memberNameText.text?.trim().toString()
+//                },${binding.memberPhoneText.text?.trim().toString().toLong()}"
+//            )
 
         }
 
+        viewModel.updatedUri = member.memberProfile
+
         // update profile irrespective of edit enabled
         if (member.memberProfile != null) {
+            // member profile is stored
             ///binding.memberImageView.setImageURI(member.memberProfile)
             binding.memberImageView.setImageBitmap(
                 getRoundedCroppedBitmap(
@@ -534,20 +625,23 @@ class MemberProfileFragment : Fragment() {
         return uri
     }
 
-    private fun updateProfile(uri: Uri) {
+    private fun updateProfile(uri: Uri?) {
         Snackbar.make(binding.root, getString(R.string.profile_updated), Snackbar.LENGTH_SHORT)
             .show()
-        viewModel.updateProfile(uri)
+
+        // previously I directly updated uri, but now I am saving in viewmodel and updated later, later ref
+        //viewModel.updateProfile(uri)
+        viewModel.updatedUri = uri
 
         ///binding.memberImageView.setImageURI(uri)
         binding.memberImageView.setImageBitmap(
             getRoundedCroppedBitmap(
-            decodeSampledBitmapFromUri(
-                binding.root.context,
-                uri,
-                160.dpToPx(resources.displayMetrics),
-                160.dpToPx(resources.displayMetrics)
-            )!!
+                decodeSampledBitmapFromUri(
+                    binding.root.context,
+                    uri,
+                    160.dpToPx(resources.displayMetrics),
+                    160.dpToPx(resources.displayMetrics)
+                )!!
             )
         )
 
@@ -555,4 +649,11 @@ class MemberProfileFragment : Fragment() {
         binding.memberImageHolder.visibility = View.GONE
         binding.memberImageHolderImage.visibility = View.GONE
     }
+
+    private fun checkForChanges(): Boolean{
+        return (viewModel.member.value!!.name != binding.memberNameText.text?.trim().toString()) ||
+                (viewModel.member.value!!.phone.toString() != binding.memberPhoneText.text?.trim().toString())
+                || (viewModel.member.value!!.memberProfile != viewModel.updatedUri)
+    }
+
 }

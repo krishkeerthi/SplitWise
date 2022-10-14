@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.splitwise.R
 import com.example.splitwise.ui.fragment.adapter.ExpenseEmptyViewHolder
 import com.example.splitwise.ui.fragment.adapter.GroupEmptyViewHolder
@@ -34,7 +35,15 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
     var escapeVelocity: Float = 1f
     var animationSpeed: Long = 0
 
+    var limitCrossed: Boolean = false
 
+    open fun leftSwipeCallback(viewHolder: ViewHolder){
+        
+    }
+    
+    open fun rightSwipeCallback(viewHolder: ViewHolder){
+        Log.d(TAG, "rightSwipeCallback: called")
+    }
 
     override fun getSwipeVelocityThreshold(defaultValue: Float): Float {
         return super.getSwipeVelocityThreshold(defaultValue)
@@ -42,7 +51,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder
+        viewHolder: ViewHolder
     ): Int {
         val swipeFlag = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
 
@@ -53,10 +62,11 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
         return makeMovementFlags(0, swipeFlag)
     }
 
+
     override fun onMove(
         recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        target: RecyclerView.ViewHolder
+        viewHolder: ViewHolder,
+        target: ViewHolder
     ): Boolean {
         return false
     }
@@ -66,16 +76,23 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
     override fun onChildDraw(
         c: Canvas,
         recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
+        viewHolder: ViewHolder,
         dX: Float,
         dY: Float,
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
 
-        Log.d(TAG, "onChildDraw: child drawed")
+        if(dX == 0f && !isCurrentlyActive && limitCrossed){
+            limitCrossed = false
+            rightSwipeCallback(viewHolder)
+        }
+
+        Log.d(TAG, "onChildDraw: child draw state is ${actionState}")
 
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+            Log.d(TAG, "onChildDraw: action state swipe")
             val itemView = viewHolder.itemView
 
             Log.d(TAG, "onChildDraw: dX value $dX")
@@ -106,8 +123,15 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
             }
             else{ // left side movement
 
+                Log.d(TAG, "onChildDraw: dX value on left swipe is $dX")
+
+                if(dX.absoluteValue >= 140f){
+                    limitCrossed = true
+                }
+
                 // setting velocity and threshold
-                swipeThreshold = 0.4f
+                swipeThreshold = 1f
+                escapeVelocity = 100000f
                 animationSpeed = 250
 
                 paint.color = recyclerView.context.resources.getColor(R.color.light_red)
@@ -121,13 +145,19 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
 
 
         }
+        else if(actionState == ItemTouchHelper.ANIMATION_TYPE_SWIPE_CANCEL){
+            Log.d(TAG, "onChildDraw: action state cancel")
+        }
+        else{
+            Log.d(TAG, "onChildDraw: action state unknown")
+        }
 
     }
 
     override fun onChildDrawOver(
         c: Canvas,
         recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder?,
+        viewHolder: ViewHolder?,
         dX: Float,
         dY: Float,
         actionState: Int,
@@ -137,13 +167,13 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
         super.onChildDrawOver(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        animationSpeed = 0
-    }
+//    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//        animationSpeed = 0
+//    }
 
     private fun setTrashIcon(c: Canvas,
                              recyclerView: RecyclerView,
-                             viewHolder: RecyclerView.ViewHolder,
+                             viewHolder: ViewHolder,
                              dX: Float,
                              dY: Float,
                              actionState: Int,
@@ -210,7 +240,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
 
     private fun setNoAction(c: Canvas,
                             recyclerView: RecyclerView,
-                            viewHolder: RecyclerView.ViewHolder,
+                            viewHolder: ViewHolder,
                             dX: Float,
                             dY: Float,
                             actionState: Int,
@@ -250,7 +280,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
         return false
     }
 
-    override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
+    override fun getSwipeThreshold(viewHolder: ViewHolder): Float {
        // super.getSwipeThreshold(viewHolder)
         return swipeThreshold
     }
@@ -270,6 +300,8 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
 
         return animationSpeed//super.getAnimationDuration(recyclerView, animationType, animateDx, animateDy)
     }
+
+    
 
     //    override fun canDropOver(
 //        recyclerView: RecyclerView,

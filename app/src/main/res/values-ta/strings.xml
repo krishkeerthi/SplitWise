@@ -209,4 +209,7 @@
     <string name="group_updated">குழு புதுப்பிக்கப்பட்டது</string>
     <string name="invalid_input">தவறான உள்ளீடு</string>
     <string name="owes_text">%1$s %3$sக்கு ₹%2$s கடன்பட்டுள்ளார்</string>
+    <string name="group_icon_deleted">குழு ஐகான் நீக்கப்பட்டது</string>
+    <string name="confirm_editing_member">உறுப்பினர் விவரங்களைத் திருத்துவதை உறுதிப்படுத்தவும்?</string>
+    <string name="edit_not_allowed">புதிதாக சேர்க்கப்பட்ட உறுப்பினர்கள் குழு புதுப்பிக்கப்படும் போது மட்டுமே திருத்த முடியும்</string>
 </resources>

@@ -10,6 +10,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -94,8 +95,9 @@ class CreateEditGroupFragment : Fragment() {
                     builder.setNegativeButton(getString(R.string.cancel), null)
                     builder.show()
                 } else {
-                    if(viewModel.reset())
-                    NavHostFragment.findNavController(this@CreateEditGroupFragment).popBackStack()
+                    if (viewModel.reset())
+                        NavHostFragment.findNavController(this@CreateEditGroupFragment)
+                            .popBackStack()
                     Log.d(TAG, "handleOnBackPressed: reset back pressed")
                     // reset viewmodel data, because this viewmodel is activity viewmodel now
                 }
@@ -200,6 +202,8 @@ class CreateEditGroupFragment : Fragment() {
         }, { member, position, deleteImageView ->
             deleteImageView.ripple(requireContext())
             confirmationDialog(member, position, deleteImageView)
+        },{
+            Toast.makeText(requireContext(), getString(R.string.edit_not_allowed), Toast.LENGTH_SHORT).show()
         }
         )
 
@@ -281,29 +285,38 @@ class CreateEditGroupFragment : Fragment() {
 
                 // ends
                 if (group.groupIcon != null) {
-                    Log.d(TAG, "onViewCreated: image set")
+                    Log.d(
+                        TAG,
+                        "onViewCreated: checking group observed grouicon != null \n${group.groupIcon}"
+                    )
                     ///binding.groupImageView.setImageURI(group.groupIcon)
 
                     //  Handler(Looper.getMainLooper()).postDelayed({
-                    binding.groupImageView.setImageBitmap(
-                        getRoundedCroppedBitmap(
-                            decodeSampledBitmapFromUri(
-                                binding.root.context,
-                                group.groupIcon,
-                                160.dpToPx(resources.displayMetrics),
-                                160.dpToPx(resources.displayMetrics)
-                            )!!
-                        )
-                    )
-                    //   }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
-                    binding.groupImageHolder.visibility = View.INVISIBLE
-                    binding.groupImageHolderImage.visibility = View.INVISIBLE
-                    binding.groupImageView.visibility = View.VISIBLE
+                    if(viewModel.updatedUri != null){
+                        binding.groupImageView.setImageBitmap(
+                            getRoundedCroppedBitmap(
+                                decodeSampledBitmapFromUri(
+                                    binding.root.context,
+                                    group.groupIcon,
+                                    160.dpToPx(resources.displayMetrics),
+                                    160.dpToPx(resources.displayMetrics)
+                                )!!
+                            )
+                        )
+                        //   }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+
+                        binding.groupImageHolder.visibility = View.INVISIBLE
+                        binding.groupImageHolderImage.visibility = View.INVISIBLE
+                        binding.groupImageView.visibility = View.VISIBLE
+                    }
+
                 } else {
-                    binding.groupImageHolder.visibility = View.VISIBLE
-                    binding.groupImageHolderImage.visibility = View.VISIBLE
-                    binding.groupImageView.visibility = View.INVISIBLE
+                    if(viewModel.updatedUri == null){ // later ref
+                        binding.groupImageHolder.visibility = View.VISIBLE
+                        binding.groupImageHolderImage.visibility = View.VISIBLE
+                        binding.groupImageView.visibility = View.INVISIBLE
+                    }
                 }
             }
         }
@@ -317,42 +330,46 @@ class CreateEditGroupFragment : Fragment() {
         // group not created, but group icon set
         if (args.groupIcon != null) {
 
-            viewModel.updatedUri = Uri.parse(args.groupIcon) //  here group icon should be not null. // later ref
+            Log.d(TAG, "onViewCreated: checking args group icon != null \n ${args.groupIcon}")
+            viewModel.updatedUri =
+                Uri.parse(args.groupIcon) //  here group icon should be not null. // later ref
 
             Log.d(TAG, "onViewCreated: xxx  groupIcon not null ${viewModel.updatedUri}")
 
             // update group change when uri changed
             viewModel.group.value?.let {
-                if(it.groupIcon != viewModel.updatedUri) {
+                if (it.groupIcon != viewModel.updatedUri) {
                     viewModel.change = true
                     Log.d(TAG, "onViewCreated: xxx changed detected ${viewModel.change}")
                 }
             }
 
             // create group change when uri changed
-            if(args.groupId == -1 && args.groupIcon != null)
+            if (args.groupId == -1 && args.groupIcon != null)
                 viewModel.change = true
 
 
+            // delay applied here because the image will be updated when group is been observed also
             ///binding.groupImageView.setImageURI(Uri.parse(args.groupIcon))
-             Handler(Looper.getMainLooper()).postDelayed({
-            binding.groupImageView.setImageBitmap(
-                getRoundedCroppedBitmap(
-                    decodeSampledBitmapFromUri(
-                        binding.root.context,
-                        Uri.parse(args.groupIcon),
-                        160.dpToPx(resources.displayMetrics),
-                        160.dpToPx(resources.displayMetrics)
-                    )!!
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.groupImageView.setImageBitmap(
+                    getRoundedCroppedBitmap(
+                        decodeSampledBitmapFromUri(
+                            binding.root.context,
+                            Uri.parse(args.groupIcon),
+                            160.dpToPx(resources.displayMetrics),
+                            160.dpToPx(resources.displayMetrics)
+                        )!!
+                    )
                 )
-            )
-               }, resources.getInteger(R.integer.reply_motion_duration_very_small).toLong())
 
-            binding.groupImageHolder.visibility = View.INVISIBLE
-            binding.groupImageHolderImage.visibility = View.INVISIBLE
-            binding.groupImageView.visibility = View.VISIBLE
+                binding.groupImageHolder.visibility = View.INVISIBLE
+                binding.groupImageHolderImage.visibility = View.INVISIBLE
+                binding.groupImageView.visibility = View.VISIBLE
+            }, resources.getInteger(R.integer.reply_motion_duration_very_small).toLong())
 
         } else {
+            viewModel.updatedUri = null
             binding.groupImageHolder.visibility = View.VISIBLE
             binding.groupImageHolderImage.visibility = View.VISIBLE
             binding.groupImageView.visibility = View.INVISIBLE
@@ -435,8 +452,9 @@ class CreateEditGroupFragment : Fragment() {
 //
 //                    }
                 } else {
-                    if(args.groupId != -1)
-                    binding.outlinedGroupNameTextField.error = getString(R.string.enter_valid_name) // unwanted code
+                    if (args.groupId != -1)
+                        binding.outlinedGroupNameTextField.error =
+                            getString(R.string.enter_valid_name) // unwanted code
 
 //                    if (!viewModel.memberCountChange)
 //                        viewModel.change = false

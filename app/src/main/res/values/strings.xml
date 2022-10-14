@@ -208,4 +208,7 @@
     <string name="group_updated">Group updated</string>
     <string name="invalid_input">Invalid input</string>
     <string name="owes_text">%1$s owes ₹%2$s to %3$s</string>
+    <string name="group_icon_deleted">Group icon deleted</string>
+    <string name="confirm_editing_member">Confirm member editing?</string>
+    <string name="edit_not_allowed">Newly added members are editable only when group is updated</string>
 </resources>

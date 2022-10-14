@@ -147,10 +147,15 @@ class GroupIconFragment : Fragment() {
                    }
                } else // without groupid, during creation only we can be here
                    gotoCreateEditGroupFragment(null)
+
+               //Toast.makeText(requireContext(), getString(R.string.group_icon_deleted), Toast.LENGTH_SHORT).show()
+
            }
            else{
                Toast.makeText(requireContext(), getString(R.string.no_group_icon), Toast.LENGTH_SHORT).show()
            }
+
+           groupIconBottomSheet.dismiss()
        }
 
 

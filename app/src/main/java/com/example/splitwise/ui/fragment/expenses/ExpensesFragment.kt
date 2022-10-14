@@ -341,9 +341,9 @@ class ExpensesFragment : Fragment() {
         // show and hide fab on scrollview scrolling
 
         binding.expensesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
                 // Hide fab button
                 if (dy > 0 && binding.addFabButton.visibility == View.VISIBLE)
                     binding.addFabButton.hide()
@@ -367,6 +367,18 @@ class ExpensesFragment : Fragment() {
         }
 
         val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+            override fun rightSwipeCallback(viewHolder: RecyclerView.ViewHolder) {
+                viewModel.expenseMembers.value?.let {
+                    expenseDeleteConfirmationDialog(
+                        it[viewHolder.absoluteAdapterPosition],
+                        viewHolder.absoluteAdapterPosition
+                    )
+                }
+
+                //Toast.makeText(requireContext(), "right swiped test", Toast.LENGTH_SHORT).show()
+                super.rightSwipeCallback(viewHolder)
+            }
+
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
                 viewModel.expenseMembers.value?.let {

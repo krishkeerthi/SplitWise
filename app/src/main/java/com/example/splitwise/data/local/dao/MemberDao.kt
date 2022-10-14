@@ -29,7 +29,7 @@ interface MemberDao {
     suspend fun getMember(name: String, phoneNumber: Long): Member?
 
     @Query("UPDATE member SET member_profile = :uri WHERE member_id = :memberId")
-    suspend fun updateMemberProfile(memberId: Int, uri: Uri)
+    suspend fun updateMemberProfile(memberId: Int, uri: Uri?)
 
     @Query("UPDATE member SET member_profile = :uri WHERE member_id = :memberId")
     suspend fun deleteMemberProfile(memberId: Int, uri: Uri)

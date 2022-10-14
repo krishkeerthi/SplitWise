@@ -219,6 +219,26 @@ class GroupsFragment : Fragment() {
 //        })
         // Testing swipe in groups recyclerview
         val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+
+
+            override fun leftSwipeCallback(viewHolder: ViewHolder) {
+
+                Toast.makeText(requireContext(), "left swiped test", Toast.LENGTH_SHORT).show()
+                super.leftSwipeCallback(viewHolder)
+            }
+
+            override fun rightSwipeCallback(viewHolder: ViewHolder) {
+                viewModel.groups.value?.let {
+                    confirmationDialog(it[viewHolder.absoluteAdapterPosition].groupId,
+                        it[viewHolder.absoluteAdapterPosition].groupName,
+                        viewHolder.absoluteAdapterPosition)
+                    //goToExpenseFragment(it[viewHolder.absoluteAdapterPosition].groupId, viewHolder.itemView)
+                }
+
+                //Toast.makeText(requireContext(), "right swiped test", Toast.LENGTH_SHORT).show()
+                super.rightSwipeCallback(viewHolder)
+            }
+
             override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
 //                val swipeDirection = if (ItemTouchHelper.LEFT == direction) "Left"
 //                else if (ItemTouchHelper.RIGHT == direction) "Right"
@@ -237,8 +257,10 @@ class GroupsFragment : Fragment() {
                         viewHolder.absoluteAdapterPosition)
                     //goToExpenseFragment(it[viewHolder.absoluteAdapterPosition].groupId, viewHolder.itemView)
                 }
-                else // reloads the swiped item
+                else { // reloads the swiped item
                     viewHolder.bindingAdapter?.notifyItemChanged(viewHolder.absoluteAdapterPosition)
+                    Toast.makeText(requireContext(), "test", Toast.LENGTH_SHORT).show()
+                }
             }
 
         }

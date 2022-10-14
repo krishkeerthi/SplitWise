@@ -17,6 +17,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
@@ -62,6 +64,32 @@ class AddMemberFragment() : Fragment() {
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
+
+        val callback = object : OnBackPressedCallback(true /* enabled by default */) {
+
+            override fun handleOnBackPressed() {
+                if (checkForChanges()) {
+                    val builder = AlertDialog.Builder(requireContext())
+
+                    builder.setTitle(getString(R.string.discard))
+                    builder.setMessage(getString(R.string.discard_changes))
+                    builder.setPositiveButton(
+                        getString(R.string.discard)
+                    ) { dialog, which ->
+
+                        NavHostFragment.findNavController(this@AddMemberFragment)
+                            .popBackStack()
+                    }
+                    builder.setNegativeButton(getString(R.string.cancel), null)
+                    builder.show()
+                } else {
+                    NavHostFragment.findNavController(this@AddMemberFragment)
+                        .popBackStack()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+
     }
 
     override fun onCreateView(
@@ -575,4 +603,9 @@ class AddMemberFragment() : Fragment() {
 
         }
 
+    private fun checkForChanges(): Boolean{
+        return (binding.memberNameText.text?.trim().toString() != "" ||
+                binding.memberPhoneText.text?.trim().toString() != "" ||
+                viewModel.memberProfile != null)
+    }
 }

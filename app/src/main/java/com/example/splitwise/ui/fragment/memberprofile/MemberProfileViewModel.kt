@@ -22,6 +22,8 @@ class MemberProfileViewModel(context: Context, val memberId: Int): ViewModel() {
     // edit variable
     var editEnabled = false
 
+    var updatedUri: Uri? = null
+
     fun fetchData(){
         viewModelScope.launch {
             _member.value = memberRepository.getMember(memberId)
@@ -44,6 +46,35 @@ class MemberProfileViewModel(context: Context, val memberId: Int): ViewModel() {
         viewModelScope.launch {
             memberRepository.updateMemberProfile(memberId, uri)
         }
+    }
+
+    fun newUpdateMember(
+        name: String,
+        phone: String,
+        gotoCreateEditGroupFragment: () -> Unit,
+        memberUpdated: () -> Unit
+    ) {
+//        if ((_member.value!!.name != name) || (_member.value!!.phone.toString() != phone)
+//            || (_member.value!!.memberProfile != updatedUri)
+//        ) {
+
+            viewModelScope.launch {
+                // updating member profile // checking whether uri is updated first, then also checking that uri is different
+                // from previous.
+                if (_member.value!!.memberProfile != updatedUri) {
+                    memberRepository.updateMemberProfile(memberId, updatedUri)
+                }
+
+                if((_member.value!!.name != name) || (_member.value!!.phone.toString() != phone)){
+                    memberRepository.updateMember(memberId, name, phone.toLong())
+                }
+
+                memberUpdated()
+                gotoCreateEditGroupFragment()
+            }
+//        } else {
+//           // notEdited()
+//        }
     }
 }
 

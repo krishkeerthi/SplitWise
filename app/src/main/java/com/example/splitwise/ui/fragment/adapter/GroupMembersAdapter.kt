@@ -17,7 +17,8 @@ import com.example.splitwise.util.ripple
 class GroupMembersAdapter(
     val groupId: Int,
     val memberClicked: (Int, View) -> Unit,
-    val onDeleteClicked: (Member, Int, View) -> Unit
+    val onDeleteClicked: (Member, Int, View) -> Unit,
+    val editNotAllowed: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var members = listOf<Member>()
 
@@ -38,7 +39,11 @@ class GroupMembersAdapter(
             GroupMembersViewHolder(binding).apply {
                 itemView.setOnClickListener {
                     //it.ripple(it.context)
-                    memberClicked(members[absoluteAdapterPosition].memberId, itemView)
+                    if(members[absoluteAdapterPosition].memberId in 1000..10000) {
+                        editNotAllowed()
+                    }
+                    else
+                        memberClicked(members[absoluteAdapterPosition].memberId, itemView)
                 }
             }
         }

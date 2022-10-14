@@ -20,6 +20,7 @@ class AddMemberViewModel(
 
     var memberProfile: Uri? = null
 
+
     fun checkMember(groupId: Int, member: Member, gotoCreateEditGroupFragment: (Member) -> Unit,  memberExists: () -> Unit,
                     error: () -> Unit
     ) {
