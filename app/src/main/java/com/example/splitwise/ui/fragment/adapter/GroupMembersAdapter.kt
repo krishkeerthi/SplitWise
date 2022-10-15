@@ -39,10 +39,10 @@ class GroupMembersAdapter(
             GroupMembersViewHolder(binding).apply {
                 itemView.setOnClickListener {
                     //it.ripple(it.context)
-                    if(members[absoluteAdapterPosition].memberId in 1000..10000) {
-                        editNotAllowed()
-                    }
-                    else
+//                    if(members[absoluteAdapterPosition].memberId in 1000..10000) {
+//                        editNotAllowed()
+//                    }
+//                    else
                         memberClicked(members[absoluteAdapterPosition].memberId, itemView)
                 }
             }
@@ -107,10 +107,14 @@ class GroupMembersViewHolder(val binding: GroupMemberCardBinding) :
             )
             //    }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
-
             binding.memberImageView.visibility = View.VISIBLE
             binding.memberImageHolder.visibility = View.INVISIBLE
             binding.memberImageHolderImage.visibility = View.INVISIBLE
+        }
+        else{
+            binding.memberImageView.visibility = View.INVISIBLE
+            binding.memberImageHolder.visibility = View.VISIBLE
+            binding.memberImageHolderImage.visibility = View.VISIBLE
         }
     }
 

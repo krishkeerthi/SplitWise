@@ -46,13 +46,20 @@ class PayerViewHolder(val binding: com.example.splitwise.databinding.IconBottomS
 
     fun bind(payer: Member) {
         binding.itemTextView.text = payer.name
-        binding.itemImageHolder.setImageBitmap(
-            getRoundedCroppedBitmap(
-                decodeSampledBitmapFromUri(
-                    binding.root.context, payer.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
-                )!!
+
+        if(payer.memberProfile != null){
+            binding.itemImageHolder.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context, payer.memberProfile, 40.dpToPx(resources.displayMetrics), 40.dpToPx(resources.displayMetrics)
+                    )!!
+                )
             )
-        )
+        }
+        else{
+            binding.itemImageView.setImageResource(R.drawable.baseline_person_24)
+        }
+
         //binding.itemImageView.setImageResource(R.drawable.ic_baseline_person_24)
 
     }

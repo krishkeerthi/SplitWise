@@ -33,7 +33,7 @@ import java.util.*
 import kotlin.math.min
 
 fun nameCheck(value: String): Boolean {
-    return value.matches("[a-zA-Z0-9-&\"'.\n /,]+$".toRegex())
+    return value.matches("[a-zA-Z0-9-&\"'.\n /,()]+$".toRegex())
 }
 
 fun formatDate(date: Date, dateOnly: Boolean = false): String {

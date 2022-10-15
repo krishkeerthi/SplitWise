@@ -12,7 +12,7 @@ interface MemberDataSource {
 
     suspend fun getMembers(): List<Member>?
 
-    suspend fun addMemberStreak(memberId: Int): Int
+    suspend fun addMemberStreak(memberId: Int, defaultStreak: Int): Int
 
     suspend fun getMemberStreak(memberId: Int): MemberStreak?
 

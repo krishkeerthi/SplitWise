@@ -153,13 +153,24 @@ class CreateEditGroupViewModel(
                 _groupName.value = group?.groupName
                 _group.value = group
 
-                val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
+                // later ref
+//                if(groupMembers.isNotEmpty()){
+//                    _members.value = groupMembers.toMutableList()
+//                }
+//                else{
+                    val memberIds = groupRepository.getGroupMembers(groupId)?.toMutableList()
 
-                getMembersFromIds(memberIds)?.let {
-                    groupMembers = it.toMutableSet()
-                    _members.value = groupMembers.toMutableList()
-                }
+                    getMembersFromIds(memberIds)?.let {
+                        groupMembers = it.toMutableSet()
 
+                        if(membersNewlyAddedToGroup.isNotEmpty()){ // this is called during member update // later ref
+                            for(member in membersNewlyAddedToGroup)
+                                groupMembers.add(member)
+                        }
+
+                        _members.value = groupMembers.toMutableList()
+                    }
+                //}
 
             } else if (groupId == -1 && selectedMembers != null) { // choosing member while creating group or adding members
 
@@ -457,11 +468,11 @@ class CreateEditGroupViewModel(
         groupUpdated: () -> Unit,
         notEdited: () -> Unit
     ) {
-        if (groupId != -1) {
-            if (membersNewlyAddedToGroup.isNotEmpty()
-                || (tempGroupName != _group.value!!.groupName) // !! bcaz groupId != -1
-                || (updatedUri != null && _group.value!!.groupIcon != updatedUri)
-            ) {
+//        if (groupId != -1) {
+//            if (membersNewlyAddedToGroup.isNotEmpty()
+//                || (tempGroupName != _group.value!!.groupName) // !! bcaz groupId != -1
+//                || (updatedUri != null && _group.value!!.groupIcon != updatedUri)
+//            ) {
                 // update group
                 viewModelScope.launch {
                     // updating group name
@@ -476,17 +487,28 @@ class CreateEditGroupViewModel(
 
                     // updating group icon // checking whether uri is updated first, then also checking that uri is different
                     // from previous.
-                    if (updatedUri != null && _group.value!!.groupIcon != updatedUri) {
-                        groupRepository.updateGroupIcon(groupId, updatedUri!!)
+                    if (_group.value!!.groupIcon != updatedUri) { //updatedUri != null &&  later ref
+                        if(updatedUri != null)
+                            groupRepository.updateGroupIcon(groupId, updatedUri!!)
+                        else
+                            groupRepository.removeGroupIcon(groupId)
                     }
 
                     groupUpdated()
                     gotoGroupFragment()
                 }
-            } else {
-                notEdited()
-            }
+//            } else {
+//                notEdited()
+//            }
+//        }
+    }
+
+    fun checkForNewMember(memberId: Int): Boolean {
+        for(member in membersNewlyAddedToGroup){
+            if(member.memberId == memberId)
+                return true
         }
+        return false
     }
 
 }

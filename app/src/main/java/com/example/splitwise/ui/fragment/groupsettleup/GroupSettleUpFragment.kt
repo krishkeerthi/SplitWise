@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -92,7 +93,7 @@ class GroupSettleUpFragment : Fragment() {
                 if (it.memberProfile != null) {
                     ///binding.fromMemberImageView.setImageURI(it.memberProfile)
 
-                    Handler(Looper.getMainLooper()).postDelayed({
+                    //Handler(Looper.getMainLooper()).postDelayed({
 
                         binding.fromMemberImageView.setImageBitmap(
                             getRoundedCroppedBitmap(
@@ -104,7 +105,7 @@ class GroupSettleUpFragment : Fragment() {
                             )!!
                             )
                         )
-                    }, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
+                    //}, resources.getInteger(R.integer.reply_motion_duration_large).toLong())
 
 
                     binding.fromMemberImageView.visibility = View.VISIBLE
@@ -170,15 +171,26 @@ class GroupSettleUpFragment : Fragment() {
 
         binding.settleButton.setOnClickListener {
             Log.d(ContentValues.TAG, "onViewCreated: selected ${viewModel.selectedPayeesIds()}")
-            viewModel.settle(viewModel.selectedPayeesIds()) {
-                Snackbar.make(
-                    binding.root,
-                    "${getString(R.string.settled_successfully)}",
-                    Snackbar.LENGTH_SHORT
-                ).show()
+            val builder = AlertDialog.Builder(requireContext())
 
-                gotoGroupSplitWiseFragment()
+            builder.setMessage(getString(R.string.confirm_settle_up))
+
+            builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+                viewModel.settle(viewModel.selectedPayeesIds()) {
+                    Snackbar.make(
+                        binding.root,
+                        "${getString(R.string.settled_successfully)}",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+
+                    gotoGroupSplitWiseFragment()
+                }
             }
+
+            builder.setNegativeButton(getString(R.string.cancel), null)
+
+            builder.show()
+
         }
 
     }

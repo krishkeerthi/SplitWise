@@ -46,7 +46,7 @@
                 android:layout_height="match_parent"
                 app:radius="24dp"
                 android:background="@color/background"
-                app:fill_color="@color/new_view_color"
+                app:fill_color="@color/view_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

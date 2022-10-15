@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -255,15 +256,25 @@ class SettleUpFragment : Fragment() {
 
         binding.settleButton.setOnClickListener {
             Log.d(TAG, "onViewCreated: selected ${viewModel.selectedPayeesIds()}")
-            viewModel.settle(viewModel.selectedPayeesIds()) {
-                Snackbar.make(
-                    binding.root,
-                    "${getString(R.string.settled_successfully)}",
-                    Snackbar.LENGTH_SHORT
-                ).show()
+            val builder = AlertDialog.Builder(requireContext())
 
-                gotoSplitWiseFragment()
+            builder.setMessage(getString(R.string.confirm_settle_up))
+
+            builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+                viewModel.settle(viewModel.selectedPayeesIds()) {
+                    Snackbar.make(
+                        binding.root,
+                        "${getString(R.string.settled_successfully)}",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+
+                    gotoSplitWiseFragment()
+                }
             }
+
+            builder.setNegativeButton(getString(R.string.cancel), null)
+
+            builder.show()
         }
 
 //        binding.settleButton.setOnClickListener {

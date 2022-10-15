@@ -135,6 +135,7 @@ class CreateEditGroupFragment : Fragment() {
 
         binding = FragmentCreateEditGroupBinding.bind(view)
 
+        Log.d(TAG, "onViewCreated: newly added ${viewModel.membersNewlyAddedToGroup}")
 
         // transition code starts
 
@@ -167,16 +168,22 @@ class CreateEditGroupFragment : Fragment() {
         // many problem arises if it is not called from here
         //viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
 
-        if (viewModel.newEntry) {
-            viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
-            viewModel.newEntry = false
-        } else {
-            viewModel.updatedFetchData(
-                args.groupId,
-                if (viewModel.groupMembers.isNotEmpty()) viewModel.groupMembers.toList()
-                else args.selectedMembers?.toList()
-            )
-        }
+//        if (viewModel.newEntry) {  // later ref
+//            Log.d(TAG, "onViewCreated: members issue ${args.selectedMembers?.toList()}")
+//            viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
+//            viewModel.newEntry = false
+//        } else {
+//            val members = if (viewModel.groupMembers.isNotEmpty()) viewModel.groupMembers.toList()
+//            else args.selectedMembers?.toList()
+//
+//            Log.d(TAG, "onViewCreated: members issue ${members}")
+//            viewModel.updatedFetchData(
+//                args.groupId,
+//                members
+//            )
+//        }
+
+        viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
 
 
         // not works
@@ -197,13 +204,18 @@ class CreateEditGroupFragment : Fragment() {
 //            requireActivity().title = "Edit Group"
 
         // Rv
-        val membersAdapter = GroupMembersAdapter(args.groupId, { memberId, memberView ->
+        val membersAdapter = GroupMembersAdapter(args.groupId, { memberId, memberView -> // member click
+
             memberClicked(memberId, memberView)
-        }, { member, position, deleteImageView ->
+        }, { member, position, deleteImageView -> // delete click
             deleteImageView.ripple(requireContext())
             confirmationDialog(member, position, deleteImageView)
-        },{
-            Toast.makeText(requireContext(), getString(R.string.edit_not_allowed), Toast.LENGTH_SHORT).show()
+        }, {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.edit_not_allowed),
+                Toast.LENGTH_SHORT
+            ).show()
         }
         )
 
@@ -293,7 +305,7 @@ class CreateEditGroupFragment : Fragment() {
 
                     //  Handler(Looper.getMainLooper()).postDelayed({
 
-                    if(viewModel.updatedUri != null){
+                    if (viewModel.updatedUri != null) {
                         binding.groupImageView.setImageBitmap(
                             getRoundedCroppedBitmap(
                                 decodeSampledBitmapFromUri(
@@ -312,7 +324,7 @@ class CreateEditGroupFragment : Fragment() {
                     }
 
                 } else {
-                    if(viewModel.updatedUri == null){ // later ref
+                    if (viewModel.updatedUri == null) { // later ref
                         binding.groupImageHolder.visibility = View.VISIBLE
                         binding.groupImageHolderImage.visibility = View.VISIBLE
                         binding.groupImageView.visibility = View.INVISIBLE
@@ -369,6 +381,9 @@ class CreateEditGroupFragment : Fragment() {
             }, resources.getInteger(R.integer.reply_motion_duration_very_small).toLong())
 
         } else {
+            if(viewModel.updatedUri != null) // check whether uri was not null before
+                viewModel.change = true
+
             viewModel.updatedUri = null
             binding.groupImageHolder.visibility = View.VISIBLE
             binding.groupImageHolderImage.visibility = View.VISIBLE
@@ -552,8 +567,17 @@ class CreateEditGroupFragment : Fragment() {
 
     private fun memberClicked(memberId: Int, memberView: View) {
         if (args.groupId != -1) {
-            memberView.ripple(memberView.context)
-            gotoMemberProfileFragment(memberId, memberView)
+            if(viewModel.checkForNewMember(memberId)){
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.edit_not_allowed),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else{
+                memberView.ripple(memberView.context)
+                gotoMemberProfileFragment(memberId, memberView)
+            }
         }
     }
 
@@ -678,37 +702,51 @@ class CreateEditGroupFragment : Fragment() {
                 ).show()
             } else {
                 // new Update group
-                val builder = AlertDialog.Builder(requireContext())
+                Log.d(TAG, "updateGroup: group iconc${viewModel.group.value!!.groupIcon}  updated uri ${viewModel.updatedUri}")
+                if (viewModel.groupId != -1) {
+                    if (viewModel.membersNewlyAddedToGroup.isNotEmpty()
+                        || (viewModel.tempGroupName != viewModel.group.value!!.groupName) // !! bcaz groupId != -1
+                        || (viewModel.group.value!!.groupIcon != viewModel.updatedUri) //viewModel.updatedUri != null &&  later ref
+                    ) {
+                        val builder = AlertDialog.Builder(requireContext())
 
-                builder.setMessage(getString(R.string.confirm_editing_group))
+                        builder.setMessage(getString(R.string.confirm_editing_group))
 
-                builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+                        builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
 
-                    viewModel.newUpdateGroupName({
-                        viewModel.reset()
-                        gotoGroupsFragment()
-                    }, {
-                        Snackbar.make(
-                            binding.root,
-                            getString(R.string.group_updated),
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                    }, {
+                            viewModel.newUpdateGroupName({
+                                viewModel.reset()
+                                gotoGroupsFragment()
+                            }, {
+                                Snackbar.make(
+                                    binding.root,
+                                    getString(R.string.group_updated),
+                                    Snackbar.LENGTH_SHORT
+                                ).show()
+                            }, {
+                                Snackbar.make(
+                                    binding.root,
+                                    getString(R.string.fields_not_edited),
+                                    Snackbar.LENGTH_SHORT
+                                ).show()
+                            })
+
+                        }
+
+                        builder.setNegativeButton(getString(R.string.cancel), null)
+
+                        builder.show()
+                    } else {
                         Snackbar.make(
                             binding.root,
                             getString(R.string.fields_not_edited),
                             Snackbar.LENGTH_SHORT
                         ).show()
-                    })
-
+                    }
                 }
-
-                builder.setNegativeButton(getString(R.string.cancel), null)
-
-                builder.show()
             }
-        }
 
+        }
     }
 
     private fun gotoAddMemberFragment() {
@@ -789,7 +827,7 @@ class CreateEditGroupFragment : Fragment() {
         val action =
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToGroupIconFragment(
                 args.groupId,
-                groupIcon.toString(), // .toString() added, later ref
+                groupIcon?.toString(), // .toString() added, later ref
                 groupName,
                 false,
                 false,

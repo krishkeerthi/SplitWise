@@ -118,6 +118,9 @@ class MemberProfileFragment : Fragment() {
         }
 
 
+        if(viewModel.updatedUri != null) {
+            showProfile(viewModel.updatedUri!!)
+        }
         // image click
         binding.memberImageHolder.setOnClickListener {
             if (viewModel.editEnabled)
@@ -339,20 +342,33 @@ class MemberProfileFragment : Fragment() {
         if (member.memberProfile != null) {
             // member profile is stored
             ///binding.memberImageView.setImageURI(member.memberProfile)
-            binding.memberImageView.setImageBitmap(
-                getRoundedCroppedBitmap(
-                    decodeSampledBitmapFromUri(
-                        binding.root.context,
-                        member.memberProfile,
-                        160.dpToPx(resources.displayMetrics),
-                        160.dpToPx(resources.displayMetrics)
-                    )!!
-                )
-            )
+//            binding.memberImageView.setImageBitmap(
+//                getRoundedCroppedBitmap(
+//                    decodeSampledBitmapFromUri(
+//                        binding.root.context,
+//                        member.memberProfile,
+//                        160.dpToPx(resources.displayMetrics),
+//                        160.dpToPx(resources.displayMetrics)
+//                    )!!
+//                )
+//            )
+            showProfile(member.memberProfile!!)
             setImageVisibility()
         }
     }
 
+    private fun showProfile(uri: Uri){
+        binding.memberImageView.setImageBitmap(
+            getRoundedCroppedBitmap(
+                decodeSampledBitmapFromUri(
+                    binding.root.context,
+                    uri,
+                    160.dpToPx(resources.displayMetrics),
+                    160.dpToPx(resources.displayMetrics)
+                )!!
+            )
+        )
+    }
     private fun setImageVisibility() {
         binding.memberImageView.visibility = View.VISIBLE
         binding.memberImageHolder.visibility = View.GONE
@@ -417,6 +433,8 @@ class MemberProfileFragment : Fragment() {
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.camera_image_holder)
         val galleryImage =
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.gallery_image_holder)
+        val deleteImage =
+            groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.delete_image_holder)
 
         cameraImage?.setOnClickListener {
             openCamera()
@@ -425,6 +443,11 @@ class MemberProfileFragment : Fragment() {
 
         galleryImage?.setOnClickListener {
             selectFile()
+            groupIconBottomSheet.dismiss()
+        }
+
+        deleteImage?.setOnClickListener {
+            updateProfile(null)
             groupIconBottomSheet.dismiss()
         }
 
@@ -626,28 +649,36 @@ class MemberProfileFragment : Fragment() {
     }
 
     private fun updateProfile(uri: Uri?) {
-        Snackbar.make(binding.root, getString(R.string.profile_updated), Snackbar.LENGTH_SHORT)
-            .show()
+//        Snackbar.make(binding.root, getString(R.string.profile_updated), Snackbar.LENGTH_SHORT)
+//            .show()
 
         // previously I directly updated uri, but now I am saving in viewmodel and updated later, later ref
         //viewModel.updateProfile(uri)
         viewModel.updatedUri = uri
 
-        ///binding.memberImageView.setImageURI(uri)
-        binding.memberImageView.setImageBitmap(
-            getRoundedCroppedBitmap(
-                decodeSampledBitmapFromUri(
-                    binding.root.context,
-                    uri,
-                    160.dpToPx(resources.displayMetrics),
-                    160.dpToPx(resources.displayMetrics)
-                )!!
+        if(uri != null){
+            ///binding.memberImageView.setImageURI(uri)
+            binding.memberImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        uri,
+                        160.dpToPx(resources.displayMetrics),
+                        160.dpToPx(resources.displayMetrics)
+                    )!!
+                )
             )
-        )
 
-        binding.memberImageView.visibility = View.VISIBLE
-        binding.memberImageHolder.visibility = View.GONE
-        binding.memberImageHolderImage.visibility = View.GONE
+            binding.memberImageView.visibility = View.VISIBLE
+            binding.memberImageHolder.visibility = View.GONE
+            binding.memberImageHolderImage.visibility = View.GONE
+        }
+        else{
+            binding.memberImageView.visibility = View.INVISIBLE
+            binding.memberImageHolder.visibility = View.VISIBLE
+            binding.memberImageHolderImage.visibility = View.VISIBLE
+        }
+
     }
 
     private fun checkForChanges(): Boolean{

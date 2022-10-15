@@ -21,16 +21,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentExpenseBillsBinding
 import com.example.splitwise.ui.fragment.adapter.BillsAdapter
-import com.example.splitwise.ui.fragment.billsholder.BillsHolderFragment
-import com.example.splitwise.ui.fragment.expensedetail.ExpenseDetailFragmentDirections
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 import java.io.IOException
@@ -110,7 +109,7 @@ class ExpenseBillsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add_bill_menu -> {
-                uploadBill()
+                openBottomSheet()
                 true
             }
             else -> {
@@ -153,7 +152,7 @@ class ExpenseBillsFragment : Fragment() {
                     getString(R.string.permission_granted),
                     Snackbar.LENGTH_SHORT
                 ).show()
-                uploadBill()
+                openBottomSheet()
             } else {
                 gotoSettings()
                 //Snackbar.make(binding.root, getString(R.string.permission_denied), Snackbar.LENGTH_SHORT).show()
@@ -168,7 +167,35 @@ class ExpenseBillsFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun uploadBill() {
+    private fun openBottomSheet() {
+        val billBottomSheet = BottomSheetDialog(requireContext())
+        billBottomSheet.setContentView(R.layout.add_bill_bottom_sheet)
+
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            billBottomSheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        val cameraImage =
+            billBottomSheet.findViewById<ShapeableImageView>(R.id.camera_image_holder)
+        val galleryImage =
+            billBottomSheet.findViewById<ShapeableImageView>(R.id.gallery_image_holder)
+
+        cameraImage?.setOnClickListener {
+            openCamera()
+            //Toast.makeText(requireContext(), "Camera Clicked", Toast.LENGTH_SHORT).show()
+            billBottomSheet.dismiss()
+        }
+
+        galleryImage?.setOnClickListener {
+            selectFile()
+            billBottomSheet.dismiss()
+            //Toast.makeText(requireContext(), "Gallery Clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        billBottomSheet.show()
+
+    }
+
+    private fun openCamera(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // on sdk 33 onwards there is no write external storage permission, thus camera was not loading
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -274,6 +301,47 @@ class ExpenseBillsFragment : Fragment() {
 
         return uri
     }
+    private fun selectFile() {
+        //Intent.ACTION_PICK,
+        //            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val intent =
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply { //ACTION_OPEN_DOCUMENT // ACTION_GET_CONTENT
+                type = "image/*"
+                flags = (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            }
+
+        selectFileLauncher.launch(intent)
+    }
+
+
+    private val selectFileLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
+
+                val uri = result.data?.data
+
+                //As you are using ACTION_GET_CONTENT, your access to the Uri ends when the component is destroyed (unless you pass
+                // the Uri to a new component). You must make a copy of the file from the Uri if you'd like to continue to access
+                // it beyond the lifetime of your component or switch to ACTION_OPEN_DOCUMENT and persist permissions (possible only
+                // with document Uris).
+
+                if (uri != null) {
+                    requireActivity().contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+
+                    viewModel.addBills(uri)
+
+                } else
+                    Snackbar.make(binding.root, getString(R.string.error), Snackbar.LENGTH_SHORT)
+                        .show()
+            }
+
+        }
+
 
         private fun gotoBillsHolderFragment(position: Int, billImageView: View) {
 

@@ -123,7 +123,7 @@ class AddMemberFragment() : Fragment() {
 
         // update group icon set before orientation change
         if (viewModel.memberProfile != null) {
-            updateProfile(viewModel.memberProfile!!)
+            updateProfile(viewModel.memberProfile)
         }
 
         // update profile click
@@ -132,6 +132,10 @@ class AddMemberFragment() : Fragment() {
         }
 
         binding.memberImageHolderImage.setOnClickListener {
+            openBottomSheet()
+        }
+
+        binding.memberImageHolder.setOnClickListener {
             openBottomSheet()
         }
 
@@ -245,25 +249,39 @@ class AddMemberFragment() : Fragment() {
         return when (item.itemId) {
             R.id.add_member_save -> {
                 if (menuVisible) // menuVisible says whether entered fields are correct
-                    viewModel.checkMember(
-                        args.groupId,
-                        Member(
-                            binding.memberNameText.text?.trim().toString(),
-                            binding.memberPhoneText.text?.trim().toString().toLong(),
-                            viewModel.memberProfile
-                        ).apply {
+                {
+                    val builder = AlertDialog.Builder(requireContext())
+
+                    builder.setMessage(getString(R.string.confirm_adding_member))
+
+                    builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+
+                        viewModel.checkMember(
+                            args.groupId,
+                            Member(
+                                binding.memberNameText.text?.trim().toString(),
+                                binding.memberPhoneText.text?.trim().toString().toLong(),
+                                viewModel.memberProfile
+                            ).apply {
                                 memberId = (1000..10000).random()
-                        },
-                        { member: Member ->
-                            gotoCreateEditGroupFragment(member)
-                        },
-                        {
-                            memberExists()
-                        },
-                        {
-                            errorAdding()
-                        }
-                    )
+                            },
+                            { member: Member ->
+                                gotoCreateEditGroupFragment(member)
+                            },
+                            {
+                                memberExists()
+                            },
+                            {
+                                errorAdding()
+                            }
+                        )
+
+                    }
+
+                    builder.setNegativeButton(getString(R.string.cancel), null)
+
+                    builder.show()
+                }
                 else
                     Snackbar.make(
                         binding.root,
@@ -298,6 +316,8 @@ class AddMemberFragment() : Fragment() {
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.camera_image_holder)
         val galleryImage =
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.gallery_image_holder)
+        val deleteImage =
+            groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.delete_image_holder)
 
         cameraImage?.setOnClickListener {
             openCamera()
@@ -306,6 +326,11 @@ class AddMemberFragment() : Fragment() {
 
         galleryImage?.setOnClickListener {
             selectFile()
+            groupIconBottomSheet.dismiss()
+        }
+
+        deleteImage?.setOnClickListener {
+            updateProfile(null)
             groupIconBottomSheet.dismiss()
         }
 
@@ -430,22 +455,31 @@ class AddMemberFragment() : Fragment() {
             }
         }
 
-    private fun updateProfile(uri: Uri) {
+    private fun updateProfile(uri: Uri?) {
         ///binding.memberImageView.setImageURI(uri)
-        binding.memberImageView.setImageBitmap(
-            getRoundedCroppedBitmap(
-                decodeSampledBitmapFromUri(
-                    binding.root.context,
-                    uri,
-                    160.dpToPx(resources.displayMetrics),
-                    160.dpToPx(resources.displayMetrics)
-                )!!
+        viewModel.memberProfile = uri
+        if(uri != null){
+            binding.memberImageView.setImageBitmap(
+                getRoundedCroppedBitmap(
+                    decodeSampledBitmapFromUri(
+                        binding.root.context,
+                        uri,
+                        160.dpToPx(resources.displayMetrics),
+                        160.dpToPx(resources.displayMetrics)
+                    )!!
+                )
             )
-        )
 
-        binding.memberImageView.visibility = View.VISIBLE
-        binding.memberImageHolder.visibility = View.GONE
-        binding.memberImageHolderImage.visibility = View.GONE
+            binding.memberImageView.visibility = View.VISIBLE
+            binding.memberImageHolder.visibility = View.GONE
+            binding.memberImageHolderImage.visibility = View.GONE
+        }
+        else{
+            binding.memberImageView.visibility = View.INVISIBLE
+            binding.memberImageHolder.visibility = View.VISIBLE
+            binding.memberImageHolderImage.visibility = View.VISIBLE
+        }
+
     }
 
     private fun selectFile() {

@@ -55,7 +55,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:radius="60dp"
-                        app:fill_color="@color/new_view_color"
+                        app:fill_color="@color/view_color"
                         app:layout_constraintEnd_toEndOf="@+id/group_image_view"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"

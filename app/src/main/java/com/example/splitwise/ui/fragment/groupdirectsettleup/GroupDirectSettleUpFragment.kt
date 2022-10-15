@@ -10,6 +10,7 @@ import android.text.Spanned
 import android.text.style.TextAppearanceSpan
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -191,9 +192,20 @@ class GroupDirectSettleUpFragment : Fragment() {
 
         if(amount > 0){
             if(amount <= viewModel.totalPayable) {
-                viewModel.settle(amount) {
-                    gotoGroupSplitwiseFragment()
+                val builder = AlertDialog.Builder(requireContext())
+
+                builder.setMessage(getString(R.string.confirm_settle_up))
+
+                builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+                    viewModel.settle(amount) {
+                        gotoGroupSplitwiseFragment()
+                    }
                 }
+
+                builder.setNegativeButton(getString(R.string.cancel), null)
+
+                builder.show()
+
             }
             else
                 Snackbar.make(binding.root, getString(R.string.amount_exceeds), Snackbar.LENGTH_SHORT).show()

@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
@@ -42,6 +44,32 @@ class EditExpenseFragment : Fragment() {
         enterTransition = MaterialElevationScale(true).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
+
+        val callback = object : OnBackPressedCallback(true /* enabled by default */) {
+
+            override fun handleOnBackPressed() {
+                if (checkEdited()) {
+                    val builder = AlertDialog.Builder(requireContext())
+
+                    builder.setTitle(getString(R.string.discard));
+                    builder.setMessage(getString(R.string.discard_changes))
+                    builder.setPositiveButton(
+                        getString(R.string.discard)
+                    ) { dialog, which ->
+
+                        NavHostFragment.findNavController(this@EditExpenseFragment)
+                            .popBackStack()
+                    }
+                    builder.setNegativeButton(getString(R.string.cancel), null)
+                    builder.show()
+                } else {
+                    NavHostFragment.findNavController(this@EditExpenseFragment)
+                        .popBackStack()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+
     }
 
     override fun onCreateView(
@@ -138,14 +166,35 @@ class EditExpenseFragment : Fragment() {
                     binding.choosePayerText.text = member.name
                     // profile set
                     binding.payerImageView.visibility = View.VISIBLE
-                    binding.payerImageView.setImageBitmap(
-                        getRoundedCroppedBitmap(
-                            decodeSampledBitmapFromUri(
-                                binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
-                            )!!
+
+                    if(viewModel.payer!!.memberProfile != null){
+                        binding.payerImageView.visibility = View.VISIBLE
+                        binding.payerImageView.setImageBitmap(
+                            getRoundedCroppedBitmap(
+                                decodeSampledBitmapFromUri(
+                                    binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                                )!!
+                            )
                         )
-                    )
-                    binding.payerImageHolderView.visibility = View.INVISIBLE
+                        binding.payerImageHolderView.visibility = View.INVISIBLE
+                    }
+                    else{
+                        binding.payerImageView.visibility = View.VISIBLE
+                        binding.payerImageView.setImageResource(R.drawable.baseline_person_24)
+                        binding.payerImageHolderView.visibility = View.INVISIBLE
+                        binding.payerImageHolder.visibility = View.VISIBLE
+
+                    }
+
+//                    binding.payerImageView.visibility = View.VISIBLE
+//                    binding.payerImageView.setImageBitmap(
+//                        getRoundedCroppedBitmap(
+//                            decodeSampledBitmapFromUri(
+//                                binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+//                            )!!
+//                        )
+//                    )
+//                    binding.payerImageHolderView.visibility = View.INVISIBLE
 
                 }
 
@@ -175,14 +224,34 @@ class EditExpenseFragment : Fragment() {
             binding.choosePayerText.text = viewModel.payer!!.name
             // profile set
             binding.payerImageView.visibility = View.VISIBLE
-            binding.payerImageView.setImageBitmap(
-                getRoundedCroppedBitmap(
-                    decodeSampledBitmapFromUri(
-                        binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
-                    )!!
+
+            if(viewModel.payer!!.memberProfile != null){
+                binding.payerImageView.visibility = View.VISIBLE
+                binding.payerImageView.setImageBitmap(
+                    getRoundedCroppedBitmap(
+                        decodeSampledBitmapFromUri(
+                            binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                        )!!
+                    )
                 )
-            )
-            binding.payerImageHolderView.visibility = View.INVISIBLE
+                binding.payerImageHolderView.visibility = View.INVISIBLE
+            }
+            else{
+                binding.payerImageView.visibility = View.VISIBLE
+                binding.payerImageView.setImageResource(R.drawable.baseline_person_24)
+                binding.payerImageHolderView.visibility = View.INVISIBLE
+                binding.payerImageHolder.visibility = View.VISIBLE
+
+            }
+
+//            binding.payerImageView.setImageBitmap(
+//                getRoundedCroppedBitmap(
+//                    decodeSampledBitmapFromUri(
+//                        binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+//                    )!!
+//                )
+//            )
+//            binding.payerImageHolderView.visibility = View.INVISIBLE
         }
 
 
@@ -202,49 +271,55 @@ class EditExpenseFragment : Fragment() {
                 .toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
             && viewModel.category != null && viewModel.payer != null
         ) {
-            if (viewModel.memberIds.isNotEmpty()) {
+            if(binding.expenseAmountText.text?.trim().toString().toFloat() > 0f){
+                if (viewModel.memberIds.isNotEmpty()) {
 
-                if (checkEdited()) {
-                    val builder = AlertDialog.Builder(requireContext())
+                    if (checkEdited()) {
+                        val builder = AlertDialog.Builder(requireContext())
 
-                    builder.setMessage(getString(R.string.confirm_editing_expense))
+                        builder.setMessage(getString(R.string.confirm_editing_expense))
 
-                    builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+                        builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
 
-                        viewModel.updateExpense(
-                            binding.expenseNameText.text.toString(),
-                            viewModel.category!!.ordinal,
-                            viewModel.payer!!.memberId,
-                            binding.expenseAmountText.text.toString().toFloat(),
-                            viewModel.memberIds.toList()
-                        ) { expenseId: Int ->
-                            gotoExpenseDetailFragment(expenseId)
+                            viewModel.updateExpense(
+                                binding.expenseNameText.text.toString(),
+                                viewModel.category!!.ordinal,
+                                viewModel.payer!!.memberId,
+                                binding.expenseAmountText.text.toString().toFloat(),
+                                viewModel.memberIds.toList()
+                            ) { expenseId: Int ->
+                                gotoExpenseDetailFragment(expenseId)
+                            }
+                            Snackbar.make(
+                                binding.root,
+                                getString(R.string.expense_updated),
+                                Snackbar.LENGTH_SHORT
+                            ).show()
                         }
+
+                        builder.setNegativeButton(getString(R.string.cancel), null)
+
+                        builder.show()
+
+                    }
+                    else{
                         Snackbar.make(
                             binding.root,
-                            getString(R.string.expense_updated),
+                            getString(R.string.expense_not_edited),
                             Snackbar.LENGTH_SHORT
                         ).show()
                     }
-
-                    builder.setNegativeButton(getString(R.string.cancel), null)
-
-                    builder.show()
-
                 }
-                else{
+                else {
                     Snackbar.make(
                         binding.root,
-                        getString(R.string.expense_not_edited),
+                        getString(R.string.atleast_1_payee),
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
-            } else {
-                Snackbar.make(
-                    binding.root,
-                    getString(R.string.atleast_1_payee),
-                    Snackbar.LENGTH_SHORT
-                ).show()
+            }
+            else{
+                Snackbar.make(binding.root, getString(R.string.amount_greater_than_0), Snackbar.LENGTH_SHORT).show()
             }
         } else
             Snackbar.make(
@@ -320,15 +395,34 @@ class EditExpenseFragment : Fragment() {
             viewModel.payer = payer
             binding.choosePayerText.text = payer.name
             // profile set
-            binding.payerImageView.visibility = View.VISIBLE
-            binding.payerImageView.setImageBitmap(
-                getRoundedCroppedBitmap(
-                    decodeSampledBitmapFromUri(
-                        binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
-                    )!!
+            if(payer.memberProfile != null){
+                binding.payerImageView.visibility = View.VISIBLE
+                binding.payerImageView.setImageBitmap(
+                    getRoundedCroppedBitmap(
+                        decodeSampledBitmapFromUri(
+                            binding.root.context, payer.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                        )!!
+                    )
                 )
-            )
-            binding.payerImageHolderView.visibility = View.INVISIBLE
+                binding.payerImageHolderView.visibility = View.INVISIBLE
+            }
+            else{
+                binding.payerImageView.visibility = View.VISIBLE
+                binding.payerImageView.setImageResource(R.drawable.baseline_person_24)
+                binding.payerImageHolderView.visibility = View.INVISIBLE
+                binding.payerImageHolder.visibility = View.VISIBLE
+
+            }
+
+//            binding.payerImageView.visibility = View.VISIBLE
+//            binding.payerImageView.setImageBitmap(
+//                getRoundedCroppedBitmap(
+//                    decodeSampledBitmapFromUri(
+//                        binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+//                    )!!
+//                )
+//            )
+//            binding.payerImageHolderView.visibility = View.INVISIBLE
 
             payerBottomSheetDialog.dismiss()
         }
@@ -358,5 +452,6 @@ class EditExpenseFragment : Fragment() {
                 (args.expense.payer == viewModel.payer!!.memberId) &&
                 (getMemberIds(args.expensePayees.toList()).toList() == viewModel.memberIds.toList()))
     }
+
 
 }

@@ -211,4 +211,7 @@
     <string name="group_icon_deleted">Group icon deleted</string>
     <string name="confirm_editing_member">Confirm member editing?</string>
     <string name="edit_not_allowed">Newly added members are editable only when group is updated</string>
+    <string name="confirm_adding_member">Confirm adding member</string>
+    <string name="confirm_settle_up">Confirm settle up?</string>
+    <string name="upload_bill">Upload Bill</string>
 </resources>

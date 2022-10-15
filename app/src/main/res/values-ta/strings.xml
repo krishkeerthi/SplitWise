@@ -212,4 +212,7 @@
     <string name="group_icon_deleted">குழு ஐகான் நீக்கப்பட்டது</string>
     <string name="confirm_editing_member">உறுப்பினர் விவரங்களைத் திருத்துவதை உறுதிப்படுத்தவும்?</string>
     <string name="edit_not_allowed">புதிதாக சேர்க்கப்பட்ட உறுப்பினர்கள் குழு புதுப்பிக்கப்படும் போது மட்டுமே திருத்த முடியும்</string>
+    <string name="confirm_adding_member">உறுப்பினரைச் சேர்ப்பதை உறுதிப்படுத்தவும்</string>
+    <string name="confirm_settle_up">செட்டில் செய்வதை உறுதிப்படுத்தவும்</string>
+    <string name="upload_bill">ரசிதை பதிவேற்று</string>
 </resources>

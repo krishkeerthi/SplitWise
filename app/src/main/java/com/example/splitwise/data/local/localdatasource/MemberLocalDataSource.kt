@@ -29,8 +29,8 @@ class MemberLocalDataSource(
         return memberDao.getMembers()
     }
 
-    override suspend fun addMemberStreak(memberId: Int): Int {
-        return memberStreakDao.insert(MemberStreak(memberId, 0)).toInt()
+    override suspend fun addMemberStreak(memberId: Int, defaultStreak: Int): Int {
+        return memberStreakDao.insert(MemberStreak(memberId, defaultStreak)).toInt()
     }
 
     override suspend fun getMemberStreak(memberId: Int): MemberStreak? {

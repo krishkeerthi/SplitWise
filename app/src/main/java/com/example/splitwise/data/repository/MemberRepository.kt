@@ -43,7 +43,7 @@ class MemberRepository(
 
     suspend fun addMemberStreak(memberId: Int) {
         return withContext(Dispatchers.IO){
-            dataSource.addMemberStreak(memberId)
+            dataSource.addMemberStreak(memberId, 0)
         }
     }
 
@@ -95,6 +95,22 @@ class MemberRepository(
     suspend fun updateMemberProfile(memberId: Int, uri: Uri?) {
         withContext(Dispatchers.IO){
             dataSource.updateProfile(memberId, uri)
+        }
+    }
+
+    suspend fun createOrIncrementStreak(memberId: Int) {
+        withContext(Dispatchers.IO){
+            val memberStreak = dataSource.getMemberStreak(memberId)
+            if(memberStreak != null){
+                dataSource.updateMemberStreak(memberStreak.memberId, memberStreak.streak + 1)
+            }
+            else{
+                val memberStreakId = dataSource.addMemberStreak(memberId,1)
+//                dataSource.getMemberStreak(memberStreakId)?.let {
+//                    dataSource.updateMemberStreak(it.memberId,1)
+//                }
+
+            }
         }
     }
 

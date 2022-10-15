@@ -24,7 +24,7 @@ class PayerArrayAdapter(
 
             convertView = binding.root
             binding.itemTextView.text = payers[position].name
-            binding.itemImageView.setImageResource(R.drawable.ic_baseline_person_24)
+            binding.itemImageView.setImageResource(R.drawable.baseline_person_24)
         }
 
         return convertView

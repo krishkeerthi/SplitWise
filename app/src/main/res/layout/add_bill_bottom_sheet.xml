@@ -6,12 +6,12 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/member_icon_title"
+        android:id="@+id/bill_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="@string/member_icon"
+        android:text="@string/upload_bill"
         android:textColor="@color/text_bold"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toStartOf="@+id/gallery_image_holder"
         app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@id/member_icon_title"
+        app:layout_constraintTop_toBottomOf="@id/bill_title"
         app:layout_constraintStart_toStartOf="parent"
         app:shapeAppearanceOverlay="@style/Circular"
         tools:layout_editor_absoluteY="67dp" />
@@ -34,25 +34,11 @@
         android:id="@+id/gallery_image_holder"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:background="@color/view_color"
-        app:layout_constraintEnd_toStartOf="@+id/delete_image_holder"
-        app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@id/member_icon_title"
-        app:layout_constraintStart_toEndOf="@+id/camera_image_holder"
-        app:shapeAppearanceOverlay="@style/Circular"
-        tools:layout_editor_absoluteY="67dp" />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/delete_image_holder"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
         android:background="@color/view_color"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginTop="32dp"
-        app:layout_constraintStart_toEndOf="@+id/gallery_image_holder"
-        app:layout_constraintTop_toBottomOf="@+id/member_icon_title"
+        app:layout_constraintStart_toEndOf="@+id/camera_image_holder"
+        app:layout_constraintTop_toBottomOf="@id/bill_title"
         app:shapeAppearanceOverlay="@style/Circular" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -75,17 +61,6 @@
         app:layout_constraintStart_toStartOf="@+id/gallery_image_holder"
         app:layout_constraintTop_toTopOf="@id/gallery_image_holder"
         app:layout_constraintBottom_toBottomOf="@id/gallery_image_holder" />
-
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/delete_image"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/round_delete_24"
-        app:layout_constraintEnd_toEndOf="@+id/delete_image_holder"
-        app:layout_constraintStart_toStartOf="@+id/delete_image_holder"
-        app:layout_constraintTop_toTopOf="@id/delete_image_holder"
-        app:layout_constraintBottom_toBottomOf="@id/delete_image_holder" />
 
 
     <com.google.android.material.textview.MaterialTextView
@@ -115,20 +90,6 @@
         app:layout_constraintEnd_toEndOf="@id/gallery_image_holder"
         app:layout_constraintStart_toStartOf="@id/gallery_image_holder"
         app:layout_constraintTop_toBottomOf="@id/gallery_image_holder" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/delete_text_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="24dp"
-        android:lines="1"
-        android:text="@string/delete"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/delete_image_holder"
-        app:layout_constraintStart_toStartOf="@id/delete_image_holder"
-        app:layout_constraintTop_toBottomOf="@id/delete_image_holder" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

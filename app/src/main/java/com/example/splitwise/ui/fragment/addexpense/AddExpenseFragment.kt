@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,6 +52,30 @@ class AddExpenseFragment : Fragment() {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
 
+        val callback = object : OnBackPressedCallback(true /* enabled by default */) {
+
+            override fun handleOnBackPressed() {
+                if (checkForChanges()) {
+                    val builder = AlertDialog.Builder(requireContext())
+
+                    builder.setTitle(getString(R.string.discard));
+                    builder.setMessage(getString(R.string.discard_changes))
+                    builder.setPositiveButton(
+                        getString(R.string.discard)
+                    ) { dialog, which ->
+
+                        NavHostFragment.findNavController(this@AddExpenseFragment)
+                            .popBackStack()
+                    }
+                    builder.setNegativeButton(getString(R.string.cancel), null)
+                    builder.show()
+                } else {
+                        NavHostFragment.findNavController(this@AddExpenseFragment)
+                            .popBackStack()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
 
     }
 
@@ -138,15 +164,33 @@ class AddExpenseFragment : Fragment() {
         if(viewModel.payer != null){
             binding.choosePayerText.text = viewModel.payer!!.name
             // profile set
-            binding.payerImageView.visibility = View.VISIBLE
-            binding.payerImageView.setImageBitmap(
-                getRoundedCroppedBitmap(
-                    decodeSampledBitmapFromUri(
-                        binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
-                    )!!
+            if(viewModel.payer!!.memberProfile != null){
+                binding.payerImageView.visibility = View.VISIBLE
+                binding.payerImageView.setImageBitmap(
+                    getRoundedCroppedBitmap(
+                        decodeSampledBitmapFromUri(
+                            binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                        )!!
+                    )
                 )
-            )
-            binding.payerImageHolderView.visibility = View.INVISIBLE
+                binding.payerImageHolderView.visibility = View.INVISIBLE
+            }
+            else{
+                binding.payerImageView.visibility = View.VISIBLE
+                binding.payerImageView.setImageResource(R.drawable.baseline_person_24)
+                binding.payerImageHolderView.visibility = View.INVISIBLE
+                binding.payerImageHolder.visibility = View.VISIBLE
+
+            }
+//            binding.payerImageView.visibility = View.VISIBLE
+//            binding.payerImageView.setImageBitmap(
+//                getRoundedCroppedBitmap(
+//                    decodeSampledBitmapFromUri(
+//                        binding.root.context, viewModel.payer!!.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+//                    )!!
+//                )
+//            )
+//            binding.payerImageHolderView.visibility = View.INVISIBLE
 
         }
 
@@ -172,32 +216,37 @@ class AddExpenseFragment : Fragment() {
                 .toString() != "" && binding.expenseAmountText.text?.trim().toString() != ""
             && viewModel.category != null && viewModel.payer != null
         ) {
-            if(viewModel.memberIds.isNotEmpty()){
+            if(binding.expenseAmountText.text?.trim().toString().toFloat() > 0f){
+                if(viewModel.memberIds.isNotEmpty()){
 
-                val builder = AlertDialog.Builder(requireContext())
+                    val builder = AlertDialog.Builder(requireContext())
 
-                builder.setMessage(getString(R.string.confirm_adding_expense))
+                    builder.setMessage(getString(R.string.confirm_adding_expense))
 
-                builder.setPositiveButton(getString(R.string.confirm)){ dialog, which ->
-                    viewModel.createExpense(
-                        binding.expenseNameText.text.toString(),
-                        viewModel.category!!.ordinal,
-                        viewModel.payer!!.memberId,
-                        binding.expenseAmountText.text.toString().toFloat(),
-                        viewModel.memberIds.toList()
-                    ) {
-                        gotoExpenseFragment()
+                    builder.setPositiveButton(getString(R.string.confirm)){ dialog, which ->
+                        viewModel.createExpense(
+                            binding.expenseNameText.text.toString(),
+                            viewModel.category!!.ordinal,
+                            viewModel.payer!!.memberId,
+                            binding.expenseAmountText.text.toString().toFloat(),
+                            viewModel.memberIds.toList()
+                        ) {
+                            gotoExpenseFragment()
+                        }
+                        Snackbar.make(binding.root, getString(R.string.expense_added), Snackbar.LENGTH_SHORT).show()
                     }
-                    Snackbar.make(binding.root, getString(R.string.expense_added), Snackbar.LENGTH_SHORT).show()
+
+                    builder.setNegativeButton(getString(R.string.cancel), null)
+
+                    builder.show()
+
                 }
-
-                builder.setNegativeButton(getString(R.string.cancel), null)
-
-                builder.show()
-
-           }
+                else{
+                    Snackbar.make(binding.root, getString(R.string.atleast_1_payee), Snackbar.LENGTH_SHORT).show()
+                }
+            }
             else{
-                Snackbar.make(binding.root, getString(R.string.atleast_1_payee), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, getString(R.string.amount_greater_than_0), Snackbar.LENGTH_SHORT).show()
             }
         }
         else
@@ -281,15 +330,25 @@ class AddExpenseFragment : Fragment() {
             viewModel.payer = payer
             binding.choosePayerText.text = payer.name
             // profile set
-            binding.payerImageView.visibility = View.VISIBLE
-            binding.payerImageView.setImageBitmap(
-                getRoundedCroppedBitmap(
-                    decodeSampledBitmapFromUri(
-                        binding.root.context, payer.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
-                    )!!
+            if(payer.memberProfile != null){
+                binding.payerImageView.visibility = View.VISIBLE
+                binding.payerImageView.setImageBitmap(
+                    getRoundedCroppedBitmap(
+                        decodeSampledBitmapFromUri(
+                            binding.root.context, payer.memberProfile, 30.dpToPx(resources.displayMetrics), 30.dpToPx(resources.displayMetrics)
+                        )!!
+                    )
                 )
-            )
-            binding.payerImageHolderView.visibility = View.INVISIBLE
+                binding.payerImageHolderView.visibility = View.INVISIBLE
+            }
+            else{
+                binding.payerImageView.visibility = View.VISIBLE
+                binding.payerImageView.setImageResource(R.drawable.baseline_person_24)
+                binding.payerImageHolderView.visibility = View.INVISIBLE
+                binding.payerImageHolder.visibility = View.VISIBLE
+
+            }
+
             payerBottomSheetDialog.dismiss()
         }
 
@@ -316,5 +375,11 @@ class AddExpenseFragment : Fragment() {
             AddExpenseFragmentDirections.actionAddExpenseFragmentToExpensesFragment(args.groupId)
         view?.findNavController()?.navigate(action)
 
+    }
+
+    private fun checkForChanges(): Boolean{
+        return ( (binding.expenseNameText.text?.toString() != "" ) || (binding.expenseAmountText.text?.toString() != "" )
+                || (viewModel.payer != null) || (viewModel.category != null)
+                )
     }
 }
