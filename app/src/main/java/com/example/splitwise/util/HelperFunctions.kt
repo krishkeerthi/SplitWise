@@ -9,28 +9,25 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.fonts.Font
 import android.net.Uri
-import android.provider.MediaStore
-import android.text.Html
+import android.os.*
 import android.text.format.DateUtils
 import android.util.DisplayMetrics
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.model.ExpenseMember
-import com.google.android.material.internal.ContextUtils
 import com.google.android.material.internal.ContextUtils.getActivity
-import org.w3c.dom.Text
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.min
+
 
 fun nameCheck(value: String): Boolean {
     return value.matches("[a-zA-Z0-9-&\"'.\n /,()]+$".toRegex())
@@ -470,3 +467,51 @@ fun getRoundedCroppedBitmap(bitmap: Bitmap): Bitmap? {
     canvas.drawBitmap(bitmap, 0f, 0f, paintImage)
     return output
 }
+
+fun vibrate(context: Context, delete: Boolean){
+
+    val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
+// Vibrate for 500 milliseconds
+// Vibrate for 500 milliseconds
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // for delete single vibration
+        if(delete)
+        v!!.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+        else
+        v!!.vibrate(VibrationEffect.createWaveform(longArrayOf(1, 2, 30, 50, 80), -1))
+        // for no action double vibration
+    } else {
+        //deprecated in API 26
+        v!!.vibrate(50)
+    }
+
+}
+
+///**
+// * Check whether [effectId] is supported by the device's Vibrator.
+// */
+//private fun isPrimitiveSupported(effectId: Int): Boolean {
+//    return vibratorManager.defaultVibrator.areAllPrimitivesSupported(effectId)
+//}
+//
+///**
+// * Try making vibration with the given [effectId] if the device supports it. Otherwise,
+// * show error message.
+// */
+//private fun tryVibrate(vibratorManager: VibratorManager, effectId: Int, context: Context) {
+//    if (isPrimitiveSupported(effectId)) {
+//        vibratorManager.vibrate(
+//            CombinedVibration.createParallel(
+//                VibrationEffect.startComposition()
+//                    .addPrimitive(effectId)
+//                    .compose()
+//            )
+//        )
+//    } else {
+//        Toast.makeText(
+//            context,
+//            "This primitive is not supported by this device.",
+//            Toast.LENGTH_LONG,
+//        ).show()
+//    }
+//}

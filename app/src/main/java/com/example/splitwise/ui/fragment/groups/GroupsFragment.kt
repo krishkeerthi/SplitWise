@@ -222,19 +222,19 @@ class GroupsFragment : Fragment() {
 
 
             override fun leftSwipeCallback(viewHolder: ViewHolder) {
-
-                Toast.makeText(requireContext(), "left swiped test", Toast.LENGTH_SHORT).show()
-                super.leftSwipeCallback(viewHolder)
-            }
-
-            override fun rightSwipeCallback(viewHolder: ViewHolder) {
                 viewModel.groups.value?.let {
+                    vibrate(requireContext(), true)
                     confirmationDialog(it[viewHolder.absoluteAdapterPosition].groupId,
                         it[viewHolder.absoluteAdapterPosition].groupName,
                         viewHolder.absoluteAdapterPosition)
                     //goToExpenseFragment(it[viewHolder.absoluteAdapterPosition].groupId, viewHolder.itemView)
                 }
 
+                super.leftSwipeCallback(viewHolder)
+            }
+
+            override fun rightSwipeCallback(viewHolder: ViewHolder) {
+                vibrate(requireContext(), false)
                 //Toast.makeText(requireContext(), "right swiped test", Toast.LENGTH_SHORT).show()
                 super.rightSwipeCallback(viewHolder)
             }

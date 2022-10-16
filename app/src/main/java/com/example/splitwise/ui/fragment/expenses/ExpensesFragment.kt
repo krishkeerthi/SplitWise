@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
@@ -367,14 +368,21 @@ class ExpensesFragment : Fragment() {
         }
 
         val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
-            override fun rightSwipeCallback(viewHolder: RecyclerView.ViewHolder) {
+            override fun leftSwipeCallback(viewHolder: RecyclerView.ViewHolder) {
                 viewModel.expenseMembers.value?.let {
+                    vibrate(requireContext(), true)
                     expenseDeleteConfirmationDialog(
                         it[viewHolder.absoluteAdapterPosition],
                         viewHolder.absoluteAdapterPosition
                     )
                 }
 
+                //Toast.makeText(requireContext(), "left swiped test", Toast.LENGTH_SHORT).show()
+                super.leftSwipeCallback(viewHolder)
+            }
+
+            override fun rightSwipeCallback(viewHolder: RecyclerView.ViewHolder) {
+                vibrate(requireContext(), false)
                 //Toast.makeText(requireContext(), "right swiped test", Toast.LENGTH_SHORT).show()
                 super.rightSwipeCallback(viewHolder)
             }

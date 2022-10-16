@@ -4,13 +4,8 @@ import android.content.ContentValues.TAG
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
-import android.os.Build
 import android.util.Log
-import android.view.MotionEvent
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.splitwise.R
 import com.example.splitwise.ui.fragment.adapter.ExpenseEmptyViewHolder
 import com.example.splitwise.ui.fragment.adapter.GroupEmptyViewHolder
-import com.example.splitwise.ui.fragment.adapter.GroupsAdapter
 import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.pxToDp
 import kotlin.math.absoluteValue
@@ -35,7 +29,10 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
     var escapeVelocity: Float = 1f
     var animationSpeed: Long = 0
 
-    var limitCrossed: Boolean = false
+    var leftSwipeLimitCrossed: Boolean = false
+    var rightSwipeLimitCrossed: Boolean = false
+    var rightSwiped: Boolean = false
+    var leftSwiped: Boolean = false
 
     open fun leftSwipeCallback(viewHolder: ViewHolder){
         
@@ -83,9 +80,21 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
         isCurrentlyActive: Boolean
     ) {
 
-        if(dX == 0f && !isCurrentlyActive && limitCrossed){
-            limitCrossed = false
-            rightSwipeCallback(viewHolder)
+        if(dX == 0f && !isCurrentlyActive){
+            if(rightSwiped){
+                rightSwiped = false
+                if(rightSwipeLimitCrossed){
+                    rightSwipeLimitCrossed = false
+                    rightSwipeCallback(viewHolder)
+                }
+            }
+            else{
+                leftSwiped = false
+                if(leftSwipeLimitCrossed){
+                    leftSwipeLimitCrossed = false
+                    leftSwipeCallback(viewHolder)
+                }
+            }
         }
 
         Log.d(TAG, "onChildDraw: child draw state is ${actionState}")
@@ -96,12 +105,24 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
             val itemView = viewHolder.itemView
 
             Log.d(TAG, "onChildDraw: dX value $dX")
-            if (dX > 0) { // right side movement
+            if (dX > 0) { // left to right side movement
+                rightSwiped = true
+
+                // tracking user swipe action
+                if(dX.absoluteValue/6 >= 50f){
+                    rightSwipeLimitCrossed = true
+                }
+                else{
+                    if(isCurrentlyActive){
+                        rightSwipeLimitCrossed = false
+                        //Log.d(TAG, "onChildDraw: user is touching ")
+                    }
+                }
 
                 // setting velocity and threshold
                 swipeThreshold = 1f
                 escapeVelocity = 100000f
-                animationSpeed = 500
+                animationSpeed = 250//500
 
                 paint.color = recyclerView.context.resources.getColor(R.color.gray)
                 c.drawRect(RectF(itemView.left.toFloat(), itemView.top.toFloat(), itemView.left + dX/6, itemView.bottom.toFloat())
@@ -121,12 +142,19 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
 
 
             }
-            else{ // left side movement
-
+            else{ // right to left side movement
+                leftSwiped = true
                 Log.d(TAG, "onChildDraw: dX value on left swipe is $dX")
 
+                // tracking user swipe option
                 if(dX.absoluteValue >= 140f){
-                    limitCrossed = true
+                    leftSwipeLimitCrossed = true
+                }
+                else{
+                    if(isCurrentlyActive){
+                        leftSwipeLimitCrossed = false
+                        //Log.d(TAG, "onChildDraw: user is touching ")
+                    }
                 }
 
                 // setting velocity and threshold
