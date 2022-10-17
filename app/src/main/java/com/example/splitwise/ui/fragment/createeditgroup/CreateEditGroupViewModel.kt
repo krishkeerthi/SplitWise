@@ -57,6 +57,7 @@ class CreateEditGroupViewModel(
 
     val exists = MutableLiveData<Boolean>(false)
 
+    var backPressed: Boolean = false
 
     // things to be included
     // entered group name solves, group name edited task, call updateGroupName

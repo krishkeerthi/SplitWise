@@ -244,6 +244,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="@string/expenses"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@id/clear_expenses_filter"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/clear_expenses_filter" />

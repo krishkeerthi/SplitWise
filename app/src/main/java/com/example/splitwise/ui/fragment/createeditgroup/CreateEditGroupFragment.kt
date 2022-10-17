@@ -86,7 +86,7 @@ class CreateEditGroupFragment : Fragment() {
 
                         // clear activity viewmodel selected members
                         //      activityViewModel.selectedMembers = listOf()
-
+                        viewModel.backPressed = true
                         viewModel.reset()
                         //  Toast.makeText(requireContext(), "custom back pressed", Toast.LENGTH_SHORT).show()
                         NavHostFragment.findNavController(this@CreateEditGroupFragment)
@@ -95,6 +95,7 @@ class CreateEditGroupFragment : Fragment() {
                     builder.setNegativeButton(getString(R.string.cancel), null)
                     builder.show()
                 } else {
+                    viewModel.backPressed = true
                     if (viewModel.reset())
                         NavHostFragment.findNavController(this@CreateEditGroupFragment)
                             .popBackStack()
@@ -185,7 +186,6 @@ class CreateEditGroupFragment : Fragment() {
 
         viewModel.updatedFetchData(args.groupId, args.selectedMembers?.toList())
 
-
         // not works
 //        (requireActivity() as MainActivity).actionBar?.title = if(args.groupId == -1) "Create group"
 //        else "Edit group"
@@ -238,8 +238,10 @@ class CreateEditGroupFragment : Fragment() {
                 binding.addMemberButton.visibility = View.GONE
                 binding.noMembersTextView.visibility = View.GONE
             } else {
-                binding.addMemberButton.visibility = View.VISIBLE
-                binding.noMembersTextView.visibility = View.VISIBLE
+                if(!viewModel.backPressed) {
+                    binding.addMemberButton.visibility = View.VISIBLE
+                    binding.noMembersTextView.visibility = View.VISIBLE
+                }
             }
         }
 

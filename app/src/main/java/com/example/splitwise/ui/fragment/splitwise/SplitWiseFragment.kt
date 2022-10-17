@@ -157,7 +157,9 @@ class SplitWiseFragment : Fragment() {
 //            // update selected groups card
 //            binding.selectedGroupsText.text = ""
 //            binding.selectedGroupsCard.visibility = View.GONE
-            gotoSelf()
+
+            gotoSelf() //later ref
+
         }
 
         binding.membersRecyclerView.apply {

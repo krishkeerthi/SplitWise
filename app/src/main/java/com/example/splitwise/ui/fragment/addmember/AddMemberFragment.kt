@@ -21,6 +21,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -318,6 +319,16 @@ class AddMemberFragment() : Fragment() {
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.gallery_image_holder)
         val deleteImage =
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.delete_image_holder)
+        val deleteIcon = groupIconBottomSheet.findViewById<AppCompatImageView>(R.id.delete_image)
+
+        if(viewModel.memberProfile != null){
+            deleteImage?.visibility = View.VISIBLE
+            deleteIcon?.visibility = View.VISIBLE
+        }
+        else{
+            deleteImage?.visibility = View.GONE
+            deleteIcon?.visibility = View.GONE
+        }
 
         cameraImage?.setOnClickListener {
             openCamera()

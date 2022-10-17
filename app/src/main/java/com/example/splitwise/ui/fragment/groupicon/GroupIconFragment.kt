@@ -25,6 +25,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -123,33 +124,45 @@ class GroupIconFragment : Fragment() {
         val galleryImage =
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.gallery_image_holder)
         val deleteImage = groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.delete_image_holder)
+        val deleteIcon = groupIconBottomSheet.findViewById<AppCompatImageView>(R.id.delete_icon)
+
+        if(args.groupIcon == null) {
+            deleteImage?.visibility = View.GONE
+            deleteIcon?.visibility = View.GONE
+        }
 
         // delete icon
        deleteImage?.setOnClickListener {
            if(args.groupIcon != null){
                // later ref
-               if (args.groupId != -1) {
-                   if (args.fromGroupsSearchFragment) {
-                       viewModel.removeGroupIcon {
-                           gotoSearchGroupsFragment()
-                       }
-                   } else {
-                       if (args.fromGroupsFragment)
+               val alertDialog = AlertDialog.Builder(requireContext())
+               alertDialog.setMessage(getString(R.string.delete_message))
+
+               alertDialog.setPositiveButton(getString(R.string.delete)){ dialog, which ->
+                   if (args.groupId != -1) {
+                       if (args.fromGroupsSearchFragment) {
                            viewModel.removeGroupIcon {
-                               gotoGroupsFragment()
+                               gotoSearchGroupsFragment()
                            }
-                       else { // from create edit group,(during edit group)
-                           gotoCreateEditGroupFragment(null)
+                       } else {
+                           if (args.fromGroupsFragment)
+                               viewModel.removeGroupIcon {
+                                   gotoGroupsFragment()
+                               }
+                           else { // from create edit group,(during edit group)
+                               gotoCreateEditGroupFragment(null)
 //                                    viewModel.updateGroupIcon(uri)
 //                                    NavHostFragment.findNavController(this).popBackStack()
-                           //requireActivity().onBackPressed()  for back press I used this, this is wrong
+                               //requireActivity().onBackPressed()  for back press I used this, this is wrong
+                           }
                        }
-                   }
-               } else // without groupid, during creation only we can be here
-                   gotoCreateEditGroupFragment(null)
+                   } else // without groupid, during creation only we can be here
+                       gotoCreateEditGroupFragment(null)
 
-               //Toast.makeText(requireContext(), getString(R.string.group_icon_deleted), Toast.LENGTH_SHORT).show()
-
+                   //Toast.makeText(requireContext(), getString(R.string.group_icon_deleted), Toast.LENGTH_SHORT).show()
+               }
+               alertDialog.setNegativeButton(getString(R.string.cancel), null)
+               alertDialog.show()
            }
            else{
                Toast.makeText(requireContext(), getString(R.string.no_group_icon), Toast.LENGTH_SHORT).show()

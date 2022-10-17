@@ -22,6 +22,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -435,6 +436,14 @@ class MemberProfileFragment : Fragment() {
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.gallery_image_holder)
         val deleteImage =
             groupIconBottomSheet.findViewById<ShapeableImageView>(R.id.delete_image_holder)
+        val deleteIcon = groupIconBottomSheet.findViewById<AppCompatImageView>(R.id.delete_image)
+
+        viewModel.member.value?.let {
+            if(it.memberProfile == null){
+                deleteImage?.visibility = View.GONE
+                deleteIcon?.visibility = View.GONE
+            }
+        }
 
         cameraImage?.setOnClickListener {
             openCamera()
@@ -447,7 +456,14 @@ class MemberProfileFragment : Fragment() {
         }
 
         deleteImage?.setOnClickListener {
-            updateProfile(null)
+            val alertDialog = AlertDialog.Builder(requireContext())
+            alertDialog.setMessage(getString(R.string.delete_message))
+            alertDialog.setPositiveButton(R.string.delete){ dialog, which ->
+                updateProfile(null)
+            }
+            alertDialog.setNegativeButton(getString(R.string.cancel), null)
+            alertDialog.show()
+
             groupIconBottomSheet.dismiss()
         }
 

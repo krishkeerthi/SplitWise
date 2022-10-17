@@ -3,12 +3,12 @@
 
     <style name="Theme.SplitWise" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#4fc3f7</item>
+        <item name="colorPrimary">#1976d2</item>
         <item name="colorPrimaryVariant">#4fc3f7</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
 
-        <item name="colorSecondary">#29b6f6</item>
+        <item name="colorSecondary">#1976d2</item>
         <item name="colorSecondaryVariant">#0093c4</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
@@ -27,7 +27,7 @@
 
     <style name="Theme.SplitWise.Boxed" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#0d47a1</item>
+        <item name="colorPrimary">#1976d2</item>
         <item name="colorPrimaryVariant">@color/white</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->

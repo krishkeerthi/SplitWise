@@ -27,10 +27,15 @@ class SearchGroupViewModel(context: Context) : ViewModel() {
         )
 
         viewModelScope.launch {
-            val groupsStartedWith = groupsRepository.getGroupsStartsWith(textEntered)
-            val groupsContained = groupsRepository.getGroupsContain(textEntered)
+            if(textEntered == ""){
+                _groups.value = groupsRepository.getGroups()
+            }
+            else {
+                val groupsStartedWith = groupsRepository.getGroupsStartsWith(textEntered)
+                val groupsContained = groupsRepository.getGroupsContain(textEntered)
 
-            _groups.value = merge(groupsStartedWith, groupsContained)
+                _groups.value = merge(groupsStartedWith, groupsContained)
+            }
         }
     }
 

@@ -239,7 +239,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
         Log.d(TAG, "setTrashIcon: onChildDraw dx dx abs ${dX.absoluteValue} delete left ${deleteIconRight
             .pxToDp(recyclerView.context.resources.displayMetrics).toFloat()}")
         //deleteIconRight.pxToDp(recyclerView.context.resources.displayMetrics).toFloat()
-        if(dX.absoluteValue > (intrinsicWidth * 2)) {
+     //   if(dX.absoluteValue > (intrinsicWidth * 2)) {
             // drawing delete
             deleteDrawable.setBounds(
                 deleteIconLeft,
@@ -251,10 +251,10 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
             //deleteDrawable.setColorFilter(R.color.red)
             deleteDrawable.draw(c)
 
-        }
+     //   }
         val textWidth = paint.measureText("Delete").toInt().dpToPx(recyclerView.resources.displayMetrics).toFloat()
 
-        if(dX.absoluteValue > (itemView.right - textWidth * 3).toInt().pxToDp(recyclerView.resources.displayMetrics)){
+      //  if(dX.absoluteValue > (itemView.right - textWidth * 3).toInt().pxToDp(recyclerView.resources.displayMetrics)){
             textPaint.textSize = 16.dpToPx(recyclerView.resources.displayMetrics).toFloat()
 
 
@@ -263,7 +263,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
             c.drawText(text, (itemView.right - textWidth * 3), (itemView.top + (textY * 1.15f)), textPaint)
             //0, 6, previously text index was set, but it wont work translated s    trings
 
-        }
+      //  }
     }
 
     private fun setNoAction(c: Canvas,
