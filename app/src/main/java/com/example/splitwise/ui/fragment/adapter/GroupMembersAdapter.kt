@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
@@ -68,8 +69,13 @@ class GroupMembersAdapter(
     }
 
     fun updateMembers(members: List<Member>) {
+        val diffCallback = DiffCallback(this.members, members)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         this.members = members
-        notifyDataSetChanged()
+        //notifyDataSetChanged()
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
 }
@@ -154,4 +160,19 @@ class NewGroupMembersViewHolder(val binding: NewGroupMemberCardBinding) :
         }
     }
 
+}
+
+class DiffCallback(private val oldItems: List<Member>, private val newItems: List<Member>)
+    : DiffUtil.Callback(){
+    override fun getOldListSize() = oldItems.size
+
+    override fun getNewListSize() = newItems.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItems[oldItemPosition].memberId == newItems[newItemPosition].memberId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItems[oldItemPosition] == newItems[newItemPosition]
+    }
 }

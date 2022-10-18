@@ -303,11 +303,13 @@ class EditExpenseFragment : Fragment() {
 
                     }
                     else{
-                        Snackbar.make(
-                            binding.root,
-                            getString(R.string.expense_not_edited),
-                            Snackbar.LENGTH_SHORT
-                        ).show()
+//                        Snackbar.make(
+//                            binding.root,
+//                            getString(R.string.expense_not_edited),
+//                            Snackbar.LENGTH_SHORT
+//                        ).show()
+                        NavHostFragment.findNavController(this@EditExpenseFragment)
+                            .popBackStack()
                     }
                 }
                 else {

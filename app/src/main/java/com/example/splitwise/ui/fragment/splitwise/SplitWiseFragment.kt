@@ -107,8 +107,10 @@ class SplitWiseFragment : Fragment() {
         // displaying selected groups if present
         viewModel.selectedGroupsCardVisibility.observe(viewLifecycleOwner){
             if(it == View.VISIBLE) {
-                binding.selectedGroupsCard.visibility = View.VISIBLE
-                binding.selectedGroupsText.text = viewModel.selectedGroupsText
+                if(selectedGroups.isNotEmpty()) {
+                    binding.selectedGroupsCard.visibility = View.VISIBLE
+                    binding.selectedGroupsText.text = viewModel.selectedGroupsText
+                }
 
                 // add chips
                 addChips(selectedGroups)
@@ -147,8 +149,9 @@ class SplitWiseFragment : Fragment() {
                 paymentStatView.ripple(paymentStatView.context)
                 gotoSettleUpFragment(payerId, paymentStatView)
             }
-
         }
+
+        splitWiseAdapter.updateMembersPaymentStatsDetail(viewModel.membersPaymentStatsDetail.value ?: listOf())
         // clear button selected groups
         binding.clearGroups.setOnClickListener {
 //            selectedGroups.clear()
@@ -158,8 +161,15 @@ class SplitWiseFragment : Fragment() {
 //            binding.selectedGroupsText.text = ""
 //            binding.selectedGroupsCard.visibility = View.GONE
 
-            gotoSelf() //later ref
+       //     gotoSelf() //later ref
 
+            for(group in selectedGroups){
+                viewModel.removedGroupIds.add(group.groupId)
+            }
+            selectedGroups = mutableListOf()
+            viewModel.selectedGroupsCardVisibility.value = View.GONE
+            binding.selectedGroupsCard.visibility = View.GONE
+            viewModel.fetchData()
         }
 
         binding.membersRecyclerView.apply {
@@ -292,19 +302,24 @@ class SplitWiseFragment : Fragment() {
 
         chip.setOnCloseIconClickListener {
             viewModel.removedGroupIds.add(groupId) // adding group id to removed so that during screen orientation, those groups will be eliminated
-            removeGroupFromSelected(groupId)
+            removeGroupFromSelected(groupId){
+                binding.selectedGroupsCard.visibility = View.GONE
+            }
             chipGroup.removeView(chip)
         }
         return chip
     }
 
-    private fun removeGroupFromSelected(groupId: Int){
+    private fun removeGroupFromSelected(groupId: Int, noSelection: () -> Unit){
         for(group in selectedGroups)
             if(group.groupId == groupId) {
                 selectedGroups.remove(group)
 
-                if(selectedGroups.isEmpty())
-                    gotoSelf()
+                if(selectedGroups.isEmpty()) {
+                    noSelection()
+                    viewModel.fetchData()
+                    //gotoSelf()
+                }
                 else
                     viewModel.fetchData(getGroupIds(selectedGroups))
 

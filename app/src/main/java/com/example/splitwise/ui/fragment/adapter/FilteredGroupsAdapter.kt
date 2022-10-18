@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.adapter
 
+import android.content.ContentValues.TAG
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
@@ -7,12 +8,14 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.TextAppearanceSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
@@ -91,10 +94,20 @@ class FilteredGroupsAdapter(
         return groups.size
     }
 
-    fun updateGroups(groups: List<Group>, query: String) {
+    fun updateGroups(groups: List<Group>, query: String, recyclerView: RecyclerView) {
+        // rvState = recyclerView.layoutManager?.onSaveInstanceState()
+
+//        val diffCallback = GroupsDiffCallback(this.groups, groups)
+//        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         this.groups = groups
         this.query = query
         notifyDataSetChanged()
+
+ //       diffResult.dispatchUpdatesTo(this)
+
+//        recyclerView.layoutManager?.onRestoreInstanceState(rvState)
+//        recyclerView.smoothScrollToPosition(0)
     }
 }
 
@@ -157,6 +170,7 @@ class FilteredGroupsViewHolder(val binding: GroupCard2Binding) :
     }
 
     private fun getSpannable(data: String, query: String): Spannable {
+        Log.d(TAG, "getSpannable: data ${data} query ${query}")
         val startPos =
             data.lowercase(Locale.getDefault()).indexOf(query.lowercase(Locale.getDefault()))
         val endPos = startPos + query.length

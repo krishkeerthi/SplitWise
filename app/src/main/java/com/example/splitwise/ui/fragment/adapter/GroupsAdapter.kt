@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
@@ -16,6 +17,7 @@ import com.example.splitwise.databinding.EmptyCardBinding
 import com.example.splitwise.databinding.GroupCard1Binding
 import com.example.splitwise.databinding.GroupCard2Binding
 import com.example.splitwise.model.ExpenseMember
+import com.example.splitwise.model.MemberPaymentStatsDetail
 import com.example.splitwise.util.*
 
 
@@ -164,9 +166,14 @@ class GroupsAdapter(
     }
 
     fun updateGroups(groups: List<Group>) {
+        val diffCallback = GroupsDiffCallback(this.groups, groups)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         val emptyGroupAddedGroups = addEmptyGroup(groups)
         this.groups = emptyGroupAddedGroups
-        notifyDataSetChanged()
+       // notifyDataSetChanged()
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -257,5 +264,20 @@ class GroupEmptyViewHolder(val binding: EmptyCardBinding) :
 
     fun bind() {
 
+    }
+}
+
+class GroupsDiffCallback(private val oldItems: List<Group>, private val newItems: List<Group>)
+    : DiffUtil.Callback(){
+    override fun getOldListSize() = oldItems.size
+
+    override fun getNewListSize() = newItems.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItems[oldItemPosition].groupId == newItems[newItemPosition].groupId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItems[oldItemPosition] == newItems[newItemPosition]
     }
 }

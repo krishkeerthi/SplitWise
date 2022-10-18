@@ -535,6 +535,9 @@
             android:name="groupIcon"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="directContact"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/memberProfileFragment"

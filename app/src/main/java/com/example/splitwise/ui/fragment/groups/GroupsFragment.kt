@@ -156,6 +156,7 @@ class GroupsFragment : Fragment() {
                 )
             }
         )
+        groupsAdapter.updateGroups(viewModel.groups.value ?: listOf())
 //            { groupId: Int ->
 //                if (groupId == 12345 || groupId == 54321)
 //                    Toast.makeText(

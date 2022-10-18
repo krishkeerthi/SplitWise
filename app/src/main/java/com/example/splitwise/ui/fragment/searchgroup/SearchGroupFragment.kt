@@ -109,23 +109,27 @@ class SearchGroupFragment : Fragment() {
                 )
             }
         )
+        //groupsAdapter.updateGroups(viewModel.groups.value ?: listOf(), "")
 
         binding.searchGroupsRecyclerView.apply {
+
             layoutManager = LinearLayoutManager(requireContext())
             adapter = groupsAdapter
         }
 
+//        val rvState = binding.searchGroupsRecyclerView.layoutManager?.onSaveInstanceState()
+//        binding.searchGroupsRecyclerView.layoutManager?.onRestoreInstanceState(rvState)
         // Livedata
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
             if (groups != null && groups.isNotEmpty()) {
                 Log.d(TAG, "onViewCreated:$$$ groups != null && groups.isNotEmpty()")
-                groupsAdapter.updateGroups(groups, viewModel.textEntered)
+                groupsAdapter.updateGroups(groups, viewModel.textEntered, binding.searchGroupsRecyclerView)
                 binding.searchGroupsRecyclerView.visibility = View.VISIBLE
                 binding.noResultImage.visibility = View.GONE
                 binding.noGroupsTextView.visibility = View.GONE
             } else if (groups != null && groups.isEmpty()) { // to handle when query not entered
                 Log.d(TAG, "onViewCreated:$$$ groups != null && groups.isEmpty()")
-                groupsAdapter.updateGroups(listOf(), "")
+                groupsAdapter.updateGroups(listOf(), "", binding.searchGroupsRecyclerView)
                 binding.searchGroupsRecyclerView.visibility = View.GONE
                 binding.noResultImage.visibility = View.VISIBLE
                 binding.noGroupsTextView.visibility = View.VISIBLE

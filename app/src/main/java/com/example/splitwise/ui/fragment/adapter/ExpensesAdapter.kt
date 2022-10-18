@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
+import com.example.splitwise.data.local.entity.Expense
+import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.databinding.EmptyCardBinding
 import com.example.splitwise.databinding.ExpenseCard1Binding
 import com.example.splitwise.model.ExpenseMember
@@ -74,9 +77,14 @@ class ExpensesAdapter(
     }
 
     fun updateExpenseMembers(expenseMembers: List<ExpenseMember>) {
+        val diffCallback = ExpensessDiffCallback(this.expenseMembers, expenseMembers)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         val updatedExpenseMembers = addEmptyMember(expenseMembers)
         this.expenseMembers = updatedExpenseMembers//expenseMembers
-        notifyDataSetChanged()
+        //notifyDataSetChanged()
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -139,3 +147,18 @@ class ExpenseEmptyViewHolder(val binding: EmptyCardBinding):
 
             }
         }
+
+class ExpensessDiffCallback(private val oldItems: List<ExpenseMember>, private val newItems: List<ExpenseMember>)
+    : DiffUtil.Callback(){
+    override fun getOldListSize() = oldItems.size
+
+    override fun getNewListSize() = newItems.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItems[oldItemPosition].expenseId == newItems[newItemPosition].expenseId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItems[oldItemPosition] == newItems[newItemPosition]
+    }
+}

@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.splitwise.R
+import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.MemberOweLendCardBinding
 import com.example.splitwise.model.MemberPaymentStatsDetail
 import com.example.splitwise.util.*
@@ -48,8 +50,14 @@ class SplitWiseAdapter(
 
     fun updateMembersPaymentStatsDetail(membersPaymentStatsDetail: List<MemberPaymentStatsDetail>) {
         Log.d(TAG, "updateMembersPaymentStatsDetail: ${membersPaymentStatsDetail}")
+
+        val diffCallback = PaymentStatsDiffCallback(this.membersPaymentStatsDetail, membersPaymentStatsDetail)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         this.membersPaymentStatsDetail = membersPaymentStatsDetail
-        notifyDataSetChanged()
+        //notifyDataSetChanged()
+
+        diffResult.dispatchUpdatesTo(this)
     }
 }
 
@@ -106,4 +114,19 @@ class SplitWiseViewHolder(val binding: MemberOweLendCardBinding) :
         }
     }
 
+}
+
+class PaymentStatsDiffCallback(private val oldItems: List<MemberPaymentStatsDetail>, private val newItems: List<MemberPaymentStatsDetail>)
+    : DiffUtil.Callback(){
+    override fun getOldListSize() = oldItems.size
+
+    override fun getNewListSize() = newItems.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItems[oldItemPosition].memberId == newItems[newItemPosition].memberId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItems[oldItemPosition] == newItems[newItemPosition]
+    }
 }

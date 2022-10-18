@@ -33,10 +33,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentMemberProfileBinding
-import com.example.splitwise.util.decodeSampledBitmapFromUri
-import com.example.splitwise.util.dpToPx
-import com.example.splitwise.util.getRoundedCroppedBitmap
-import com.example.splitwise.util.nameCheck
+import com.example.splitwise.util.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
@@ -258,37 +255,48 @@ class MemberProfileFragment : Fragment() {
                     (viewModel.member.value!!.phone.toString() != phone)
                     || (viewModel.member.value!!.memberProfile != viewModel.updatedUri)
                 ) {
-                    // new Update group
-                    val builder = AlertDialog.Builder(requireContext())
+                    if(numberCheck(binding.memberPhoneText.text?.trim().toString().toLong())){
+                        // new Update group
+                        val builder = AlertDialog.Builder(requireContext())
 
-                    builder.setMessage(getString(R.string.confirm_editing_member))
+                        builder.setMessage(getString(R.string.confirm_editing_member))
 
-                    builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+                        builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
 
-                        viewModel.newUpdateMember(
-                            name,
-                            phone,
-                            {
-                                gotoCreateEditGroupFragment()
-                            }, {
-                                Snackbar.make(
-                                    binding.root,
-                                    getString(R.string.member_updated),
-                                    Snackbar.LENGTH_SHORT
-                                ).show()
-                            })
+                            viewModel.newUpdateMember(
+                                if(args.memberId != 1) name else "$name(You)",
+                                phone,
+                                {
+                                    gotoCreateEditGroupFragment()
+                                }, {
+                                    Snackbar.make(
+                                        binding.root,
+                                        getString(R.string.member_updated),
+                                        Snackbar.LENGTH_SHORT
+                                    ).show()
+                                })
 
+                        }
+
+                        builder.setNegativeButton(getString(R.string.cancel), null)
+
+                        builder.show()
                     }
-
-                    builder.setNegativeButton(getString(R.string.cancel), null)
-
-                    builder.show()
+                    else{
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.number_starts_with_0),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
                 } else {
-                    Snackbar.make(
-                        binding.root,
-                        getString(R.string.fields_not_edited),
-                        Snackbar.LENGTH_SHORT
-                    ).show()
+                    NavHostFragment.findNavController(this@MemberProfileFragment)
+                        .popBackStack()
+//                    Snackbar.make(
+//                        binding.root,
+//                        getString(R.string.fields_not_edited),
+//                        Snackbar.LENGTH_SHORT
+//                    ).show()
                 }
             }
         } else {
@@ -325,7 +333,12 @@ class MemberProfileFragment : Fragment() {
             binding.dummyMemberNameText.setText(member.name)
             binding.dummyMemberPhoneText.setText(member.phone.toString())
 
-            binding.memberNameText.setText(member.name)
+            if(member.memberId == 1) {
+                binding.memberNameText.setText(member.name.substring(0, member.name.length - 5))
+            }
+            else{
+                binding.memberNameText.setText(member.name)
+            }
             binding.memberPhoneText.setText(member.phone.toString())
 
 //            Log.d(

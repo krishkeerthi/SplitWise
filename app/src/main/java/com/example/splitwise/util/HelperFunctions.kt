@@ -33,6 +33,9 @@ fun nameCheck(value: String): Boolean {
     return value.matches("[a-zA-Z0-9-&\"'.\n /,()]+$".toRegex())
 }
 
+fun numberCheck(number: Long): Boolean{
+    return number in 1000000000..9999999999
+}
 fun formatDate(date: Date, dateOnly: Boolean = false): String {
     //val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.UK) // warning shown to add locale
 

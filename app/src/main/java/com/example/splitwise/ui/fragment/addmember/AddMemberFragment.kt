@@ -108,6 +108,10 @@ class AddMemberFragment() : Fragment() {
 
         binding = FragmentAddMemberBinding.bind(view)
 
+        // if direct contact is choosen then directly navigate them
+        if(args.directContact){
+            selectContact()
+        }
 //        binding.outlinedMemberNameTextField.hint = getString(R.string.name)
 //        binding.outlinedMemberPhoneTextField.hint = getString(R.string.phone_number)
 
@@ -251,37 +255,46 @@ class AddMemberFragment() : Fragment() {
             R.id.add_member_save -> {
                 if (menuVisible) // menuVisible says whether entered fields are correct
                 {
-                    val builder = AlertDialog.Builder(requireContext())
+                    if(numberCheck(binding.memberPhoneText.text?.trim().toString().toLong())){
+                        val builder = AlertDialog.Builder(requireContext())
 
-                    builder.setMessage(getString(R.string.confirm_adding_member))
+                        builder.setMessage(getString(R.string.confirm_adding_member))
 
-                    builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
+                        builder.setPositiveButton(getString(R.string.confirm)) { dialog, which ->
 
-                        viewModel.checkMember(
-                            args.groupId,
-                            Member(
-                                binding.memberNameText.text?.trim().toString(),
-                                binding.memberPhoneText.text?.trim().toString().toLong(),
-                                viewModel.memberProfile
-                            ).apply {
-                                memberId = (1000..10000).random()
-                            },
-                            { member: Member ->
-                                gotoCreateEditGroupFragment(member)
-                            },
-                            {
-                                memberExists()
-                            },
-                            {
-                                errorAdding()
-                            }
-                        )
+                            viewModel.checkMember(
+                                args.groupId,
+                                Member(
+                                    binding.memberNameText.text?.trim().toString(),
+                                    binding.memberPhoneText.text?.trim().toString().toLong(),
+                                    viewModel.memberProfile
+                                ).apply {
+                                    memberId = (1000..10000).random()
+                                },
+                                { member: Member ->
+                                    gotoCreateEditGroupFragment(member)
+                                },
+                                {
+                                    memberExists()
+                                },
+                                {
+                                    errorAdding()
+                                }
+                            )
 
+                        }
+
+                        builder.setNegativeButton(getString(R.string.cancel), null)
+
+                        builder.show()
                     }
-
-                    builder.setNegativeButton(getString(R.string.cancel), null)
-
-                    builder.show()
+                    else{
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.number_starts_with_0),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
                 }
                 else
                     Snackbar.make(

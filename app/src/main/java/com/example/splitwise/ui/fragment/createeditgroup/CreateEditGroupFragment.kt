@@ -218,6 +218,7 @@ class CreateEditGroupFragment : Fragment() {
             ).show()
         }
         )
+        membersAdapter.updateMembers(viewModel.groupMembers.toList())
 
         binding.groupMembersRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -500,28 +501,29 @@ class CreateEditGroupFragment : Fragment() {
 
         // Add Members button click
         binding.addMemberButton.setOnClickListener {
-            gotoChooseMembersFragment()
+            gotoAddMemberFragment(true)
+            //gotoChooseMembersFragment()
         }
 
 
-        val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-                viewModel.members.value?.let {
-                    confirmationDialog(
-                        it[viewHolder.absoluteAdapterPosition],
-                        viewHolder.absoluteAdapterPosition,
-                        viewHolder.itemView.findViewById(R.id.delete_member_image_view)
-                    )
-                }
-            }
-
-        }
-
-        if (args.groupId == -1) { // only delete member during group creation
-            val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
-            itemTouchHelper.attachToRecyclerView(binding.groupMembersRecyclerView)
-        }
+//        val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//
+//                viewModel.members.value?.let {
+//                    confirmationDialog(
+//                        it[viewHolder.absoluteAdapterPosition],
+//                        viewHolder.absoluteAdapterPosition,
+//                        viewHolder.itemView.findViewById(R.id.delete_member_image_view)
+//                    )
+//                }
+//            }
+//
+//        }
+//
+//        if (args.groupId == -1) { // only delete member during group creation
+//            val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+//            itemTouchHelper.attachToRecyclerView(binding.groupMembersRecyclerView)
+//        }
 
         // Menu
 
@@ -539,7 +541,7 @@ class CreateEditGroupFragment : Fragment() {
                 //Toast.makeText(requireContext(), "${member.name} deleted", Toast.LENGTH_SHORT).show()
 
                 viewModel.removeMember(args.groupId, member) {
-                    binding.groupMembersRecyclerView.adapter?.notifyItemChanged(position)
+                    //binding.groupMembersRecyclerView.adapter?.notifyItemChanged(position)
                     Snackbar.make(
                         binding.root,
                         "${member.name} ${getString(R.string.deleted)}",
@@ -664,7 +666,7 @@ class CreateEditGroupFragment : Fragment() {
         return when (item.itemId) {
             R.id.add_member -> {
                 //AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
-                gotoAddMemberFragment()
+                gotoAddMemberFragment(true)
                 true
             }
             R.id.create_group -> {
@@ -726,11 +728,13 @@ class CreateEditGroupFragment : Fragment() {
                                     Snackbar.LENGTH_SHORT
                                 ).show()
                             }, {
-                                Snackbar.make(
-                                    binding.root,
-                                    getString(R.string.fields_not_edited),
-                                    Snackbar.LENGTH_SHORT
-                                ).show()
+                                NavHostFragment.findNavController(this@CreateEditGroupFragment)
+                                    .popBackStack()
+//                                Snackbar.make(
+//                                    binding.root,
+//                                    getString(R.string.fields_not_edited),
+//                                    Snackbar.LENGTH_SHORT
+//                                ).show()
                             })
 
                         }
@@ -739,11 +743,13 @@ class CreateEditGroupFragment : Fragment() {
 
                         builder.show()
                     } else {
-                        Snackbar.make(
-                            binding.root,
-                            getString(R.string.fields_not_edited),
-                            Snackbar.LENGTH_SHORT
-                        ).show()
+                        NavHostFragment.findNavController(this@CreateEditGroupFragment)
+                            .popBackStack()
+//                        Snackbar.make(
+//                            binding.root,
+//                            getString(R.string.fields_not_edited),
+//                            Snackbar.LENGTH_SHORT
+//                        ).show()
                     }
                 }
             }
@@ -751,8 +757,7 @@ class CreateEditGroupFragment : Fragment() {
         }
     }
 
-    private fun gotoAddMemberFragment() {
-
+    private fun gotoAddMemberFragment(directContact: Boolean) {
         exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
@@ -764,7 +769,8 @@ class CreateEditGroupFragment : Fragment() {
             CreateEditGroupFragmentDirections.actionCreateEditGroupFragmentToAddMemberFragment(
                 args.groupId,
                 binding.groupNameText.text.toString(), //args.groupName,
-                args.groupIcon
+                args.groupIcon,
+                directContact
             )
 
         view?.findNavController()?.navigate(action)

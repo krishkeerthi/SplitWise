@@ -5,10 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
-    android:background ="?attr/selectableItemBackground"
+    android:background ="@color/background"
     android:focusable="true"
     >
 
+<!--    android:background ="?attr/selectableItemBackground"-->
 <!--    <com.google.android.material.card.MaterialCardView-->
 <!--        android:id="@+id/expense_card"-->
 <!--        android:layout_width="match_parent"-->

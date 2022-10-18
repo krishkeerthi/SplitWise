@@ -12,6 +12,8 @@ import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityRegisterBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.util.nameCheck
+import com.example.splitwise.util.numberCheck
+import com.google.android.material.snackbar.Snackbar
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -86,10 +88,19 @@ class RegisterActivity : AppCompatActivity() {
 
         // Button click
         binding.registerButton.setOnClickListener {
-            viewModel.registerMember(
-                binding.memberNameText.text?.trim().toString(),
-                binding.memberPhoneText.text.toString().toLong()
-            )
+            if (numberCheck(binding.memberPhoneText.text.toString().toLong())) {
+                viewModel.registerMember(
+                    binding.memberNameText.text?.trim().toString(),
+                    binding.memberPhoneText.text.toString().toLong()
+                )
+            } else {
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.number_starts_with_0),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+
         }
 
         // Live data(observe to move to next screen)
