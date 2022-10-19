@@ -19,6 +19,7 @@ import androidx.core.view.accessibility.AccessibilityEventCompat.getAction
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.metrics.performance.JankStats
 import androidx.metrics.performance.PerformanceMetricsState
 import androidx.navigation.findNavController
@@ -55,7 +56,7 @@ class GroupsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d(TAG, "onCreate: fragment oncreate called")
+        Log.d(TAG, "onCreate: toolbar check groups")
         // this animation not working fine in my device(1+9)
 //        reenterTransition = MaterialElevationScale(true).apply {
 //            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
@@ -100,7 +101,7 @@ class GroupsFragment : Fragment() {
 //        val view = inflater.inflate(R.layout.fragment_groups, container, false)
 //        binding = FragmentGroupsBinding.bind(view)
 
-        Log.d(TAG, "onCreate: fragment oncreateview called")
+        Log.d(TAG, "onCreateView: toolbar check groups")
         (requireActivity() as AppCompatActivity).supportActionBar?.title =
             getString(R.string.groups)
         return inflater.inflate(R.layout.fragment_groups, container, false)
@@ -121,6 +122,7 @@ class GroupsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d(TAG, "onViewCreated: toolbar check groups")
         // start enter transition only when data loaded, and just started to draw
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
@@ -395,6 +397,8 @@ class GroupsFragment : Fragment() {
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
+
+                playDeleteSound(requireContext())
             }
 
             setNegativeButton(getString(R.string.cancel)){ dialog, which ->
@@ -410,11 +414,13 @@ class GroupsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        Log.d(TAG, "onResume: toolbar check groups")
         jankStats.isTrackingEnabled = true
     }
 
     override fun onPause() {
         super.onPause()
+        Log.d(TAG, "onPause: toolbar check groups")
         jankStats.isTrackingEnabled = false
     }
 
@@ -521,14 +527,13 @@ class GroupsFragment : Fragment() {
     }
 
     private fun goToExpenseFragment(groupId: Int, groupView: View) {
-
+//        this.onDestroyView()
         exitTransition = MaterialElevationScale(false).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
         reenterTransition = MaterialElevationScale(true).apply {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
         }
-
 
         val expensesTransitionName = getString(R.string.expenses_transition_name)
         val extras = FragmentNavigatorExtras(groupView to expensesTransitionName)
@@ -626,6 +631,8 @@ class GroupsFragment : Fragment() {
 //
 //        filterBottomSheetDialog.show()
 //    }
+    
+    
 
     private fun goToCreateEditGroupFragment(groupId: Int = -1) {
         // transition
@@ -887,5 +894,13 @@ class GroupsFragment : Fragment() {
         Log.d(TAG, "createAmountFilterChip: end")
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d(TAG, "onDestroyView: toolbar check groups")
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy: toolbar check groups")
+    }
 }

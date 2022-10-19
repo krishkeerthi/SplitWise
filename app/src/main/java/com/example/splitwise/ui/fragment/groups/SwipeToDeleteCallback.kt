@@ -80,6 +80,7 @@ abstract class SwipeToDeleteCallback : ItemTouchHelper.Callback() {
         isCurrentlyActive: Boolean
     ) {
 
+        viewHolder.itemView.setBackgroundColor(viewHolder.itemView.resources.getColor(R.color.background))
         if(dX == 0f && !isCurrentlyActive){
             if(rightSwiped){
                 rightSwiped = false

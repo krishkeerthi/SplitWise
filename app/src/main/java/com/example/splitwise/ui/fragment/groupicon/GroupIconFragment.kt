@@ -37,6 +37,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupIconBinding
+import com.example.splitwise.util.playDeleteSound
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
@@ -159,6 +160,7 @@ class GroupIconFragment : Fragment() {
                    } else // without groupid, during creation only we can be here
                        gotoCreateEditGroupFragment(null)
 
+                   playDeleteSound(requireContext())
                    //Toast.makeText(requireContext(), getString(R.string.group_icon_deleted), Toast.LENGTH_SHORT).show()
                }
                alertDialog.setNegativeButton(getString(R.string.cancel), null)

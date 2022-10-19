@@ -338,6 +338,7 @@ class ExpenseDetailFragment : Fragment() {
                             Snackbar.LENGTH_SHORT
                         ).show()
                     }
+                    playDeleteSound(requireContext())
                 }
             }
 

@@ -8,11 +8,13 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFF</color>
     <color name="view_color">#52514e</color>
+    <color name="chip_view_color">#161c24</color>
     <color name="new_view_color">#EDEDEA</color>
     <color name="invert_color">#dee3e1</color>
     <color name="text_bold">#FFFFFFFF</color>
     <color name="blue">#4fc3f7</color>
-    <color name="fab_blue">#1976d2</color>
+    <color name="chip_blue">#1976d2</color>
+    <color name="fab_blue">#293340</color>
     <color name="teal">#017C80</color>
     <color name="fab_blue_1">#0D89C6</color>
     <color name="background">#000000</color>

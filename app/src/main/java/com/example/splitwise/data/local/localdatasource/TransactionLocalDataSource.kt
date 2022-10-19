@@ -29,7 +29,7 @@ class TransactionLocalDataSource(
             Log.d(TAG, "updateTransaction: new record inserted")
         }
         else{ // transaction exists between this payer and payee so update
-            transactionDao.updateAmount(groupId, payerId, payeeId, totalAmount + amount)
+            transactionDao.updateAmount(groupId, payerId, payeeId, totalAmount + amount)  // later ref transaction
             Log.d(TAG, "updateTransaction: old record updated")
         }
     }

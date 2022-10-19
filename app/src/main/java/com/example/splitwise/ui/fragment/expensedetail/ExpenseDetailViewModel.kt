@@ -141,7 +141,29 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int) : Vie
                     // 3. reduce expense's split amount in transaction
                     expenseRepository.getExpense(expenseId)?.let { expense ->
                         transactionRepository.getAmount(expense.groupId, expense.payer, member.memberId)?.let { amount ->
-                            transactionRepository.updateAmount(expense.groupId, expense.payer, member.memberId, amount - expense.splitAmount)
+                            val updatedAmount = amount - expense.splitAmount
+                            if(updatedAmount >= 0) {
+                                transactionRepository.updateAmount(
+                                    expense.groupId,
+                                    expense.payer,
+                                    member.memberId,
+                                    updatedAmount
+                                )
+                            }
+                            else{ // later ref transaction
+                                transactionRepository.updateAmount(
+                                    expense.groupId,
+                                    expense.payer,
+                                    member.memberId,
+                                    0f
+                                )
+                                transactionRepository.updateAmount(
+                                    expense.groupId,
+                                    member.memberId,
+                                    expense.payer,
+                                    updatedAmount.absoluteValue
+                                )
+                            }
 
                             onDelete()
                         }
@@ -171,7 +193,14 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int) : Vie
                     //4. reduce amount in transaction
                     for(payeeId in payeesIds){
                         transactionRepository.getAmount(groupId, expense.payer, payeeId)?.let { amount ->
-                            transactionRepository.updateAmount(groupId, expense.payer, payeeId, amount - expense.splitAmount)
+                            val updatedAmount = amount - expense.splitAmount
+                            if(updatedAmount >= 0) {
+                                transactionRepository.updateAmount(groupId, expense.payer, payeeId, updatedAmount)
+                            }
+                            else{
+                                transactionRepository.updateAmount(groupId, expense.payer, payeeId, 0f)
+                                transactionRepository.updateAmount(groupId, payeeId, expense.payer, updatedAmount.absoluteValue)
+                            }
                         }
                     }
 

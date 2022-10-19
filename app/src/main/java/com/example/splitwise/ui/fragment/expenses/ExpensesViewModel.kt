@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.absoluteValue
 
 class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
@@ -92,13 +93,13 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
         }
     }
 
-    fun loadGroup(){
+    fun loadGroup() {
         viewModelScope.launch {
             _group.value = groupRepository.getGroup(groupId)
         }
     }
 
-    private fun loadGroupMembers(){
+    private fun loadGroupMembers() {
         viewModelScope.launch {
             val memberIds = groupRepository.getGroupMembers(groupId)
             Log.d(TAG, "viewmodel: group members $memberIds with groupid $groupId")
@@ -106,7 +107,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
         }
     }
 
-    fun loadExpensesAndMembers(){ // previously private
+    fun loadExpensesAndMembers() { // previously private
         viewModelScope.launch {
             setExpenseMembers(true)
         }
@@ -129,7 +130,6 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
                 null
         }
     }
-
 
 
     private suspend fun toExpenseMember(expense: Expense, member: Member): ExpenseMember {
@@ -166,8 +166,8 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
             if (expenses != null) {
                 // setting expense count on initial load
-                    if(initialLoad)
-                        _expenseCount.value = expenses.size
+                if (initialLoad)
+                    _expenseCount.value = expenses.size
 
                 Log.d(TAG, "viewmodel: group expenses $expenses")
                 val expenseMembers = mutableListOf<ExpenseMember>()
@@ -179,7 +179,8 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
                         expenseMembers.add(toExpenseMember(expense, member))
                 }
 
-                _expenseMembers.value = expenseMembers.reversed() // reversed the list here, instead of reversing the layout
+                _expenseMembers.value =
+                    expenseMembers.reversed() // reversed the list here, instead of reversing the layout
             }
         }
     }
@@ -213,9 +214,9 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
         _checkedFiltersCount.value = _checkedFiltersCount.value?.plus(1)
     }
 
-    fun generateReport(shareIntent: (String) -> Unit){
+    fun generateReport(shareIntent: (String) -> Unit) {
         viewModelScope.launch {
-            var report ="👋Hello\n"
+            var report = "👋Hello\n"
             report += "\n😃Welcome to *SplitWise* ‼\n"
             // generating report
 
@@ -232,8 +233,10 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
                 val expenses = expenseRepository.getExpenses(groupId)
                 expenses?.let { expenses ->
-                    for(expense in expenses){
-                        report += "\n${getEmoji(expense.category)}Expense: ${expense.expenseName.trim().getBold()}"
+                    for (expense in expenses) {
+                        report += "\n${getEmoji(expense.category)}Expense: ${
+                            expense.expenseName.trim().getBold()
+                        }"
 
                         val expenseMembersId = expenseRepository.getExpensePayees(expense.expenseId)
                         val expenseMembers = getMembersFromIds(expenseMembersId).printableMember()
@@ -258,7 +261,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
 
             shareIntent(report)
-         }
+        }
     }
 
 //    fun clearCategoryFilter() {
@@ -271,7 +274,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 //        }
 //    }
 
-    fun deleteExpense(groupId: Int, expenseId: Int, onDelete: () -> Unit){
+    fun deleteExpense(groupId: Int, expenseId: Int, onDelete: () -> Unit) {
         viewModelScope.launch {
             //1. delete bills
             expenseRepository.deleteBills(expenseId)
@@ -284,25 +287,50 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
 
                 expenseRepository.getExpensePayees(expenseId)?.let { payeesIds ->
                     // decrementing streak
-                    for(payeeId in payeesIds)
+                    for (payeeId in payeesIds)
                         memberRepository.decrementStreak(payeeId)
 
                     //4. reduce amount in transaction
-                    for(payeeId in payeesIds){
-                        transactionRepository.getAmount(groupId, expense.payer, payeeId)?.let { amount ->
-                            transactionRepository.updateAmount(groupId, expense.payer, payeeId, amount - expense.splitAmount)
-                        }
+                    for (payeeId in payeesIds) {
+                        transactionRepository.getAmount(groupId, expense.payer, payeeId)
+                            ?.let { amount ->
+                                val updatedAmount = amount - expense.splitAmount
+                                if (updatedAmount >= 0) {
+                                    transactionRepository.updateAmount(
+                                        groupId,
+                                        expense.payer,
+                                        payeeId,
+                                        updatedAmount
+                                    )
+                                } else {
+                                    transactionRepository.updateAmount(
+                                        groupId,
+                                        expense.payer,
+                                        payeeId,
+                                        0f
+                                    )
+                                    transactionRepository.updateAmount(
+                                        groupId,
+                                        payeeId,
+                                        expense.payer,
+                                        updatedAmount.absoluteValue
+                                    )
+                                }
+                            }
                     }
 
                     //5. delete expense payees
-                    for(payeeId in payeesIds)
+                    for (payeeId in payeesIds)
                         expenseRepository.removeExpensePayee(expenseId, payeeId)
 
                 }
 
                 //6. reduce expense total in groups
                 groupRepository.getTotalExpense(groupId)?.let { total ->
-                    Log.d(TAG, "deleteExpense: group total ${total} expense total ${expense.totalAmount}")
+                    Log.d(
+                        TAG,
+                        "deleteExpense: group total ${total} expense total ${expense.totalAmount}"
+                    )
                     groupRepository.reduceTotalExpense(groupId, total - expense.totalAmount)
                 }
                 //7. delete expense in expenses
@@ -331,7 +359,7 @@ class ExpensesViewModel(context: Context, val groupId: Int) : ViewModel() {
                             memberRepository.decrementStreak(payeeId)
 
                         //3. delete expense payees
-                        for(payeeId in payeesIds)
+                        for (payeeId in payeesIds)
                             expenseRepository.removeExpensePayee(expense.expenseId, payeeId)
                     }
 

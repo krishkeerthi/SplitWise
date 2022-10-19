@@ -38,6 +38,7 @@ import com.google.android.material.transition.MaterialElevationScale
 
 
 class ExpensesFragment : Fragment() {
+
     private lateinit var binding: FragmentExpensesBinding
     private val args: ExpensesFragmentArgs by navArgs()
 
@@ -77,6 +78,7 @@ class ExpensesFragment : Fragment() {
         super.onCreate(savedInstanceState)
         //sharedElementEnterTransition = MaterialContainerTransform()
 
+        Log.d(TAG, "onCreate: toolbar check expenses")
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment_container
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
@@ -101,6 +103,7 @@ class ExpensesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        Log.d(TAG, "onCreateView: toolbar check expenses")
         (requireActivity() as AppCompatActivity).supportActionBar?.title =
             getString(R.string.group_expenses)
         return inflater.inflate(R.layout.fragment_expenses, container, false)
@@ -109,6 +112,7 @@ class ExpensesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d(TAG, "onViewCreated: toolbar check expenses")
         //viewModel.clicked = false
 
         // start enter transition only when data loaded, and just started to draw
@@ -413,6 +417,7 @@ class ExpensesFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
+        Log.d(TAG, "onStop: toolbar check expenses")
         Log.d(TAG, "onStop: called ex ${binding.groupIconCard.radius}")
         //binding.groupIconCard.radius = 100.dpToPx(resources.displayMetrics).toFloat()
         Log.d(TAG, "onStop: called ex ${binding.groupIconCard.radius}")
@@ -420,7 +425,7 @@ class ExpensesFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d(TAG, "onDestroyView: called ex")
+        Log.d(TAG, "onDestroyView: toolbar check expenses")
 //        binding.groupImageHolder.setBackgroundColor(resources.getColor(R.color.blue))
 //        binding.groupImageView.setBackgroundColor(resources.getColor(R.color.blue))
 
@@ -431,7 +436,7 @@ class ExpensesFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy: called ex")
+        Log.d(TAG, "onDestroy: toolbar check expenses")
         //binding.groupIconCard.radius = 100.dpToPx(resources.displayMetrics).toFloat()
     }
 
@@ -451,6 +456,8 @@ class ExpensesFragment : Fragment() {
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
+
+                playDeleteSound(requireContext())
             }
 
             setNegativeButton(getString(R.string.cancel)) { dialog, which ->
@@ -502,6 +509,8 @@ class ExpensesFragment : Fragment() {
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
+
+                playDeleteSound(requireContext())
             }
 
             setNegativeButton(getString(R.string.cancel)) { dialog, which ->
@@ -690,4 +699,11 @@ class ExpensesFragment : Fragment() {
         )
         findNavController().navigate(action)//, extras)
     }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume: toolbar check expenses")
+    }
+
+
 }

@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.math.absoluteValue
 
 class EditExpenseViewModel(context: Context, private val groupId: Int, private val expense: Expense) :ViewModel() {
     private val database = SplitWiseRoomDatabase.getInstance(context)
@@ -111,7 +112,14 @@ class EditExpenseViewModel(context: Context, private val groupId: Int, private v
                     //4. reduce amount in transaction
                     for(payeeId in payeesIds){
                         transactionRepository.getAmount(groupId, expense.payer, payeeId)?.let { amount ->
-                            transactionRepository.updateAmount(groupId, expense.payer, payeeId, amount - expense.splitAmount)
+                            val updatedAmount = amount - expense.splitAmount
+                            if(updatedAmount >= 0) {
+                                transactionRepository.updateAmount(groupId, expense.payer, payeeId, updatedAmount)
+                            }
+                            else{
+                                transactionRepository.updateAmount(groupId, expense.payer, payeeId, 0f)
+                                transactionRepository.updateAmount(groupId, payeeId, expense.payer, updatedAmount.absoluteValue)
+                            }
                         }
                     }
 

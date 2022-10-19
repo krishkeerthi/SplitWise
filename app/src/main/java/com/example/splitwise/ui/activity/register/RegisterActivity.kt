@@ -48,7 +48,7 @@ class RegisterActivity : AppCompatActivity() {
                     nameLayout.error = null
                     nameLayout.isErrorEnabled = false
                 } else {
-                    nameLayout.error = getString(R.string.enter_valid_name)
+                    //nameLayout.error = getString(R.string.enter_valid_name)
                 }
 
                 binding.registerButton.isEnabled =

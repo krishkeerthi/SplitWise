@@ -9,6 +9,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
 import android.text.format.DateUtils
@@ -288,6 +289,10 @@ fun View.ripple(context: Context){
     if(backgroundResource != null) {
         Log.d(TAG, "ripple: bg res not null res is ${backgroundResource}")
         this.setBackgroundResource(R.color.view_color)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            this.setBackgroundColor(android.R.attr.selectableItemBackground)
+        },this.resources.getInteger(R.integer.reply_motion_duration_small).toLong())
     }
     else{
         Log.d(TAG, "ripple: bg res null")
@@ -490,6 +495,10 @@ fun vibrate(context: Context, delete: Boolean){
 
 }
 
+fun playDeleteSound(context: Context){
+    val mediaPlayer = MediaPlayer.create(context, R.raw.delete)
+    mediaPlayer.start()
+}
 ///**
 // * Check whether [effectId] is supported by the device's Vibrator.
 // */

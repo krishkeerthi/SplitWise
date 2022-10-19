@@ -711,9 +711,13 @@ class MemberProfileFragment : Fragment() {
     }
 
     private fun checkForChanges(): Boolean{
-        return (viewModel.member.value!!.name != binding.memberNameText.text?.trim().toString()) ||
-                (viewModel.member.value!!.phone.toString() != binding.memberPhoneText.text?.trim().toString())
-                || (viewModel.member.value!!.memberProfile != viewModel.updatedUri)
+        return ((viewModel.member.value!!.phone.toString() != binding.memberPhoneText.text?.trim().toString())
+                || (viewModel.member.value!!.memberProfile != viewModel.updatedUri) ||
+                if(args.memberId != 1) {viewModel.member.value!!.name != binding.memberNameText.text?.trim().toString()}
+                else{
+                    (viewModel.member.value!!.name.substring(0, viewModel.member.value!!.name.length - 5)
+                    != binding.memberNameText.text?.trim().toString())}
+                )
     }
 
 }

@@ -146,7 +146,7 @@ class SplitWiseFragment : Fragment() {
                     Snackbar.LENGTH_SHORT
                 ).show()
             else {
-                paymentStatView.ripple(paymentStatView.context)
+                paymentStatView.ripple(requireContext()) //paymentStatView.context
                 gotoSettleUpFragment(payerId, paymentStatView)
             }
         }

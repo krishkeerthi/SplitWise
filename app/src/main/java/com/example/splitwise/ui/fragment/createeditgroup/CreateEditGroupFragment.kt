@@ -501,7 +501,7 @@ class CreateEditGroupFragment : Fragment() {
 
         // Add Members button click
         binding.addMemberButton.setOnClickListener {
-            gotoAddMemberFragment(true)
+            gotoAddMemberFragment(false)
             //gotoChooseMembersFragment()
         }
 
@@ -548,6 +548,8 @@ class CreateEditGroupFragment : Fragment() {
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
+
+                playDeleteSound(requireContext())
             }
 
             setNegativeButton(getString(R.string.cancel)) { dialog, which ->
@@ -579,7 +581,7 @@ class CreateEditGroupFragment : Fragment() {
                 ).show()
             }
             else{
-                memberView.ripple(memberView.context)
+                //memberView.ripple(memberView.context)
                 gotoMemberProfileFragment(memberId, memberView)
             }
         }
@@ -666,7 +668,7 @@ class CreateEditGroupFragment : Fragment() {
         return when (item.itemId) {
             R.id.add_member -> {
                 //AddMemberDialog(viewModel).show(childFragmentManager, "Add Member Alert Dialog")
-                gotoAddMemberFragment(true)
+                gotoAddMemberFragment(false)
                 true
             }
             R.id.create_group -> {
