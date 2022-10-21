@@ -149,11 +149,11 @@ class GroupsViewModel(context: Context) : ViewModel() {
                     //1. remove bills
                     expenseRepository.deleteBills(expense.expenseId)
 
-                    // 2. decrement member streak
-                    memberRepository.decrementStreak(expense.payer)
+                    // 2. decrement member streak payer
+                    //memberRepository.decrementStreak(expense.payer) //later ref
 
                     expenseRepository.getExpensePayees(expense.expenseId)?.let { payeesIds ->
-                        // decrementing streak
+                        // decrementing streak payees
                         for (payeeId in payeesIds)
                             memberRepository.decrementStreak(payeeId)
 

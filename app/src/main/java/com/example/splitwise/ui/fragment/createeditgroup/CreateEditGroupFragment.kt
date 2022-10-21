@@ -612,26 +612,34 @@ class CreateEditGroupFragment : Fragment() {
         if (nameCheck(binding.groupNameText.text?.trim().toString())) {
 
             if (viewModel.getMembersSize() > 1) {
-                val memberId = requireActivity().getSharedPreferences(
-                    MainActivity.KEY,
-                    Context.MODE_PRIVATE
-                )
-                    .getInt("MEMBERID", -1)
 
-                viewModel.createGroup(
-                    binding.groupNameText.text.toString(),
-                    memberId,
-                    args.groupIcon
-                ) {
-                    viewModel.reset() // later ref if issue
-                    gotoGroupsFragment()
+                val alertDialog = AlertDialog.Builder(requireContext())
+                alertDialog.setMessage(getString(R.string.sure_create_group))
+                alertDialog.setPositiveButton(getString(R.string.confirm)){dialog, which ->
+                    val memberId = requireActivity().getSharedPreferences(
+                        MainActivity.KEY,
+                        Context.MODE_PRIVATE
+                    )
+                        .getInt("MEMBERID", -1)
+
+                    viewModel.createGroup(
+                        binding.groupNameText.text.toString(),
+                        memberId,
+                        args.groupIcon
+                    ) {
+                        viewModel.reset() // later ref if issue
+                        gotoGroupsFragment()
+                    }
+
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.group_created_successfully),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                 }
+                alertDialog.setNegativeButton(getString(R.string.cancel), null)
 
-                Snackbar.make(
-                    binding.root,
-                    getString(R.string.group_created_successfully),
-                    Snackbar.LENGTH_SHORT
-                ).show()
+                alertDialog.show()
 
                 // activityViewModel.selectedMembers = listOf()
                 // gotoGroupsFragment()

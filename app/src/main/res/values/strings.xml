@@ -215,4 +215,5 @@
     <string name="confirm_settle_up">Confirm settle up?</string>
     <string name="upload_bill">Upload Bill</string>
     <string name="number_starts_with_0">Number should not start with 0</string>
+    <string name="sure_create_group">Are you sure want to create group?</string>
 </resources>

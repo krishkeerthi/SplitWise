@@ -61,6 +61,9 @@ interface TransactionDao {
     @Query("DELETE FROM `transaction` WHERE payer IN (:receiverIds) AND payee = :senderId AND group_id IN (:groupIds)") //
     suspend fun reduceAmount(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>)
 
+    @Query("UPDATE `transaction` SET amount = :amount WHERE payer IN (:receiverIds) AND payee = :senderId AND group_id IN (:groupIds)") //
+    suspend fun setAmount0(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>, amount: Float)
+
     @Query("DELETE FROM `transaction` WHERE payee = :senderId")
     suspend fun reduceBulkAmount(senderId: Int)
 

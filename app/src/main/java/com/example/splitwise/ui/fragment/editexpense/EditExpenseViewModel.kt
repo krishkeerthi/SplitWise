@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.editexpense
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
@@ -42,12 +43,12 @@ class EditExpenseViewModel(context: Context, private val groupId: Int, private v
         getGroupMembers()
     }
 
-    fun updateExpense(name: String, category: Int, payer: Int, amount: Float, memberIds: List<Int>,
+    fun updateExpense(name: String, category: Int, payer: Int, oldAmount: Float, newAmount: Float, memberIds: List<Int>,
                       gotoExpenseDetailFragment: (Int) -> Unit){
         viewModelScope.launch {
             deleteExpense(groupId, expense.expenseId)
 
-            createExpense(name, category, payer, amount, memberIds, gotoExpenseDetailFragment)
+            createExpense(name, category, payer, newAmount, memberIds, gotoExpenseDetailFragment)
         }
     }
 
@@ -100,9 +101,9 @@ class EditExpenseViewModel(context: Context, private val groupId: Int, private v
             expenseRepository.removeExpenseIdFromGroup(groupId, expenseId)
 
             expenseRepository.getExpense(expenseId)?.let { expense ->
-                // 3. decrement member streak
-                memberRepository.decrementStreak(expense.payer)
-
+                // 3. decrement member streak payer
+                //memberRepository.decrementStreak(expense.payer)
+                Log.d(TAG, "deleteExpense: expense ${expense}")
                 expenseRepository.getExpensePayees(expenseId)?.let { payeesIds ->
                     // decrementing streak
                     for(payeeId in payeesIds)
@@ -110,13 +111,18 @@ class EditExpenseViewModel(context: Context, private val groupId: Int, private v
 
                     // ok
                     //4. reduce amount in transaction
+                    Log.d(TAG, "deleteExpense: expense payees ${payeesIds}")
+
                     for(payeeId in payeesIds){
                         transactionRepository.getAmount(groupId, expense.payer, payeeId)?.let { amount ->
+                            Log.d(TAG, "deleteExpense: calculation error amount ${amount} expense split old${expense.splitAmount}")
                             val updatedAmount = amount - expense.splitAmount
                             if(updatedAmount >= 0) {
+                                Log.d(TAG, "deleteExpense: calculation error positive value ${updatedAmount}")
                                 transactionRepository.updateAmount(groupId, expense.payer, payeeId, updatedAmount)
                             }
                             else{
+                                Log.d(TAG, "deleteExpense: calculation error negative value ${updatedAmount}")
                                 transactionRepository.updateAmount(groupId, expense.payer, payeeId, 0f)
                                 transactionRepository.updateAmount(groupId, payeeId, expense.payer, updatedAmount.absoluteValue)
                             }

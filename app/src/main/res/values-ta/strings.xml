@@ -216,4 +216,5 @@
     <string name="confirm_settle_up">செட்டில் செய்வதை உறுதிப்படுத்தவும்</string>
     <string name="upload_bill">ரசிதை பதிவேற்று</string>
     <string name="number_starts_with_0">எண் 0 இல் தொடங்கக்கூடாது</string>
+    <string name="sure_create_group">நீங்கள் நிச்சயமாக குழுவை உருவாக்க விரும்புகிறீர்களா?</string>
 </resources>

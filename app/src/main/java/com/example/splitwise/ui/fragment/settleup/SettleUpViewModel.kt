@@ -179,6 +179,7 @@ class SettleUpViewModel(
         Log.d(TAG, "settle: selected fragment called")
     }
 
+    // not used
     fun settle(
         senderId: Int, receiverId: Int? = null, groupId: Int,
         gotoSplitWiseFragment: () -> Unit

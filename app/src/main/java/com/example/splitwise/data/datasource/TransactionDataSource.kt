@@ -42,6 +42,8 @@ interface TransactionDataSource {
 
     suspend fun getAmount(groupId: Int, payerId: Int, payeeId: Int): Float?
 
+    suspend fun newUpdateAmount(groupId: Int, payerId: Int, payeeId: Int, amount: Float) // later ref update amount
+
     suspend fun updateAmount(groupId: Int, payerId: Int, payeeId: Int, amount: Float)
 
     suspend fun deleteGroupTransactions(groupId: Int)

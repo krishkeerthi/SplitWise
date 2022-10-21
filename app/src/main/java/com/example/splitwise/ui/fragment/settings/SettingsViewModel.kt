@@ -1,7 +1,14 @@
 package com.example.splitwise.ui.fragment.settings
 
+import android.app.AlarmManager
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -10,16 +17,31 @@ import com.example.splitwise.data.repository.ExpenseRepository
 import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.data.repository.TransactionRepository
+import com.example.splitwise.ui.SplitwiseApplication
+import com.example.splitwise.util.AlarmReceiver
+import com.example.splitwise.util.createNotificationChannel
+import com.example.splitwise.util.sendNotification
 import kotlinx.coroutines.launch
 import java.util.*
 
-class SettingsViewModel(context: Context) :
+class SettingsViewModel(val context: Context) :
     ViewModel() {
     private val database = SplitWiseRoomDatabase.getInstance(context)
     private val transactionRepository = TransactionRepository(database)
     private val expenseRepository = ExpenseRepository(database)
     private val memberRepository = MemberRepository(database)
     private val groupRepository = GroupRepository(database)
+
+    private val REQUEST_CODE = 0
+
+    private val notifyIntent = Intent(SplitwiseApplication.getApplication(), AlarmReceiver::class.java)
+
+    private val notifyPendingIntent: PendingIntent = PendingIntent.getBroadcast(
+        SplitwiseApplication.getApplication(),
+        REQUEST_CODE,
+        notifyIntent,
+        PendingIntent.FLAG_IMMUTABLE
+    )
 
     fun insertSampleData(updateDateInserted: () -> Unit, restartActivity: () -> Unit) {
         viewModelScope.launch {
@@ -199,6 +221,50 @@ class SettingsViewModel(context: Context) :
             restartActivity()
 
         }
+
+        createNotificationChannel(context) // context leaks
+
+        startNotifications()
+    }
+
+    private fun startNotifications(){
+//        val notificationManager =
+//            ContextCompat.getSystemService(
+//                context,
+//                NotificationManager::class.java
+//            ) as NotificationManager
+//        notificationManager.cancelNotifications()
+
+        //val alarmManager = ContextCompat.getSystemService(context, AlarmManager::class.java)
+        val alarmManager = SplitwiseApplication.getApplication().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        //if(alarmManager != null)
+        Log.d(TAG, "startNotifications: alarm alarm manager ${alarmManager}")
+
+//        alarmManager.setRepeating(
+//            AlarmManager.RTC_WAKEUP,
+//            Calendar.getInstance().timeInMillis,
+//            1000*60,
+//            notifyPendingIntent
+//        )
+
+        val cal = Calendar.getInstance()
+
+        cal[Calendar.HOUR_OF_DAY] = 16
+        cal[Calendar.MINUTE] = 30
+        cal[Calendar.SECOND] = 0
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            cal.timeInMillis,
+            notifyPendingIntent
+        )
+
+        val notificationManager = ContextCompat.getSystemService(
+            context,
+            NotificationManager::class.java
+        ) as NotificationManager
+
+        notificationManager.sendNotification("hi", context)
+
     }
 }
 

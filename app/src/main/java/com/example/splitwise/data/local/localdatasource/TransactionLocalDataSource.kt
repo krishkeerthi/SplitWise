@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 class TransactionLocalDataSource(
     private val transactionDao: TransactionDao
-): TransactionDataSource {
+) : TransactionDataSource {
     override suspend fun addTransaction(groupId: Int, payerId: Int, payeeId: Int, amount: Float) {
         transactionDao.insert(Transaction(groupId, payerId, payeeId, amount))
     }
@@ -24,12 +24,22 @@ class TransactionLocalDataSource(
         amount: Float
     ) {
         val totalAmount = transactionDao.getAmount(groupId, payerId, payeeId)
-        if(totalAmount == null){ // no such transaction exists so create new
+        if (totalAmount == null) { // no such transaction exists so create new
             transactionDao.insert(Transaction(groupId, payerId, payeeId, amount))
             Log.d(TAG, "updateTransaction: new record inserted")
-        }
-        else{ // transaction exists between this payer and payee so update
-            transactionDao.updateAmount(groupId, payerId, payeeId, totalAmount + amount)  // later ref transaction
+        } else { // transaction exists between this payer and payee so update
+//            transactionDao.updateAmount( // later ref new update amount,
+//                groupId,
+//                payerId,
+//                payeeId,
+//                totalAmount + amount
+//            )  // later ref transaction
+            newUpdateAmount(
+                groupId,
+                payerId,
+                payeeId,
+                amount
+            )
             Log.d(TAG, "updateTransaction: old record updated")
         }
     }
@@ -43,15 +53,16 @@ class TransactionLocalDataSource(
     }
 
     override suspend fun settle(senderId: Int, receiverIds: List<Int>, groupIds: List<Int>) { //
-        transactionDao.reduceAmount(senderId, receiverIds, groupIds) // deletes record
+        //transactionDao.reduceAmount(senderId, receiverIds, groupIds) // deletes record
+        transactionDao.setAmount0(senderId, receiverIds, groupIds, 0f)
         Log.d(TAG, "settle: selected local datasource ${receiverIds}")
     }
 
     override suspend fun settle(groupId: Int, payerId: Int, recipientId: Int, amount: Float) { //
         // transactionDao.getAmount(groupId, payerId, recipientId)
-       getOwed(payerId, listOf(recipientId), listOf(groupId))?.let {
+        getOwed(payerId, listOf(recipientId), listOf(groupId))?.let {
             //transactionDao.updateAmount(groupId, payerId, recipientId, it - amount) // old
-           transactionDao.updateAmount(groupId, recipientId, payerId, it - amount) // new
+            transactionDao.updateAmount(groupId, recipientId, payerId, it - amount) // new
         }
     }
 
@@ -67,9 +78,9 @@ class TransactionLocalDataSource(
         val lendList = transactionDao.getLendAmount()
         val owedList = transactionDao.getOwedAmount()
 
-        return if(lendList != null && owedList != null)
+        return if (lendList != null && owedList != null)
             listMerger(lendList, owedList)
-        else{
+        else {
             //throw NullPointerException("Transaction missing")
             null
         }
@@ -79,11 +90,10 @@ class TransactionLocalDataSource(
         val lendList = transactionDao.getLendAmountInGroup(groupId)
         val owedList = transactionDao.getOwedAmountInGroup(groupId)
 
-        return if(lendList != null && owedList != null) {
+        return if (lendList != null && owedList != null) {
             Log.d(TAG, "transactionStats: transaction found")
             listMerger(lendList, owedList)
-        }
-        else{
+        } else {
             Log.d(TAG, "transactionStats: null found")
             //throw NullPointerException("Transaction missing")
             null
@@ -94,11 +104,10 @@ class TransactionLocalDataSource(
         val lendList = transactionDao.getLendAmountInGroups(groupIds)
         val owedList = transactionDao.getOwedAmountInGroups(groupIds)
 
-        return if(lendList != null && owedList != null) {
+        return if (lendList != null && owedList != null) {
             Log.d(TAG, "transactionStats: transaction found")
             listMerger(lendList, owedList)
-        }
-        else{
+        } else {
             Log.d(TAG, "transactionStats: null found")
             //throw NullPointerException("Transaction missing")
             null
@@ -145,39 +154,69 @@ class TransactionLocalDataSource(
         return transactionDao.getAmount(groupId, payerId, payeeId)
     }
 
-    override suspend fun updateAmount(groupId: Int, payerId: Int, payeeId: Int, amount: Float) { //
-        transactionDao.updateAmount(groupId, payerId, payeeId, amount)
+    override suspend fun newUpdateAmount(groupId: Int, payerId: Int, payeeId: Int, amount: Float) { //
+        val previousSettlements = transactionDao.getAmount(groupId, payeeId, payerId)
+        if (previousSettlements != null) {
+            if (previousSettlements > amount) {
+                transactionDao.updateAmount(groupId, payeeId, payerId, previousSettlements - amount)
+            } else if (previousSettlements < amount) {
+                transactionDao.updateAmount(groupId, payeeId, payerId, 0f)
+                transactionDao.updateAmount(groupId, payerId, payeeId, amount - previousSettlements)
+            } else { // previousSettlements = amount
+                transactionDao.updateAmount(groupId, payerId, payeeId, 0f)
+                transactionDao.updateAmount(groupId, payeeId, payeeId, 0f)
+            }
+        } else {
+            val result = transactionDao.getAmount(groupId, payerId, payeeId)
+            if (result != null) {
+                transactionDao.updateAmount(groupId, payerId, payeeId, amount)
+            } else {
+                transactionDao.insert(Transaction(groupId, payerId, payeeId, amount))
+            }
+        }
     }
+
+    override suspend fun updateAmount(groupId: Int, payerId: Int, payeeId: Int, amount: Float) { //
+        val result = transactionDao.getAmount(groupId, payerId, payeeId)
+        if (result != null) {
+            transactionDao.updateAmount(groupId, payerId, payeeId, amount)
+        } else {
+            transactionDao.insert(Transaction(groupId, payerId, payeeId, amount))
+        }
+    }
+
 
     override suspend fun deleteGroupTransactions(groupId: Int) {
         transactionDao.deleteGroup(groupId)
     }
 
-    private suspend fun listMerger(lendList: List<MemberAmount>, owedList: List<MemberAmount>): List<MemberPaymentStats>{
+    private suspend fun listMerger(
+        lendList: List<MemberAmount>,
+        owedList: List<MemberAmount>
+    ): List<MemberPaymentStats> {
         Log.d(TAG, "listMerger: lend: $lendList \n owed: $owedList")
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val memberPaymentStats = mutableListOf<MemberPaymentStats>()
             val lendMap = mutableMapOf<Int, Float>()
 
-            for(i in lendList)
+            for (i in lendList)
                 lendMap[i.memberId] = i.amount
 
-            for(i in owedList){
-                if(lendMap.containsKey(i.memberId)){
+            for (i in owedList) {
+                if (lendMap.containsKey(i.memberId)) {
                     memberPaymentStats.add(
                         MemberPaymentStats(i.memberId, lendMap[i.memberId] ?: 0F, i.amount)
                     )
 
                     lendMap.remove(i.memberId)
-                }
-                else{
+                } else {
                     memberPaymentStats.add(
                         MemberPaymentStats(i.memberId, 0F, i.amount)
                     )
                 }
             }
 
-            for( (key, value) in lendMap.entries)
+            for ((key, value) in lendMap.entries)
                 memberPaymentStats.add(
                     MemberPaymentStats(key, value, 0F)
                 )

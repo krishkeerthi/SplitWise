@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.absoluteValue
+import kotlin.math.exp
 
 class ExpenseDetailViewModel(context: Context, private val expenseId: Int) : ViewModel() {
 
@@ -182,11 +183,11 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int) : Vie
             expenseRepository.removeExpenseIdFromGroup(groupId, expenseId)
 
             expenseRepository.getExpense(expenseId)?.let { expense ->
-                // 3. decrement member streak
-                memberRepository.decrementStreak(expense.payer)
+                // 3. decrement member streak payer
+                //memberRepository.decrementStreak(expense.payer) // later ref
 
                 expenseRepository.getExpensePayees(expenseId)?.let { payeesIds ->
-                    // decrementing streak
+                    // decrementing streak payees
                     for(payeeId in payeesIds)
                         memberRepository.decrementStreak(payeeId)
 
@@ -199,7 +200,12 @@ class ExpenseDetailViewModel(context: Context, private val expenseId: Int) : Vie
                             }
                             else{
                                 transactionRepository.updateAmount(groupId, expense.payer, payeeId, 0f)
-                                transactionRepository.updateAmount(groupId, payeeId, expense.payer, updatedAmount.absoluteValue)
+
+                                val existingValue = transactionRepository.getAmount(groupId, payeeId, expense.payer)
+                                if(existingValue != null)
+                                    transactionRepository.updateAmount(groupId, payeeId, expense.payer, existingValue + updatedAmount.absoluteValue)
+                                else
+                                    transactionRepository.updateAmount(groupId, payeeId, expense.payer, updatedAmount.absoluteValue)
                             }
                         }
                     }

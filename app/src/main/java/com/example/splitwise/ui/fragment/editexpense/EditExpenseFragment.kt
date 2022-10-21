@@ -285,6 +285,7 @@ class EditExpenseFragment : Fragment() {
                                 binding.expenseNameText.text.toString(),
                                 viewModel.category!!.ordinal,
                                 viewModel.payer!!.memberId,
+                                args.expense.splitAmount,
                                 binding.expenseAmountText.text.toString().toFloat(),
                                 viewModel.memberIds.toList()
                             ) { expenseId: Int ->
