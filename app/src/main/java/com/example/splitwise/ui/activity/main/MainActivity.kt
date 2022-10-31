@@ -56,12 +56,17 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         // set shape
         val shape = sharedPreference.getInt("SHAPE", R.style.Theme_SplitWise)
 
-        setTheme(shape)
+        //setTheme(shape) // commented because theme is set during font selection
 
         // set mode
         val theme = sharedPreference.getString("THEME", "System")
 
         setMode(theme)
+
+        // set font
+        val font = sharedPreference.getString("FONT", "Default") as String
+
+        setFont(font, shape)
 
 //        if(this.isDarkThemeOn()){
 //            setMode("Dark")
@@ -171,11 +176,40 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
     }
 
+    private fun setFont(font: String, shapeTheme: Int){
+        var newTheme: Int
+        if(shapeTheme == R.style.Theme_SplitWise){
+            newTheme = if(font == "Caligraphy")
+                R.style.Theme_SplitWise_Caligraphy
+            else if(font == "Brussels")
+                R.style.Theme_SplitWise_Brussels
+            else
+                R.style.Theme_SplitWise
+        }
+        else if(shapeTheme == R.style.Theme_SplitWise_Boxed){
+            newTheme = if(font == "Caligraphy")
+                R.style.Theme_SplitWise_Boxed_Caligraphy
+            else if(font == "Brussels")
+                R.style.Theme_SplitWise_Boxed_Brussels
+            else
+                R.style.Theme_SplitWise_Boxed
+        }
+        else{
+            newTheme = if(font == "Caligraphy")
+                R.style.Theme_SplitWise_Caligraphy
+            else if(font == "Brussels")
+                R.style.Theme_SplitWise_Brussels
+            else
+                R.style.Theme_SplitWise
+        }
+        setTheme(newTheme)
+    }
 
     private fun changeLanguage(language: String) {
         val languageCode = when(language){
             "English" -> "en"
             "Tamil" -> "ta"
+            "Hindi" -> "hi"
             else -> "en"
         }
         val locale = Locale(languageCode)

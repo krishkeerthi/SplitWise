@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.groupsettleup
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,10 +26,7 @@ import com.example.splitwise.ui.fragment.settleup.SettleUpFragmentArgs
 import com.example.splitwise.ui.fragment.settleup.SettleUpFragmentDirections
 import com.example.splitwise.ui.fragment.settleup.SettleUpViewModel
 import com.example.splitwise.ui.fragment.settleup.SettleUpViewModelFactory
-import com.example.splitwise.util.decodeSampledBitmapFromUri
-import com.example.splitwise.util.dpToPx
-import com.example.splitwise.util.getRoundedCroppedBitmap
-import com.example.splitwise.util.roundOff
+import com.example.splitwise.util.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialSharedAxis
@@ -118,6 +116,7 @@ class GroupSettleUpFragment : Fragment() {
         // Payees
         viewModel.payeesAndAmounts.observe(viewLifecycleOwner) { payeesAndAmount ->
             if (payeesAndAmount != null) {
+                Log.d(TAG, "fetchData: zero check $payeesAndAmount")
                 payeesAndAmountsAdapter.updatePayees(payeesAndAmount, viewModel.selectedPayeesIds())
             }
         }
@@ -185,6 +184,8 @@ class GroupSettleUpFragment : Fragment() {
 
                     gotoGroupSplitWiseFragment()
                 }
+                playPaymentSuccessSound(requireContext())
+                //showTick()
             }
 
             builder.setNegativeButton(getString(R.string.cancel), null)
@@ -208,6 +209,12 @@ class GroupSettleUpFragment : Fragment() {
                 args.payerId,
             )
        findNavController().navigate(action)
+    }
+
+    private fun showTick(){
+        val alertDialog = AlertDialog.Builder(requireContext())
+        alertDialog.setView(R.layout.tick_layout)
+        alertDialog.show()
     }
 
 }

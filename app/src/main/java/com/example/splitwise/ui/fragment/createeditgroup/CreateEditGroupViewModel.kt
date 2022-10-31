@@ -394,7 +394,9 @@ class CreateEditGroupViewModel(
                         // add to members table
                         val mId = memberRepository.addMember(i.name, i.phone, i.memberProfile)
                         // add to member streak table
-                        //memberRepository.addMemberStreak(mId) no need for incrementing streak, just bcaz added to group
+                        memberRepository.addMemberStreak(mId) // now // has to set streak to 0 otherwise member won't be display
+                        // during other group creation
+                        // before //no need for incrementing streak, just bcaz added to group
                         groupRepository.addGroupMember(groupId, mId)
                     } else
                         groupRepository.addGroupMember(groupId, member.memberId)

@@ -496,7 +496,12 @@ fun vibrate(context: Context, delete: Boolean){
 }
 
 fun playDeleteSound(context: Context){
-    val mediaPlayer = MediaPlayer.create(context, R.raw.delete)
+    val mediaPlayer = MediaPlayer.create(context, R.raw.swipe)
+    mediaPlayer.start()
+}
+
+fun playPaymentSuccessSound(context: Context){
+    val mediaPlayer = MediaPlayer.create(context, R.raw.payment_success)
     mediaPlayer.start()
 }
 ///**

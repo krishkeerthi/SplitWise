@@ -1,6 +1,7 @@
 package com.example.splitwise.ui.fragment.groupsettleup
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
@@ -76,18 +77,19 @@ class GroupSettleUpViewModel(context: Context, val payerId: Int, val groupIds: L
 
             memberIds?.let { ids ->
                 val members = getMembersFromIds(ids)
-                Log.d(ContentValues.TAG, "fetchData: members size ${members?.size}")
+                Log.d(TAG, "fetchData: members size ${members?.size}")
                 val membersAndAmounts = mutableListOf<MemberAndAmount>()
                 members?.let { members ->
                     for (m in members) {
                         val amount = getAmount(m.memberId, tempGroupsId)
 
-                        if (amount != null)
+                        if (amount != null && amount > 0f) // later ref
                             membersAndAmounts.add(MemberAndAmount(m, amount))
 
-                        Log.d(ContentValues.TAG, "fetchData: amount ${amount}")
+                        Log.d(TAG, "fetchData: amount ${amount}")
                     }
 
+                    Log.d(TAG, "fetchData: zero check $membersAndAmounts")
                     _payeesAndAmounts.value = membersAndAmounts
                 }
 

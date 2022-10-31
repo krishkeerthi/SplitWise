@@ -414,6 +414,9 @@ class GroupsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+//        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+//            getString(R.string.groups)
+
         Log.d(TAG, "onResume: toolbar check groups")
         jankStats.isTrackingEnabled = true
     }

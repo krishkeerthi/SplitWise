@@ -25,6 +25,7 @@ import com.example.splitwise.databinding.FragmentGroupDirectSettleUpBinding
 import com.example.splitwise.util.decodeSampledBitmapFromUri
 import com.example.splitwise.util.dpToPx
 import com.example.splitwise.util.getRoundedCroppedBitmap
+import com.example.splitwise.util.playPaymentSuccessSound
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
@@ -200,6 +201,7 @@ class GroupDirectSettleUpFragment : Fragment() {
                     viewModel.settle(amount) {
                         gotoGroupSplitwiseFragment()
                     }
+                    playPaymentSuccessSound(requireContext())
                 }
 
                 builder.setNegativeButton(getString(R.string.cancel), null)

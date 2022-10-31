@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.activity.register
 
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -8,11 +9,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityRegisterBinding
 import com.example.splitwise.ui.activity.main.MainActivity
-import com.example.splitwise.util.nameCheck
-import com.example.splitwise.util.numberCheck
+import com.example.splitwise.util.*
 import com.google.android.material.snackbar.Snackbar
 
 class RegisterActivity : AppCompatActivity() {
@@ -120,10 +121,22 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun gotoMainActivity() {
 
-        val intent = Intent(this, MainActivity::class.java).apply {
+        createNotificationChannel(this)
+
+        val notificationIntent = Intent(this, NotificationWorker::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        startActivity(intent)
+        startActivity(notificationIntent)
+
+//        val notificationManager =
+//            ContextCompat.getSystemService(
+//                this,
+//                NotificationManager::class.java
+//            ) as NotificationManager
+//
+//        notificationManager.welcomeNotification(this)
+//        notificationManager.cancelNotifications()
+
     }
 
     private fun saveIdToSharedPreference(memberId: Int, sharedPreference: SharedPreferences) {

@@ -14,9 +14,36 @@ import com.example.splitwise.ui.activity.main.MainActivity
 
 private val NOTIFICAITON_ID = 0
 private val NOTIFICATION_CHANNEL = "splitwise_channel"
-private val NOTIFICATION_CHANNEL_NAME ="Splitwise channel"
+private val NOTIFICATION_CHANNEL_NAME = "Splitwise channel"
 
-fun NotificationManager.sendNotification(message: String, context: Context){
+private val notificationTitle = listOf(
+    "Neenga siricha azhaga irukinga 😉",
+    "Natpu na enna theriyuma Surya na enna theriyuma 👨‍❤️‍👨",
+    "(1997/4 + 598/3 + 7650/12 + 3160/8) = ?  🤔",
+    "1 🍌 inga iruku innonu 🍌 enga 🧐",
+    "Naalu kasu sambadhikanum na savanum 😵",
+    "Odra bus 🚎 la irundhu 1 rupee coin 🪙 vizhundhale",
+    "Thakkali 🍅 kilo 8 ruba, Vengayam 🧅 kilo 15 ruba",
+    "Avalai maraka thaan 💑 ennai maraka thaan ❤️‍🩹",
+    "Marakuma nenjam 😵‍💫",
+    "Kasukoru panjam vandhalum \uD83D\uDCB0"
+
+)
+
+private val notificationBody = listOf(
+    "Aana selavu panninga na inum azhaga irupinga \uD83D\uDE0A Aprom marakama split potrunga \uD83E\uDD11",
+    "Oru expense split podunga \uD83D\uDCB0 Aprom ellam theriyum \uD83D\uDE02",
+    "Ungaluku yen kastam, use splitwise and be wise\uD83D\uDE1C",
+    "Ipdi ungala yarum yematha mudiyathu, Splitwise use pannunga \uD83D\uDCB5 kanaku sariya irukum ✅",
+    "Sambadhichcha kasu veetuku kondu varanum na raththa adi padanum\uD83E\uDE78. Adhanala porupa Splitwise use pannunga",
+    "urundu vandhu edukum JP kooda Splitwise dha use pannaru\uD83D\uDE02",
+    "Kanaku pathu selavu pandravangala neenga, appo splitwise kandipa use agum \uD83E\uDD23",
+    "Adhuku dha solren\uD83D\uDE02 splitwise use pannunga, edhuvum marakadhu",
+    "Kandipa marakum, olunga splitwise use pannunga\uD83E\uDD23",
+    "\"Pasathuku panjam illanu solirupangale\", nambadhinga - Splitwise"
+)
+
+fun NotificationManager.sendNotification(context: Context) {
 
     val contentIntent = Intent(context, MainActivity::class.java)
     val contentPendingIntent = PendingIntent.getActivity(
@@ -31,8 +58,9 @@ fun NotificationManager.sendNotification(message: String, context: Context){
         NOTIFICATION_CHANNEL
     ).apply {
         setSmallIcon(R.drawable.splitwiseicon)
-        setContentTitle("Neenga siricha azhaga irukinga😉")
-        setContentText("Apdiye selava panninga na inum azhaga irupinga😊")
+        val index = (0..9).random()
+        setContentTitle(notificationTitle[index])
+        setContentText(notificationBody[index])
 
         setContentIntent(contentPendingIntent)
         priority = NotificationCompat.PRIORITY_HIGH
@@ -43,12 +71,66 @@ fun NotificationManager.sendNotification(message: String, context: Context){
     notify(NOTIFICAITON_ID, builder.build())
 }
 
-fun NotificationManager.cancelNotifications(){
+fun NotificationManager.sendCustomNotification(context: Context, notificationTitle: String, notificationBody: String) {
+
+    val contentIntent = Intent(context, MainActivity::class.java)
+    val contentPendingIntent = PendingIntent.getActivity(
+        context,
+        NOTIFICAITON_ID,
+        contentIntent,
+        PendingIntent.FLAG_IMMUTABLE
+    )
+
+    val builder = NotificationCompat.Builder(
+        context,
+        NOTIFICATION_CHANNEL
+    ).apply {
+        setSmallIcon(R.drawable.splitwiseicon)
+        setContentTitle(notificationTitle)
+        setContentText(notificationBody)
+
+        setContentIntent(contentPendingIntent)
+        priority = NotificationCompat.PRIORITY_HIGH
+
+        setAutoCancel(true)
+    }
+
+    notify(NOTIFICAITON_ID, builder.build())
+}
+
+fun NotificationManager.welcomeNotification(context: Context) {
+
+    val contentIntent = Intent(context, MainActivity::class.java)
+    val contentPendingIntent = PendingIntent.getActivity(
+        context,
+        NOTIFICAITON_ID,
+        contentIntent,
+        PendingIntent.FLAG_IMMUTABLE
+    )
+
+    val builder = NotificationCompat.Builder(
+        context,
+        NOTIFICATION_CHANNEL
+    ).apply {
+        setSmallIcon(R.drawable.splitwiseicon)
+        setContentTitle("Neenga siricha azhaga irukinga \uD83D\uDE09")
+        setContentText("Aana selavu panninga na inum azhaga irupinga \uD83D\uDE0A Aprom marakama split potrunga \uD83E\uDD11")
+
+        setContentIntent(contentPendingIntent)
+        priority = NotificationCompat.PRIORITY_HIGH
+
+        setAutoCancel(true)
+    }
+
+    notify(NOTIFICAITON_ID, builder.build())
+}
+
+fun NotificationManager.cancelNotifications() {
     cancelAll()
 }
 
-fun createNotificationChannel(context: Context){
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+fun createNotificationChannel(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL,
             NOTIFICATION_CHANNEL_NAME,
@@ -60,7 +142,7 @@ fun createNotificationChannel(context: Context){
             enableLights(true)
             lightColor = Color.RED
             enableVibration(true)
-            description ="Splitwise notification channel"
+            description = "Splitwise notification channel"
 
         }
 

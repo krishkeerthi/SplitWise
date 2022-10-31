@@ -29,7 +29,67 @@
         <item name="actionModeBackground">?attr/colorSecondary</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+
     </style>
+
+    <style name="Theme.SplitWise.Caligraphy" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#4b93ff</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+
+        <item name="colorSecondary">#1976d2</item>
+        <item name="colorSecondaryVariant">#00227b</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+        <!--        <item name="android:windowLightStatusBar">true</item>-->
+
+        <!--        ripple color-->
+        <item name="android:colorControlHighlight">@color/view_color</item>
+
+        <!-- Customize your theme here. -->
+
+        <!--        Action Mode -->
+        <item name="actionModeBackground">?attr/colorSecondary</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+
+        <!--        font-->
+        <item name="fontFamily">@font/roxale_story_calligraphy_italic</item>
+    </style>
+
+    <style name="Theme.SplitWise.Brussels" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#4b93ff</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+
+        <item name="colorSecondary">#1976d2</item>
+        <item name="colorSecondaryVariant">#00227b</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+        <!--        <item name="android:windowLightStatusBar">true</item>-->
+
+        <!--        ripple color-->
+        <item name="android:colorControlHighlight">@color/view_color</item>
+
+        <!-- Customize your theme here. -->
+
+        <!--        Action Mode -->
+        <item name="actionModeBackground">?attr/colorSecondary</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+
+        <!--        font-->
+        <item name="fontFamily">@font/brussels_city</item>
+    </style>
+
 
     <style name="Theme.SplitWise.Boxed" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
@@ -58,6 +118,70 @@
         <item name="actionModeBackground">?attr/colorSecondary</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+    </style>
+
+    <style name="Theme.SplitWise.Boxed.Caligraphy" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#4b93ff</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+
+        <item name="colorSecondary">#1976d2</item>
+        <item name="colorSecondaryVariant">#00227b</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+        <!--        <item name="android:windowLightStatusBar">true</item>-->
+
+        <item name="android:colorControlHighlight">@color/view_color</item>
+
+        <!-- Customize your theme here. -->
+
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Boxed.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Boxed.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Boxed.LargeComponent</item>
+
+        <!--        Action Mode -->
+        <item name="actionModeBackground">?attr/colorSecondary</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+
+        <!--        font-->
+        <item name="fontFamily">@font/roxale_story_calligraphy_italic</item>
+    </style>
+
+    <style name="Theme.SplitWise.Boxed.Brussels" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#4b93ff</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+
+        <item name="colorSecondary">#1976d2</item>
+        <item name="colorSecondaryVariant">#00227b</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+        <!--        <item name="android:windowLightStatusBar">true</item>-->
+
+        <item name="android:colorControlHighlight">@color/view_color</item>
+
+        <!-- Customize your theme here. -->
+
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Boxed.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Boxed.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Boxed.LargeComponent</item>
+
+        <!--        Action Mode -->
+        <item name="actionModeBackground">?attr/colorSecondary</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+
+        <!--        font-->
+        <item name="fontFamily">@font/brussels_city</item>
     </style>
 
 

@@ -135,6 +135,16 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginStart="24dp"
+                android:src="@drawable/ic_baseline_text_fields_24"
+                app:layout_constraintBottom_toTopOf="@id/hindi_image_view"
+                app:layout_constraintTop_toBottomOf="@id/english_image_view"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/hindi_image_view"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
                 android:layout_marginBottom="12dp"
                 android:src="@drawable/ic_baseline_text_fields_24"
                 app:layout_constraintBottom_toBottomOf="@+id/language_group"
@@ -167,18 +177,26 @@
                     android:layoutDirection="rtl"
                     android:text="@string/tamil"
                     android:textAlignment="textStart" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/language_hindi_radio_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl"
+                    android:text="@string/hindi"
+                    android:textAlignment="textStart" />
             </RadioGroup>
 
             <View
                 android:id="@+id/language_horizontal_view"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="64dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/view_color"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/language_group" />
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/view_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/language_group" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/theme_image_view"
@@ -271,7 +289,7 @@
             </RadioGroup>
 
             <View
-                android:id="@+id/feedback_horizontal_view"
+                android:id="@+id/theme_horizontal_view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="64dp"
@@ -280,6 +298,109 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/theme_group" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/font_image_view"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:src="@drawable/font_download"
+                app:layout_constraintBottom_toBottomOf="@id/fonts_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/fonts_label" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/fonts_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/font"
+                android:textStyle="bold"
+                android:textColor="@color/text_bold"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@id/theme_image_view"
+                app:layout_constraintTop_toBottomOf="@id/theme_horizontal_view" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/default_font_image_view"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/text_format"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/font_group" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/caligraphy_font_image_view"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:src="@drawable/text_format"
+                app:layout_constraintBottom_toTopOf="@id/brussels_font_image_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/default_font_image_view" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/brussels_font_image_view"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="12dp"
+                android:src="@drawable/text_format"
+                app:layout_constraintBottom_toBottomOf="@+id/font_group"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <RadioGroup
+                android:id="@+id/font_group"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/default_font_image_view"
+                app:layout_constraintTop_toBottomOf="@id/fonts_label">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/default_font_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl"
+                    android:text="@string/Default"
+                    android:textAlignment="textStart" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/caligraphy_font_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl"
+                    android:text="@string/caligraphy"
+                    android:fontFamily="@font/roxale_story_calligraphy_italic"
+                    android:textAlignment="textStart" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/brussels_font_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl"
+                    android:text="@string/brussels"
+                    android:fontFamily="@font/brussels_city"
+                    android:textAlignment="textStart" />
+
+            </RadioGroup>
+
+            <View
+                android:id="@+id/feedback_horizontal_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/view_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/font_group" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/feedback"
