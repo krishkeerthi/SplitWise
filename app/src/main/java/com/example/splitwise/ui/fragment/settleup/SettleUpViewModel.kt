@@ -95,7 +95,7 @@ class SettleUpViewModel(
                     for (m in members) {
                         val amount = getAmount(m.memberId, tempGroupsId)
 
-                        if (amount != null)
+                        if (amount != null && amount > 0f)
                             membersAndAmounts.add(MemberAndAmount(m, amount))
 
                         Log.d(TAG, "fetchData: amount ${amount}")

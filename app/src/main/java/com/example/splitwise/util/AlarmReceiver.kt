@@ -15,7 +15,7 @@ class AlarmReceiver: BroadcastReceiver() {
             NotificationManager::class.java
         ) as NotificationManager
 
-        notificationManager.sendNotification("hi", context)
+        notificationManager.sendNotification(context)
 
         Log.d(TAG, "onReceive: alarm received")
     }

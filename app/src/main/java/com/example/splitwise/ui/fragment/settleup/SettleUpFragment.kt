@@ -20,10 +20,7 @@ import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSettleUpBinding
 import com.example.splitwise.model.MemberAndAmount
 import com.example.splitwise.ui.fragment.adapter.ChoosePayeeAdapter
-import com.example.splitwise.util.decodeSampledBitmapFromUri
-import com.example.splitwise.util.dpToPx
-import com.example.splitwise.util.getRoundedCroppedBitmap
-import com.example.splitwise.util.roundOff
+import com.example.splitwise.util.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 
@@ -267,8 +264,9 @@ class SettleUpFragment : Fragment() {
                         "${getString(R.string.settled_successfully)}",
                         Snackbar.LENGTH_SHORT
                     ).show()
-
+                    playPaymentSuccessSound(requireContext())
                     gotoSplitWiseFragment()
+
                 }
             }
 

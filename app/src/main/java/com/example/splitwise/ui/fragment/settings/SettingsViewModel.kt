@@ -18,9 +18,7 @@ import com.example.splitwise.data.repository.GroupRepository
 import com.example.splitwise.data.repository.MemberRepository
 import com.example.splitwise.data.repository.TransactionRepository
 import com.example.splitwise.ui.SplitwiseApplication
-import com.example.splitwise.util.AlarmReceiver
-import com.example.splitwise.util.createNotificationChannel
-import com.example.splitwise.util.sendNotification
+import com.example.splitwise.util.*
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -34,7 +32,8 @@ class SettingsViewModel(val context: Context) :
 
     private val REQUEST_CODE = 0
 
-    private val notifyIntent = Intent(SplitwiseApplication.getApplication(), AlarmReceiver::class.java)
+    private val notifyIntent =
+        Intent(SplitwiseApplication.getApplication(), AlarmReceiver::class.java)
 
     private val notifyPendingIntent: PendingIntent = PendingIntent.getBroadcast(
         SplitwiseApplication.getApplication(),
@@ -222,23 +221,24 @@ class SettingsViewModel(val context: Context) :
 
         }
 
-        createNotificationChannel(context) // context leaks
+        //createNotificationChannel(context) // context leaks
 
-        startNotifications()
+       // startNotifications()
     }
 
-    private fun startNotifications(){
-//        val notificationManager =
-//            ContextCompat.getSystemService(
-//                context,
-//                NotificationManager::class.java
-//            ) as NotificationManager
-//        notificationManager.cancelNotifications()
+    private fun startNotifications() {
+        val notificationManager =
+            ContextCompat.getSystemService(
+                context,
+                NotificationManager::class.java
+            ) as NotificationManager
+
+        notificationManager.cancelNotifications()
 
         //val alarmManager = ContextCompat.getSystemService(context, AlarmManager::class.java)
-        val alarmManager = SplitwiseApplication.getApplication().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        val alarmManager = SplitwiseApplication.getApplication().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         //if(alarmManager != null)
-        Log.d(TAG, "startNotifications: alarm alarm manager ${alarmManager}")
+//        Log.d(TAG, "startNotifications: alarm alarm manager ${alarmManager}")
 
 //        alarmManager.setRepeating(
 //            AlarmManager.RTC_WAKEUP,
@@ -247,24 +247,35 @@ class SettingsViewModel(val context: Context) :
 //            notifyPendingIntent
 //        )
 
-        val cal = Calendar.getInstance()
+//        val cal = Calendar.getInstance()
+//
+//        cal[Calendar.HOUR_OF_DAY] = 16
+//        cal[Calendar.MINUTE] = 30
+//        cal[Calendar.SECOND] = 0
+//        alarmManager.setExact(
+//            AlarmManager.RTC_WAKEUP,
+//            cal.timeInMillis,
+//            notifyPendingIntent
+//        )
 
-        cal[Calendar.HOUR_OF_DAY] = 16
-        cal[Calendar.MINUTE] = 30
-        cal[Calendar.SECOND] = 0
-        alarmManager.setExact(
-            AlarmManager.RTC_WAKEUP,
-            cal.timeInMillis,
-            notifyPendingIntent
-        )
+//        val notificationManager = ContextCompat.getSystemService(
+//            context,
+//            NotificationManager::class.java
+//        ) as NotificationManager
+//
+//        notificationManager.sendNotification(context)
 
-        val notificationManager = ContextCompat.getSystemService(
-            context,
-            NotificationManager::class.java
-        ) as NotificationManager
+//        val intent = Intent(context, NotificationWorker::class.java).apply {
+//        }
+//        context.startActivity(intent)
 
-        notificationManager.sendNotification("hi", context)
 
+//        val notificationManager = ContextCompat.getSystemService(
+//            context,
+//            NotificationManager::class.java
+//        ) as NotificationManager
+
+        notificationManager.sendNotification(context)
     }
 }
 

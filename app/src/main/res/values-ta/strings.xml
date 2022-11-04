@@ -51,8 +51,9 @@
     <string name="deleted">நீக்கப்பட்டது</string>
     <string name="filter">வடிகட்டு</string>
     <string name="Import">இறக்கு</string>
-    <string name="tamil">தமிழ்</string>
-    <string name="english">ஆங்கிலம்</string>
+    <string name="tamil">Tamil(தமிழ்)</string>
+    <string name="english">English(ஆங்கிலம்)</string>
+    <string name="hindi">Hindi(இந்தி)</string>
     <string name="create_edit_group">குழு உருவாக்கு</string>
     <string name="create_group">குழு உருவாக்கு</string>
     <string name="edit_group">குழு மாற்று</string>
@@ -217,4 +218,7 @@
     <string name="upload_bill">ரசிதை பதிவேற்று</string>
     <string name="number_starts_with_0">எண் 0 இல் தொடங்கக்கூடாது</string>
     <string name="sure_create_group">நீங்கள் நிச்சயமாக குழுவை உருவாக்க விரும்புகிறீர்களா?</string>
+    <string name="caligraphy">எழுத்துக்கலை</string>
+    <string name="brussels">பிரஸ்ஸல்ஸ்</string>
+    <string name="font">எழுத்து</string>
 </resources>

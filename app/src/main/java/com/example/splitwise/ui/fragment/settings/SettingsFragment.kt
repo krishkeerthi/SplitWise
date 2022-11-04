@@ -4,12 +4,14 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -25,6 +27,7 @@ import com.example.splitwise.util.ripple
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
+import java.io.File
 import java.util.*
 
 
@@ -96,6 +99,9 @@ class SettingsFragment : Fragment() {
             "Tamil" -> {
                 binding.languageTamilRadioButton.isChecked = true
             }
+            "Hindi" ->{
+                binding.languageHindiRadioButton.isChecked = true
+            }
         }
 
         when (sharedPreferences.getString("THEME", "System")) {
@@ -110,6 +116,17 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        when(sharedPreferences.getString("FONT", "Default")){
+            "Default" -> {
+                binding.defaultFontButton.isChecked = true
+            }
+            "Caligraphy" ->{
+                binding.caligraphyFontButton.isChecked = true
+            }
+            "Brussels" ->{
+                binding.brusselsFontButton.isChecked = true
+            }
+        }
 
         // Radio checked listener
         binding.shapeGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -134,6 +151,9 @@ class SettingsFragment : Fragment() {
                 R.id.language_tamil_radio_button -> {
                     changeLanguage("Tamil")
                 }
+                R.id.language_hindi_radio_button ->{
+                    changeLanguage("Hindi")
+                }
                 else -> {
                     changeLanguage("English")
                 }
@@ -157,6 +177,23 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        binding.fontGroup.setOnCheckedChangeListener{ group, checkedId ->
+            when(checkedId){
+                R.id.default_font_button ->{
+                    changeFont("Default")
+                }
+                R.id.caligraphy_font_button ->{
+                    changeFont("Caligraphy")
+                }
+                R.id.brussels_font_button ->{
+                    changeFont("Brussels")
+                }
+                else ->{
+                    changeFont("Default")
+                }
+            }
+        }
+
         binding.feedback.setOnClickListener {
             it.ripple(it.context)
             gotoFeedbackFragment(it)
@@ -166,6 +203,15 @@ class SettingsFragment : Fragment() {
         if (!sharedPreferences.getBoolean("DATA_INSERTED", false)) {
             setHasOptionsMenu(true)
         }
+
+        // setting this programmatically so that during font change, these texts wont change their fonts, mere xml setting changes it
+        binding.defaultFontButton.typeface = Typeface.DEFAULT
+
+        val caligraphyTypeface = ResourcesCompat.getFont(requireContext(), R.font.roxale_story_calligraphy_italic)
+        binding.caligraphyFontButton.typeface = caligraphyTypeface
+
+        val brusselsTypeface = ResourcesCompat.getFont(requireContext(), R.font.brussels_city)
+        binding.brusselsFontButton.typeface = brusselsTypeface
 
     }
 
@@ -238,7 +284,9 @@ class SettingsFragment : Fragment() {
             apply()
         }
 
-        setTheme(themeId)
+        val font = sharedPreferences.getString("FONT", "Default") as String
+        setFont(font, themeId)
+        //setTheme(themeId) // previously set theme is set, but now font has to be checked
     }
 
     private fun changeLanguage(language: String) {
@@ -257,6 +305,16 @@ class SettingsFragment : Fragment() {
         }
 
         setMode(theme)
+    }
+
+    private fun changeFont(font: String){
+        with(sharedPreferences.edit()) {
+            putString("FONT", font)
+            apply()
+        }
+
+        val shapeTheme = sharedPreferences.getInt("SHAPE", R.style.Theme_SplitWise)
+        setFont(font, shapeTheme)
     }
 
     private fun setMode(theme: String?) {
@@ -279,6 +337,7 @@ class SettingsFragment : Fragment() {
         val languageCode = when (language) {
             "English" -> "en"
             "Tamil" -> "ta"
+            "Hindi" -> "hi"
             else -> "en"
         }
         val locale = Locale(languageCode)
@@ -296,6 +355,35 @@ class SettingsFragment : Fragment() {
         (requireActivity() as AppCompatActivity).delegate.setTheme(resId)
 
         requireActivity().recreate()
+    }
+
+    private fun setFont(font: String, shapeTheme: Int){
+        var newTheme: Int
+        if(shapeTheme == R.style.Theme_SplitWise){
+            newTheme = if(font == "Caligraphy")
+                R.style.Theme_SplitWise_Caligraphy
+            else if(font == "Brussels")
+                R.style.Theme_SplitWise_Brussels
+            else
+                R.style.Theme_SplitWise
+        }
+        else if(shapeTheme == R.style.Theme_SplitWise_Boxed){
+            newTheme = if(font == "Caligraphy")
+                R.style.Theme_SplitWise_Boxed_Caligraphy
+            else if(font == "Brussels")
+                R.style.Theme_SplitWise_Boxed_Brussels
+            else
+                R.style.Theme_SplitWise_Boxed
+        }
+        else{
+            newTheme = if(font == "Caligraphy")
+                R.style.Theme_SplitWise_Caligraphy
+            else if(font == "Brussels")
+                R.style.Theme_SplitWise_Brussels
+            else
+                R.style.Theme_SplitWise
+        }
+        setTheme(newTheme)
     }
 
 }

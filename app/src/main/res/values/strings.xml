@@ -50,8 +50,9 @@
     <string name="deleted">Deleted</string>
     <string name="filter">Filter</string>
     <string name="Import">Import</string>
-    <string name="tamil">Tamil</string>
+    <string name="tamil">Tamil(தமிழ்)</string>
     <string name="english">English</string>
+    <string name="hindi">Hindi(हिन्दी)</string>
     <string name="create_edit_group">Create Group</string>
     <string name="create_group">Create Group</string>
     <string name="edit_group">Edit Group</string>
@@ -216,4 +217,7 @@
     <string name="upload_bill">Upload Bill</string>
     <string name="number_starts_with_0">Number should not start with 0</string>
     <string name="sure_create_group">Are you sure want to create group?</string>
+    <string name="caligraphy">Caligraphy</string>
+    <string name="brussels">Brussels</string>
+    <string name="font">Font</string>
 </resources>
