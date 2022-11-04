@@ -19,6 +19,7 @@ import androidx.core.view.accessibility.AccessibilityEventCompat.getAction
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.metrics.performance.JankStats
 import androidx.metrics.performance.PerformanceMetricsState
@@ -31,7 +32,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
+//import com.example.splitwise.framework.SplitwiseViewModelFactory
 import com.example.splitwise.model.ExpenseMember
+//import com.example.splitwise.presentation.groups.MyGroupsViewModel
 import com.example.splitwise.ui.fragment.adapter.*
 import com.example.splitwise.ui.fragment.addamount.AddAmountDialog
 import com.example.splitwise.util.*
@@ -43,12 +46,15 @@ import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
 import java.util.*
 
+
 class GroupsFragment : Fragment() {
 
     private lateinit var binding: FragmentGroupsBinding
     private val viewModel: GroupsViewModel by viewModels {
         GroupsViewModelFactory(requireContext())
     }
+
+    //private lateinit var myViewModel: MyGroupsViewModel
 
     //private lateinit var viewModel: GroupsViewModel
     private lateinit var jankStats: JankStats
@@ -121,6 +127,10 @@ class GroupsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // vm initialization
+      //  myViewModel = ViewModelProvider(this, SplitwiseViewModelFactory)[MyGroupsViewModel::class.java]
+     //   myViewModel.createDummyGroup("test group", "description", Date(), 1234f, null)
 
         Log.d(TAG, "onViewCreated: toolbar check groups")
         // start enter transition only when data loaded, and just started to draw

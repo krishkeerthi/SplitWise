@@ -10,6 +10,7 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Constraints
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
 import androidx.work.*
@@ -21,7 +22,8 @@ class NotificationWorker : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val constraints = Constraints.Builder()
+
+        val constraints = androidx.work.Constraints.Builder()
             //.setRequiredNetworkType(NetworkType.METERED)
             .build()
 

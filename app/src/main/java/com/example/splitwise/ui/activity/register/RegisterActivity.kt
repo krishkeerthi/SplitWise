@@ -15,6 +15,9 @@ import com.example.splitwise.databinding.ActivityRegisterBinding
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.example.splitwise.util.*
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -109,6 +112,11 @@ class RegisterActivity : AppCompatActivity() {
         viewModel.memberId.observe(this) {
             if (it != null) {
                 saveIdToSharedPreference(it, sharedPreference)
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    storeFcmToken(applicationContext)
+                }
+
                 gotoMainActivity()
             }
         }
