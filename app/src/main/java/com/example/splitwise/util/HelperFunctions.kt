@@ -1,6 +1,7 @@
 package com.example.splitwise.util
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -15,7 +16,9 @@ import android.os.*
 import android.text.format.DateUtils
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
@@ -24,6 +27,7 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.model.ExpenseMember
+import com.example.splitwise.ui.activity.main.MainActivity
 import com.google.android.material.internal.ContextUtils.getActivity
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -504,6 +508,28 @@ fun playPaymentSuccessSound(context: Context){
     val mediaPlayer = MediaPlayer.create(context, R.raw.payment_success)
     mediaPlayer.start()
 }
+
+fun changeStatusBar(activity: Activity){
+    val window = activity.window
+    window.apply {
+        addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        statusBarColor = activity.resources.getColor(R.color.green)
+    }
+
+    Handler(Looper.getMainLooper()).postDelayed(
+        {
+            window.apply {
+                addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                statusBarColor = activity.resources.getColor(R.color.status_bar_color)
+            }
+        }, 400
+    )
+
+}
+
+
 ///**
 // * Check whether [effectId] is supported by the device's Vibrator.
 // */

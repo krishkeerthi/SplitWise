@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.app.job.JobInfo.PRIORITY_HIGH
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -38,7 +39,7 @@ private val notificationBody = listOf(
     "Sambadhichcha kasu veetuku kondu varanum na raththa adi padanum\uD83E\uDE78. Adhanala porupa Splitwise use pannunga",
     "urundu vandhu edukum JP kooda Splitwise dha use pannaru\uD83D\uDE02",
     "Kanaku pathu selavu pandravangala neenga, appo splitwise kandipa use agum \uD83E\uDD23",
-    "Adhuku dha solren\uD83D\uDE02 splitwise use pannunga, edhuvum marakadhu",
+    "Adhuku dha solren\uD83D\uDE02 splitwise use pannunga, aprom edha venum na marandhudunga",
     "Kandipa marakum, olunga splitwise use pannunga\uD83E\uDD23",
     "\"Pasathuku panjam illanu solirupangale\", nambadhinga - Splitwise"
 )
@@ -61,10 +62,9 @@ fun NotificationManager.sendNotification(context: Context) {
         val index = (0..9).random()
         setContentTitle(notificationTitle[index])
         setContentText(notificationBody[index])
-
+        setStyle(NotificationCompat.BigTextStyle())
         setContentIntent(contentPendingIntent)
         priority = NotificationCompat.PRIORITY_HIGH
-
         setAutoCancel(true)
     }
 
@@ -81,6 +81,15 @@ fun NotificationManager.sendCustomNotification(context: Context, notificationTit
         PendingIntent.FLAG_IMMUTABLE
     )
 
+    val appIcon = BitmapFactory.decodeResource(
+        context.resources,
+        R.drawable.splitwiseicon
+    )
+//
+//    val bigPictureStyle = NotificationCompat.BigPictureStyle()
+//        .bigPicture(appIcon)
+//        .bigLargeIcon(null)
+
     val builder = NotificationCompat.Builder(
         context,
         NOTIFICATION_CHANNEL
@@ -88,10 +97,10 @@ fun NotificationManager.sendCustomNotification(context: Context, notificationTit
         setSmallIcon(R.drawable.splitwiseicon)
         setContentTitle(notificationTitle)
         setContentText(notificationBody)
-
         setContentIntent(contentPendingIntent)
         priority = NotificationCompat.PRIORITY_HIGH
-
+        setStyle(NotificationCompat.BigTextStyle())
+        //setStyle(bigPictureStyle)
         setAutoCancel(true)
     }
 

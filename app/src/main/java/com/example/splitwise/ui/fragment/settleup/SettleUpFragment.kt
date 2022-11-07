@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.settleup
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.os.Handler
@@ -264,6 +265,7 @@ class SettleUpFragment : Fragment() {
                         "${getString(R.string.settled_successfully)}",
                         Snackbar.LENGTH_SHORT
                     ).show()
+                    changeStatusBar(requireActivity() as Activity)
                     playPaymentSuccessSound(requireContext())
                     gotoSplitWiseFragment()
 

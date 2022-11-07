@@ -163,6 +163,7 @@
         <item name="colorSecondaryVariant">#00227b</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
+
         <item name="android:statusBarColor">?attr/colorPrimary</item>
         <item name="android:actionBarStyle">@style/ActionBarTheme</item>
         <!--        <item name="android:windowLightStatusBar">true</item>-->

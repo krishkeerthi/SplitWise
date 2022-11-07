@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.groupdirectsettleup
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.res.ColorStateList
 import android.graphics.Typeface
@@ -22,10 +23,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentGroupDirectSettleUpBinding
-import com.example.splitwise.util.decodeSampledBitmapFromUri
-import com.example.splitwise.util.dpToPx
-import com.example.splitwise.util.getRoundedCroppedBitmap
-import com.example.splitwise.util.playPaymentSuccessSound
+import com.example.splitwise.util.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
@@ -201,6 +199,7 @@ class GroupDirectSettleUpFragment : Fragment() {
                     viewModel.settle(amount) {
                         gotoGroupSplitwiseFragment()
                     }
+                    changeStatusBar(requireActivity() as Activity)
                     playPaymentSuccessSound(requireContext())
                 }
 

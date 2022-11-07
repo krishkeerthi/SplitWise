@@ -36,17 +36,17 @@ class GroupsOverviewViewModel(context: Context) : ViewModel() {
 
     init {
         //getGroups()
-        categoryAmount[Category.TICKETS] = 0F
-        categoryAmount[Category.FEES] = 0F
-        categoryAmount[Category.FOOD] = 0F
-        categoryAmount[Category.REPAIRS] = 0F
-        categoryAmount[Category.RENT] = 0F
-        categoryAmount[Category.TRAVEL] = 0F
-        categoryAmount[Category.ENTERTAINMENT] = 0F
-        categoryAmount[Category.ESSENTIALS] = 0F
-        categoryAmount[Category.OTHERS] = 0F
-
-        getChartData()
+//        categoryAmount[Category.TICKETS] = 0F
+//        categoryAmount[Category.FEES] = 0F
+//        categoryAmount[Category.FOOD] = 0F
+//        categoryAmount[Category.REPAIRS] = 0F
+//        categoryAmount[Category.RENT] = 0F
+//        categoryAmount[Category.TRAVEL] = 0F
+//        categoryAmount[Category.ENTERTAINMENT] = 0F
+//        categoryAmount[Category.ESSENTIALS] = 0F
+//        categoryAmount[Category.OTHERS] = 0F
+//
+//        getChartData()
     }
 
     private fun getGroups() {

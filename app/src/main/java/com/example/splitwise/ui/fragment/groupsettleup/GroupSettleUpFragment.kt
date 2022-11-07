@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.groupsettleup
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.os.Bundle
@@ -184,6 +185,7 @@ class GroupSettleUpFragment : Fragment() {
 
                     gotoGroupSplitWiseFragment()
                 }
+                changeStatusBar(requireActivity() as Activity)
                 playPaymentSuccessSound(requireContext())
                 //showTick()
             }

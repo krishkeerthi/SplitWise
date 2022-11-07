@@ -1,5 +1,6 @@
 package com.example.splitwise.ui.fragment.groups
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -511,6 +512,7 @@ class GroupsFragment : Fragment() {
             }
             R.id.group_fragment_filter -> {
                 openFilterBottomSheet()
+                //changeStatusBar(requireActivity() as Activity)
                 true
             }
             else ->

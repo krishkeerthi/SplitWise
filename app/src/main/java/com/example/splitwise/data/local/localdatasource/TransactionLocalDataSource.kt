@@ -166,10 +166,11 @@ class TransactionLocalDataSource(
                 transactionDao.updateAmount(groupId, payerId, payeeId, 0f)
                 transactionDao.updateAmount(groupId, payeeId, payeeId, 0f)
             }
-        } else {
+        } else { // need to be refactored
             val result = transactionDao.getAmount(groupId, payerId, payeeId)
             if (result != null) {
-                transactionDao.updateAmount(groupId, payerId, payeeId, amount)
+                transactionDao.updateAmount(groupId, payerId, payeeId, result + amount) // previously amount alone is added,
+                // now corrected it is old result + amount
             } else {
                 transactionDao.insert(Transaction(groupId, payerId, payeeId, amount))
             }
