@@ -1,0 +1,1117 @@
+Index: app/src/main/java/com/example/splitwise/ui/fragment/groups/GroupsFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.splitwise.ui.fragment.groups\n\nimport android.app.DatePickerDialog\nimport android.content.ContentValues.TAG\nimport android.content.Context\nimport android.os.Bundle\nimport android.util.Log\nimport android.view.*\nimport android.widget.AdapterView\nimport android.widget.ListView\nimport android.widget.TextView\nimport android.widget.Toast\nimport androidx.appcompat.app.AlertDialog\nimport androidx.appcompat.app.AppCompatActivity\nimport androidx.core.view.MotionEventCompat\nimport androidx.core.view.MotionEventCompat.getActionMasked\nimport androidx.core.view.ViewCompat\nimport androidx.core.view.accessibility.AccessibilityEventCompat.getAction\nimport androidx.core.view.doOnPreDraw\nimport androidx.fragment.app.Fragment\nimport androidx.fragment.app.viewModels\nimport androidx.lifecycle.lifecycleScope\nimport androidx.metrics.performance.JankStats\nimport androidx.metrics.performance.PerformanceMetricsState\nimport androidx.navigation.findNavController\nimport androidx.navigation.fragment.FragmentNavigatorExtras\nimport androidx.navigation.fragment.findNavController\nimport androidx.recyclerview.widget.ItemTouchHelper\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport androidx.recyclerview.widget.RecyclerView\nimport androidx.recyclerview.widget.RecyclerView.ViewHolder\nimport com.example.splitwise.R\nimport com.example.splitwise.databinding.FragmentGroupsBinding\nimport com.example.splitwise.model.ExpenseMember\nimport com.example.splitwise.ui.fragment.adapter.*\nimport com.example.splitwise.ui.fragment.addamount.AddAmountDialog\nimport com.example.splitwise.util.*\nimport com.google.android.material.bottomsheet.BottomSheetBehavior\nimport com.google.android.material.bottomsheet.BottomSheetDialog\nimport com.google.android.material.button.MaterialButton\nimport com.google.android.material.snackbar.Snackbar\nimport com.google.android.material.transition.MaterialElevationScale\nimport com.google.android.material.transition.MaterialSharedAxis\nimport java.util.*\n\nclass GroupsFragment : Fragment() {\n\n    private lateinit var binding: FragmentGroupsBinding\n    private val viewModel: GroupsViewModel by viewModels {\n        GroupsViewModelFactory(requireContext())\n    }\n\n    //private lateinit var viewModel: GroupsViewModel\n    private lateinit var jankStats: JankStats\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n\n        Log.d(TAG, \"onCreate: toolbar check groups\")\n        // this animation not working fine in my device(1+9)\n//        reenterTransition = MaterialElevationScale(true).apply {\n//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n//        }\n//        exitTransition = MaterialElevationScale(false).apply {\n//            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n//        }\n\n        // placing group loading here so that it wont be called while returning from backstack\n\n        //viewModel.fetchData()\n//        binding = FragmentGroupsBinding.bind(view)\n//\n//        // Rv\n//        val groupsAdapter = GroupsAdapter({ groupId: Int, groupView: View ->\n//            goToExpenseFragment(groupId, groupView)\n//        },\n//            { groupId: Int, groupIcon: String?, groupName: String, groupView: View ->\n//                gotoGroupIconFragment(\n//                    groupId,\n//                    groupIcon,\n//                    groupName,\n//                    groupView\n//                )\n//            }\n//        )\n//\n//        binding.groupsRecyclerView.apply {\n//            layoutManager = LinearLayoutManager(requireContext()).apply {\n//            }\n//\n//            adapter = groupsAdapter\n//        }\n    }\n\n    override fun onCreateView(\n        inflater: LayoutInflater, container: ViewGroup?,\n        savedInstanceState: Bundle?\n    ): View? {\n        // Inflate the layout for this fragment\n        // Chip visibility on view created\n//        val view = inflater.inflate(R.layout.fragment_groups, container, false)\n//        binding = FragmentGroupsBinding.bind(view)\n\n        Log.d(TAG, \"onCreateView: toolbar check groups\")\n        (requireActivity() as AppCompatActivity).supportActionBar?.title =\n            getString(R.string.groups)\n        return inflater.inflate(R.layout.fragment_groups, container, false)\n    }\n\n    private val jankFrameListener = JankStats.OnFrameListener { frameData ->\n        Log.d(\n            TAG, \"JankStats: ----------------\\n \" +\n                    \"is Jank: ${frameData.isJank} \\n\" +\n                    \"frameDurationUiNanos: ${frameData.frameDurationUiNanos} \\n\" +\n                    \"frameStartNanos: ${frameData.frameStartNanos}\\n\" +\n                    \"states: ${frameData.states}\\n\" +\n                    \"Overall: ${frameData.toString()}\" +\n                    \"-------------------------\\n\"\n        )\n    }\n\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\n        super.onViewCreated(view, savedInstanceState)\n\n        Log.d(TAG, \"onViewCreated: toolbar check groups\")\n        // start enter transition only when data loaded, and just started to draw\n        postponeEnterTransition()\n        view.doOnPreDraw { startPostponedEnterTransition() }\n        //\n\n\n        viewModel.fetchData() // (latest) all changes did are not effecting in this fragment while poping out\n        //viewModel.fetchData() // fetching data in viewmodel init{} does not get called while returning from back stack\n        //viewModel = ViewModelProvider(this, GroupsViewModelFactory(requireContext()))[GroupsViewModel::class.java]\n        binding = FragmentGroupsBinding.bind(view)\n\n//        Toast.makeText(requireContext(),\n//            String.format(resources.getString(R.string.test), \"1234\"), Toast.LENGTH_SHORT).show()\n\n        // Jank stat start\n\n        val metricStateHolder = PerformanceMetricsState.getHolderForHierarchy(binding.root)\n        jankStats = JankStats.createAndTrack(requireActivity().window, jankFrameListener)\n        metricStateHolder.state?.putState(\"Fragment\", this.toString())\n        // janks stat ends\n\n\n        // Rv\n        val groupsAdapter = GroupsAdapter({ groupId: Int, groupView: View ->\n            goToExpenseFragment(groupId, groupView)\n        },\n            { groupId: Int, groupIcon: String?, groupName: String, groupView: View ->\n                gotoGroupIconFragment(\n                    groupId,\n                    groupIcon,\n                    groupName,\n                    groupView\n                )\n            }\n        )\n        groupsAdapter.updateGroups(viewModel.groups.value ?: listOf())\n//            { groupId: Int ->\n//                if (groupId == 12345 || groupId == 54321)\n//                    Toast.makeText(\n//                        requireContext(),\n//                        \"This is dummy group. Create actual group to add members\",\n//                        Toast.LENGTH_SHORT\n//                    ).show()\n//                else\n//                    goToCreateEditGroupFragment(groupId)\n//            },\n\n\n        // just to check whether view retaining or not\n//        if(viewModel.bool) {\n//            val dummyTV = view?.findViewById<TextView>(R.id.dummy_textview)\n//            dummyTV?.text = \"Hello from keerthi \"\n//            viewModel.bool = false\n//        }\n\n\n        Log.d(TAG, \"onViewCreated: onCreate: rvcomputing ${binding.groupsRecyclerView.isComputingLayout}\")\n        binding.groupsRecyclerView.apply {\n            layoutManager = LinearLayoutManager(requireContext()).apply {\n//                reverseLayout = true // it reverses but scrolled down to the last item\n//                stackFromEnd = true // corrects above problem\n                //scrollToPosition(1)\n            }\n\n            adapter = groupsAdapter\n        }\n//\n//        binding.groupsRecyclerView.setOnTouchListener(object: View.OnTouchListener{\n//            override fun onTouch(v: View?, event: MotionEvent?): Boolean {\n//                val action = MotionEventCompat.getActionMasked(event)\n//\n//                return when (action) {\n//                    MotionEvent.ACTION_DOWN -> {\n//                        Log.d(TAG, \"Action was DOWN\")\n//                        true\n//                    }\n//                    MotionEvent.ACTION_MOVE -> {\n//                        Log.d(TAG, \"Action was MOVE\")\n//                        true\n//                    }\n//                    MotionEvent.ACTION_UP -> {\n//                        Log.d(TAG, \"Action was UP\")\n//                        true\n//                    }\n//                    MotionEvent.ACTION_CANCEL -> {\n//                        Log.d(TAG, \"Action was CANCEL\")\n//                        true\n//                    }\n//                    MotionEvent.ACTION_OUTSIDE -> {\n//                        Log.d(TAG, \"Movement occurred outside bounds of current screen element\")\n//                        true\n//                    }\n//                    else -> false\n//                }\n//            }\n//\n//        })\n        // Testing swipe in groups recyclerview\n        val swipeToDeleteCallback = object : SwipeToDeleteCallback() {\n\n\n            override fun leftSwipeCallback(viewHolder: ViewHolder) {\n                viewModel.groups.value?.let {\n                    vibrate(requireContext(), true)\n                    confirmationDialog(it[viewHolder.absoluteAdapterPosition].groupId,\n                        it[viewHolder.absoluteAdapterPosition].groupName,\n                        viewHolder.absoluteAdapterPosition)\n                    //goToExpenseFragment(it[viewHolder.absoluteAdapterPosition].groupId, viewHolder.itemView)\n                }\n\n                super.leftSwipeCallback(viewHolder)\n            }\n\n            override fun rightSwipeCallback(viewHolder: ViewHolder) {\n                vibrate(requireContext(), false)\n                //Toast.makeText(requireContext(), \"right swiped test\", Toast.LENGTH_SHORT).show()\n                super.rightSwipeCallback(viewHolder)\n            }\n\n            override fun onSwiped(viewHolder: ViewHolder, direction: Int) {\n//                val swipeDirection = if (ItemTouchHelper.LEFT == direction) \"Left\"\n//                else if (ItemTouchHelper.RIGHT == direction) \"Right\"\n//                else \"Unknown\"\n//\n//                Toast.makeText(\n//                    requireContext(),\n//                    \"swiped $swipeDirection, rv position ${viewHolder.absoluteAdapterPosition}\",\n//                    Toast.LENGTH_SHORT\n//                ).show()\n\n                if(direction == ItemTouchHelper.LEFT)\n                viewModel.groups.value?.let {\n                    confirmationDialog(it[viewHolder.absoluteAdapterPosition].groupId,\n                        it[viewHolder.absoluteAdapterPosition].groupName,\n                        viewHolder.absoluteAdapterPosition)\n                    //goToExpenseFragment(it[viewHolder.absoluteAdapterPosition].groupId, viewHolder.itemView)\n                }\n                else { // reloads the swiped item\n                    viewHolder.bindingAdapter?.notifyItemChanged(viewHolder.absoluteAdapterPosition)\n                    Toast.makeText(requireContext(), \"test\", Toast.LENGTH_SHORT).show()\n                }\n            }\n\n        }\n\n\n        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)\n        itemTouchHelper.attachToRecyclerView(binding.groupsRecyclerView)\n        // test ends\n\n        // Livedata<item name=\"android:actionBarStyle\">@style/ActionBarTheme</item>a\n        viewModel.groups.observe(viewLifecycleOwner) { groups ->\n            if (groups != null && groups.isNotEmpty()) {\n                Log.d(TAG, \"onViewCreated: groups livedatax existing rv size${binding.groupsRecyclerView.adapter?.itemCount}\")\n                Log.d(TAG, \"onViewCreated: groups livedatax groups size${groups.size}\")\n                groupsAdapter.updateGroups(groups)\n                binding.groupsRecyclerView.visibility = View.VISIBLE\n                binding.emptyGroupImageView.visibility = View.GONE\n                binding.noGroupsTextView.visibility = View.GONE\n                binding.dateTextView.visibility = View.VISIBLE\n\n//                Log.d(TAG, \"onViewCreated: rv ${binding.groupsRecyclerView.hasPendingAdapterUpdates()}\")\n//                Log.d(TAG, \"onViewCreated: rv ${binding.groupsRecyclerView.invalidate()}\")\n//                Log.d(TAG, \"onViewCreated: rv ${binding.groupsRecyclerView.bringToFront()}\")\n//                binding.groupsRecyclerView.postInvalidateDelayed(10)\n//                binding.groupsRecyclerView.forceLayout()\n\n                // experimental because during orientation change filter not showing\n                updateAmountFilter()\n                updateDateFilter()\n            } else {\n                Log.d(TAG, \"onViewCreated: groups livedata null\")\n                binding.groupsRecyclerView.visibility = View.GONE\n                binding.emptyGroupImageView.visibility = View.VISIBLE\n                binding.noGroupsTextView.visibility = View.VISIBLE\n                binding.dateTextView.visibility = View.GONE\n\n                updateAmountFilter()\n                updateDateFilter()\n            }\n        }\n\n\n        binding.groupsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {\n            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {\n                super.onScrolled(recyclerView, dx, dy)\n// turned it off for now\n//                val layout = recyclerView.layoutManager as LinearLayoutManager\n//                val position = layout.findLastCompletelyVisibleItemPosition()\n//\n//                if (viewModel.groups.value != null) {\n//                    binding.dateTextView.visibility = View.VISIBLE\n//                    binding.dateTextView.text =\n//                        getDateStringResource(formatDate(viewModel.groups.value!![position].creationDate))\n//                }\n//\n//\n                // Hide fab button\n                if (dy > 0 && binding.addGroupFab.visibility == View.VISIBLE)\n                    binding.addGroupFab.hide()\n                else if (dy < 0 && binding.addGroupFab.visibility != View.VISIBLE)\n                    binding.addGroupFab.show()\n\n            }\n\n            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {\n                super.onScrollStateChanged(recyclerView, newState)\n//                binding.dateTextView.visibility = View.GONE\n            }\n        })\n\n        // Button click\n        binding.addGroupFab.setOnClickListener {\n            goToCreateEditGroupFragment()\n        }\n\n        // Menu\n        setHasOptionsMenu(true)\n        requireActivity().title = \"Groups\"\n\n        updateAmountFilter()\n\n        updateDateFilter()\n\n        // Chip closing\n        binding.dateFilterChip.setOnCloseIconClickListener {\n            Log.d(TAG, \"onViewCreated: date filter closed\")\n            viewModel.removeDateFilter()\n            it.visibility = View.GONE\n\n            if (viewModel.filterModel.amountFilterModel == null)\n                binding.horizontalView.visibility = View.GONE\n        }\n        binding.dateFilterChip.isClickable = false\n\n        binding.amountFilterChip.setOnCloseIconClickListener {\n            Log.d(TAG, \"onViewCreated: amount filter closed\")\n            viewModel.removeAmountFilter()\n            it.visibility = View.GONE\n\n            if (viewModel.filterModel.dateFilterModel == null)\n                binding.horizontalView.visibility = View.GONE\n        }\n        binding.amountFilterChip.isClickable = false\n\n\n        // ripple effect\n\n//        val attrs = IntArray(androidx.appcompat.R.attr.selectableItemBackground)\n//        val typedArray = requireActivity().obtainStyledAttributes(attrs)\n//        val bgRes = typedArray.getResourceId(0, 0)\n//        binding.root.setBackgroundResource(bgRes)\n\n    }\n\n\n\n    private fun confirmationDialog(groupId: Int, groupName: String, position: Int) {\n        val dialogBuilder = AlertDialog.Builder(requireContext()).apply {\n            setTitle(getString(R.string.delete_group))\n            setCancelable(false)\n            setMessage(String.format(getString(R.string.delete_group_message), groupName))\n\n            setPositiveButton(getString(R.string.delete)){ dialog, which ->\n                //Toast.makeText(requireContext(), \"${member.name} deleted\", Toast.LENGTH_SHORT).show()\n\n                viewModel.deleteGroup(groupId) {\n                    viewModel.fetchData()\n                    Snackbar.make(\n                        binding.root,\n                        \"$groupName ${getString(R.string.deleted)}\",\n                        Snackbar.LENGTH_SHORT\n                    ).show()\n                }\n\n                playDeleteSound(requireContext())\n            }\n\n            setNegativeButton(getString(R.string.cancel)){ dialog, which ->\n                binding.groupsRecyclerView.adapter?.notifyItemChanged(position)\n                dialog.cancel()\n            }\n        }\n\n        dialogBuilder.show()\n\n    }\n\n\n    override fun onResume() {\n        super.onResume()\n        Log.d(TAG, \"onResume: toolbar check groups\")\n        jankStats.isTrackingEnabled = true\n    }\n\n    override fun onPause() {\n        super.onPause()\n        Log.d(TAG, \"onPause: toolbar check groups\")\n        jankStats.isTrackingEnabled = false\n    }\n\n    private fun updateDateFilter() {\n        if (viewModel.filterModel.dateFilterModel != null) {\n            val dateFilterModel = viewModel.filterModel.dateFilterModel\n            binding.dateFilterChip.text = String.format(\n                getString(R.string.date_filter),\n                dateFilterModel!!.dateFilter.name.lowercase().titleCase()\n                    .translate(requireContext()),\n                formatDate(dateFilterModel!!.date, dateOnly = true)\n            )\n//                \"${dateFilterModel!!.dateFilter.name.lowercase().titleCase().translate(requireContext())} ${\n//                    formatDate(dateFilterModel!!.date, dateOnly = true)\n//                }\"\n            binding.dateFilterChip.visibility = View.VISIBLE\n            binding.horizontalView.visibility = View.VISIBLE\n        }\n    }\n\n    private fun updateAmountFilter() {\n        if (viewModel.filterModel.amountFilterModel != null) {\n            val amountFilterModel = viewModel.filterModel.amountFilterModel\n            binding.amountFilterChip.text = String.format(\n                getString(R.string.amount_filter),\n                amountFilterModel!!.amountFilter.name.lowercase().titleCase()\n                    .translate(requireContext()),\n                amountFilterModel!!.amount.roundOff()\n            )\n//                \"${\n//                amountFilterModel!!.amountFilter.name.lowercase().titleCase().translate(requireContext())\n//            } \" +\n//                    \"₹${amountFilterModel!!.amount}\"\n            binding.amountFilterChip.visibility = View.VISIBLE\n            binding.horizontalView.visibility = View.VISIBLE\n        }\n    }\n\n    private fun gotoGroupIconFragment(\n        groupId: Int,\n        groupIcon: String?,\n        groupName: String,\n        groupImageView: View\n    ) {\n        exitTransition = MaterialElevationScale(false).apply {\n            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n        }\n        reenterTransition = MaterialElevationScale(true).apply {\n            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n        }\n\n        val transitionName = getString(R.string.group_icon_transition_name)\n        val extras = FragmentNavigatorExtras(groupImageView to transitionName)\n        val action = GroupsFragmentDirections.actionGroupsFragmentToGroupIconFragment(\n            groupId,\n            groupIcon,\n            groupName,\n            true,\n            false,\n            false\n        )\n        view?.findNavController()?.navigate(action, extras)\n    }\n\n    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {\n        inflater.inflate(R.menu.groups_fragment_menu, menu)\n        super.onCreateOptionsMenu(menu, inflater)\n    }\n\n    override fun onOptionsItemSelected(item: MenuItem): Boolean {\n        return when (item.itemId) {\n            R.id.group_fragment_search -> {\n                goToSearchGroupFragment()\n                true\n            }\n            R.id.group_fragment_filter -> {\n                openFilterBottomSheet()\n                true\n            }\n            else ->\n                false\n        }\n    }\n\n    private fun getDateStringResource(formatDate: String): String {\n        return when (formatDate) {\n            //\"Today\" -> getString(R.string.today)\n            \"Yesterday\" -> getString(R.string.yesterday)\n            else -> formatDate\n        }\n    }\n\n    private fun goToSearchGroupFragment() {\n        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {\n            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n        }\n        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {\n            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n        }\n\n\n        val action = GroupsFragmentDirections.actionGroupsFragmentToSearchGroupFragment()\n        view?.findNavController()?.navigate(action)\n    }\n\n    private fun goToExpenseFragment(groupId: Int, groupView: View) {\n//        this.onDestroyView()\n        exitTransition = MaterialElevationScale(false).apply {\n            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n        }\n        reenterTransition = MaterialElevationScale(true).apply {\n            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n        }\n\n        val expensesTransitionName = getString(R.string.expenses_transition_name)\n        val extras = FragmentNavigatorExtras(groupView to expensesTransitionName)\n        val action = GroupsFragmentDirections.actionGroupsFragmentToExpensesFragment(groupId)\n        findNavController().navigate(action, extras)\n    }\n\n    // Bottom Sheet Dialogs\n    private fun openFilterBottomSheet() {\n        val filterBottomSheetDialog = BottomSheetDialog(requireContext())\n        filterBottomSheetDialog.setContentView(R.layout.group_filter_bottom_sheet)\n\n        filterBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED\n\n        val filterTitle = filterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)\n        val filterRV = filterBottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_list)\n        val clearButton = filterBottomSheetDialog.findViewById<MaterialButton>(R.id.clear_filter)\n\n        filterTitle?.text = getString(R.string.filter_by)\n\n        val filters = GroupFilter.values().toList()\n        val remainingFilters = viewModel.remainingFilters.toList()\n\n        //Adapter\n        val filterAdapter =\n            GroupFilterAdapter(filters, remainingFilters) { filter ->\n                filterClicked(filter)\n                filterBottomSheetDialog.dismiss()\n            }\n\n        filterRV?.apply {\n            Log.d(TAG, \"openCategoryBottomSheet: list adapter set\")\n            layoutManager = LinearLayoutManager(requireContext())\n            adapter = filterAdapter\n        }\n\n        // clear button visibility\n        clearButton?.visibility = if (filters.size != remainingFilters.size) {\n            View.VISIBLE\n        } else {\n            View.INVISIBLE\n        }\n\n        clearButton?.setOnClickListener {\n            viewModel.resetFilters()\n            binding.dateFilterChip.visibility = View.GONE\n            binding.amountFilterChip.visibility = View.GONE\n            binding.horizontalView.visibility = View.GONE\n            filterBottomSheetDialog.dismiss()\n            //binding.groupsRecyclerView.smoothScrollToPosition(0)\n            //openFilterBottomSheet()\n        }\n\n        filterBottomSheetDialog.show()\n    }\n\n    private fun filterClicked(filter: GroupFilter) {\n        when (filter) {\n            GroupFilter.DATE -> openDateFilterBottomSheet()\n            GroupFilter.AMOUNT -> openAmountFilterBottomSheet()\n        }\n    }\n\n//    private fun openFilterBottomSheet() {\n//        val filterBottomSheetDialog = BottomSheetDialog(requireContext())\n//        filterBottomSheetDialog.setContentView(R.layout.bottom_sheet)\n//\n//        val filterTitle = filterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)\n//        val filterList = filterBottomSheetDialog.findViewById<ListView>(R.id.bottom_sheet_list)\n//        val filters = viewModel.remainingFilters\n//\n//        filterTitle?.text = getString(R.string.filter_by)\n//\n//        //Adapter\n//        val filterAdapter =\n//            GroupFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, filters)\n//        filterList?.apply {\n//            Log.d(TAG, \"openCategoryBottomSheet: list adapter set\")\n//            adapter = filterAdapter\n//            onItemClickListener =\n//                AdapterView.OnItemClickListener { parent, view, position, id ->\n//\n//                    when (filters[position]) {\n//                        GroupFilter.AMOUNT -> {\n//                            openAmountFilterBottomSheet()\n//                        }\n//                        GroupFilter.DATE -> {\n//                            openDateFilterBottomSheet()\n//                        }\n//                    }\n//\n//                    filterBottomSheetDialog.dismiss()\n//                }\n//        }\n//\n//        filterBottomSheetDialog.show()\n//    }\n    \n    \n\n    private fun goToCreateEditGroupFragment(groupId: Int = -1) {\n        // transition\n        exitTransition = MaterialElevationScale(false).apply {\n            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n        }\n        reenterTransition = MaterialElevationScale(true).apply {\n            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()\n        }\n\n        val transitionName = getString(R.string.create_edit_group_transition_name)\n        val extras = FragmentNavigatorExtras(binding.addGroupFab to transitionName)\n\n        val action = GroupsFragmentDirections.actionGroupsFragmentToCreateEditGroupFragment(\n            groupId,\n            null,\n            null,\n            null\n        )\n        findNavController().navigate(action, extras)\n\n    }\n\n    private fun openAmountFilterBottomSheet() {\n        val amountFilterBottomSheetDialog = BottomSheetDialog(requireContext())\n        amountFilterBottomSheetDialog.setContentView(R.layout.rv_bottom_sheet)\n\n        amountFilterBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED\n\n        val amountFilterTitle =\n            amountFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)\n        val amountFilterRv =\n            amountFilterBottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_list)\n        val amountFilters = AmountFilter.values().toList()\n\n        amountFilterTitle?.text = getString(R.string.filter_by_amount)\n\n        //Adapter\n//        val filterAdapter =\n//            AmountFilterArrayAdapter(\n//                requireContext(),\n//                R.layout.icon_bottom_sheet_item,\n//                amountFilters\n//            )\n//        amountFilterList?.apply {\n//            Log.d(TAG, \"openCategoryBottomSheet: list adapter set\")\n//            adapter = filterAdapter\n//            onItemClickListener =\n//                AdapterView.OnItemClickListener { parent, view, position, id ->\n//\n//                    viewModel.selectedAmountFilter = amountFilters[position]\n//                    openAmountDialog()\n//                    amountFilterBottomSheetDialog.dismiss()\n//                }\n//        }\n\n        val filterAdapter = AmountFilterAdapter(\n            amountFilters\n        ) { filter ->\n            amountFilterClicked(filter)\n            amountFilterBottomSheetDialog.dismiss()\n        }\n\n        amountFilterRv?.apply {\n            layoutManager = LinearLayoutManager(requireContext())\n            adapter = filterAdapter\n        }\n\n        amountFilterBottomSheetDialog.show()\n    }\n\n    private fun amountFilterClicked(filter: AmountFilter) {\n        viewModel.selectedAmountFilter = filter\n        openAmountDialog()\n    }\n\n    private fun openDateFilterBottomSheet() {\n        val dateFilterBottomSheetDialog = BottomSheetDialog(requireContext())\n        dateFilterBottomSheetDialog.setContentView(R.layout.rv_bottom_sheet)\n\n        dateFilterBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED\n\n        val dateFilterTitle =\n            dateFilterBottomSheetDialog.findViewById<TextView>(R.id.bottom_sheet_title)\n        val dateFilterRv =\n            dateFilterBottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_list)\n        val dateFilters = DateFilter.values().toList()\n\n        dateFilterTitle?.text = getString(R.string.filter_by_date)\n\n        //Adapter\n//        val filterAdapter =\n//            DateFilterArrayAdapter(requireContext(), R.layout.icon_bottom_sheet_item, dateFilters)\n//        dateFilterList?.apply {\n//            Log.d(TAG, \"openCategoryBottomSheet: list adapter set\")\n//            adapter = filterAdapter\n//            onItemClickListener =\n//                AdapterView.OnItemClickListener { parent, view, position, id ->\n//\n//                    viewModel.selectedDateFilter = dateFilters[position]\n//                    openDatePicker()\n//\n//                    dateFilterBottomSheetDialog.dismiss()\n//                }\n//        }\n\n        val filterAdapter = DateFilterAdapter(\n            dateFilters\n        ) { filter ->\n            dateFilterClicked(filter)\n            dateFilterBottomSheetDialog.dismiss()\n        }\n\n        dateFilterRv?.apply {\n            layoutManager = LinearLayoutManager(requireContext())\n            adapter = filterAdapter\n        }\n        dateFilterBottomSheetDialog.show()\n    }\n\n    private fun dateFilterClicked(filter: DateFilter) {\n        viewModel.selectedDateFilter = filter\n        openDatePicker()\n    }\n\n\n    private val dateSetListener =\n        DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->  // SAM\n            //Toast.makeText(requireContext(), \"$dayOfMonth/${month+1}/$year\", Toast.LENGTH_SHORT).show()\n            // put logic\n            val calendar = Calendar.getInstance().apply {\n                set(Calendar.YEAR, year)\n                set(Calendar.MONTH, month)\n                set(Calendar.DAY_OF_MONTH, dayOfMonth)\n            }\n\n            val date = calendar.time\n\n            viewModel.applyDateFilter(date)\n            createDateFilterChip(viewModel.selectedDateFilter, date)\n        }\n\n    private fun openDatePicker() {\n        val calendar = Calendar.getInstance()\n\n        val year = calendar.get(Calendar.YEAR)\n\n        val month = calendar.get(Calendar.MONTH)\n        val day = calendar.get(Calendar.DAY_OF_MONTH)\n\n        DatePickerDialog(requireContext(), dateSetListener, year, month, day).show()\n    }\n\n    private fun openAmountDialog() {\n        AddAmountDialog(viewModel) { amountFilter, amount, dialogContext ->\n            createAmountFilterChip(amountFilter, amount, dialogContext)\n        }.show(childFragmentManager, \"Add Amount Alert Dialog\")\n//        val builder = AlertDialog.Builder(requireContext())\n//\n//        builder.setTitle(\"Enter Amount\")\n//\n//        val amountDialog = layoutInflater.inflate(R.layout.add_amount_dialog, null)\n//        builder.setView(amountDialog)\n//\n//        val amountEditText = amountDialog.findViewById<TextInputEditText>(R.id.amount_text)\n//        val amountLayout =\n//            amountDialog.findViewById<TextInputLayout>(R.id.outlined_amount_text_field)\n//\n//        builder.setPositiveButton(getString(R.string.save)) { dialogInterface, _ ->\n//            val amount = amountEditText.text.toString().toFloat()\n//\n//            viewModel.applyAmountFilter(amount)\n//            createAmountFilterChip(viewModel.selectedAmountFilter, amount)\n//        }\n//\n//        builder.setNegativeButton(getString(R.string.cancel)){ dialogInterface, _ ->\n//            dialogInterface.cancel()\n//        }\n//\n//        val dialog = builder.create()\n//        dialog.show()\n//\n//\n//        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false\n//\n//        val amountWatcher = object : TextWatcher {\n//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {\n//            }\n//\n//            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {\n//            }\n//\n//            override fun afterTextChanged(s: Editable?) {\n//                val amountText = amountEditText.text.toString()\n//\n//                val amount = if(amountText.isNotEmpty()) amountText.toInt() else 0\n//\n//\n//\n//                if (amount == 0 || amountText.isEmpty())\n//                    amountLayout.error = \"Enter Amount\"\n//                else {\n//                    amountLayout.error = null\n//                    amountLayout.isErrorEnabled = false\n//                }\n//\n//                dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled = amountText.isNotEmpty()\n//            }\n//        }\n//        amountEditText.addTextChangedListener(amountWatcher)\n\n    }\n\n    private fun createDateFilterChip(dateFilter: DateFilter, date: Date) {\n//        val chipGroup = binding.filterChipGroup\n//        val chip = Chip(requireContext()).apply {\n//            text = \"${dateFilter.name} ${formatDate(date)}\"\n//            setCloseIconResource(R.drawable.ic_baseline_close_24)\n//            isCloseIconVisible = true\n//            setOnCloseIconClickListener { View.OnClickListener {\n//                viewModel.removeDateFilter()\n//                chipGroup.removeView(it)\n//            } }\n//        }\n//\n//        chipGroup.addView(chip)\n\n        binding.dateFilterChip.text =\n            String.format(\n                getString(R.string.date_filter),\n                dateFilter.name.lowercase().titleCase().translate(requireContext()),\n                formatDate(date, dateOnly = true)\n            )\n        //    \"${dateFilter.name.lowercase().titleCase().translate(requireContext())} ${formatDate(date, dateOnly = true)}\"\n        binding.dateFilterChip.visibility = View.VISIBLE\n\n        binding.horizontalView.visibility = View.VISIBLE\n    }\n\n    private fun createAmountFilterChip(\n        amountFilter: AmountFilter,\n        amount: Float,\n        dialogContext: Context\n    ) {\n        Log.d(TAG, \"createAmountFilterChip: start\")\n        binding.amountFilterChip.text =\n            String.format(\n                dialogContext.getString(R.string.amount_filter),\n                amountFilter.name.lowercase().titleCase().translate(dialogContext),\n                amount.roundOff()\n            )\n\n        //viewModel.applyAmountFilter(amount)\n        // Error: Fragment not attached to a context, when calling getString() without requireActivity()\n        //          \"${amountFilter.name.lowercase().titleCase().translate(requireContext())} ₹${amount.roundOff()}\"\n        binding.amountFilterChip.visibility = View.VISIBLE\n\n        binding.horizontalView.visibility = View.VISIBLE\n        Log.d(TAG, \"createAmountFilterChip: end\")\n    }\n\n    override fun onDestroyView() {\n        super.onDestroyView()\n        Log.d(TAG, \"onDestroyView: toolbar check groups\")\n    }\n\n    override fun onDestroy() {\n        super.onDestroy()\n        Log.d(TAG, \"onDestroy: toolbar check groups\")\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/splitwise/ui/fragment/groups/GroupsFragment.kt b/app/src/main/java/com/example/splitwise/ui/fragment/groups/GroupsFragment.kt
+--- a/app/src/main/java/com/example/splitwise/ui/fragment/groups/GroupsFragment.kt	(revision 3d6e4631bd53e38c49e74d09d45bc1c81345cea0)
++++ b/app/src/main/java/com/example/splitwise/ui/fragment/groups/GroupsFragment.kt	(date 1667538425998)
+@@ -19,6 +19,7 @@
+ import androidx.core.view.doOnPreDraw
+ import androidx.fragment.app.Fragment
+ import androidx.fragment.app.viewModels
++import androidx.lifecycle.ViewModelProvider
+ import androidx.lifecycle.lifecycleScope
+ import androidx.metrics.performance.JankStats
+ import androidx.metrics.performance.PerformanceMetricsState
+@@ -31,7 +32,9 @@
+ import androidx.recyclerview.widget.RecyclerView.ViewHolder
+ import com.example.splitwise.R
+ import com.example.splitwise.databinding.FragmentGroupsBinding
++import com.example.splitwise.framework.SplitwiseViewModelFactory
+ import com.example.splitwise.model.ExpenseMember
++import com.example.splitwise.presentation.groups.MyGroupsViewModel
+ import com.example.splitwise.ui.fragment.adapter.*
+ import com.example.splitwise.ui.fragment.addamount.AddAmountDialog
+ import com.example.splitwise.util.*
+@@ -43,6 +46,7 @@
+ import com.google.android.material.transition.MaterialSharedAxis
+ import java.util.*
+ 
++
+ class GroupsFragment : Fragment() {
+ 
+     private lateinit var binding: FragmentGroupsBinding
+@@ -50,6 +54,8 @@
+         GroupsViewModelFactory(requireContext())
+     }
+ 
++    private lateinit var myViewModel: MyGroupsViewModel
++
+     //private lateinit var viewModel: GroupsViewModel
+     private lateinit var jankStats: JankStats
+ 
+@@ -122,6 +128,10 @@
+     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+         super.onViewCreated(view, savedInstanceState)
+ 
++        // vm initialization
++        myViewModel = ViewModelProvider(this, SplitwiseViewModelFactory)[MyGroupsViewModel::class.java]
++        myViewModel.createDummyGroup("test group", "description", Date(), 1234f, null)
++
+         Log.d(TAG, "onViewCreated: toolbar check groups")
+         // start enter transition only when data loaded, and just started to draw
+         postponeEnterTransition()
+Index: settings.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>pluginManagement {\n    repositories {\n        gradlePluginPortal()\n        google()\n        mavenCentral()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n        maven { url 'https://jitpack.io' }\n    }\n}\nrootProject.name = \"SplitWise\"\ninclude ':app'\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/settings.gradle b/settings.gradle
+--- a/settings.gradle	(revision 3d6e4631bd53e38c49e74d09d45bc1c81345cea0)
++++ b/settings.gradle	(date 1667538436394)
+@@ -15,3 +15,10 @@
+ }
+ rootProject.name = "SplitWise"
+ include ':app'
++include ':core'
++include ':core'
++include ':core'
++include ':core'
++include ':core'
++include ':core'
++include ':core'
+Index: app/src/main/java/com/example/splitwise/framework/Interactors.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/splitwise/framework/Interactors.kt b/app/src/main/java/com/example/splitwise/framework/Interactors.kt
+new file mode 100644
+--- /dev/null	(date 1667538483632)
++++ b/app/src/main/java/com/example/splitwise/framework/Interactors.kt	(date 1667538483632)
+@@ -0,0 +1,7 @@
++package com.example.splitwise.framework
++
++import com.example.androidcore.interactors.group.GroupInteractors
++
++data class Interactors(
++    val groupInteractors: GroupInteractors
++)
+Index: androidcore/src/main/java/com/example/androidcore/domain/group/GroupModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/src/main/java/com/example/androidcore/domain/group/GroupModel.kt b/androidcore/src/main/java/com/example/androidcore/domain/group/GroupModel.kt
+new file mode 100644
+--- /dev/null	(date 1667538483629)
++++ b/androidcore/src/main/java/com/example/androidcore/domain/group/GroupModel.kt	(date 1667538483629)
+@@ -0,0 +1,15 @@
++package com.example.androidcore.domain.group
++
++import android.net.Uri
++import java.util.*
++
++data class GroupModel(
++    val groupId: Int,
++    val groupName: String,
++    val description: String,
++    val creationDate: Date,
++    val lastActiveDate: Date,
++    val totalExpense: Float,
++    var groupIcon: Uri?
++)
++
+Index: core/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/.gitignore b/core/.gitignore
+new file mode 100644
+--- /dev/null	(date 1667538483631)
++++ b/core/.gitignore	(date 1667538483631)
+@@ -0,0 +1,1 @@
++/build
+\ No newline at end of file
+Index: app/src/main/java/com/example/splitwise/framework/db/group/MyGroupLocalDataSource.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/splitwise/framework/db/group/MyGroupLocalDataSource.kt b/app/src/main/java/com/example/splitwise/framework/db/group/MyGroupLocalDataSource.kt
+new file mode 100644
+--- /dev/null	(date 1667538483637)
++++ b/app/src/main/java/com/example/splitwise/framework/db/group/MyGroupLocalDataSource.kt	(date 1667538483637)
+@@ -0,0 +1,147 @@
++package com.example.splitwise.framework.db.group
++
++import android.content.Context
++import android.net.Uri
++import com.example.androidcore.data.group.MyGroupDataSource
++import com.example.androidcore.domain.group.GroupModel
++import com.example.splitwise.data.local.SplitWiseRoomDatabase
++import com.example.splitwise.data.local.dao.GroupDao
++import com.example.splitwise.data.local.dao.GroupExpenseDao
++import com.example.splitwise.data.local.dao.GroupMemberDao
++import com.example.splitwise.data.local.entity.Group
++import java.util.*
++
++class MyGroupLocalDataSource(context: Context): MyGroupDataSource {
++
++    private val database = SplitWiseRoomDatabase.getInstance(context)
++    private val groupDao: GroupDao = database.groupDao()
++    private val groupMemberDao: GroupMemberDao = database.groupMemberDao()
++    private val groupExpenseDao: GroupExpenseDao = database.groupExpenseDao()
++
++    override suspend fun createGroup(
++        name: String,
++        description: String,
++        date: Date,
++        expense: Float,
++        icon: Uri?
++    ): Int {
++        return groupDao.insert(
++            Group(
++                name,
++                description,
++                date,
++                date,
++                expense,
++                icon
++            )
++        ).toInt()
++    }
++
++    override suspend fun addGroupMember(groupId: Int, memberId: Int) {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupMembers(groupId: Int): List<Int>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun addGroupExpense(groupId: Int, expenseId: Int) {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroup(groupId: Int): GroupModel? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroups(): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroups(groupIds: List<Int>): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsStartsWith(query: String): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsContains(query: String): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun updateTotalExpense(groupId: Int, amount: Float) {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getTotalExpense(groupId: Int): Float? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsCreatedBefore(date: Date): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsCreatedAfter(date: Date): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsWithAmountBelow(amount: Float): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsWithAmountAbove(amount: Float): List<GroupModel> {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsCreatedBeforeAndAmountBelow(
++        date: Date,
++        amount: Float
++    ): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsCreatedBeforeAndAmountAbove(
++        date: Date,
++        amount: Float
++    ): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsCreatedAfterAndAmountBelow(
++        date: Date,
++        amount: Float
++    ): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun getGroupsCreatedAfterAndAmountAbove(
++        date: Date,
++        amount: Float
++    ): List<GroupModel>? {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun deleteGroup(groupId: Int) {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun updateGroupIcon(groupId: Int, uri: Uri) {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun updateGroupName(groupId: Int, groupName: String) {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun removeGroup(groupId: Int) {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun removeGroupMembers(groupId: Int) {
++        TODO("Not yet implemented")
++    }
++
++    override suspend fun removeGroupIcon(groupId: Int) {
++        TODO("Not yet implemented")
++    }
++}
+\ No newline at end of file
+Index: core/proguard-rules.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/proguard-rules.pro b/core/proguard-rules.pro
+new file mode 100644
+--- /dev/null	(date 1667538483634)
++++ b/core/proguard-rules.pro	(date 1667538483634)
+@@ -0,0 +1,21 @@
++# Add project specific ProGuard rules here.
++# You can control the set of applied configuration files using the
++# proguardFiles setting in build.gradle.
++#
++# For more details, see
++#   http://developer.android.com/guide/developing/tools/proguard.html
++
++# If your project uses WebView with JS, uncomment the following
++# and specify the fully qualified class name to the JavaScript interface
++# class:
++#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
++#   public *;
++#}
++
++# Uncomment this to preserve the line number information for
++# debugging stack traces.
++#-keepattributes SourceFile,LineNumberTable
++
++# If you keep the line number information, uncomment this to
++# hide the original source file name.
++#-renamesourcefileattribute SourceFile
+\ No newline at end of file
+Index: core/src/test/java/com/example/core/ExampleUnitTest.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/src/test/java/com/example/core/ExampleUnitTest.kt b/core/src/test/java/com/example/core/ExampleUnitTest.kt
+new file mode 100644
+--- /dev/null	(date 1667538483624)
++++ b/core/src/test/java/com/example/core/ExampleUnitTest.kt	(date 1667538483624)
+@@ -0,0 +1,17 @@
++package com.example.core
++
++import org.junit.Test
++
++import org.junit.Assert.*
++
++/**
++ * Example local unit test, which will execute on the development machine (host).
++ *
++ * See [testing documentation](http://d.android.com/tools/testing).
++ */
++class ExampleUnitTest {
++    @Test
++    fun addition_isCorrect() {
++        assertEquals(4, 2 + 2)
++    }
++}
+\ No newline at end of file
+Index: core/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/src/main/AndroidManifest.xml b/core/src/main/AndroidManifest.xml
+new file mode 100644
+--- /dev/null	(date 1667538483626)
++++ b/core/src/main/AndroidManifest.xml	(date 1667538483626)
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
++
++</manifest>
+\ No newline at end of file
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Thu Jul 14 18:26:42 IST 2022\ndistributionBase=GRADLE_USER_HOME\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-7.2-bin.zip\ndistributionPath=wrapper/dists\nzipStorePath=wrapper/dists\nzipStoreBase=GRADLE_USER_HOME\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+--- a/gradle/wrapper/gradle-wrapper.properties	(revision 3d6e4631bd53e38c49e74d09d45bc1c81345cea0)
++++ b/gradle/wrapper/gradle-wrapper.properties	(date 1667538483621)
+@@ -1,6 +1,6 @@
+ #Thu Jul 14 18:26:42 IST 2022
+ distributionBase=GRADLE_USER_HOME
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.2-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-7.4-bin.zip
+ distributionPath=wrapper/dists
+ zipStorePath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+Index: androidcore/src/main/java/com/example/androidcore/data/group/MyGroupDataSource.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/src/main/java/com/example/androidcore/data/group/MyGroupDataSource.kt b/androidcore/src/main/java/com/example/androidcore/data/group/MyGroupDataSource.kt
+new file mode 100644
+--- /dev/null	(date 1667538483618)
++++ b/androidcore/src/main/java/com/example/androidcore/data/group/MyGroupDataSource.kt	(date 1667538483618)
+@@ -0,0 +1,57 @@
++package com.example.androidcore.data.group
++
++import android.net.Uri
++import java.util.*
++import com.example.androidcore.domain.group.GroupModel
++
++interface MyGroupDataSource {
++    suspend fun createGroup(name: String, description: String, date: Date, expense: Float, icon: Uri?): Int
++
++    suspend fun addGroupMember(groupId: Int, memberId: Int)
++
++    suspend fun getGroupMembers(groupId: Int): List<Int>?
++
++    suspend fun addGroupExpense(groupId: Int, expenseId: Int)
++
++    suspend fun getGroup(groupId: Int): GroupModel?
++
++    suspend fun getGroups(): List<GroupModel>?
++
++    suspend fun getGroups(groupIds: List<Int>): List<GroupModel>?
++
++    suspend fun getGroupsStartsWith(query: String): List<GroupModel>?
++
++    suspend fun getGroupsContains(query: String): List<GroupModel>?
++
++    suspend fun updateTotalExpense(groupId: Int, amount: Float)
++
++    suspend fun getTotalExpense(groupId: Int): Float?
++
++    suspend fun getGroupsCreatedBefore(date: Date): List<GroupModel>?
++
++    suspend fun getGroupsCreatedAfter(date: Date): List<GroupModel>?
++
++    suspend fun getGroupsWithAmountBelow(amount: Float): List<GroupModel>?
++
++    suspend fun getGroupsWithAmountAbove(amount: Float): List<GroupModel>
++
++    suspend fun getGroupsCreatedBeforeAndAmountBelow(date: Date, amount: Float): List<GroupModel>?
++
++    suspend fun getGroupsCreatedBeforeAndAmountAbove(date: Date, amount: Float): List<GroupModel>?
++
++    suspend fun getGroupsCreatedAfterAndAmountBelow(date: Date, amount: Float): List<GroupModel>?
++
++    suspend fun getGroupsCreatedAfterAndAmountAbove(date: Date, amount: Float): List<GroupModel>?
++
++    suspend fun deleteGroup(groupId: Int)
++
++    suspend fun updateGroupIcon(groupId: Int, uri: Uri)
++
++    suspend fun updateGroupName(groupId: Int, groupName: String)
++
++    suspend fun removeGroup(groupId: Int)
++
++    suspend fun removeGroupMembers(groupId: Int)
++
++    suspend fun removeGroupIcon(groupId: Int)
++}
+\ No newline at end of file
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\n\n\nbuildscript {\n    repositories {\n        google()\n        mavenCentral()  // Maven Central repository\n    }\n    dependencies {\n        def nav_version = \"2.5.0\"\n        classpath(\"androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version\")\n\n        classpath 'com.google.gms:google-services:4.3.13'\n    }\n}\n\nplugins {\n    id 'com.android.application' version '7.1.2' apply false\n    id 'com.android.library' version '7.1.2' apply false\n    id 'org.jetbrains.kotlin.android' version '1.6.21' apply false\n}\n\ntask clean(type: Delete) {\n    delete rootProject.buildDir\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision 3d6e4631bd53e38c49e74d09d45bc1c81345cea0)
++++ b/build.gradle	(date 1667538483638)
+@@ -15,8 +15,8 @@
+ }
+ 
+ plugins {
+-    id 'com.android.application' version '7.1.2' apply false
+-    id 'com.android.library' version '7.1.2' apply false
++    id 'com.android.application' version '7.3.0' apply false
++    id 'com.android.library' version '7.3.0' apply false
+     id 'org.jetbrains.kotlin.android' version '1.6.21' apply false
+ }
+ 
+Index: app/src/main/java/com/example/splitwise/ui/SplitwiseApplication.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.splitwise.ui\n\nimport android.app.Application\n\nclass SplitwiseApplication: Application() {\n\n    override fun onCreate() {\n        super.onCreate()\n\n        application = this\n    }\n\n    companion object {\n        private lateinit var application: SplitwiseApplication\n\n        fun getApplication() = application\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/splitwise/ui/SplitwiseApplication.kt b/app/src/main/java/com/example/splitwise/ui/SplitwiseApplication.kt
+--- a/app/src/main/java/com/example/splitwise/ui/SplitwiseApplication.kt	(revision 3d6e4631bd53e38c49e74d09d45bc1c81345cea0)
++++ b/app/src/main/java/com/example/splitwise/ui/SplitwiseApplication.kt	(date 1667538483640)
+@@ -1,6 +1,12 @@
+ package com.example.splitwise.ui
+ 
+ import android.app.Application
++import com.example.androidcore.data.group.MyGroupRepository
++import com.example.androidcore.interactors.group.GroupInteractors
++import com.example.splitwise.data.local.localdatasource.GroupLocalDataSource
++import com.example.splitwise.framework.Interactors
++import com.example.splitwise.framework.SplitwiseViewModelFactory
++import com.example.splitwise.framework.db.group.MyGroupLocalDataSource
+ 
+ class SplitwiseApplication: Application() {
+ 
+@@ -8,6 +14,15 @@
+         super.onCreate()
+ 
+         application = this
++
++        val myGroupRepository = MyGroupRepository(MyGroupLocalDataSource(this))
++
++        SplitwiseViewModelFactory.inject(
++            this,
++            Interactors(
++                GroupInteractors(myGroupRepository)
++            )
++        )
+     }
+ 
+     companion object {
+Index: core/src/androidTest/java/com/example/core/ExampleInstrumentedTest.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/src/androidTest/java/com/example/core/ExampleInstrumentedTest.kt b/core/src/androidTest/java/com/example/core/ExampleInstrumentedTest.kt
+new file mode 100644
+--- /dev/null	(date 1667538483614)
++++ b/core/src/androidTest/java/com/example/core/ExampleInstrumentedTest.kt	(date 1667538483614)
+@@ -0,0 +1,24 @@
++package com.example.core
++
++import androidx.test.platform.app.InstrumentationRegistry
++import androidx.test.ext.junit.runners.AndroidJUnit4
++
++import org.junit.Test
++import org.junit.runner.RunWith
++
++import org.junit.Assert.*
++
++/**
++ * Instrumented test, which will execute on an Android device.
++ *
++ * See [testing documentation](http://d.android.com/tools/testing).
++ */
++@RunWith(AndroidJUnit4::class)
++class ExampleInstrumentedTest {
++    @Test
++    fun useAppContext() {
++        // Context of the app under test.
++        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
++        assertEquals("com.example.core.test", appContext.packageName)
++    }
++}
+\ No newline at end of file
+Index: androidcore/src/androidTest/java/com/example/androidcore/ExampleInstrumentedTest.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/src/androidTest/java/com/example/androidcore/ExampleInstrumentedTest.kt b/androidcore/src/androidTest/java/com/example/androidcore/ExampleInstrumentedTest.kt
+new file mode 100644
+--- /dev/null	(date 1667538483663)
++++ b/androidcore/src/androidTest/java/com/example/androidcore/ExampleInstrumentedTest.kt	(date 1667538483663)
+@@ -0,0 +1,24 @@
++package com.example.androidcore
++
++import androidx.test.platform.app.InstrumentationRegistry
++import androidx.test.ext.junit.runners.AndroidJUnit4
++
++import org.junit.Test
++import org.junit.runner.RunWith
++
++import org.junit.Assert.*
++
++/**
++ * Instrumented test, which will execute on an Android device.
++ *
++ * See [testing documentation](http://d.android.com/tools/testing).
++ */
++@RunWith(AndroidJUnit4::class)
++class ExampleInstrumentedTest {
++    @Test
++    fun useAppContext() {
++        // Context of the app under test.
++        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
++        assertEquals("com.example.androidcore.test", appContext.packageName)
++    }
++}
+\ No newline at end of file
+Index: core/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/build.gradle b/core/build.gradle
+new file mode 100644
+--- /dev/null	(date 1667538483656)
++++ b/core/build.gradle	(date 1667538483656)
+@@ -0,0 +1,45 @@
++plugins {
++    id 'com.android.library'
++    id 'kotlin-android'
++    id 'org.jetbrains.kotlin.android'
++}
++
++android {
++    namespace 'com.example.core'
++    compileSdk 33
++
++    defaultConfig {
++        minSdk 21
++        targetSdk 33
++
++        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
++        consumerProguardFiles "consumer-rules.pro"
++    }
++
++    buildTypes {
++        release {
++            minifyEnabled false
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
++        }
++    }
++    compileOptions {
++        sourceCompatibility JavaVersion.VERSION_1_8
++        targetCompatibility JavaVersion.VERSION_1_8
++    }
++    kotlinOptions {
++        jvmTarget = '1.8'
++    }
++}
++
++dependencies {
++
++    implementation 'androidx.core:core-ktx:1.7.0'
++    implementation 'androidx.appcompat:appcompat:1.5.1'
++    implementation 'com.google.android.material:material:1.7.0'
++    testImplementation 'junit:junit:4.13.2'
++    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
++    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
++
++    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
++    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
++}
+\ No newline at end of file
+Index: androidcore/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/build.gradle b/androidcore/build.gradle
+new file mode 100644
+--- /dev/null	(date 1667538483657)
++++ b/androidcore/build.gradle	(date 1667538483657)
+@@ -0,0 +1,44 @@
++plugins {
++    id 'com.android.library'
++    id 'org.jetbrains.kotlin.android'
++}
++
++android {
++    namespace 'com.example.androidcore'
++    compileSdk 32
++
++    defaultConfig {
++        minSdk 21
++        targetSdk 32
++
++        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
++        consumerProguardFiles "consumer-rules.pro"
++    }
++
++    buildTypes {
++        release {
++            minifyEnabled false
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
++        }
++    }
++    compileOptions {
++        sourceCompatibility JavaVersion.VERSION_1_8
++        targetCompatibility JavaVersion.VERSION_1_8
++    }
++    kotlinOptions {
++        jvmTarget = '1.8'
++    }
++}
++
++dependencies {
++
++    implementation 'androidx.core:core-ktx:1.7.0'
++    implementation 'androidx.appcompat:appcompat:1.5.1'
++    implementation 'com.google.android.material:material:1.7.0'
++    testImplementation 'junit:junit:4.13.2'
++    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
++    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
++
++    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
++    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
++}
+\ No newline at end of file
+Index: androidcore/src/main/java/com/example/androidcore/interactors/group/GroupInteractors.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/src/main/java/com/example/androidcore/interactors/group/GroupInteractors.kt b/androidcore/src/main/java/com/example/androidcore/interactors/group/GroupInteractors.kt
+new file mode 100644
+--- /dev/null	(date 1667538483652)
++++ b/androidcore/src/main/java/com/example/androidcore/interactors/group/GroupInteractors.kt	(date 1667538483652)
+@@ -0,0 +1,10 @@
++package com.example.androidcore.interactors.group
++
++import com.example.androidcore.data.group.MyGroupRepository
++
++class GroupInteractors(
++    myGroupRepository: MyGroupRepository
++){
++    val createGroup: CreateGroup = CreateGroup(myGroupRepository)
++
++}
+Index: androidcore/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/src/main/AndroidManifest.xml b/androidcore/src/main/AndroidManifest.xml
+new file mode 100644
+--- /dev/null	(date 1667538483654)
++++ b/androidcore/src/main/AndroidManifest.xml	(date 1667538483654)
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
++
++</manifest>
+\ No newline at end of file
+Index: androidcore/src/main/java/com/example/androidcore/interactors/group/CreateGroup.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/src/main/java/com/example/androidcore/interactors/group/CreateGroup.kt b/androidcore/src/main/java/com/example/androidcore/interactors/group/CreateGroup.kt
+new file mode 100644
+--- /dev/null	(date 1667538483662)
++++ b/androidcore/src/main/java/com/example/androidcore/interactors/group/CreateGroup.kt	(date 1667538483662)
+@@ -0,0 +1,11 @@
++package com.example.androidcore.interactors.group
++
++import android.net.Uri
++import com.example.androidcore.data.group.MyGroupRepository
++import java.util.*
++
++class CreateGroup(private val myGroupRepository: MyGroupRepository) {
++    suspend operator fun invoke(name: String, description: String, date: Date, expense: Float, icon: Uri?): Int{
++        return myGroupRepository.createGroup(name, description, date, expense, icon)
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/splitwise/framework/SplitwiseViewModelFactory.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/splitwise/framework/SplitwiseViewModelFactory.kt b/app/src/main/java/com/example/splitwise/framework/SplitwiseViewModelFactory.kt
+new file mode 100644
+--- /dev/null	(date 1667538483659)
++++ b/app/src/main/java/com/example/splitwise/framework/SplitwiseViewModelFactory.kt	(date 1667538483659)
+@@ -0,0 +1,33 @@
++package com.example.splitwise.framework
++
++import android.app.Application
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.ViewModelProvider
++import com.example.androidcore.interactors.group.GroupInteractors
++import com.example.splitwise.ui.SplitwiseApplication
++
++object SplitwiseViewModelFactory: ViewModelProvider.Factory{
++    private lateinit var application: SplitwiseApplication
++    private lateinit var interactors: Interactors
++
++    fun inject(application: SplitwiseApplication, interactors: Interactors){
++        SplitwiseViewModelFactory.application = application
++        SplitwiseViewModelFactory.interactors = interactors
++    }
++
++    override fun <T : ViewModel> create(modelClass: Class<T>): T {
++        if(SplitwiseViewModel::class.java.isAssignableFrom(modelClass)){
++            return modelClass.getConstructor(Application::class.java, Interactors::class.java)
++                .newInstance(
++                    application,
++                    interactors
++                )
++        }
++        else
++        {
++            throw java.lang.IllegalStateException("Viewmodel should extend splitwise viewmodel")
++
++        }
++    }
++
++}
+\ No newline at end of file
+Index: androidcore/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/.gitignore b/androidcore/.gitignore
+new file mode 100644
+--- /dev/null	(date 1667538483660)
++++ b/androidcore/.gitignore	(date 1667538483660)
+@@ -0,0 +1,1 @@
++/build
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\n  <component name=\"GradleSettings\">\n    <option name=\"linkedExternalProjectsSettings\">\n      <GradleProjectSettings>\n        <option name=\"testRunner\" value=\"GRADLE\" />\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"modules\">\n          <set>\n            <option value=\"$PROJECT_DIR$\" />\n            <option value=\"$PROJECT_DIR$/app\" />\n          </set>\n        </option>\n      </GradleProjectSettings>\n    </option>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision 3d6e4631bd53e38c49e74d09d45bc1c81345cea0)
++++ b/.idea/gradle.xml	(date 1667538483655)
+@@ -10,6 +10,7 @@
+         <option name="modules">
+           <set>
+             <option value="$PROJECT_DIR$" />
++            <option value="$PROJECT_DIR$/androidcore" />
+             <option value="$PROJECT_DIR$/app" />
+           </set>
+         </option>
+Index: androidcore/src/test/java/com/example/androidcore/ExampleUnitTest.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/src/test/java/com/example/androidcore/ExampleUnitTest.kt b/androidcore/src/test/java/com/example/androidcore/ExampleUnitTest.kt
+new file mode 100644
+--- /dev/null	(date 1667538483651)
++++ b/androidcore/src/test/java/com/example/androidcore/ExampleUnitTest.kt	(date 1667538483651)
+@@ -0,0 +1,17 @@
++package com.example.androidcore
++
++import org.junit.Test
++
++import org.junit.Assert.*
++
++/**
++ * Example local unit test, which will execute on the development machine (host).
++ *
++ * See [testing documentation](http://d.android.com/tools/testing).
++ */
++class ExampleUnitTest {
++    @Test
++    fun addition_isCorrect() {
++        assertEquals(4, 2 + 2)
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/splitwise/framework/SplitwiseViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/splitwise/framework/SplitwiseViewModel.kt b/app/src/main/java/com/example/splitwise/framework/SplitwiseViewModel.kt
+new file mode 100644
+--- /dev/null	(date 1667538483643)
++++ b/app/src/main/java/com/example/splitwise/framework/SplitwiseViewModel.kt	(date 1667538483643)
+@@ -0,0 +1,11 @@
++package com.example.splitwise.framework
++
++import android.app.Application
++import androidx.lifecycle.AndroidViewModel
++import com.example.androidcore.interactors.group.GroupInteractors
++import com.example.splitwise.ui.SplitwiseApplication
++
++open class SplitwiseViewModel(application: Application, protected val interactors: Interactors)
++    :AndroidViewModel(application){
++
++}
+\ No newline at end of file
+Index: androidcore/proguard-rules.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/proguard-rules.pro b/androidcore/proguard-rules.pro
+new file mode 100644
+--- /dev/null	(date 1667538483645)
++++ b/androidcore/proguard-rules.pro	(date 1667538483645)
+@@ -0,0 +1,21 @@
++# Add project specific ProGuard rules here.
++# You can control the set of applied configuration files using the
++# proguardFiles setting in build.gradle.
++#
++# For more details, see
++#   http://developer.android.com/guide/developing/tools/proguard.html
++
++# If your project uses WebView with JS, uncomment the following
++# and specify the fully qualified class name to the JavaScript interface
++# class:
++#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
++#   public *;
++#}
++
++# Uncomment this to preserve the line number information for
++# debugging stack traces.
++#-keepattributes SourceFile,LineNumberTable
++
++# If you keep the line number information, uncomment this to
++# hide the original source file name.
++#-renamesourcefileattribute SourceFile
+\ No newline at end of file
+Index: androidcore/src/main/java/com/example/androidcore/util/HelperFunctions.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/src/main/java/com/example/androidcore/util/HelperFunctions.kt b/androidcore/src/main/java/com/example/androidcore/util/HelperFunctions.kt
+new file mode 100644
+--- /dev/null	(date 1667538483642)
++++ b/androidcore/src/main/java/com/example/androidcore/util/HelperFunctions.kt	(date 1667538483642)
+@@ -0,0 +1,7 @@
++package com.example.androidcore.util
++
++import java.util.*
++
++fun String.titleCase(): String {
++    return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/splitwise/presentation/groups/MyGroupsViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/splitwise/presentation/groups/MyGroupsViewModel.kt b/app/src/main/java/com/example/splitwise/presentation/groups/MyGroupsViewModel.kt
+new file mode 100644
+--- /dev/null	(date 1667538483646)
++++ b/app/src/main/java/com/example/splitwise/presentation/groups/MyGroupsViewModel.kt	(date 1667538483646)
+@@ -0,0 +1,24 @@
++package com.example.splitwise.presentation.groups
++
++import android.app.Application
++import android.net.Uri
++import androidx.lifecycle.viewModelScope
++import com.example.splitwise.framework.Interactors
++import com.example.splitwise.framework.SplitwiseViewModel
++import com.example.splitwise.ui.SplitwiseApplication
++import kotlinx.coroutines.launch
++import java.util.*
++
++class MyGroupsViewModel(application: Application, interactors: Interactors)
++    : SplitwiseViewModel(application, interactors) {
++
++        fun createDummyGroup(name: String,
++                             description: String,
++                             date: Date,
++                             expense: Float,
++                             icon: Uri?){
++            viewModelScope.launch {
++                interactors.groupInteractors.createGroup(name, description, date, expense, icon)
++            }
++        }
++}
+\ No newline at end of file
+Index: androidcore/src/main/java/com/example/androidcore/data/group/MyGroupRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/androidcore/src/main/java/com/example/androidcore/data/group/MyGroupRepository.kt b/androidcore/src/main/java/com/example/androidcore/data/group/MyGroupRepository.kt
+new file mode 100644
+--- /dev/null	(date 1667538483649)
++++ b/androidcore/src/main/java/com/example/androidcore/data/group/MyGroupRepository.kt	(date 1667538483649)
+@@ -0,0 +1,145 @@
++package com.example.androidcore.data.group
++
++import android.net.Uri
++import com.example.androidcore.domain.group.GroupModel
++import com.example.androidcore.util.titleCase
++import kotlinx.coroutines.CoroutineScope
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.launch
++import kotlinx.coroutines.withContext
++import java.util.*
++
++class MyGroupRepository(private val dataSource: MyGroupDataSource) {
++
++    suspend fun createGroup(name: String, description: String, date: Date, expense: Float, icon: Uri?): Int{
++        return withContext(Dispatchers.IO){dataSource.createGroup(name.titleCase(), description.titleCase(), date, expense, icon)}
++    }
++
++    suspend fun addGroupMember(groupId: Int, memberId: Int){
++        dataSource.addGroupMember(groupId, memberId)
++    }
++
++    suspend fun addGroupExpense(groupId: Int, expenseId: Int){
++        dataSource.addGroupExpense(groupId, expenseId)
++    }
++
++    suspend fun getGroup(groupId: Int): GroupModel?{
++        return withContext(Dispatchers.IO){dataSource.getGroup(groupId)}
++    }
++
++    suspend fun getGroups(): List<GroupModel>?{
++        return withContext(Dispatchers.IO){dataSource.getGroups()}
++    }
++
++    suspend fun getGroups(groupIds: List<Int>): List<GroupModel>?{
++        return withContext(Dispatchers.IO){dataSource.getGroups(groupIds)}
++    }
++
++    suspend fun getGroupsStartsWith(query: String): List<GroupModel>?{
++        return if(query == "") null else withContext(Dispatchers.IO){dataSource.getGroupsStartsWith(query)}
++    }
++
++    suspend fun getGroupMembers(groupId: Int): List<Int>?{
++        return withContext(Dispatchers.IO){dataSource.getGroupMembers(groupId)}
++    }
++
++    suspend fun getTotalExpense(groupId: Int): Float?{
++        return withContext(Dispatchers.IO){dataSource.getTotalExpense(groupId)}
++    }
++
++    suspend fun updateTotalExpense(groupId: Int, amount: Float){
++        CoroutineScope(Dispatchers.IO).launch{
++            getTotalExpense(groupId)?.let {
++                dataSource.updateTotalExpense(groupId, it + amount)
++            }
++        }.join()
++    }
++
++    suspend fun reduceTotalExpense(groupId: Int, amount: Float){
++        withContext(Dispatchers.IO){
++            getTotalExpense(groupId)?.let {
++                dataSource.updateTotalExpense(groupId,  amount)
++            }
++        }
++    }
++
++    suspend fun getGroupsCreatedBefore(date: Date): List<GroupModel>? = withContext(Dispatchers.IO){
++        dataSource.getGroupsCreatedBefore(date)
++    }
++
++    suspend fun getGroupsCreatedAfter(date: Date): List<GroupModel>? = withContext(Dispatchers.IO){
++        dataSource.getGroupsCreatedAfter(date)
++    }
++
++    suspend fun getGroupsWithAmountBelow(amount: Float): List<GroupModel>? = withContext(Dispatchers.IO){
++        dataSource.getGroupsWithAmountBelow(amount)
++    }
++
++    suspend fun getGroupsWithAmountAbove(amount: Float): List<GroupModel> = withContext(Dispatchers.IO){
++        dataSource.getGroupsWithAmountAbove(amount)
++    }
++
++    suspend fun getGroupsCreatedBeforeAndAmountBelow(date: Date, amount: Float): List<GroupModel>? = withContext(
++        Dispatchers.IO){
++        dataSource.getGroupsCreatedBeforeAndAmountBelow(date, amount)
++    }
++
++    suspend fun getGroupsCreatedBeforeAndAmountAbove(date: Date, amount: Float): List<GroupModel>? = withContext(
++        Dispatchers.IO){
++        dataSource.getGroupsCreatedBeforeAndAmountAbove(date, amount)
++    }
++
++    suspend fun getGroupsCreatedAfterAndAmountBelow(date: Date, amount: Float): List<GroupModel>? = withContext(
++        Dispatchers.IO){
++        dataSource.getGroupsCreatedAfterAndAmountBelow(date, amount)
++    }
++
++    suspend fun getGroupsCreatedAfterAndAmountAbove(date: Date, amount: Float): List<GroupModel>? = withContext(
++        Dispatchers.IO){
++        dataSource.getGroupsCreatedAfterAndAmountAbove(date, amount)
++    }
++
++    suspend fun updateLastActiveDate(date: Date){
++
++    }
++
++    suspend fun deleteGroup(groupId: Int) {
++        withContext(Dispatchers.IO){
++            dataSource.deleteGroup(groupId)
++        }
++    }
++
++    suspend fun getGroupsContain(query: String): List<GroupModel>? {
++        return if(query == "") null else withContext(Dispatchers.IO){dataSource.getGroupsContains(query)}
++    }
++
++    suspend fun updateGroupIcon(groupId: Int, uri: Uri) {
++        withContext(Dispatchers.IO){
++            dataSource.updateGroupIcon(groupId, uri)
++        }
++    }
++
++    suspend fun updateGroupName(groupId: Int, groupName: String) {
++        withContext(Dispatchers.IO){
++            dataSource.updateGroupName(groupId, groupName)
++        }
++    }
++
++    suspend fun removeGroup(groupId: Int) {
++        withContext(Dispatchers.IO){
++            dataSource.removeGroup(groupId)
++        }
++    }
++
++    suspend fun removeGroupMembers(groupId: Int) {
++        withContext(Dispatchers.IO){
++            dataSource.removeGroupMembers(groupId)
++        }
++    }
++
++    suspend fun removeGroupIcon(groupId: Int) {
++        withContext(Dispatchers.IO){
++            dataSource.removeGroupIcon(groupId)
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/core/consumer-rules.pro b/core/consumer-rules.pro
+new file mode 100644
+diff --git a/androidcore/consumer-rules.pro b/androidcore/consumer-rules.pro
+new file mode 100644

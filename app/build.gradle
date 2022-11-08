@@ -77,7 +77,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
 
-
     // jank stat library to identify janks
     implementation "androidx.metrics:metrics-performance:1.0.0-alpha03"
 

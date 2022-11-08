@@ -1,0 +1,15 @@
+Index: settings.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>pluginManagement {\n    repositories {\n        gradlePluginPortal()\n        google()\n        mavenCentral()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n        maven { url 'https://jitpack.io' }\n    }\n}\nrootProject.name = \"SplitWise\"\ninclude ':app'\ninclude ':core'\ninclude ':core'\ninclude ':core'\ninclude ':core'\ninclude ':core'\ninclude ':core'\ninclude ':core'\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/settings.gradle b/settings.gradle
+--- a/settings.gradle	
++++ b/settings.gradle	
+@@ -22,3 +22,4 @@
+ include ':core'
+ include ':core'
+ include ':core'
++include ':core'

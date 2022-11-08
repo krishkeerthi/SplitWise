@@ -10,14 +10,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -25,19 +21,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.transition.Slide
-import androidx.transition.TransitionManager
 import com.example.splitwise.R
 import com.example.splitwise.databinding.ActivityMainBinding
 import com.example.splitwise.receiver.ConfigurationChangeReceiver
 import com.example.splitwise.ui.activity.register.RegisterActivity
-import com.example.splitwise.ui.fragment.groups.GroupsFragment
-import com.example.splitwise.ui.fragment.groupsoverview.GroupsOverviewFragment
-import com.example.splitwise.ui.fragment.settings.SettingsFragment
-import com.example.splitwise.ui.fragment.splitwise.SplitWiseFragment
-import com.example.splitwise.util.decodeSampledBitmapFromUri
-import com.example.splitwise.util.dpToPx
-import com.example.splitwise.util.isDarkThemeOn
 import java.util.*
 
 
@@ -162,7 +149,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     private fun setMode(theme: String?) {
-        when(theme) {
+        when (theme) {
             "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             "System" -> {
@@ -176,28 +163,26 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
     }
 
-    private fun setFont(font: String, shapeTheme: Int){
+    private fun setFont(font: String, shapeTheme: Int) {
         var newTheme: Int
-        if(shapeTheme == R.style.Theme_SplitWise){
-            newTheme = if(font == "Caligraphy")
+        if (shapeTheme == R.style.Theme_SplitWise) {
+            newTheme = if (font == "Caligraphy")
                 R.style.Theme_SplitWise_Caligraphy
-            else if(font == "Brussels")
+            else if (font == "Brussels")
                 R.style.Theme_SplitWise_Brussels
             else
                 R.style.Theme_SplitWise
-        }
-        else if(shapeTheme == R.style.Theme_SplitWise_Boxed){
-            newTheme = if(font == "Caligraphy")
+        } else if (shapeTheme == R.style.Theme_SplitWise_Boxed) {
+            newTheme = if (font == "Caligraphy")
                 R.style.Theme_SplitWise_Boxed_Caligraphy
-            else if(font == "Brussels")
+            else if (font == "Brussels")
                 R.style.Theme_SplitWise_Boxed_Brussels
             else
                 R.style.Theme_SplitWise_Boxed
-        }
-        else{
-            newTheme = if(font == "Caligraphy")
+        } else {
+            newTheme = if (font == "Caligraphy")
                 R.style.Theme_SplitWise_Caligraphy
-            else if(font == "Brussels")
+            else if (font == "Brussels")
                 R.style.Theme_SplitWise_Brussels
             else
                 R.style.Theme_SplitWise
@@ -206,7 +191,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     private fun changeLanguage(language: String) {
-        val languageCode = when(language){
+        val languageCode = when (language) {
             "English" -> "en"
             "Tamil" -> "ta"
             "Hindi" -> "hi"
@@ -233,17 +218,19 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
 
-        override fun onDestinationChanged(
+    override fun onDestinationChanged(
         controller: NavController,
         destination: NavDestination,
         arguments: Bundle?
     ) {
 
-            if(binding.bottomNavigation.visibility == View.VISIBLE)
+        if (binding.bottomNavigation.visibility == View.VISIBLE)
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.bottomNavigation.visibility =
                     if (destination.id in setOf(
-                            R.id.groupsFragment, R.id.splitWiseFragment, R.id.groupsOverviewFragment,
+                            R.id.groupsFragment,
+                            R.id.splitWiseFragment,
+                            R.id.groupsOverviewFragment,
                             R.id.settingsFragment
                         )
                     )
@@ -252,24 +239,24 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                         View.GONE
                     }
             }, resources.getInteger(R.integer.reply_motion_duration_small).toLong())
-            else
-                binding.bottomNavigation.visibility =
-                    if (destination.id in setOf(
-                            R.id.groupsFragment, R.id.splitWiseFragment, R.id.groupsOverviewFragment,
-                            R.id.settingsFragment
-                        )
+        else
+            binding.bottomNavigation.visibility =
+                if (destination.id in setOf(
+                        R.id.groupsFragment, R.id.splitWiseFragment, R.id.groupsOverviewFragment,
+                        R.id.settingsFragment
                     )
-                        View.VISIBLE
-                    else {
-                        View.GONE
-                    }
+                )
+                    View.VISIBLE
+                else {
+                    View.GONE
+                }
 
-            // View.INVISIBLE not good
+        // View.INVISIBLE not good
     }
 
 //  override fun onBackPressed() {
 
-        //val fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container)
+    //val fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container)
 
 //        val currentFragment = navController.currentDestination?.id
 //
@@ -296,7 +283,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 //                super.onBackPressed()
 //        }
 
- //   }
+    //   }
 
     companion object {
         const val KEY = "com.example.splitwise.sharedprefkey"

@@ -1,0 +1,18 @@
+Index: app/src/main/java/com/example/splitwise/util/NotificationUtils.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.splitwise.util\n\nimport android.app.NotificationChannel\nimport android.app.NotificationManager\nimport android.app.PendingIntent\nimport android.app.job.JobInfo.PRIORITY_HIGH\nimport android.content.Context\nimport android.content.Intent\nimport android.graphics.Color\nimport android.os.Build\nimport androidx.core.app.NotificationCompat\nimport com.example.splitwise.R\nimport com.example.splitwise.ui.activity.main.MainActivity\n\nprivate val NOTIFICAITON_ID = 0\nprivate val NOTIFICATION_CHANNEL = \"splitwise_channel\"\nprivate val NOTIFICATION_CHANNEL_NAME =\"Splitwise channel\"\n\nfun NotificationManager.sendNotification(message: String, context: Context){\n\n    val contentIntent = Intent(context, MainActivity::class.java)\n    val contentPendingIntent = PendingIntent.getActivity(\n        context,\n        NOTIFICAITON_ID,\n        contentIntent,\n        PendingIntent.FLAG_IMMUTABLE\n    )\n\n    val builder = NotificationCompat.Builder(\n        context,\n        NOTIFICATION_CHANNEL\n    ).apply {\n        setSmallIcon(R.drawable.splitwiseicon)\n        setContentTitle(\"Neenga siricha azhaga irukinga\uD83D\uDE09\")\n        setContentText(\"Apdiye selava panninga na inum azhaga irupinga\uD83D\uDE0A\")\n\n        setContentIntent(contentPendingIntent)\n        priority = NotificationCompat.PRIORITY_HIGH\n\n        setAutoCancel(true)\n    }\n\n    notify(NOTIFICAITON_ID, builder.build())\n}\n\nfun NotificationManager.cancelNotifications(){\n    cancelAll()\n}\n\nfun createNotificationChannel(context: Context){\n    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){\n        val channel = NotificationChannel(\n            NOTIFICATION_CHANNEL,\n            NOTIFICATION_CHANNEL_NAME,\n            NotificationManager.IMPORTANCE_HIGH\n        )\n\n        channel.apply {\n            setShowBadge(false)\n            enableLights(true)\n            lightColor = Color.RED\n            enableVibration(true)\n            description =\"Splitwise notification channel\"\n\n        }\n\n        val notificationManager = context.getSystemService(\n            NotificationManager::class.java\n        )\n\n        notificationManager.createNotificationChannel(channel)\n    }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/splitwise/util/NotificationUtils.kt b/app/src/main/java/com/example/splitwise/util/NotificationUtils.kt
+--- a/app/src/main/java/com/example/splitwise/util/NotificationUtils.kt	
++++ b/app/src/main/java/com/example/splitwise/util/NotificationUtils.kt	
+@@ -61,7 +61,6 @@
+             lightColor = Color.RED
+             enableVibration(true)
+             description ="Splitwise notification channel"
+-
+         }
+ 
+         val notificationManager = context.getSystemService(
