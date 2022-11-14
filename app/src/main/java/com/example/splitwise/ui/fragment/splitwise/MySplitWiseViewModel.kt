@@ -1,29 +1,26 @@
 package com.example.splitwise.ui.fragment.splitwise
 
-import android.content.ContentValues.TAG
-import android.content.Context
+import android.app.Application
+import android.content.ContentValues
 import android.util.Log
 import android.view.View
-import androidx.lifecycle.*
-import com.example.splitwise.data.local.SplitWiseRoomDatabase
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.splitwise.data.local.entity.Group
-import com.example.splitwise.data.repository.GroupRepository
-import com.example.splitwise.data.repository.MemberRepository
-import com.example.splitwise.data.repository.TransactionRepository
+import com.example.splitwise.framework.Interactors
+import com.example.splitwise.framework.SplitwiseViewModel
 import com.example.splitwise.model.MemberPaymentStats
 import com.example.splitwise.model.MemberPaymentStatsDetail
 import com.example.splitwise.util.getGroupIds
+import com.example.splitwise.util.trimGroupModelsToGroups
+import com.example.splitwise.util.trimMemberStatsModelToMemberStats
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
-class SplitWiseViewModel(context: Context, selectedGroups: Array<Group>?) : ViewModel() {
-
-    private val database = SplitWiseRoomDatabase.getInstance(context)
-    private val memberRepository = MemberRepository(database)
-    private val transactionRepository = TransactionRepository(database)
-    private val groupRepository = GroupRepository(database)
+class MySplitWiseViewModel(application: Application, interactors: Interactors):
+    SplitwiseViewModel(application, interactors){
 
     private val _membersPaymentStatsDetail = MutableLiveData<List<MemberPaymentStatsDetail>?>()
 
@@ -48,16 +45,23 @@ class SplitWiseViewModel(context: Context, selectedGroups: Array<Group>?) : View
 
     var removedGroupIds = mutableSetOf<Int>()
 
+    var selectedGroups: Array<Group>? = null // will be changed later
+    var selectedGroupsSet = false
+
     init {
 
+
+    }
+
+    fun loadGroups(){
         if(selectedGroups != null){
-            Log.d(TAG, ": ")
-            val groupsList = selectedGroups.toMutableList()
+            Log.d(ContentValues.TAG, ": ")
+            val groupsList = selectedGroups!!.toMutableList() // manually not null asserted
 
             // preparing selected group names
             if (groupsList.isNotEmpty()) {
                 var groupsText = ""
-                for (group in selectedGroups) {
+                for (group in selectedGroups!!) { // manually not null asserted
                     groupsText += "● ${group.groupName} "
                 }
 
@@ -70,43 +74,43 @@ class SplitWiseViewModel(context: Context, selectedGroups: Array<Group>?) : View
         else{
             fetchData()
         }
-
     }
 
     fun loadGroupName() {
         viewModelScope.launch {
-            _groupName.value = groupRepository.getGroup(groupId)?.groupName
+            _groupName.value = interactors.groupInteractors.getGroup(groupId)?.groupName
         }
     }
 
     fun fetchData(groupIds: List<Int> = listOf()) {
-        Log.d(TAG, "fetchData: ${groupIds.size}")
+        Log.d(ContentValues.TAG, "fetchData: ${groupIds.size}")
         viewModelScope.launch {
-            val memberStats = if(groupIds.isEmpty()) transactionRepository.transactionStats()
-            else transactionRepository.transactionStats(groupIds)
+            val memberStatsModels = if(groupIds.isEmpty()) interactors.transactionInteractors.transactionStats()
+            else interactors.transactionInteractors.transactionStatsInGroups(groupIds)
 
-            _membersPaymentStatsDetail.value = memberStatsToDetail(memberStats)
-            Log.d(TAG, "getGroupMembersPaymentStats: $memberStats")
-            _groups.value = groupRepository.getGroups()
+
+            _membersPaymentStatsDetail.value = memberStatsToDetail(memberStatsModels.trimMemberStatsModelToMemberStats())
+            //Log.d(ContentValues.TAG, "getGroupMembersPaymentStats: $memberStats")
+            _groups.value = interactors.groupInteractors.getGroups().trimGroupModelsToGroups()
         }
     }
 
     fun getGroupMembersPaymentStats(groupId: Int? = null) {
         viewModelScope.launch {
-            val memberStats = if (groupId != null)
-                transactionRepository.transactionStats(groupId)
+            val memberStatsModels = if (groupId != null)
+                interactors.transactionInteractors.transactionStatsInGroup(groupId)
             else
-                transactionRepository.transactionStats()
-            Log.d(TAG, "getGroupMembersPaymentStats: ${memberStats}")
-            _membersPaymentStatsDetail.value = memberStatsToDetail(memberStats)
+                interactors.transactionInteractors.transactionStats()
+            //Log.d(ContentValues.TAG, "getGroupMembersPaymentStats: ${memberStats}")
+            _membersPaymentStatsDetail.value = memberStatsToDetail(memberStatsModels.trimMemberStatsModelToMemberStats())
         }
     }
 
     fun getGroupMembersPaymentStats(groupIds: List<Int>) {
         viewModelScope.launch {
-            val memberStats = transactionRepository.transactionStats(groupIds)
-            Log.d(TAG, "getGroupMembersPaymentStats: ${memberStats}")
-            _membersPaymentStatsDetail.value = memberStatsToDetail(memberStats)
+            val memberStatsModels = interactors.transactionInteractors.transactionStatsInGroups(groupIds)
+            //Log.d(ContentValues.TAG, "getGroupMembersPaymentStats: ${memberStats}")
+            _membersPaymentStatsDetail.value = memberStatsToDetail(memberStatsModels.trimMemberStatsModelToMemberStats())
         }
     }
 
@@ -116,7 +120,7 @@ class SplitWiseViewModel(context: Context, selectedGroups: Array<Group>?) : View
                 val memberPaymentStatsDetails = mutableListOf<MemberPaymentStatsDetail>()
 
                 for (i in memberStats) {
-                    memberRepository.getMember(i.memberId)?.let {
+                    interactors.memberInteractors.getMember(i.memberId)?.let {
                         memberPaymentStatsDetails.add(
                             MemberPaymentStatsDetail(
                                 i.memberId,
@@ -133,13 +137,6 @@ class SplitWiseViewModel(context: Context, selectedGroups: Array<Group>?) : View
                 null
         }
     }
-}
 
-class SplitWiseViewModelFactory (private val context: Context, private val selectedGroups: Array<Group>?) :
-    ViewModelProvider.Factory {
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SplitWiseViewModel(context, selectedGroups) as T
-    }
 }

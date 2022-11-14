@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "SplitWise"
 include ':app'
 include ':core'
-
+include ':androidcore'

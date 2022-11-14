@@ -7,4 +7,7 @@ class GroupInteractors(
 ){
     val createGroup: CreateGroup = CreateGroup(myGroupRepository)
 
+    val getGroup: GetGroup = GetGroup(myGroupRepository)
+
+    val getGroups: GetGroups = GetGroups(myGroupRepository)
 }

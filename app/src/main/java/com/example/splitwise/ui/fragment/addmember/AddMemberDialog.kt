@@ -161,7 +161,6 @@ class AddMemberDialog(
         Log.d(TAG, "selectContact: select contact empty")
         selectContactLauncher.launch(intent)
     }
-
     private val selectContactLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {

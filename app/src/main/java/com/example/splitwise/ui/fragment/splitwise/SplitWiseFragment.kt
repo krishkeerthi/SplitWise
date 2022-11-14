@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -23,6 +24,7 @@ import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.databinding.FragmentSplitWiseBinding
+import com.example.splitwise.framework.SplitwiseViewModelFactory
 import com.example.splitwise.ui.fragment.adapter.GroupArrayAdapter
 import com.example.splitwise.ui.fragment.adapter.SplitWiseAdapter
 import com.example.splitwise.util.getGroupIds
@@ -43,9 +45,15 @@ class SplitWiseFragment : Fragment() {
     private val args: SplitWiseFragmentArgs by navArgs()
     private var selectedGroups = mutableListOf<Group>()
 
-    private val viewModel: SplitWiseViewModel by viewModels {
-        SplitWiseViewModelFactory(requireContext(), args.selectedGroups)
-    }
+//    private val viewModel: SplitWiseViewModel by viewModels {
+//        SplitWiseViewModelFactory(requireContext(), args.selectedGroups)
+//    }
+
+//    private val viewModel: MySplitWiseViewModel by viewModels{
+//        SplitwiseViewModelFactory
+//    }
+
+    private lateinit var viewModel: MySplitWiseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,11 +74,23 @@ class SplitWiseFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.splitwise)
+
+        viewModel = ViewModelProvider(this, SplitwiseViewModelFactory)[MySplitWiseViewModel::class.java]
+
         return inflater.inflate(R.layout.fragment_split_wise, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+//        if(!viewModel.selectedGroupsSet){
+//            viewModel.selectedGroupsSet = true
+//            viewModel.selectedGroups = args.selectedGroups
+//        }
+
+        viewModel.selectedGroups = args.selectedGroups
+        viewModel.loadGroups()
+
 
         // start enter transition only when data loaded, and just started to draw
         postponeEnterTransition()

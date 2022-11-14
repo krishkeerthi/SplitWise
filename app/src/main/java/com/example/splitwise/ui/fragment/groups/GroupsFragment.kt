@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.splitwise.R
 import com.example.splitwise.databinding.FragmentGroupsBinding
+import com.example.splitwise.framework.SplitwiseViewModelFactory
 //import com.example.splitwise.framework.SplitwiseViewModelFactory
 import com.example.splitwise.model.ExpenseMember
 //import com.example.splitwise.presentation.groups.MyGroupsViewModel
@@ -55,7 +56,7 @@ class GroupsFragment : Fragment() {
         GroupsViewModelFactory(requireContext())
     }
 
-    //private lateinit var myViewModel: MyGroupsViewModel
+    private lateinit var myViewModel: MyGroupsViewModel
 
     //private lateinit var viewModel: GroupsViewModel
     private lateinit var jankStats: JankStats
@@ -130,8 +131,9 @@ class GroupsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // vm initialization
-      //  myViewModel = ViewModelProvider(this, SplitwiseViewModelFactory)[MyGroupsViewModel::class.java]
-     //   myViewModel.createDummyGroup("test group", "description", Date(), 1234f, null)
+        myViewModel = ViewModelProvider(this, SplitwiseViewModelFactory)[MyGroupsViewModel::class.java]
+
+        //myViewModel.createDummyGroup("test group", "description", Date(), 1234f, null)
 
         Log.d(TAG, "onViewCreated: toolbar check groups")
         // start enter transition only when data loaded, and just started to draw

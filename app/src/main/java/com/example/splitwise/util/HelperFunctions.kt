@@ -23,10 +23,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
+import com.example.androidcore.domain.group.GroupModel
+import com.example.androidcore.domain.transaction.MemberPaymentStatsModel
 import com.example.splitwise.R
 import com.example.splitwise.data.local.entity.Group
 import com.example.splitwise.data.local.entity.Member
 import com.example.splitwise.model.ExpenseMember
+import com.example.splitwise.model.MemberPaymentStats
 import com.example.splitwise.ui.activity.main.MainActivity
 import com.google.android.material.internal.ContextUtils.getActivity
 import java.net.URL
@@ -487,8 +490,9 @@ fun vibrate(context: Context, delete: Boolean){
 // Vibrate for 500 milliseconds
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // for delete single vibration
-        if(delete)
-        v!!.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+        if(delete) {
+            v!!.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+        }
         else
         v!!.vibrate(VibrationEffect.createWaveform(longArrayOf(1, 2, 30, 50, 80), -1))
         // for no action double vibration
@@ -527,6 +531,42 @@ fun changeStatusBar(activity: Activity){
         }, 400
     )
 
+}
+
+fun List<MemberPaymentStatsModel>?.trimMemberStatsModelToMemberStats(): List<MemberPaymentStats>?{
+    val memberStats : MutableList<MemberPaymentStats> = mutableListOf()
+
+    return if(this != null){
+        for(item in this){
+            memberStats.add(
+                MemberPaymentStats(
+                    item.memberId, item.amountLend, item.amountOwed
+                )
+            )
+        }
+        memberStats
+    }
+    else
+        null
+}
+
+fun List<GroupModel>?.trimGroupModelsToGroups(): List<Group>?{
+    val groups : MutableList<Group> = mutableListOf()
+
+    return if(this != null){
+        for(item in this){
+            val group = Group(
+                item.groupName, item.description, item.creationDate, item.lastActiveDate, item.totalExpense, item.groupIcon
+            )
+            group.groupId = item.groupId
+
+            groups.add(group)
+
+        }
+        groups
+    }
+    else
+        null
 }
 
 
